@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>لانش بوكس بلانر</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#f5f0e8;--card:#fff;--accent:#c8522a;--accent2:#e8a87c;
+    --green:#4a7c59;--text:#2a2118;--muted:#8a7a6a;
+    --border:#e0d5c5;--shadow:0 4px 24px rgba(42,33,24,.10);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Tajawal',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:0 0 80px}
+  header{background:var(--accent);color:white;padding:22px 20px 16px;text-align:center;position:relative;overflow:hidden}
+  header::before{content:'';position:absolute;top:-40px;right:-40px;width:150px;height:150px;border-radius:50%;background:rgba(255,255,255,.08)}
+  header h1{font-size:21px;font-weight:800}
+  header p{font-size:11px;opacity:.8;margin-top:3px}
+  .box-legend{display:flex;gap:7px;justify-content:center;margin:12px 10px 0;flex-wrap:wrap}
+  .box-badge{display:flex;align-items:center;gap:5px;background:white;border-radius:20px;padding:4px 11px;font-size:10px;font-weight:600;color:var(--text);box-shadow:0 2px 6px rgba(0,0,0,.07)}
+  .box-dot{width:8px;height:8px;border-radius:50%}
+  .dot1{background:var(--accent)}.dot2{background:var(--green)}.dot3{background:var(--accent2)}.dot4{background:#9b7fb6}
+  .week-nav{display:flex;align-items:center;justify-content:space-between;padding:11px 14px;background:white;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:10;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+  .week-nav button{background:none;border:1.5px solid var(--border);border-radius:7px;padding:5px 11px;font-family:'Tajawal',sans-serif;font-size:11px;cursor:pointer;color:var(--text);transition:all .2s}
+  .week-nav button:hover{background:var(--accent);color:white;border-color:var(--accent)}
+  .week-nav h2{font-size:12px;font-weight:700;text-align:center}
+  .days-container{padding:10px;display:flex;flex-direction:column;gap:12px}
+  .day-card{background:var(--card);border-radius:13px;overflow:hidden;box-shadow:var(--shadow);border:1.5px solid var(--border)}
+  .day-header{padding:10px 14px;display:flex;align-items:center;justify-content:space-between;color:white}
+  .day-name{font-size:13px;font-weight:700}
+  .day-date{font-size:10px;opacity:.75}
+  .boxes-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border)}
+  .box-section{background:var(--card);padding:11px}
+  .box-section.full-width{grid-column:1/-1}
+  .box-label{font-size:10px;font-weight:700;letter-spacing:.3px;margin-bottom:7px;display:flex;align-items:center;gap:5px;color:var(--muted)}
+  .box-label span{width:7px;height:7px;border-radius:50%;display:inline-block;flex-shrink:0}
+  .cat-row{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:6px}
+  .cat-btn{background:var(--bg);border:1.5px solid var(--border);border-radius:14px;padding:3px 8px;font-family:'Tajawal',sans-serif;font-size:10px;cursor:pointer;color:var(--text);font-weight:600;transition:all .15s}
+  .cat-btn:hover{border-color:var(--accent);color:var(--accent)}
+  .cat-btn.active{background:var(--accent);color:white;border-color:var(--accent)}
+  .cat-btn.active-orange{background:var(--accent2);color:white;border-color:var(--accent2)}
+  .items-select{width:100%;border:1.5px solid var(--border);border-radius:8px;padding:6px 9px;font-family:'Tajawal',sans-serif;font-size:11px;color:var(--text);background:var(--bg);appearance:none;cursor:pointer}
+  .items-select:focus{outline:none;border-color:var(--accent)}
+  .dish-info{margin-top:7px;background:#fff9f5;border:1.5px solid #f0ddd0;border-radius:9px;padding:9px 11px;display:none}
+  .dish-info.show{display:block}
+  .dish-info-name{font-size:11px;font-weight:700;color:var(--accent);margin-bottom:3px}
+  .dish-info-desc{font-size:10px;color:var(--text);line-height:1.7;margin-bottom:5px}
+  .dish-info-qty{font-size:9px;color:var(--green);font-weight:600;background:#f0f7f3;border-radius:5px;padding:3px 7px;display:inline-block}
+  .salad-info{margin-top:5px;font-size:10px;color:var(--muted);display:none;background:#f5faf7;border-radius:6px;padding:5px 8px;border:1px solid #d5ead9;line-height:1.6}
+  .salad-info.show{display:block}
+  .sauce-row{display:flex;flex-wrap:wrap;gap:4px}
+  .sauce-chip{background:var(--bg);border:1.5px solid var(--border);border-radius:9px;padding:3px 7px;font-size:10px;cursor:pointer;font-family:'Tajawal',sans-serif;transition:all .15s;font-weight:600}
+  .sauce-chip.active{background:#9b7fb6;color:white;border-color:#9b7fb6}
+  .notes-input{width:100%;border:1.5px solid var(--border);border-radius:8px;padding:6px 9px;font-family:'Tajawal',sans-serif;font-size:10px;resize:none;height:42px;background:var(--bg);color:var(--text)}
+  .notes-input:focus{outline:none;border-color:var(--accent)}
+  .actions{position:fixed;bottom:0;left:0;right:0;background:white;border-top:1.5px solid var(--border);padding:9px 14px;display:flex;gap:8px;box-shadow:0 -4px 20px rgba(0,0,0,.08)}
+  .btn-print{flex:1;background:var(--accent);color:white;border:none;border-radius:10px;padding:13px;font-family:'Tajawal',sans-serif;font-size:13px;font-weight:700;cursor:pointer}
+  .btn-reset{background:var(--bg);color:var(--text);border:1.5px solid var(--border);border-radius:10px;padding:13px 14px;font-family:'Tajawal',sans-serif;font-size:11px;font-weight:600;cursor:pointer}
+  #print-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:100;padding:14px;overflow-y:auto}
+  #print-modal.show{display:flex;align-items:flex-start;justify-content:center}
+  .print-card{background:white;border-radius:16px;padding:20px;max-width:500px;width:100%;margin:12px auto;direction:ltr}
+  .print-header{text-align:center;margin-bottom:18px;border-bottom:2px solid #f0f0f0;padding-bottom:14px}
+  .print-header h2{font-size:17px;font-weight:800;color:#c8522a}
+  .print-header .ph-sub{font-size:11px;color:#888;margin-top:2px}
+  .print-header .ph-week{font-size:10px;color:#aaa;margin-top:2px}
+  .print-day{margin-bottom:18px;border:1.5px solid #eee;border-radius:11px;overflow:hidden}
+  .print-day-header{color:white;padding:8px 13px;display:flex;justify-content:space-between;align-items:center}
+  .pday{font-size:12px;font-weight:700}
+  .pdate{font-size:9px;opacity:.75}
+  .print-day-body{padding:11px 13px}
+  .print-no-sel{font-size:10px;color:#aaa;font-style:italic;text-align:center;padding:6px 0}
+  .print-box{margin-bottom:10px;padding-bottom:10px;border-bottom:1px dashed #eee}
+  .print-box:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0}
+  .print-box-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#aaa;margin-bottom:5px}
+  .print-dish-name{font-size:13px;font-weight:700;color:#2a2118}
+  .print-dish-ar{font-size:9px;color:#aaa;margin-bottom:4px}
+  .print-qty-badge{display:inline-block;background:#e8f5ec;color:#3a6b49;font-size:9px;font-weight:600;border-radius:4px;padding:2px 6px;margin-bottom:5px}
+  .print-steps{counter-reset:step}
+  .print-step{font-size:10px;color:#444;padding:2px 0 2px 16px;position:relative;line-height:1.7}
+  .print-step::before{content:counter(step);counter-increment:step;position:absolute;left:0;background:#c8522a;color:white;border-radius:50%;width:12px;height:12px;font-size:8px;display:flex;align-items:center;justify-content:center;top:3px}
+  .print-notes-box{background:#fff9f0;border:1px solid #f0ddd0;border-radius:7px;padding:7px 9px;margin-top:5px}
+  .print-notes-box p{font-size:10px;color:#666}
+  .modal-actions{display:flex;gap:8px;margin-top:16px}
+  .btn-close-modal{flex:1;padding:10px;background:#f5f0e8;border:1.5px solid #e0d5c5;border-radius:8px;font-family:'Tajawal',sans-serif;font-size:12px;cursor:pointer;font-weight:600}
+  .btn-do-print{flex:1;padding:10px;background:#c8522a;color:white;border:none;border-radius:8px;font-family:'Tajawal',sans-serif;font-size:12px;cursor:pointer;font-weight:700}
+  @media print{
+    body *{visibility:hidden}
+    #print-modal,#print-modal *{visibility:visible}
+    #print-modal{position:absolute;inset:0;background:white;padding:0;display:block !important}
+    .modal-actions{display:none}
+    .print-card{box-shadow:none;border-radius:0;margin:0;max-width:100%}
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>🍱 لانش بوكس بلانر</h1>
+  <p>اختر وجبتك – ورقة الخادمة تطلع بالفلبيني مع الكميات والخطوات</p>
+</header>
+<div class="box-legend">
+  <div class="box-badge"><span class="box-dot dot1"></span>بوكس ١ الطبق</div>
+  <div class="box-badge"><span class="box-dot dot2"></span>بوكس ٢ السلطة</div>
+  <div class="box-badge"><span class="box-dot dot3"></span>بوكس ٣ الفاكهة</div>
+  <div class="box-badge"><span class="box-dot dot4"></span>بوكس ص الصوص</div>
+</div>
+<div class="week-nav">
+  <button onclick="changeWeek(-1)">◀ السابق</button>
+  <h2 id="week-label"></h2>
+  <button onclick="changeWeek(1)">القادم ▶</button>
+</div>
+<div class="days-container" id="days-container"></div>
+<div class="actions">
+  <button class="btn-reset" onclick="resetAll()">🔄 مسح</button>
+  <button class="btn-print" onclick="showPrint()">📋 ورقة الخادمة (Filipino)</button>
+</div>
+<div id="print-modal">
+  <div class="print-card">
+    <div class="print-header">
+      <h2>🍱 Lunch Box Schedule</h2>
+      <div class="ph-sub">Patnubay sa Pagluluto — Cooking Guide</div>
+      <div class="ph-week" id="print-week-label"></div>
+    </div>
+    <div id="print-content"></div>
+    <div class="modal-actions">
+      <button class="btn-close-modal" onclick="closePrint()">إغلاق</button>
+      <button class="btn-do-print" onclick="window.print()">🖨️ طباعة / Print</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const DAYS_AR=['الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
+const DAYS_FIL=['Lunes','Martes','Miyerkules','Huwebes','Biyernes','Sabado'];
+
+const MAIN_DISHES={
+  '🇱🇧 لبناني':[
+    {ar:'فتة حمص',fil:'Fatta Hummus',
+     desc_ar:'حمص مطبوخ فوق خبز محمص مع لبن وطحينة وصنوبر – طبق لبناني أصيل',
+     desc_fil:'Cooked chickpeas on crispy toasted bread with yogurt, tahini sauce and pine nuts',
+     qty_ar:'١ كوب حمص مسلوق، نصف خبز عربي، ٣ ملاعق لبن، ١ ملعقة طحينة، صنوبر محمص',
+     qty_fil:'1 cup boiled chickpeas, ½ Arabic bread, 3 tbsp yogurt, 1 tbsp tahini, toasted pine nuts, salt, cumin',
+     steps_fil:['Boil chickpeas in water until very soft – can be from can, just drain and rinse','Toast Arabic bread in oven 180°C for 5 min until crispy and golden – must be crunchy','Mix: yogurt + tahini + pinch salt + squeeze of lemon','Layer in box: bread first at bottom → chickpeas on top → pour yogurt mix → pine nuts last','Put extra tahini in the small sauce box separately']},
+    {ar:'شيش طاووق',fil:'Shish Tawook',
+     desc_ar:'مكعبات دجاج متبلة بالليمون والثوم واللبن مشوية على سيخ',
+     desc_fil:'Chicken cubes marinated in lemon, garlic and yogurt then grilled',
+     qty_ar:'٢٠٠ غرام صدر دجاج مقطع مكعبات، ليمونة، ٢ فص ثوم، ملعقة بهارات شيش طاووق، ٢ ملعقة لبن',
+     qty_fil:'200g chicken breast cubed, 1 lemon (juice only), 2 garlic cloves minced, 1 tsp shish tawook spice, 2 tbsp yogurt, salt',
+     steps_fil:['Mix marinade: lemon + garlic + spice + yogurt + salt in a bowl','Add chicken cubes, mix well to coat all pieces','Marinate in fridge minimum 2 hours – overnight is much better','Grill on hot pan or grill 4-5 min each side until golden and slightly charred edges','Do NOT put hot chicken in closed box – wait 15 min to cool first']},
+    {ar:'فلافل لف',fil:'Falafel Wrap',
+     desc_ar:'كرات فلافل مقلية داخل خبز مرق مع خيار وطماطم وطحينة',
+     desc_fil:'Crispy fried falafel balls wrapped in flatbread with fresh vegetables and tahini',
+     qty_ar:'٦ حبات فلافل جاهزة، خبز مرق، خيار وطماطم مقطعة، خس، طحينة',
+     qty_fil:'6 falafel balls (ready-made ok), 1 flatbread, sliced cucumber + tomato, lettuce leaves, tahini',
+     steps_fil:['Fry falafel in hot oil – outside must be DARK BROWN, not light, or it will be soft and fall apart','Drain on paper towels, let cool completely – 15 min minimum','Warm flatbread in dry pan 30 sec so it becomes soft and foldable','Layer on bread: lettuce → tomato → cucumber → falafel balls','Roll tightly and wrap in foil to keep shape','Put tahini in separate small box so bread does not get soggy']},
+    {ar:'مجدرة',fil:'Mujaddara',
+     desc_ar:'أرز وعدس مطبوخ مع بصل مقلي حتى يتكرمل – طبق نباتي شبعان',
+     desc_fil:'Rice and lentils cooked together topped with deeply caramelized crispy onion',
+     qty_ar:'نصف كوب أرز، نصف كوب عدس بني، بصلة كبيرة، ملعقة كمون، زيت، ملح',
+     qty_fil:'½ cup rice, ½ cup brown lentils, 1 large onion sliced very thin, 1 tsp cumin, oil, salt',
+     steps_fil:['Boil lentils in 2 cups water for 15 min until just tender but NOT mushy','Cook rice separately with cumin and salt until done','Fry onion slices in generous oil on LOW heat – takes 20-25 min stirring often until very dark brown and crispy – this step is the whole flavor of the dish, do not rush it','Combine rice and lentils, mix gently','Top with all the crispy fried onion when packing']},
+  ],
+  '🇦🇪 إماراتي':[
+    {ar:'كبسة دجاج',fil:'Kabsa',
+     desc_ar:'أرز بسمتي مطبوخ بمرق الدجاج والبهارات الخليجية مع قطع دجاج مشوية فوقه',
+     desc_fil:'Basmati rice cooked in spiced chicken broth with grilled chicken pieces on top',
+     qty_ar:'١ كوب أرز بسمتي، ٢ فخذة دجاج، ٢ ملعقة بهارات كبسة، بصل، طماطم، زيت، ملح',
+     qty_fil:'1 cup basmati rice (washed), 2 chicken thighs, 2 tsp kabsa spice mix, 1 onion, 1 tomato, oil, salt, 2 cups water',
+     steps_fil:['Heat oil in deep pot, brown chicken pieces on all sides until golden – remove and set aside','In same pot fry onion until soft, add chopped tomato, cook 5 min','Add kabsa spice and 2 cups water, bring to boil','Add washed rice, place chicken pieces on top, cover tightly','Cook on LOW heat 20 min – do NOT open lid or lift it during cooking','After 20 min, check rice is dry and fluffy – let rest 5 min before opening','Cool completely before packing in lunch box']},
+    {ar:'مجبوس دجاج',fil:'Machboos',
+     desc_ar:'مثل الكبسة لكن بصلصة طماطم أكثر وزعفران – طعمه أغنى وأعمق',
+     desc_fil:'Like kabsa but richer – more tomato sauce, saffron color, deeper flavor',
+     qty_ar:'نفس الكبسة + غمسة زعفران في ماء دافئ + ملعقة معجون طماطم',
+     qty_fil:'Same as kabsa + pinch saffron dissolved in 2 tbsp warm water + 1 tbsp tomato paste',
+     steps_fil:['Follow exact kabsa steps','Add tomato paste when frying the onion','Add dissolved saffron water just before closing the lid','The rice should come out deep golden-orange color – this is correct','If color is pale yellow, saffron was not enough next time']},
+    {ar:'هريس',fil:'Harees',
+     desc_ar:'قمح مجروش مطبوخ ببطء مع الدجاج حتى يصبح كريمي – طبق تراثي إماراتي',
+     desc_fil:'Slow-cooked crushed wheat with chicken until very creamy and thick – UAE traditional dish',
+     qty_ar:'نصف كوب قمح هريس منقوع من الليل، ٢٠٠ غرام دجاج مسلوق ومفتت، سمن، قرفة، ملح',
+     qty_fil:'½ cup harees wheat (soaked in water overnight), 200g boiled chicken shredded, 2 tbsp ghee (clarified butter), cinnamon, salt',
+     steps_fil:['Soak harees wheat in water the night before – this is important','Cook soaked wheat in 3 cups water, low heat, stirring every 10-15 min for 1.5 hours','Add shredded chicken, keep stirring until mixture is very thick like porridge','Season with salt','Spoon into box, drizzle ghee on top, dust with small pinch cinnamon','This dish is eaten with a spoon – texture is soft and creamy, that is correct']},
+    {ar:'ثريد دجاج',fil:'Thareed',
+     desc_ar:'خبز رقيق مبلل بمرق الدجاج الغني مع الخضار – طبق تراثي إماراتي',
+     desc_fil:'Thin flatbread soaked in rich chicken and vegetable stew – UAE heritage dish',
+     qty_ar:'خبز مرقوق أو خبز رقيق، ١ كوب مرق دجاج مركز، بطاطا وجزر وكوسا مقطعة',
+     qty_fil:'1 thin flatbread or marqooq, 1 cup strong chicken broth with vegetables, potato + carrot + zucchini small cubes, boiled chicken pieces',
+     steps_fil:['Boil chicken with vegetables (potato, carrot, zucchini) until all are cooked – keep broth','Tear bread into medium pieces, place at bottom of lunch box','Add chicken pieces and vegetables on top of bread','Pour hot broth over everything – bread will absorb it, this is intentional and correct','The bread should be wet but not swimming in liquid – adjust amount of broth accordingly']},
+  ],
+  '🇪🇬 مصري':[
+    {ar:'كشري',fil:'Koshari',
+     desc_ar:'طبق مصري شعبي من الأرز والعدس والمعكرونة مع صلصة طماطم حارة وبصل مقلي',
+     desc_fil:'Famous Egyptian street food – rice + lentils + pasta with spicy tomato sauce and crispy onion',
+     qty_ar:'ثلث كوب أرز، ثلث كوب عدس، حفنة معكرونة كوع صغيرة، بصل، ثوم، طماطم، كمون، خل',
+     qty_fil:'⅓ cup rice, ⅓ cup brown lentils, small handful elbow macaroni, 1 onion, 3 garlic cloves, 1 can tomatoes, cumin, vinegar, chili',
+     steps_fil:['Cook lentils in water 15 min until soft – drain','Cook rice with cumin and salt until done','Cook pasta in boiling salted water, drain, rinse with cold water','Tomato sauce: fry garlic in oil, add canned tomatoes + cumin + pinch chili + splash vinegar, simmer 15 min','Crispy onion: slice onion very thin, fry in oil LOW heat 20-25 min until dark brown and crunchy – this is essential','Layer in box: rice+lentils mix → pasta → tomato sauce → onion on top','Extra sauce in small separate box']},
+    {ar:'فول مدمس',fil:'Ful Medames',
+     desc_ar:'فول مطبوخ بالليمون والكمون وزيت الزيتون – غني بالبروتين',
+     desc_fil:'Slow-cooked fava beans with lemon, cumin and olive oil – very filling and high protein',
+     qty_ar:'علبة فول مدمس أو كوب فول مسلوق، ليمونة، كمون، ثوم مهروس، زيت زيتون، بقدونس',
+     qty_fil:'1 can fava beans (or 1 cup boiled), 1 lemon juice, ½ tsp cumin, 1 garlic clove mashed, olive oil, fresh parsley, salt',
+     steps_fil:['Open can and drain – or use boiled fava beans','Heat in pan, mash about half with fork – keep other half whole, this gives nice texture','Add garlic + cumin + lemon juice + salt + drizzle of olive oil','Stir and cook on low heat 5-7 min until fragrant','Chop parsley, add on top with extra drizzle of olive oil','Serve with Arabic bread on side – wrap bread separately so it stays fresh']},
+    {ar:'كفتة مشوية',fil:'Kofta',
+     desc_ar:'أصابع لحم مفروم متبل بالبهارات والبقدونس والبصل مشوية',
+     desc_fil:'Spiced ground meat fingers with herbs, onion and spices – grilled on flat skewer',
+     qty_ar:'٢٠٠ غرام لحم مفروم، بصلة صغيرة مبشورة، بقدونس مفروم، ملعقة بهارات كفتة، ملح',
+     qty_fil:'200g ground beef or lamb, 1 small onion grated (squeeze out water), handful parsley finely chopped, 1 tsp kofta spice, salt, black pepper',
+     steps_fil:['Grate onion and SQUEEZE out the juice with your hands – too much moisture makes kofta fall apart','Mix all ingredients well, knead like dough for 2-3 min','Wet hands with water, shape into finger shapes – press firmly so they hold together','Grill on HIGH heat 3-4 min each side – must be well cooked, no pink inside','Let cool on rack 10 min – do NOT cover with lid while hot, they will steam and become soft']},
+  ],
+  '🇸🇾 شامي':[
+    {ar:'شيش كباب',fil:'Shish Kebab',
+     desc_ar:'لحم مفروم ممزوج بالبصل والبهارات الشامية مشوي على سيخ معدني مسطح',
+     desc_fil:'Ground meat mixed with onion and Syrian spices pressed on flat metal skewer and grilled',
+     qty_ar:'٢٠٠ غرام لحم غنم أو بقر مفروم، بصل مبشور مصفى، بهارات ٧ تبهيل، قرفة، ملح',
+     qty_fil:'200g lamb or beef mince, 1 small onion grated (squeeze out water!), 1 tsp 7-spice (baharat), pinch cinnamon, salt',
+     steps_fil:['IMPORTANT: grate onion and squeeze water out very well – this prevents kebab from falling apart','Mix all ingredients, knead well for 3 min','Refrigerate 30 min so mixture firms up','Wet hands, take a handful and press firmly around a flat metal skewer','Grill on HIGH heat – 3-4 min per side, should have slight char on outside','Rest 5 min before packing, do not cover immediately']},
+    {ar:'دجاج مشوي شامي',fil:'Syrian Grilled Chicken',
+     desc_ar:'دجاج متبل بالسبع بهارات والثوم وزيت الزيتون على طريقة أهل الشام',
+     desc_fil:'Chicken marinated in 7-spice, garlic and olive oil – grilled Syrian style',
+     qty_ar:'٢ قطعة دجاج فخذ أو صدر، ٢ فص ثوم، ملعقة ٧ بهارات، ليمون، زيت زيتون، ملح',
+     qty_fil:'2 chicken pieces (thigh recommended – more flavor), 2 garlic cloves minced, 1 tsp 7-spice, 1 lemon juice, 2 tbsp olive oil, salt',
+     steps_fil:['Score chicken with deep knife cuts – marinade gets deeper into meat','Mix all marinade ingredients, rub generously on chicken including inside cuts','Marinate 4 hours minimum, overnight in fridge is best','Grill on medium heat – bone-in pieces need 6-8 min per side','To check if done: cut thickest part – juices must run completely clear, NOT pink at all','Rest 5 min before slicing and packing']},
+    {ar:'يبرق (ورق عنب)',fil:'Warak Dawali - Stuffed Vine Leaves',
+     desc_ar:'ورق عنب محشو بمزيج الأرز واللحم المفروم والطماطم والبقدونس',
+     desc_fil:'Vine leaves stuffed with spiced rice, minced meat, tomato and parsley – rolled tightly',
+     qty_ar:'١٢ ورقة عنب (من الجرة)، نصف كوب أرز، ١٠٠ غرام لحم مفروم، طماطم، ليمون، بهارات',
+     qty_fil:'12 vine leaves from jar, ½ cup uncooked rice, 100g minced meat, 1 tomato diced, lemon juice, olive oil, allspice, salt',
+     steps_fil:['Make filling: rice + meat + tomato + allspice + olive oil + salt – mix well','Rinse vine leaves, lay flat with rough side facing UP','Place 1 tsp filling in the middle of each leaf','Fold left side over filling, fold right side, then roll from bottom up firmly like a small cigar','Line pot bottom with sliced fresh tomato (prevents burning)','Pack rolls tightly side by side, pour lemon juice + water to just cover them','Cook on LOW heat with lid 45-50 min – do NOT stir or open during cooking','Cool completely before packing in lunch box']},
+  ],
+  '🇲🇽 مكسيكي':[
+    {ar:'بوريتو دجاج',fil:'Chicken Burrito',
+     desc_ar:'تورتيلا كبيرة ملفوفة بالدجاج المتبل والأرز والفاصوليا والأفوكادو',
+     desc_fil:'Large flour tortilla filled with seasoned chicken, rice, black beans and mashed avocado',
+     qty_ar:'تورتيلا كبيرة، ١٥٠ غرام دجاج مقطع شرائح، ٣ ملاعق أرز، ٣ ملاعق فاصوليا سوداء، نصف أفوكادو',
+     qty_fil:'1 large flour tortilla, 150g chicken strips, 3 tbsp cooked rice, 3 tbsp black beans, ½ avocado mashed, salt, cumin, paprika',
+     steps_fil:['Season chicken with cumin + paprika + garlic powder + salt','Cook chicken on HIGH heat until slightly charred on edges','Mash avocado with pinch salt and lemon – keeps it from going brown','Warm tortilla in dry pan 30 sec so it is soft and will not crack when rolling','Spread avocado in center → rice → beans → chicken','Fold sides in first, then roll from bottom tightly','Wrap tightly in aluminum foil – this holds it together and keeps it fresh','Any salsa goes in separate small box']},
+    {ar:'فاهيتا دجاج',fil:'Chicken Fajita Wrap',
+     desc_ar:'شرائح دجاج مشوية مع فلفل ملون ومتبل في تورتيلا',
+     desc_fil:'Grilled seasoned chicken strips with colorful bell peppers and onion in tortilla',
+     qty_ar:'١٥٠ غرام صدر دجاج شرائح رفيعة، نصف فلفل أحمر + أصفر، نصف بصلة، بهارات فاهيتا',
+     qty_fil:'150g chicken breast thinly sliced, ½ red + ½ yellow bell pepper sliced, ½ onion sliced, fajita spice or cumin+paprika+garlic powder',
+     steps_fil:['Season chicken slices with fajita spice, rest 15 min','Cook bell peppers and onion on VERY HIGH heat in dry pan 3-4 min – they should get charred marks but stay crunchy','Remove vegetables, cook chicken in same pan 3-4 min per side','Mix together and cool completely – hot filling makes tortilla wet and fall apart','Wrap in tortilla only when filling is cool','Wrap in foil']},
+    {ar:'كيساديا دجاج',fil:'Chicken Quesadilla',
+     desc_ar:'تورتيلا مقلية بالجبن الذائب والدجاج – مقرمشة من الخارج ناعمة من الداخل',
+     desc_fil:'Toasted tortilla with melted cheese and chicken – crispy outside, soft and cheesy inside',
+     qty_ar:'تورتيلتان صغيرتان، ١٠٠ غرام دجاج مشوي مقطع، نصف كوب جبن موزاريلا أو شيدر مبشور',
+     qty_fil:'2 small flour tortillas, 100g grilled chicken chopped, ½ cup shredded mozzarella or cheddar cheese',
+     steps_fil:['Spread chicken and cheese evenly on one tortilla, place second tortilla on top','Put in DRY pan (no oil needed) on MEDIUM-LOW heat – pressing gently with spatula','Cook 3 min until bottom is golden brown, flip carefully with large spatula','Cook other side 2-3 min until cheese is fully melted inside','Remove, place on rack to cool – do NOT stack on top of each other while hot','Cut into triangles ONLY when completely cool – otherwise cheese spills out']},
+  ],
+  '🇺🇸 أمريكي':[
+    {ar:'رول دجاج مشوي',fil:'Grilled Chicken Roll',
+     desc_ar:'خبز رول بالدجاج المشوي وكول سلو وصلصة خردل عسل',
+     desc_fil:'Soft bread roll with grilled chicken, creamy coleslaw and honey mustard sauce',
+     qty_ar:'خبز رول واحد، ١٥٠ غرام دجاج مشوي شرائح رفيعة، كول سلو، صلصة خردل وعسل',
+     qty_fil:'1 bread roll, 150g grilled chicken sliced, coleslaw (cabbage+carrot+mayo+sugar+lemon), honey mustard (1 tbsp mustard + 1 tbsp honey mixed)',
+     steps_fil:['Grill chicken breast with salt + garlic powder + black pepper, slice thin when cool','Make coleslaw: shred white cabbage + grate carrot + mix with mayo + pinch sugar + squeeze lemon – mix 30 min before so cabbage softens slightly','Cut roll in half, do NOT add sauce yet','Layer: chicken slices → coleslaw','Put honey mustard in separate small sauce box – adding it inside makes bread soggy']},
+    {ar:'سندوتش كلوب',fil:'Club Sandwich',
+     desc_ar:'ثلاث طبقات خبز توست مع دجاج مشوي وجبن وطماطم وخس ومايونيز',
+     desc_fil:'Three layers of toasted bread with grilled chicken, cheese, tomato, lettuce and mayo',
+     qty_ar:'٣ شرائح خبز توست، ٢ شريحة دجاج مشوي رقيق، شريحة جبن، طماطم وخس، مايونيز',
+     qty_fil:'3 toast bread slices, 2 thin slices grilled chicken, 1 cheese slice, tomato sliced, lettuce, mayo, toothpick',
+     steps_fil:['Toast all 3 bread slices until golden and crispy','Spread thin layer of mayo on each slice','Build layers: bread → lettuce + tomato → bread → chicken + cheese → bread on top','Press down gently, insert 1 toothpick in center to hold together','Cut diagonally into 2 triangles','Wrap tightly in cling film immediately – do NOT refrigerate after assembly or bread gets hard and dry']},
+    {ar:'BBQ دجاج',fil:'BBQ Chicken',
+     desc_ar:'قطع دجاج مغلفة بصلصة BBQ مشوية حتى تتكرمل – حلو ومدخن الطعم',
+     desc_fil:'Chicken pieces coated in sticky BBQ sauce and grilled until caramelized – sweet and smoky',
+     qty_ar:'٢ فخذة دجاج، ٣ ملاعق صلصة BBQ جاهزة، ثوم بودرة، ملح، فلفل أسود',
+     qty_fil:'2 chicken thighs, 3 tbsp BBQ sauce (bottle is fine), garlic powder, salt, black pepper',
+     steps_fil:['Season chicken with garlic powder + salt + pepper','Bake in oven at 200°C for 20 min first so chicken is mostly cooked','Take out, brush BBQ sauce generously on all sides','Return to oven or grill 5 more min – sauce caramelizes and becomes sticky','Brush sauce one more time, cook 3 more min – edges should be slightly dark and sticky','Cool 10-15 min before packing, extra sauce in small box']},
+  ],
+  '🇮🇹 إيطالي':[
+    {ar:'باستا بولونيز',fil:'Pasta Bolognese',
+     desc_ar:'باستا مع صلصة اللحم المفروم والطماطم والثوم والأعشاب الإيطالية',
+     desc_fil:'Pasta with rich slow-cooked ground meat tomato sauce, garlic and Italian herbs',
+     qty_ar:'١٠٠ غرام باستا بينه أو سباغيتي، ١٥٠ غرام لحم مفروم، علبة طماطم مهروسة، ثوم، بصل، أعشاب إيطالية',
+     qty_fil:'100g penne pasta, 150g ground beef, 1 can crushed tomatoes, 2 garlic cloves, ½ onion, olive oil, Italian herbs (oregano+basil), salt, pinch sugar',
+     steps_fil:['Cook pasta 1 minute LESS than package says – it will finish cooking in the sauce','In pan: fry onion in olive oil until soft, add garlic 1 min, add meat and cook until all brown','Add crushed tomatoes + herbs + salt + pinch sugar (sugar reduces tomato bitterness)','Simmer on LOW heat 20 min – do not rush, this develops the flavor','Add drained pasta to sauce, cook 1-2 min more, mix well','Cool completely before packing – hot pasta in closed box becomes mushy and sticks together','Parmesan cheese in separate small box – sprinkle when eating']},
+    {ar:'باستا بيستو',fil:'Pasta Pesto with Chicken',
+     desc_ar:'باستا بصلصة البيستو الخضراء مع الريحان والصنوبر والجبن وقطع دجاج مشوي',
+     desc_fil:'Pasta tossed in basil pesto sauce with pine nuts, parmesan and sliced grilled chicken',
+     qty_ar:'١٠٠ غرام باستا فوسيلي، ٣ ملاعق صلصة بيستو جاهزة، ١٠٠ غرام دجاج مشوي، صنوبر وبارميزان',
+     qty_fil:'100g fusilli pasta (best shape for pesto), 3 tbsp pesto (jar is fine), 100g grilled chicken sliced, pine nuts, parmesan',
+     steps_fil:['Cook pasta al dente – save ½ cup of pasta water before draining','Cool pasta immediately under cold running water to stop cooking – this is important for cold pasta dish','Mix pesto with 2 tbsp saved pasta water to make it flow and coat pasta evenly','Toss pasta in pesto sauce until all coated','Add sliced grilled chicken, mix gently','Top with pine nuts and parmesan when packing','This dish is served cold – no need to heat, flavor is actually better cold']},
+    {ar:'ريزوتو دجاج',fil:'Chicken Risotto',
+     desc_ar:'أرز أربوريو إيطالي مطبوخ ببطء بمرق الدجاج الساخن حتى يصبح كريمي',
+     desc_fil:'Italian arborio rice slowly cooked by adding hot chicken broth ladle by ladle until very creamy',
+     qty_ar:'نصف كوب أرز أربوريو، ٢ كوب مرق دجاج، بصلة صغيرة، جبن بارميزان، زبدة، ملح',
+     qty_fil:'½ cup arborio rice, 2 cups chicken broth (kept hot in separate pot), 1 small onion diced, ½ cup parmesan grated, 2 tbsp butter, salt, olive oil',
+     steps_fil:['Keep broth warm in a small pot on low heat throughout the entire cooking – cold broth stops the process','Fry onion in butter + olive oil until soft and translucent – do NOT let it brown','Add arborio rice, stir 2 min until slightly toasted and edges look transparent','Add warm broth ONE LADLE at a time – wait until each ladle is fully absorbed before adding next','STIR CONSTANTLY – this is not optional, the stirring releases starch which creates the creaminess','Total cooking time is 18-20 min','When done, remove from heat, add butter + parmesan, stir vigorously, rest 2 min with lid on','Risotto thickens as it cools – this is normal and correct']},
+  ],
+};
+
+const SALADS=[
+  {ar:'سلطة فتوش',fil:'Fattoush Salad',
+   info_ar:'طماطم وخيار وخس وفجل مع خبز محمص وصلصة رمان وليمون',
+   info_fil:'Tomatoes + cucumber + lettuce + radish + toasted pita croutons. PACK croutons separately in bag or they go soggy. Dressing: pomegranate molasses + lemon + olive oil + dried mint – in sauce box.'},
+  {ar:'سلطة تبولة',fil:'Tabbouleh',
+   info_ar:'بقدونس ناعم ريحه مع طماطم وبرغل ناعم وليمون وزيت',
+   info_fil:'VERY finely chopped parsley (this takes time – chop until very small), tomato, fine bulgur soaked in water 10 min then squeezed dry, lemon juice, olive oil, salt, dried mint. Mix all together. Taste for lemon – should be tangy.'},
+  {ar:'سلطة سيزر دجاج',fil:'Caesar Salad with Chicken',
+   info_ar:'خس روماني مع صوص سيزر وقطع دجاج محمر وكروتون وبارميزان',
+   info_fil:'Romaine lettuce torn into pieces + grilled chicken strips + croutons (toast bread cubes) + parmesan shavings. Caesar dressing MUST go in separate sauce box or lettuce wilts immediately.'},
+  {ar:'سلطة خضراء بسيطة',fil:'Simple Green Salad',
+   info_ar:'خيار وطماطم وخس وزيتون وشرائح بصل',
+   info_fil:'Cucumber chunks + tomato chunks + lettuce + olives + optional thin onion rings. Dress with: lemon juice + olive oil + salt + pinch dried oregano. Light and simple.'},
+  {ar:'سلطة روكا وجبن',fil:'Rocket & Feta Salad',
+   info_ar:'جرجير مع جبن فيتا وطماطم كرزية وجوز',
+   info_fil:'Rocket (arugula) leaves + crumbled feta cheese + cherry tomatoes halved + walnuts. Balsamic dressing in separate box. DO NOT dress before packing.'},
+  {ar:'سلطة كول سلو',fil:'Coleslaw',
+   info_ar:'كرنب أبيض مبشور مع جزر ومايونيز وسكر وليمون',
+   info_fil:'Shred white cabbage fine + grate 1 carrot + mix with mayo + pinch sugar + squeeze lemon + salt. Mix 30-45 min before packing so cabbage softens slightly. Should be creamy not dry.'},
+  {ar:'سلطة يونانية',fil:'Greek Salad',
+   info_ar:'طماطم وخيار وزيتون كامات وجبن فيتا وزعتر',
+   info_fil:'Tomato chunks + cucumber chunks + whole black olives + feta cheese cubes (NOT crumbled). Dress with olive oil + dried oregano + salt – no lemon. Simple and classic.'},
+  {ar:'سلطة كينوا',fil:'Quinoa Salad',
+   info_ar:'كينوا مسلوقة وباردة مع خيار وطماطم كرزية وبقدونس وليمون',
+   info_fil:'Cook quinoa in 2x water, cool completely (spread on plate to speed cooling). Mix with diced cucumber + cherry tomatoes + chopped parsley + lemon + olive oil + salt. Must be fully cool before packing.'},
+  {ar:'سلطة حمص وخيار',fil:'Chickpea Cucumber Salad',
+   info_ar:'حمص من العلبة مع خيار وكمون وليمون وزيت زيتون',
+   info_fil:'Canned chickpeas (drain and rinse) + diced cucumber + chopped parsley. Dress: lemon juice + olive oil + cumin + salt. Simple, filling, no cooking needed.'},
+  {ar:'سلطة شمندر وجبن',fil:'Beetroot & Feta Salad',
+   info_ar:'شمندر مسلوق مع جبن فيتا وجوز وصلصة عسل وخردل',
+   info_fil:'Boil or use canned beetroot, slice. Top with crumbled feta + walnuts. Dressing: honey + mustard + olive oil + pinch salt – mix in sauce box. Very colorful – beetroot will stain hands, use gloves.'},
+];
+
+const FRUITS=[
+  {ar:'بطيخ',fil:'Pakwan (Watermelon)',prep:'Cut into cubes or triangles, remove all seeds'},
+  {ar:'شمام',fil:'Melon / Cantaloupe',prep:'Peel, remove seeds, cut into cubes'},
+  {ar:'عنب',fil:'Ubas (Grapes)',prep:'Wash well, keep whole or halve – remove any stems'},
+  {ar:'تفاح',fil:'Mansanas (Apple)',prep:'Wash, slice, drizzle lemon juice on slices to stop browning'},
+  {ar:'مانجو',fil:'Mangga (Mango)',prep:'Peel, remove seed, cut into cubes'},
+  {ar:'فراولة',fil:'Strawberry',prep:'Wash, remove green top, halve if large'},
+  {ar:'خوخ',fil:'Melokoton (Peach)',prep:'Wash, slice, keep skin on – remove if requested'},
+  {ar:'أناناس',fil:'Pinya (Pineapple)',prep:'Peel, remove core, cut into cubes – be careful it is acidic'},
+  {ar:'كيوي',fil:'Kiwi',prep:'Peel fully, slice into rounds or cubes'},
+  {ar:'رمان',fil:'Granada (Pomegranate)',prep:'Cut in half, remove seeds only into box – no white pith'},
+  {ar:'توت أزرق',fil:'Blueberry',prep:'Rinse gently under cold water, keep whole, dry before packing'},
+  {ar:'مشكل فواكه',fil:'Mixed Fruit',prep:'Choose 2-3 types from above, equal portions, all prepped as above'},
+];
+
+const SAUCES=[
+  {ar:'حمص',fil:'Hummus dip'},
+  {ar:'ثوم',fil:'Toum – garlic sauce'},
+  {ar:'طحينة',fil:'Tahini – sesame sauce'},
+  {ar:'رانش',fil:'Ranch dressing'},
+  {ar:'صلصة خضراء',fil:'Green herb sauce'},
+  {ar:'كتشب',fil:'Ketchup'},
+  {ar:'مايونيز',fil:'Mayonnaise'},
+  {ar:'صلصة ليمون',fil:'Lemon olive oil dressing'},
+  {ar:'ديجون مستردة',fil:'Dijon mustard'},
+  {ar:'صلصة صويا خفيفة',fil:'Light soy sauce'},
+  {ar:'صلصة زيتون وليمون',fil:'Olive oil & lemon'},
+  {ar:'BBQ',fil:'BBQ sauce'},
+  {ar:'صلصة سيزر',fil:'Caesar dressing'},
+  {ar:'بيستو',fil:'Basil pesto sauce'},
+];
+
+let weekOffset=0, selections={};
+
+function getWeekDates(){
+  const now=new Date(), day=now.getDay();
+  const diff=day===0?-6:1-day;
+  const monday=new Date(now);
+  monday.setDate(now.getDate()+diff+weekOffset*7);
+  return DAYS_AR.map((_,i)=>{const d=new Date(monday);d.setDate(monday.getDate()+i);return d;});
+}
+function fmtAR(d){return d.toLocaleDateString('ar-AE',{day:'numeric',month:'long'})}
+function fmtEN(d){return d.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})}
+
+function updateWeekLabel(){
+  const dates=getWeekDates();
+  document.getElementById('week-label').textContent=fmtAR(dates[0])+' – '+fmtAR(dates[5]);
+}
+function changeWeek(dir){weekOffset+=dir;updateWeekLabel();renderDays();}
+
+function getSel(i){
+  if(!selections[weekOffset])selections[weekOffset]={};
+  if(!selections[weekOffset][i])selections[weekOffset][i]={cat:'',main:'',salad:'',fruits:[],sauces:[],notes:''};
+  return selections[weekOffset][i];
+}
+function getDish(cat,ar){
+  if(!cat||!ar)return null;
+  return(MAIN_DISHES[cat]||[]).find(d=>d.ar===ar)||null;
+}
+
+function renderDays(){
+  const dates=getWeekDates();
+  const cont=document.getElementById('days-container');
+  cont.innerHTML='';
+  DAYS_AR.forEach((day,i)=>{
+    const sel=getSel(i);
+    const dish=getDish(sel.cat,sel.main);
+    const hdr=sel.main?'var(--green)':'var(--text)';
+    const catBtns=Object.keys(MAIN_DISHES).map(c=>`<button class="cat-btn ${sel.cat===c?'active':''}" onclick="selectCat(${i},'${c.replace(/'/g,"\\'")}')"> ${c}</button>`).join('');
+    const dishOpts=sel.cat&&MAIN_DISHES[sel.cat]?MAIN_DISHES[sel.cat].map(d=>`<option value="${d.ar}" ${sel.main===d.ar?'selected':''}>${d.ar}</option>`).join(''):'';
+    const dishInfo=dish?`<div class="dish-info show"><div class="dish-info-name">${dish.ar}</div><div class="dish-info-desc">${dish.desc_ar}</div><div class="dish-info-qty">📏 ${dish.qty_ar}</div></div>`:'';
+    const saladOpts=SALADS.map(s=>`<option value="${s.ar}" ${sel.salad===s.ar?'selected':''}>${s.ar}</option>`).join('');
+    const saladObj=SALADS.find(s=>s.ar===sel.salad);
+    const saladInfo=saladObj?`<div class="salad-info show">${saladObj.info_ar}</div>`:'<div class="salad-info"></div>';
+    const fruitBtns=FRUITS.map(f=>`<button class="cat-btn ${sel.fruits.includes(f.ar)?'active-orange':''}" onclick="toggleFruit(${i},'${f.ar}')">${f.ar}</button>`).join('');
+    const sauceChips=SAUCES.map(s=>`<button class="sauce-chip ${sel.sauces.includes(s.ar)?'active':''}" onclick="toggleSauce(${i},'${s.ar}')">${s.ar}</button>`).join('');
+    const card=document.createElement('div');
+    card.className='day-card';
+    card.innerHTML=`
+      <div class="day-header" style="background:${hdr}">
+        <span class="day-name">${day}</span><span class="day-date">${fmtAR(dates[i])}</span>
+      </div>
+      <div class="boxes-grid">
+        <div class="box-section full-width">
+          <div class="box-label"><span style="background:var(--accent)"></span>بوكس ١ – الطبق الرئيسي</div>
+          <div class="cat-row">${catBtns}</div>
+          <select class="items-select" onchange="selectMain(${i},this.value)">
+            <option value="">-- اختر الطبق --</option>${dishOpts}
+          </select>
+          ${dishInfo}
+        </div>
+        <div class="box-section">
+          <div class="box-label"><span style="background:var(--green)"></span>بوكس ٢ – السلطة</div>
+          <select class="items-select" onchange="selectSalad(${i},this.value)">
+            <option value="">-- اختر --</option>${saladOpts}
+          </select>
+          ${saladInfo}
+        </div>
+        <div class="box-section">
+          <div class="box-label"><span style="background:var(--accent2)"></span>بوكس ٣ – فاكهة</div>
+          <div class="cat-row">${fruitBtns}</div>
+        </div>
+        <div class="box-section full-width">
+          <div class="box-label"><span style="background:#9b7fb6"></span>بوكس ص – الصوص</div>
+          <div class="sauce-row">${sauceChips}</div>
+        </div>
+        <div class="box-section full-width">
+          <div class="box-label">📝 ملاحظات للخادمة</div>
+          <textarea class="notes-input" placeholder="مثال: بدون بصل، بارد فقط..." onchange="setNotes(${i},this.value)">${sel.notes}</textarea>
+        </div>
+      </div>`;
+    cont.appendChild(card);
+  });
+}
+
+function selectCat(i,cat){getSel(i).cat=cat;getSel(i).main='';renderDays();}
+function selectMain(i,val){getSel(i).main=val;renderDays();}
+function selectSalad(i,val){getSel(i).salad=val;renderDays();}
+function toggleFruit(i,fruit){const s=getSel(i),idx=s.fruits.indexOf(fruit);if(idx>-1)s.fruits.splice(idx,1);else if(s.fruits.length<3)s.fruits.push(fruit);renderDays();}
+function toggleSauce(i,sauce){const s=getSel(i),idx=s.sauces.indexOf(sauce);if(idx>-1)s.sauces.splice(idx,1);else s.sauces.push(sauce);renderDays();}
+function setNotes(i,val){getSel(i).notes=val;}
+function resetAll(){if(confirm('تمسح كل الاختيارات؟')){delete selections[weekOffset];renderDays();}}
+
+function showPrint(){
+  const dates=getWeekDates();
+  document.getElementById('print-week-label').textContent='Week: '+fmtEN(dates[0])+' to '+fmtEN(dates[5]);
+  let html='';
+  DAYS_AR.forEach((dayAr,i)=>{
+    const sel=getSel(i), dish=getDish(sel.cat,sel.main);
+    const hasAny=sel.main||sel.salad||sel.fruits.length;
+    html+=`<div class="print-day">
+      <div class="print-day-header" style="background:${hasAny?'#4a7c59':'#777'}">
+        <span class="pday">${DAYS_FIL[i]} — ${dayAr}</span>
+        <span class="pdate">${fmtEN(dates[i])}</span>
+      </div>
+      <div class="print-day-body">`;
+    if(!hasAny){html+=`<p class="print-no-sel">Walang napili / لم يتم الاختيار</p>`;}
+    else{
+      if(dish){
+        html+=`<div class="print-box">
+          <div class="print-box-label">🔴 BOX 1 — Main Dish</div>
+          <div class="print-dish-name">${dish.fil}</div>
+          <div class="print-dish-ar">(${dish.ar})</div>
+          <div class="print-qty-badge">📏 ${dish.qty_fil}</div>
+          <div class="print-steps">${dish.steps_fil.map(s=>`<div class="print-step">${s}</div>`).join('')}</div>
+          <p style="font-size:9px;color:#bbb;margin-top:5px">⚠️ Palaging palamigin ang pagkain bago isara ang lunch box.</p>
+        </div>`;
+      }
+      if(sel.salad){
+        const so=SALADS.find(s=>s.ar===sel.salad);
+        if(so)html+=`<div class="print-box">
+          <div class="print-box-label">🟢 BOX 2 — Salad</div>
+          <div class="print-dish-name">${so.fil}</div>
+          <div class="print-dish-ar">(${so.ar})</div>
+          <p style="font-size:10px;color:#444;margin-top:4px;line-height:1.6">${so.info_fil}</p>
+        </div>`;
+      }
+      if(sel.fruits.length){
+        html+=`<div class="print-box">
+          <div class="print-box-label">🟠 BOX 3 — Fruits</div>
+          ${sel.fruits.map(fa=>{const fo=FRUITS.find(f=>f.ar===fa);return fo?`<div style="margin-bottom:5px"><strong style="font-size:12px">${fo.fil}</strong> <span style="font-size:9px;color:#aaa">(${fo.ar})</span><br><span style="font-size:10px;color:#555">→ ${fo.prep}</span></div>`:''}).join('')}
+        </div>`;
+      }
+      if(sel.sauces.length){
+        html+=`<div class="print-box">
+          <div class="print-box-label">🟣 SMALL BOX — Sauce</div>
+          <p style="font-size:11px;color:#333">${sel.sauces.map(sa=>{const so=SAUCES.find(s=>s.ar===sa);return so?`${so.fil} (${so.ar})`:sa}).join(' + ')}</p>
+          <p style="font-size:9px;color:#aaa;margin-top:3px">Put each sauce in a separate small container with a lid.</p>
+        </div>`;
+      }
+      if(sel.notes)html+=`<div class="print-notes-box"><p>📝 <strong>Special note:</strong> ${sel.notes}</p></div>`;
+    }
+    html+=`</div></div>`;
+  });
+  html+=`<div style="margin-top:14px;padding:10px;background:#f9f9f9;border-radius:8px;text-align:center">
+    <p style="font-size:10px;color:#888;font-weight:700">⚠️ Mahalagang Paalala – Important Reminders</p>
+    <p style="font-size:9px;color:#666;margin-top:4px;line-height:1.7">
+      • Palaging palamigin muna bago isara ang box (Always cool food before closing)<br>
+      • Sauces at dressings – separate small box palagi (Always keep sauces separate)<br>
+      • Sandwiches – i-wrap sa foil para hindi matuyo (Wrap in foil to prevent drying)<br>
+      • Prutas – hiwain lang sa umaga bago mag-pack (Cut fruits only in the morning)
+    </p>
+  </div>`;
+  document.getElementById('print-content').innerHTML=html;
+  document.getElementById('print-modal').classList.add('show');
+}
+function closePrint(){document.getElementById('print-modal').classList.remove('show');}
+
+updateWeekLabel();
+renderDays();
+</script>
+</body>
+</html>
