@@ -1,95 +1,69 @@
-// Platform users, sessions and per-mailbox permissions.
-const { getDb } = require('./db');
+// Platform users, sessions and per-mailbox permissions (PostgreSQL, async).
+// No default credentials: the first admin is created ONLY via `npm run create-admin`.
+const { q, all, one } = require('./db');
 const { hashPassword, verifyPassword, randomToken } = require('./crypto');
 
 const SESSION_TTL_MS = 1000 * 60 * 60 * 12;
 
-function bootstrapAdmin(cfg) {
-  const db = getDb();
-  const count = db.prepare('SELECT COUNT(*) AS n FROM users').get().n;
-  if (count === 0) {
-    const password = cfg.ADMIN_PASSWORD || randomToken().slice(0, 12);
-    db.prepare('INSERT INTO users (email, name, password_hash, role, created_at) VALUES (?,?,?,?,?)')
-      .run(cfg.ADMIN_EMAIL, 'Administrator', hashPassword(password), 'admin', Date.now());
-    if (!cfg.ADMIN_PASSWORD) {
-      console.log(`\n[madar] First run: admin user "${cfg.ADMIN_EMAIL}" created with password: ${password}`);
-      console.log('[madar] Change it after first login, or set ADMIN_PASSWORD in .env before first run.\n');
-    }
-  }
-}
-
-function login(email, password) {
-  const db = getDb();
-  const user = db.prepare('SELECT * FROM users WHERE email = ? AND disabled = 0').get(String(email).toLowerCase().trim() === String(email).trim() ? email : email);
+async function login(email, password) {
+  const user = await one('SELECT * FROM users WHERE email = $1 AND disabled = FALSE', [String(email || '').toLowerCase().trim()]);
   if (!user || !verifyPassword(password, user.password_hash)) return null;
   const token = randomToken();
-  const now = Date.now();
-  db.prepare('INSERT INTO sessions (token, user_id, created_at, expires_at) VALUES (?,?,?,?)')
-    .run(token, user.id, now, now + SESSION_TTL_MS);
+  await q('INSERT INTO sessions (token, user_id, expires_at) VALUES ($1,$2,$3)',
+    [token, user.id, new Date(Date.now() + SESSION_TTL_MS)]);
   return { token, user: publicUser(user) };
 }
 
-function logout(token) {
-  getDb().prepare('DELETE FROM sessions WHERE token = ?').run(String(token || ''));
+async function logout(token) {
+  if (token) await q('DELETE FROM sessions WHERE token = $1', [token]);
 }
 
-function userForToken(token) {
+async function userForToken(token) {
   if (!token) return null;
-  const db = getDb();
-  const row = db.prepare(`
-    SELECT u.* FROM sessions s JOIN users u ON u.id = s.user_id
-    WHERE s.token = ? AND s.expires_at > ? AND u.disabled = 0`).get(String(token), Date.now());
+  const row = await one(`SELECT u.* FROM sessions s JOIN users u ON u.id = s.user_id
+    WHERE s.token = $1 AND s.expires_at > now() AND u.disabled = FALSE`, [token]);
   return row ? publicUser(row) : null;
 }
 
 function publicUser(u) {
-  return { id: u.id, email: u.email, name: u.name, role: u.role };
+  return { id: Number(u.id), email: u.email, name: u.name, role: u.role };
 }
 
 function listUsers() {
-  return getDb().prepare('SELECT id, email, name, role, disabled, created_at FROM users ORDER BY id').all();
+  return all('SELECT id, email, name, role, disabled, created_at FROM users ORDER BY id');
 }
 
-function createUser({ email, name, password, role }) {
-  const db = getDb();
-  const r = db.prepare('INSERT INTO users (email, name, password_hash, role, created_at) VALUES (?,?,?,?,?)')
-    .run(email, name || '', hashPassword(password), role === 'admin' ? 'admin' : 'member', Date.now());
-  return Number(r.lastInsertRowid);
+async function createUser({ email, name, password, role }) {
+  if (!password || password.length < 12) throw new Error('Password must be at least 12 characters.');
+  const r = await one('INSERT INTO users (email, name, password_hash, role) VALUES ($1,$2,$3,$4) RETURNING id',
+    [String(email).toLowerCase().trim(), name || '', hashPassword(password), role === 'admin' ? 'admin' : 'member']);
+  return Number(r.id);
 }
 
-// --- per-mailbox grants ---
 function grantsForUser(userId) {
-  return getDb().prepare('SELECT mailbox_id, permission FROM mailbox_grants WHERE user_id = ?').all(userId);
+  return all('SELECT mailbox_id, permission FROM mailbox_grants WHERE user_id = $1', [userId]);
 }
 
-function setGrant(userId, mailboxId, permission) {
-  const db = getDb();
+async function setGrant(userId, mailboxId, permission) {
   if (!permission) {
-    db.prepare('DELETE FROM mailbox_grants WHERE user_id = ? AND mailbox_id = ?').run(userId, mailboxId);
+    await q('DELETE FROM mailbox_grants WHERE user_id = $1 AND mailbox_id = $2', [userId, mailboxId]);
   } else {
-    db.prepare(`INSERT INTO mailbox_grants (user_id, mailbox_id, permission) VALUES (?,?,?)
-                ON CONFLICT(user_id, mailbox_id) DO UPDATE SET permission = excluded.permission`)
-      .run(userId, mailboxId, permission === 'manage' ? 'manage' : 'read');
+    await q(`INSERT INTO mailbox_grants (user_id, mailbox_id, permission) VALUES ($1,$2,$3)
+             ON CONFLICT (user_id, mailbox_id) DO UPDATE SET permission = EXCLUDED.permission`,
+      [userId, mailboxId, permission === 'manage' ? 'manage' : 'read']);
   }
 }
 
-function canReadMailbox(user, mailboxId) {
+async function canReadMailbox(user, mailboxId) {
   if (!user) return false;
   if (user.role === 'admin') return true;
-  const row = getDb().prepare('SELECT permission FROM mailbox_grants WHERE user_id = ? AND mailbox_id = ?')
-    .get(user.id, mailboxId);
-  return Boolean(row);
+  return Boolean(await one('SELECT 1 FROM mailbox_grants WHERE user_id = $1 AND mailbox_id = $2', [user.id, mailboxId]));
 }
 
-function readableMailboxIds(user) {
+async function readableMailboxIds(user) {
   if (!user) return [];
-  if (user.role === 'admin') {
-    return getDb().prepare('SELECT id FROM mailboxes').all().map(r => r.id);
-  }
-  return grantsForUser(user.id).map(g => g.mailbox_id);
+  if (user.role === 'admin') return (await all('SELECT id FROM mailboxes')).map(r => Number(r.id));
+  return (await grantsForUser(user.id)).map(g => Number(g.mailbox_id));
 }
 
-module.exports = {
-  bootstrapAdmin, login, logout, userForToken,
-  listUsers, createUser, grantsForUser, setGrant, canReadMailbox, readableMailboxIds,
-};
+module.exports = { login, logout, userForToken, listUsers, createUser, grantsForUser, setGrant, canReadMailbox, readableMailboxIds };

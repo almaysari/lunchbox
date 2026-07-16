@@ -7,7 +7,9 @@ class ZohoMailApiConnector {
   constructor(zoho, mailbox) {
     this.zoho = zoho;
     this.mailbox = mailbox;
-    this.caps = JSON.parse(mailbox.capabilities || '{}');
+    this.caps = typeof mailbox.capabilities === 'string'
+      ? JSON.parse(mailbox.capabilities || '{}')
+      : (mailbox.capabilities || {}); // JSONB arrives as an object from pg
     if (!this.caps.workingId) throw new Error('mail_api strategy requires a probe-proven working id');
     this.id = this.caps.workingId;
   }

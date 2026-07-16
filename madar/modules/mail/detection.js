@@ -6,7 +6,7 @@
 //    never a data source.
 //  * Every conclusion carries literal (sanitized) API evidence.
 //  * Read-only: GET requests only.
-const { getDb } = require('../../core/db');
+const { q, one } = require('../../core/db');
 
 const lc = s => String(s || '').toLowerCase().trim();
 
@@ -273,55 +273,42 @@ function chooseStrategy(mailbox, caps) {
   return { strategy: 'none', status: 'error', detail: 'No read path proven for this mailbox type. See evidence.' };
 }
 
-// ---- registry upsert with alias-duplicate protection ----
-function upsertMailbox(connectionId, m, caps, choice) {
-  const db = getDb();
+// ---- registry upsert with alias-duplicate protection (PostgreSQL) ----
+async function upsertMailbox(connectionId, m, caps, choice) {
   // An alias must never become a second mailbox.
-  const aliasHit = db.prepare('SELECT mailbox_id FROM mailbox_aliases WHERE address = ?').get(m.address);
+  const aliasHit = await one('SELECT mailbox_id FROM mailbox_aliases WHERE address = $1', [m.address]);
   const existing = aliasHit
-    ? db.prepare('SELECT * FROM mailboxes WHERE id = ?').get(aliasHit.mailbox_id)
-    : db.prepare('SELECT * FROM mailboxes WHERE address = ?').get(m.address);
+    ? await one('SELECT id FROM mailboxes WHERE id = $1', [aliasHit.mailbox_id])
+    : await one('SELECT id FROM mailboxes WHERE address = $1', [m.address]);
 
-  const fields = {
-    display_name: m.displayName || '',
-    provider: 'zoho',
-    connection_id: connectionId,
-    detected_type: m.detectedType,
-    strategy: choice.strategy,
-    provider_account_id: m.providerAccountId,
-    provider_group_id: m.providerGroupId,
-    org_id: m.orgId,
-    access_level: m.accessLevel || '',
-    members: JSON.stringify(m.members || []),
-    moderators: JSON.stringify(m.moderators || []),
-    moderation_count: m.moderationCount || 0,
-    capabilities: JSON.stringify(caps || {}),
-    status: choice.status,
-    status_detail: choice.detail,
-  };
+  const vals = [
+    m.displayName || '', 'zoho', connectionId, m.detectedType, choice.strategy,
+    m.providerAccountId, m.providerGroupId, m.orgId, m.accessLevel || '',
+    JSON.stringify(m.members || []), JSON.stringify(m.moderators || []),
+    m.moderationCount || 0, JSON.stringify(caps || {}), choice.status, choice.detail,
+  ];
 
   let id;
   if (existing) {
     // Strategy is switchable without data loss: messages stay keyed to mailbox id.
-    db.prepare(`UPDATE mailboxes SET display_name=?, provider=?, connection_id=?, detected_type=?, strategy=?,
-      provider_account_id=?, provider_group_id=?, org_id=?, access_level=?, members=?, moderators=?,
-      moderation_count=?, capabilities=?, status=?, status_detail=? WHERE id=?`)
-      .run(...Object.values(fields), existing.id);
-    id = existing.id;
+    await q(`UPDATE mailboxes SET display_name=$1, provider=$2, connection_id=$3, detected_type=$4, strategy=$5,
+      provider_account_id=$6, provider_group_id=$7, org_id=$8, access_level=$9, members=$10, moderators=$11,
+      moderation_count=$12, capabilities=$13, status=$14, status_detail=$15 WHERE id=$16`, [...vals, existing.id]);
+    id = Number(existing.id);
   } else {
-    id = Number(db.prepare(`INSERT INTO mailboxes (address, display_name, provider, connection_id, detected_type,
+    const r = await one(`INSERT INTO mailboxes (address, display_name, provider, connection_id, detected_type,
       strategy, provider_account_id, provider_group_id, org_id, access_level, members, moderators,
-      moderation_count, capabilities, status, status_detail, created_at)
-      VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`)
-      .run(m.address, ...Object.values(fields), Date.now()).lastInsertRowid);
+      moderation_count, capabilities, status, status_detail)
+      VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16) RETURNING id`, [m.address, ...vals]);
+    id = Number(r.id);
   }
   for (const alias of m.aliases || []) {
     if (alias === m.address) continue;
-    db.prepare('INSERT INTO mailbox_aliases (address, mailbox_id) VALUES (?,?) ON CONFLICT(address) DO UPDATE SET mailbox_id = excluded.mailbox_id')
-      .run(alias, id);
+    await q(`INSERT INTO mailbox_aliases (address, mailbox_id) VALUES ($1,$2)
+             ON CONFLICT (address) DO UPDATE SET mailbox_id = EXCLUDED.mailbox_id`, [alias, id]);
   }
-  db.prepare('INSERT INTO detection_reports (mailbox_id, at, report) VALUES (?,?,?)')
-    .run(id, Date.now(), JSON.stringify({ discovery: m.evidence, capabilities: caps, choice }));
+  await q('INSERT INTO detection_reports (mailbox_id, report) VALUES ($1,$2)',
+    [id, JSON.stringify({ discovery: m.evidence, capabilities: caps, choice })]);
   return id;
 }
 

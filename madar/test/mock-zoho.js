@@ -52,7 +52,8 @@ function demoMessages(prefix, n) {
   }
   return out;
 }
-const MESSAGES = { [ADMIN_ACCOUNT_ID]: demoMessages('a', 12), [INFO_ORG_ACCOUNT_ID]: demoMessages('g', 25) };
+// info@ has 250 messages so partial-backfill / resume / cancellation paths are exercised
+const MESSAGES = { [ADMIN_ACCOUNT_ID]: demoMessages('a', 12), [INFO_ORG_ACCOUNT_ID]: demoMessages('g', 250) };
 const PDF = Buffer.from('%PDF-1.4\n1 0 obj<</Type/Catalog>>endobj\ntrailer<</Root 1 0 R>>\n%%EOF', 'latin1');
 
 function startMockZoho(port = 0) {

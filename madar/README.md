@@ -12,36 +12,46 @@
 > لنتائج Live Zoho API Discovery بعد OAuth حقيقي.
 > ما ثبت وما لم يثبت بعد: `docs/VERIFICATION-STATUS.md`.
 
-بدون تبعيات خارجية إطلاقًا — يتطلب Node.js ≥ 22 فقط.
+قاعدة التشغيل: **PostgreSQL** في كل الأوضاع (تطوير، live، إنتاج، اختبارات
+تكاملية). Node.js ≥ 20، والتبعية الوحيدة هي سائق `pg`.
+راجع `docs/DECISIONS.md` لسبب إزالة SQLite نهائيًا من مسار التشغيل.
 
-## التشغيل
+## التشغيل (الإنتاج/التطوير)
 
 ```bash
 cd madar
-cp .env.example .env
-node --experimental-sqlite server.js
-# افتح http://localhost:3000 — الدخول: admin@local / demo1234
+cp .env.example .env    # عبّئ POSTGRES_PASSWORD والسرّين (openssl rand -hex 32)
+docker compose up -d postgres
+npm install
+npm run migrate
+npm run create-admin    # يطلب البريد وكلمة المرور بأمان — لا admin افتراضي
+npm start               # افتح http://localhost:3000
 ```
 
-في الوضع التجريبي تعمل المنصة على منظمة وهمية كاملة (Mock Zoho API يقدّم
-الصناديق العشرين بسيناريوهاتها الحقيقية: aliases، مستويات وصول مختلفة، طوابير
-مراجعة، صندوق على نطاق ثانٍ، وصندوق يرفض بـ`Invalid Account ID`).
+أو بالكامل عبر Docker: `docker compose up -d` (مع volumes دائمة للقاعدة
+والمرفقات وHealth checks — انظر `docker-compose.yml`).
 
-## الاختبارات
+للوضع التجريبي (Mock Zoho كامل — منظمة وهمية بالصناديق العشرين): أنشئ قاعدة
+منفصلة `madar_demo`، وعيّن `MODE=demo` و`DATABASE_URL` عليها ثم نفس الأوامر.
+نتائجه تُعنون في الواجهة صراحةً كـMock Discovery.
+
+## الاختبارات (PostgreSQL تكاملية)
 
 ```bash
-node --experimental-sqlite --test test/detection.test.js
+# تحتاج قاعدة اختبار: TEST_DATABASE_URL أو postgresql://madar:madar_dev@localhost:5432/madar_test
+npm test
 ```
 
-13 اختبارًا تغطي: اكتشاف الـ20 صندوقًا، الـaliases، مستويات الوصول الثلاثة،
-طوابير المراجعة (وأنها ليست الأرشيف)، النطاق الثاني، `groupId` بلا `accountId`،
-الخطأ الحرفي `Invalid Account ID`، صندوقًا يقرأ Metadata فقط، صندوقًا تُقرأ
-رسائله، منع التكرار عبر الـalias وإعادة الاكتشاف، مزامنة Pilot قراءة-فقط بلا
-تكرار، واستيراد أرشيف eDiscovery (ZIP/EML) مع منع التكرار.
+16 اختبارًا: كل الـMigrations من قاعدة فارغة وإعادة تشغيلها، المستخدمون
+والأدوار، توقيع الجلسات، تشفير أسرار الاتصالات وعدم تسريبها من الـAPI،
+اكتشاف الـ20 صندوقًا دون تكرار، Alias uniqueness، تعقيم الأدلة والتدقيق،
+الصلاحيات ومنع الوصول المتبادل، المزامنة الجزئية وResume وCancellation
+وDedup، بقاء الحالة بعد Restart، أمان تخزين المرفقات وتنزيلها المصرّح،
+بحث FTS مقيد بالصلاحيات، وHealth check.
 
 ## الربط الحقيقي (live)
 
-1. في `.env`: عيّن `MODE=live` و`MADAR_SECRET` (و`BASE_URL` إن لم يكن localhost).
+1. في `.env`: عيّن `MODE=live` والسرّين و`BASE_URL` الصحيح.
 2. من `https://api-console.zoho.com` أنشئ **Server-based Application** بـ
    Redirect URI: `{BASE_URL}/oauth/callback`.
 3. من لوحة الإدارة → «إضافة اتصال Zoho»: أدخل Client ID/Secret (يُشفّران

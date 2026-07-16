@@ -2,7 +2,7 @@
 // Every call returns { url, status, body } WITHOUT throwing on HTTP errors —
 // the detection engine needs literal API responses as evidence.
 // Docs: https://www.zoho.com/mail/help/api/
-const { getDb } = require('../../core/db');
+const { one, q } = require('../../core/db');
 const { decrypt, encrypt } = require('../../core/crypto');
 
 const READ_SCOPES = [
@@ -20,8 +20,8 @@ class ZohoClient {
     this.expiry = 0;
   }
 
-  static forConnection(connectionId) {
-    const conn = getDb().prepare('SELECT * FROM connections WHERE id = ?').get(connectionId);
+  static async forConnection(connectionId) {
+    const conn = await one('SELECT * FROM connections WHERE id = $1', [connectionId]);
     if (!conn) throw new Error('Connection not found: ' + connectionId);
     return new ZohoClient(conn);
   }
@@ -51,8 +51,8 @@ class ZohoClient {
     if (!res.ok || json.error || !json.refresh_token) {
       throw new Error('Zoho token exchange failed: ' + (json.error || res.status));
     }
-    getDb().prepare("UPDATE connections SET refresh_token_enc = ?, status = 'connected', status_detail = '' WHERE id = ?")
-      .run(encrypt(json.refresh_token), this.conn.id);
+    await q("UPDATE connections SET refresh_token_enc = $1, status = 'connected', status_detail = '' WHERE id = $2",
+      [encrypt(json.refresh_token), this.conn.id]);
     this.accessToken = json.access_token;
     this.expiry = Date.now() + (json.expires_in - 60) * 1000;
   }

@@ -1,0 +1,47 @@
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: madar
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+      POSTGRES_DB: madar
+    volumes:
+      - madar_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U madar -d madar"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    ports:
+      - "127.0.0.1:5432:5432"
+    restart: unless-stopped
+
+  app:
+    build: .
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      MODE: ${MODE:-live}
+      PORT: 3000
+      BASE_URL: ${BASE_URL:-http://localhost:3000}
+      DATABASE_URL: postgresql://madar:${POSTGRES_PASSWORD}@postgres:5432/madar
+      MADAR_ENCRYPTION_KEY: ${MADAR_ENCRYPTION_KEY:?openssl rand -hex 32}
+      MADAR_SESSION_SECRET: ${MADAR_SESSION_SECRET:?openssl rand -hex 32}
+      MADAR_ATTACH_DIR: /var/lib/madar/attachments
+      SYNC_INTERVAL_MINUTES: ${SYNC_INTERVAL_MINUTES:-10}
+      MAX_ATTACHMENT_MB: ${MAX_ATTACHMENT_MB:-25}
+    volumes:
+      - madar_attachments:/var/lib/madar/attachments
+    ports:
+      - "127.0.0.1:3000:3000"
+    healthcheck:
+      test: ["CMD-SHELL", "node -e \"fetch('http://localhost:3000/healthz').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))\""]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+volumes:
+  madar_pgdata:
+  madar_attachments:
