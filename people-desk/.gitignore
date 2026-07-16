@@ -1,0 +1,3 @@
+# Runtime data: OAuth tokens, imported CVs, local db — never commit.
+data/
+.env

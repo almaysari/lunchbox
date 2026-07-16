@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>People Desk — صندوق التوظيف</title>
+<style>
+  :root {
+    --bg: #f4f6fa; --card: #ffffff; --ink: #17233b; --muted: #64748b;
+    --brand: #2545d3; --brand-soft: #e8ecfd; --line: #e4e8f0;
+    --ok: #157f3d; --ok-soft: #e3f5ea; --warn: #92400e; --warn-soft: #fdf0e0;
+    --bad: #b3261e; --bad-soft: #fdeceb;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: "Segoe UI", Tahoma, Arial, sans-serif; background: var(--bg); color: var(--ink); }
+  header { background: var(--card); border-bottom: 1px solid var(--line); padding: 14px 24px; display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+  .logo { width: 38px; height: 38px; border-radius: 10px; background: var(--brand); color: #fff; display: grid; place-items: center; font-weight: 700; font-size: 18px; }
+  h1 { font-size: 18px; margin: 0; }
+  .sub { color: var(--muted); font-size: 12.5px; }
+  .spacer { flex: 1; }
+  .pill { font-size: 12px; padding: 5px 12px; border-radius: 99px; border: 1px solid var(--line); background: var(--bg); }
+  .pill.demo { background: var(--warn-soft); color: var(--warn); border-color: transparent; }
+  .pill.live { background: var(--ok-soft); color: var(--ok); border-color: transparent; }
+  button { font: inherit; cursor: pointer; border: 1px solid var(--line); background: var(--card); color: var(--ink); padding: 8px 16px; border-radius: 9px; }
+  button.primary { background: var(--brand); border-color: var(--brand); color: #fff; }
+  button:disabled { opacity: .55; cursor: default; }
+  main { max-width: 1080px; margin: 22px auto; padding: 0 20px; }
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 14px; margin-bottom: 18px; }
+  .stat { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; }
+  .stat .n { font-size: 26px; font-weight: 700; }
+  .stat .l { color: var(--muted); font-size: 12.5px; margin-top: 2px; }
+  .toolbar { display: flex; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
+  input[type=search] { flex: 1; min-width: 220px; font: inherit; padding: 9px 14px; border: 1px solid var(--line); border-radius: 9px; background: var(--card); }
+  select { font: inherit; padding: 9px 12px; border: 1px solid var(--line); border-radius: 9px; background: var(--card); }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 16px 18px; margin-bottom: 12px; }
+  .row1 { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+  .name { font-weight: 700; }
+  .email { color: var(--muted); font-size: 13px; direction: ltr; }
+  .time { color: var(--muted); font-size: 12px; margin-inline-start: auto; }
+  .subject { margin: 6px 0 4px; font-size: 14px; }
+  .summary { color: var(--muted); font-size: 13px; margin: 0 0 10px; }
+  .attach { display: inline-flex; align-items: center; gap: 8px; background: var(--brand-soft); color: var(--brand); border-radius: 8px; padding: 6px 12px; font-size: 13px; text-decoration: none; margin-inline-end: 8px; }
+  .row2 { display: flex; align-items: center; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+  .tag { font-size: 11.5px; padding: 3px 10px; border-radius: 99px; }
+  .tag.new { background: var(--brand-soft); color: var(--brand); }
+  .tag.reviewed { background: #eef2f7; color: var(--muted); }
+  .tag.shortlisted { background: var(--ok-soft); color: var(--ok); }
+  .tag.rejected { background: var(--bad-soft); color: var(--bad); }
+  .banner { border-radius: 12px; padding: 12px 16px; font-size: 13.5px; margin-bottom: 16px; }
+  .banner.warn { background: var(--warn-soft); color: var(--warn); }
+  .banner.err { background: var(--bad-soft); color: var(--bad); }
+  .empty { text-align: center; color: var(--muted); padding: 60px 0; }
+  dialog { border: none; border-radius: 14px; padding: 0; width: min(860px, 92vw); height: min(85vh, 900px); }
+  dialog iframe { width: 100%; height: calc(100% - 52px); border: 0; }
+  .dlg-head { display: flex; align-items: center; padding: 10px 16px; border-bottom: 1px solid var(--line); gap: 10px; }
+  ::backdrop { background: rgba(15, 23, 42, .45); }
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">PD</div>
+  <div>
+    <h1>People Desk</h1>
+    <div class="sub">منصة سحب السير الذاتية من بريد الموارد البشرية</div>
+  </div>
+  <div class="spacer"></div>
+  <span id="modePill" class="pill">...</span>
+  <button id="syncBtn" class="primary">🔄 مزامنة الآن</button>
+</header>
+
+<main>
+  <div id="banner"></div>
+
+  <div class="stats">
+    <div class="stat"><div class="n" id="stTotal">0</div><div class="l">إجمالي المتقدمين</div></div>
+    <div class="stat"><div class="n" id="stNew">0</div><div class="l">جديد</div></div>
+    <div class="stat"><div class="n" id="stShort">0</div><div class="l">مرشَّح للمقابلة</div></div>
+    <div class="stat"><div class="n" id="stSync">—</div><div class="l">آخر مزامنة</div></div>
+  </div>
+
+  <div class="toolbar">
+    <input type="search" id="q" placeholder="ابحث بالاسم أو البريد أو الوظيفة...">
+    <select id="filter">
+      <option value="">كل الحالات</option>
+      <option value="new">جديد</option>
+      <option value="reviewed">تمت المراجعة</option>
+      <option value="shortlisted">مرشَّح</option>
+      <option value="rejected">مرفوض</option>
+    </select>
+  </div>
+
+  <div id="list"></div>
+</main>
+
+<dialog id="preview">
+  <div class="dlg-head">
+    <strong id="pvTitle"></strong>
+    <div class="spacer"></div>
+    <button onclick="document.getElementById('preview').close()">إغلاق ✕</button>
+  </div>
+  <iframe id="pvFrame"></iframe>
+</dialog>
+
+<script>
+const STATUS_LABELS = { new: 'جديد', reviewed: 'تمت المراجعة', shortlisted: 'مرشَّح', rejected: 'مرفوض' };
+let candidates = [];
+
+function fmtTime(t) {
+  return new Date(Number(t)).toLocaleString('ar', { dateStyle: 'medium', timeStyle: 'short' });
+}
+function fmtSize(b) {
+  return b > 1024 * 1024 ? (b / 1048576).toFixed(1) + ' MB' : Math.round(b / 1024) + ' KB';
+}
+function esc(s) {
+  return String(s || '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+}
+
+async function loadStatus() {
+  const s = await (await fetch('/api/status')).json();
+  const pill = document.getElementById('modePill');
+  if (s.mode === 'demo') {
+    pill.textContent = 'وضع تجريبي — بيانات وهمية';
+    pill.className = 'pill demo';
+    document.getElementById('banner').innerHTML =
+      '<div class="banner warn">أنت في الوضع التجريبي: كل السير الذاتية أدناه وهمية للعرض فقط. للربط الحقيقي مع Zoho عدّل ملف <b>.env</b> إلى <b>MODE=live</b> واتبع خطوات README.</div>';
+  } else {
+    pill.textContent = s.connected ? 'متصل بـ Zoho — ' + (s.mailbox || '') : 'غير متصل بعد';
+    pill.className = 'pill ' + (s.connected ? 'live' : 'demo');
+    if (!s.connected) {
+      const msg = s.configured
+        ? 'التطبيق مهيأ لكن لم يتم منح الصلاحية بعد. <a href="#" onclick="startOAuth();return false;">اضغط هنا لربط حساب Zoho</a>.'
+        : 'أضف ZOHO_CLIENT_ID و ZOHO_CLIENT_SECRET في ملف .env ثم أعد التشغيل.';
+      document.getElementById('banner').innerHTML = '<div class="banner warn">' + msg + '</div>';
+    } else if (s.lastSyncError) {
+      document.getElementById('banner').innerHTML =
+        '<div class="banner err">آخر مزامنة فشلت: ' + esc(s.lastSyncError) + '</div>';
+    } else {
+      document.getElementById('banner').innerHTML = '';
+    }
+  }
+  document.getElementById('stSync').textContent = s.lastSync ? fmtTime(s.lastSync) : '—';
+}
+
+async function startOAuth() {
+  const r = await (await fetch('/api/oauth/url')).json();
+  if (r.url) location.href = r.url; else alert(r.error);
+}
+
+async function loadCandidates() {
+  const q = document.getElementById('q').value;
+  candidates = await (await fetch('/api/candidates?q=' + encodeURIComponent(q))).json();
+  render();
+}
+
+function render() {
+  const filter = document.getElementById('filter').value;
+  const list = filter ? candidates.filter(c => c.status === filter) : candidates;
+  document.getElementById('stTotal').textContent = candidates.length;
+  document.getElementById('stNew').textContent = candidates.filter(c => c.status === 'new').length;
+  document.getElementById('stShort').textContent = candidates.filter(c => c.status === 'shortlisted').length;
+
+  const el = document.getElementById('list');
+  if (!list.length) {
+    el.innerHTML = '<div class="empty">لا توجد سير ذاتية مطابقة</div>';
+    return;
+  }
+  el.innerHTML = list.map(c => `
+    <div class="card">
+      <div class="row1">
+        <span class="name">${esc(c.fromName || c.from)}</span>
+        <span class="email">${esc(c.from)}</span>
+        <span class="time">${fmtTime(c.receivedTime)}</span>
+      </div>
+      <div class="subject">${esc(c.subject)}</div>
+      <p class="summary">${esc(c.summary)}</p>
+      <div>
+        ${c.attachments.map(a => `
+          <a class="attach" href="#" onclick="openPreview('${esc(a.file)}','${esc(a.name)}');return false;">
+            📄 ${esc(a.name)} <small>(${fmtSize(a.size)})</small>
+          </a>`).join('')}
+      </div>
+      <div class="row2">
+        <span class="tag ${c.status}">${STATUS_LABELS[c.status] || c.status}</span>
+        <div class="spacer"></div>
+        <button onclick="setStatus('${esc(c.id)}','reviewed')">تمت المراجعة</button>
+        <button onclick="setStatus('${esc(c.id)}','shortlisted')">ترشيح ✓</button>
+        <button onclick="setStatus('${esc(c.id)}','rejected')">رفض ✕</button>
+      </div>
+    </div>`).join('');
+}
+
+function openPreview(file, name) {
+  document.getElementById('pvTitle').textContent = name;
+  document.getElementById('pvFrame').src = '/cv/' + encodeURIComponent(file);
+  document.getElementById('preview').showModal();
+}
+
+async function setStatus(id, status) {
+  await fetch('/api/candidates/' + encodeURIComponent(id) + '/status', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ status }),
+  });
+  await loadCandidates();
+}
+
+document.getElementById('syncBtn').addEventListener('click', async () => {
+  const btn = document.getElementById('syncBtn');
+  btn.disabled = true; btn.textContent = '... جاري المزامنة';
+  try {
+    const r = await (await fetch('/api/sync', { method: 'POST' })).json();
+    if (r.error) alert('فشلت المزامنة: ' + r.error);
+  } finally {
+    btn.disabled = false; btn.textContent = '🔄 مزامنة الآن';
+    await loadStatus(); await loadCandidates();
+  }
+});
+document.getElementById('q').addEventListener('input', () => loadCandidates());
+document.getElementById('filter').addEventListener('change', render);
+
+loadStatus();
+loadCandidates();
+</script>
+</body>
+</html>
