@@ -3,223 +3,417 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>People Desk — صندوق التوظيف</title>
+<title>مدار — منصة الشركة</title>
 <style>
   :root {
-    --bg: #f4f6fa; --card: #ffffff; --ink: #17233b; --muted: #64748b;
-    --brand: #2545d3; --brand-soft: #e8ecfd; --line: #e4e8f0;
-    --ok: #157f3d; --ok-soft: #e3f5ea; --warn: #92400e; --warn-soft: #fdf0e0;
-    --bad: #b3261e; --bad-soft: #fdeceb;
+    --bg:#f4f6fa; --card:#fff; --ink:#17233b; --muted:#64748b; --brand:#2545d3;
+    --brand-soft:#e8ecfd; --line:#e4e8f0; --ok:#157f3d; --ok-soft:#e3f5ea;
+    --warn:#92400e; --warn-soft:#fdf0e0; --bad:#b3261e; --bad-soft:#fdeceb;
   }
-  * { box-sizing: border-box; }
-  body { margin: 0; font-family: "Segoe UI", Tahoma, Arial, sans-serif; background: var(--bg); color: var(--ink); }
-  header { background: var(--card); border-bottom: 1px solid var(--line); padding: 14px 24px; display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
-  .logo { width: 38px; height: 38px; border-radius: 10px; background: var(--brand); color: #fff; display: grid; place-items: center; font-weight: 700; font-size: 18px; }
-  h1 { font-size: 18px; margin: 0; }
-  .sub { color: var(--muted); font-size: 12.5px; }
-  .spacer { flex: 1; }
-  .pill { font-size: 12px; padding: 5px 12px; border-radius: 99px; border: 1px solid var(--line); background: var(--bg); }
-  .pill.demo { background: var(--warn-soft); color: var(--warn); border-color: transparent; }
-  .pill.live { background: var(--ok-soft); color: var(--ok); border-color: transparent; }
-  button { font: inherit; cursor: pointer; border: 1px solid var(--line); background: var(--card); color: var(--ink); padding: 8px 16px; border-radius: 9px; }
-  button.primary { background: var(--brand); border-color: var(--brand); color: #fff; }
-  button:disabled { opacity: .55; cursor: default; }
-  main { max-width: 1080px; margin: 22px auto; padding: 0 20px; }
-  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 14px; margin-bottom: 18px; }
-  .stat { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; }
-  .stat .n { font-size: 26px; font-weight: 700; }
-  .stat .l { color: var(--muted); font-size: 12.5px; margin-top: 2px; }
-  .toolbar { display: flex; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
-  input[type=search] { flex: 1; min-width: 220px; font: inherit; padding: 9px 14px; border: 1px solid var(--line); border-radius: 9px; background: var(--card); }
-  select { font: inherit; padding: 9px 12px; border: 1px solid var(--line); border-radius: 9px; background: var(--card); }
-  .card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 16px 18px; margin-bottom: 12px; }
-  .row1 { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
-  .name { font-weight: 700; }
-  .email { color: var(--muted); font-size: 13px; direction: ltr; }
-  .time { color: var(--muted); font-size: 12px; margin-inline-start: auto; }
-  .subject { margin: 6px 0 4px; font-size: 14px; }
-  .summary { color: var(--muted); font-size: 13px; margin: 0 0 10px; }
-  .attach { display: inline-flex; align-items: center; gap: 8px; background: var(--brand-soft); color: var(--brand); border-radius: 8px; padding: 6px 12px; font-size: 13px; text-decoration: none; margin-inline-end: 8px; }
-  .row2 { display: flex; align-items: center; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
-  .tag { font-size: 11.5px; padding: 3px 10px; border-radius: 99px; }
-  .tag.new { background: var(--brand-soft); color: var(--brand); }
-  .tag.reviewed { background: #eef2f7; color: var(--muted); }
-  .tag.shortlisted { background: var(--ok-soft); color: var(--ok); }
-  .tag.rejected { background: var(--bad-soft); color: var(--bad); }
-  .banner { border-radius: 12px; padding: 12px 16px; font-size: 13.5px; margin-bottom: 16px; }
-  .banner.warn { background: var(--warn-soft); color: var(--warn); }
-  .banner.err { background: var(--bad-soft); color: var(--bad); }
-  .empty { text-align: center; color: var(--muted); padding: 60px 0; }
-  dialog { border: none; border-radius: 14px; padding: 0; width: min(860px, 92vw); height: min(85vh, 900px); }
-  dialog iframe { width: 100%; height: calc(100% - 52px); border: 0; }
-  .dlg-head { display: flex; align-items: center; padding: 10px 16px; border-bottom: 1px solid var(--line); gap: 10px; }
-  ::backdrop { background: rgba(15, 23, 42, .45); }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:"Segoe UI",Tahoma,Arial,sans-serif; background:var(--bg); color:var(--ink); font-size:14px; }
+  header { background:var(--card); border-bottom:1px solid var(--line); padding:10px 22px; display:flex; align-items:center; gap:14px; }
+  .logo { width:36px; height:36px; border-radius:10px; background:var(--brand); color:#fff; display:grid; place-items:center; font-weight:700; }
+  h1 { font-size:17px; margin:0; }
+  .sub { color:var(--muted); font-size:12px; }
+  .spacer { flex:1; }
+  nav button { font:inherit; border:none; background:none; padding:8px 14px; border-radius:8px; cursor:pointer; color:var(--muted); }
+  nav button.active { background:var(--brand-soft); color:var(--brand); font-weight:600; }
+  main { max-width:1180px; margin:18px auto; padding:0 18px; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:16px 18px; margin-bottom:14px; }
+  button.btn { font:inherit; cursor:pointer; border:1px solid var(--line); background:var(--card); color:var(--ink); padding:7px 14px; border-radius:8px; }
+  button.primary { background:var(--brand); border-color:var(--brand); color:#fff; }
+  button.btn:disabled { opacity:.5; cursor:default; }
+  input, select { font:inherit; padding:8px 12px; border:1px solid var(--line); border-radius:8px; background:var(--card); }
+  table { width:100%; border-collapse:collapse; font-size:13px; }
+  th, td { text-align:right; padding:8px 10px; border-bottom:1px solid var(--line); vertical-align:top; }
+  th { color:var(--muted); font-weight:600; font-size:12px; }
+  .tag { display:inline-block; font-size:11px; padding:2px 9px; border-radius:99px; margin:1px; white-space:nowrap; }
+  .tag.shared_mailbox { background:var(--brand-soft); color:var(--brand); }
+  .tag.user { background:var(--ok-soft); color:var(--ok); }
+  .tag.distribution_list, .tag.stream_group { background:#eef2f7; color:var(--muted); }
+  .tag.ready, .tag.ok { background:var(--ok-soft); color:var(--ok); }
+  .tag.no_live_api, .tag.warn { background:var(--warn-soft); color:var(--warn); }
+  .tag.error, .tag.bad { background:var(--bad-soft); color:var(--bad); }
+  .tag.gray { background:#eef2f7; color:var(--muted); }
+  .stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:12px; margin-bottom:14px; }
+  .stat { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:12px 15px; }
+  .stat .n { font-size:24px; font-weight:700; }
+  .stat .l { color:var(--muted); font-size:12px; }
+  .banner { border-radius:10px; padding:10px 14px; font-size:13px; margin-bottom:12px; }
+  .banner.warn { background:var(--warn-soft); color:var(--warn); }
+  .banner.ok { background:var(--ok-soft); color:var(--ok); }
+  .banner.bad { background:var(--bad-soft); color:var(--bad); }
+  .cols { display:grid; grid-template-columns:250px 300px 1fr; gap:12px; min-height:60vh; }
+  .list-item { padding:9px 12px; border-radius:8px; cursor:pointer; border-bottom:1px solid var(--line); }
+  .list-item:hover { background:var(--bg); }
+  .list-item.active { background:var(--brand-soft); }
+  .msg-from { font-weight:600; font-size:13px; }
+  .msg-sub { font-size:12.5px; }
+  .msg-snip, .msg-time { color:var(--muted); font-size:11.5px; }
+  .scroll { overflow-y:auto; max-height:70vh; }
+  pre.evidence { direction:ltr; text-align:left; background:#0f172a; color:#cde3ff; padding:12px; border-radius:8px; font-size:11px; overflow:auto; max-height:340px; }
+  dialog { border:none; border-radius:14px; padding:0; width:min(900px,94vw); max-height:88vh; }
+  ::backdrop { background: rgba(15,23,42,.45); }
+  .dlg-head { display:flex; align-items:center; gap:10px; padding:12px 16px; border-bottom:1px solid var(--line); }
+  .dlg-body { padding:14px 18px; overflow:auto; max-height:74vh; }
+  #login { max-width:360px; margin:12vh auto; }
+  #login input { width:100%; margin-bottom:10px; }
+  .attach { display:inline-flex; gap:6px; align-items:center; background:var(--brand-soft); color:var(--brand); border-radius:8px; padding:5px 11px; font-size:12.5px; text-decoration:none; margin:3px 3px 0 0; }
+  .row { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+  .body-frame { border:1px solid var(--line); border-radius:8px; width:100%; min-height:300px; background:#fff; }
 </style>
 </head>
 <body>
 <header>
-  <div class="logo">PD</div>
-  <div>
-    <h1>People Desk</h1>
-    <div class="sub">منصة سحب السير الذاتية من بريد الموارد البشرية</div>
-  </div>
+  <div class="logo">م</div>
+  <div><h1>مدار</h1><div class="sub">منصة الشركة الموحدة — قسم البريد</div></div>
   <div class="spacer"></div>
-  <span id="modePill" class="pill">...</span>
-  <button id="syncBtn" class="primary">🔄 مزامنة الآن</button>
+  <nav id="nav" style="display:none">
+    <button data-tab="mail" class="active">📥 البريد</button>
+    <button data-tab="admin">⚙️ الإدارة</button>
+  </nav>
+  <span id="userChip" class="tag gray" style="display:none"></span>
+  <button id="logoutBtn" class="btn" style="display:none">خروج</button>
 </header>
 
 <main>
-  <div id="banner"></div>
-
-  <div class="stats">
-    <div class="stat"><div class="n" id="stTotal">0</div><div class="l">إجمالي المتقدمين</div></div>
-    <div class="stat"><div class="n" id="stNew">0</div><div class="l">جديد</div></div>
-    <div class="stat"><div class="n" id="stShort">0</div><div class="l">مرشَّح للمقابلة</div></div>
-    <div class="stat"><div class="n" id="stSync">—</div><div class="l">آخر مزامنة</div></div>
+  <!-- ================= LOGIN ================= -->
+  <div id="login" class="card" style="display:none">
+    <h3 style="margin-top:0">تسجيل الدخول</h3>
+    <input id="loginEmail" placeholder="البريد الإلكتروني" value="admin@local">
+    <input id="loginPass" type="password" placeholder="كلمة المرور">
+    <button class="btn primary" style="width:100%" onclick="doLogin()">دخول</button>
+    <p id="loginErr" style="color:var(--bad)"></p>
+    <p class="sub">في الوضع التجريبي: admin@local وكلمة المرور من ADMIN_PASSWORD في .env</p>
   </div>
 
-  <div class="toolbar">
-    <input type="search" id="q" placeholder="ابحث بالاسم أو البريد أو الوظيفة...">
-    <select id="filter">
-      <option value="">كل الحالات</option>
-      <option value="new">جديد</option>
-      <option value="reviewed">تمت المراجعة</option>
-      <option value="shortlisted">مرشَّح</option>
-      <option value="rejected">مرفوض</option>
-    </select>
+  <!-- ================= MAIL ================= -->
+  <div id="tab-mail" style="display:none">
+    <div class="card row">
+      <input id="q" type="search" placeholder="ابحث في كل صناديق الشركة أو الصندوق المحدد..." style="flex:1;min-width:240px">
+      <button class="btn primary" onclick="loadMessages()">بحث</button>
+      <span class="sub" id="mailScope"></span>
+    </div>
+    <div class="cols">
+      <div class="card scroll" id="mailboxList"></div>
+      <div class="card scroll" id="messageList"><div class="sub" style="padding:20px">اختر صندوقًا</div></div>
+      <div class="card scroll" id="messageView"><div class="sub" style="padding:20px">اختر رسالة</div></div>
+    </div>
   </div>
 
-  <div id="list"></div>
+  <!-- ================= ADMIN ================= -->
+  <div id="tab-admin" style="display:none">
+    <div id="adminBanners"></div>
+    <div class="stats" id="adminStats"></div>
+
+    <div class="card">
+      <div class="row" style="justify-content:space-between">
+        <h3 style="margin:0">اتصالات المؤسسة (OAuth)</h3>
+        <button class="btn" onclick="toggle('connForm')">+ إضافة اتصال Zoho</button>
+      </div>
+      <div id="connForm" style="display:none;margin-top:12px" class="row">
+        <input id="cLabel" placeholder="اسم الاتصال" value="Zoho — Exotic Colors">
+        <input id="cClientId" placeholder="Client ID" style="min-width:220px">
+        <input id="cClientSecret" placeholder="Client Secret" type="password" style="min-width:220px">
+        <input id="cAccounts" placeholder="Accounts Base" value="https://accounts.zoho.com">
+        <input id="cApi" placeholder="Mail API Base" value="https://mail.zoho.com">
+        <button class="btn primary" onclick="createConnection()">حفظ</button>
+      </div>
+      <table id="connTable" style="margin-top:10px"></table>
+    </div>
+
+    <div class="card">
+      <div class="row" style="justify-content:space-between">
+        <h3 style="margin:0">اكتشاف صناديق المؤسسة</h3>
+        <span class="sub">المصدر النهائي: Zoho API — القائمة المرجعية للتحقق فقط</span>
+      </div>
+      <div id="comparison" style="margin-top:10px"></div>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-top:0">سجل الصناديق <span class="sub" id="mbCount"></span></h3>
+      <table id="mbTable"></table>
+    </div>
+
+    <div class="card">
+      <div class="row" style="justify-content:space-between">
+        <h3 style="margin:0">المستخدمون والصلاحيات</h3>
+        <button class="btn" onclick="toggle('userForm')">+ مستخدم</button>
+      </div>
+      <div id="userForm" style="display:none;margin-top:10px" class="row">
+        <input id="uEmail" placeholder="email"><input id="uName" placeholder="الاسم">
+        <input id="uPass" placeholder="كلمة المرور" type="password">
+        <select id="uRole"><option value="member">member</option><option value="admin">admin</option></select>
+        <button class="btn primary" onclick="createUser()">إنشاء</button>
+      </div>
+      <table id="usersTable" style="margin-top:10px"></table>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-top:0">سجل التدقيق</h3>
+      <table id="auditTable"></table>
+    </div>
+  </div>
 </main>
 
-<dialog id="preview">
-  <div class="dlg-head">
-    <strong id="pvTitle"></strong>
-    <div class="spacer"></div>
-    <button onclick="document.getElementById('preview').close()">إغلاق ✕</button>
-  </div>
-  <iframe id="pvFrame"></iframe>
+<dialog id="dlg">
+  <div class="dlg-head"><strong id="dlgTitle"></strong><div class="spacer"></div>
+    <button class="btn" onclick="document.getElementById('dlg').close()">إغلاق ✕</button></div>
+  <div class="dlg-body" id="dlgBody"></div>
 </dialog>
 
 <script>
-const STATUS_LABELS = { new: 'جديد', reviewed: 'تمت المراجعة', shortlisted: 'مرشَّح', rejected: 'مرفوض' };
-let candidates = [];
+let ME = null, MAILBOXES = [], currentMailbox = null;
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const api = async (path, opts = {}) => {
+  const r = await fetch(path, { headers: { 'Content-Type': 'application/json' }, ...opts,
+    body: opts.body && typeof opts.body !== 'string' && !(opts.body instanceof Blob) ? JSON.stringify(opts.body) : opts.body });
+  const j = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error(j.error || r.status);
+  return j;
+};
+const fmtT = t => t ? new Date(Number(t)).toLocaleString('ar', { dateStyle:'medium', timeStyle:'short' }) : '—';
+const TYPE_AR = { shared_mailbox:'صندوق مشترك', user:'صندوق مستخدم', distribution_list:'قائمة توزيع', stream_group:'مجموعة Streams', unknown:'غير معروف' };
+const STRAT_AR = { mail_api:'قراءة حية (Mail API)', ediscovery_import:'استيراد أرشيف eDiscovery', moderation_only:'مراجعة فقط', none:'—' };
 
-function fmtTime(t) {
-  return new Date(Number(t)).toLocaleString('ar', { dateStyle: 'medium', timeStyle: 'short' });
-}
-function fmtSize(b) {
-  return b > 1024 * 1024 ? (b / 1048576).toFixed(1) + ' MB' : Math.round(b / 1024) + ' KB';
-}
-function esc(s) {
-  return String(s || '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
-}
-
-async function loadStatus() {
-  const s = await (await fetch('/api/status')).json();
-  const pill = document.getElementById('modePill');
-  if (s.mode === 'demo') {
-    pill.textContent = 'وضع تجريبي — بيانات وهمية';
-    pill.className = 'pill demo';
-    document.getElementById('banner').innerHTML =
-      '<div class="banner warn">أنت في الوضع التجريبي: كل السير الذاتية أدناه وهمية للعرض فقط. للربط الحقيقي مع Zoho عدّل ملف <b>.env</b> إلى <b>MODE=live</b> واتبع خطوات README.</div>';
-  } else {
-    pill.textContent = s.connected ? 'متصل بـ Zoho — ' + (s.mailbox || '') : 'غير متصل بعد';
-    pill.className = 'pill ' + (s.connected ? 'live' : 'demo');
-    if (!s.connected) {
-      const msg = s.configured
-        ? 'التطبيق مهيأ لكن لم يتم منح الصلاحية بعد. <a href="#" onclick="startOAuth();return false;">اضغط هنا لربط حساب Zoho</a>.'
-        : 'أضف ZOHO_CLIENT_ID و ZOHO_CLIENT_SECRET في ملف .env ثم أعد التشغيل.';
-      document.getElementById('banner').innerHTML = '<div class="banner warn">' + msg + '</div>';
-    } else if (s.lastSyncError) {
-      document.getElementById('banner').innerHTML =
-        '<div class="banner err">آخر مزامنة فشلت: ' + esc(s.lastSyncError) + '</div>';
-    } else {
-      document.getElementById('banner').innerHTML = '';
-    }
+async function boot() {
+  ME = await api('/api/auth/me');
+  if (!ME && location.hash.startsWith('#auto:')) {
+    // demo convenience: #auto:email:password — server still verifies credentials
+    const [, email, pass] = location.hash.slice(1).split(':');
+    try { await api('/api/auth/login', { method:'POST', body:{ email, password: pass } }); ME = await api('/api/auth/me'); } catch {}
+    history.replaceState(null, '', location.pathname + (location.search || ''));
   }
-  document.getElementById('stSync').textContent = s.lastSync ? fmtTime(s.lastSync) : '—';
+  if (!ME) { $('login').style.display=''; return; }
+  $('login').style.display='none';
+  $('nav').style.display = ME.role === 'admin' ? '' : 'none';
+  $('userChip').style.display=''; $('userChip').textContent = ME.email + ' (' + ME.role + ')';
+  $('logoutBtn').style.display='';
+  showTab(new URLSearchParams(location.search).get('tab') === 'admin' && ME.role === 'admin' ? 'admin' : 'mail');
+  if (ME.role === 'admin') loadAdmin();
+  loadMailboxesForMail();
 }
-
-async function startOAuth() {
-  const r = await (await fetch('/api/oauth/url')).json();
-  if (r.url) location.href = r.url; else alert(r.error);
-}
-
-async function loadCandidates() {
-  const q = document.getElementById('q').value;
-  candidates = await (await fetch('/api/candidates?q=' + encodeURIComponent(q))).json();
-  render();
-}
-
-function render() {
-  const filter = document.getElementById('filter').value;
-  const list = filter ? candidates.filter(c => c.status === filter) : candidates;
-  document.getElementById('stTotal').textContent = candidates.length;
-  document.getElementById('stNew').textContent = candidates.filter(c => c.status === 'new').length;
-  document.getElementById('stShort').textContent = candidates.filter(c => c.status === 'shortlisted').length;
-
-  const el = document.getElementById('list');
-  if (!list.length) {
-    el.innerHTML = '<div class="empty">لا توجد سير ذاتية مطابقة</div>';
-    return;
-  }
-  el.innerHTML = list.map(c => `
-    <div class="card">
-      <div class="row1">
-        <span class="name">${esc(c.fromName || c.from)}</span>
-        <span class="email">${esc(c.from)}</span>
-        <span class="time">${fmtTime(c.receivedTime)}</span>
-      </div>
-      <div class="subject">${esc(c.subject)}</div>
-      <p class="summary">${esc(c.summary)}</p>
-      <div>
-        ${c.attachments.map(a => `
-          <a class="attach" href="#" onclick="openPreview('${esc(a.file)}','${esc(a.name)}');return false;">
-            📄 ${esc(a.name)} <small>(${fmtSize(a.size)})</small>
-          </a>`).join('')}
-      </div>
-      <div class="row2">
-        <span class="tag ${c.status}">${STATUS_LABELS[c.status] || c.status}</span>
-        <div class="spacer"></div>
-        <button onclick="setStatus('${esc(c.id)}','reviewed')">تمت المراجعة</button>
-        <button onclick="setStatus('${esc(c.id)}','shortlisted')">ترشيح ✓</button>
-        <button onclick="setStatus('${esc(c.id)}','rejected')">رفض ✕</button>
-      </div>
-    </div>`).join('');
-}
-
-function openPreview(file, name) {
-  document.getElementById('pvTitle').textContent = name;
-  document.getElementById('pvFrame').src = '/cv/' + encodeURIComponent(file);
-  document.getElementById('preview').showModal();
-}
-
-async function setStatus(id, status) {
-  await fetch('/api/candidates/' + encodeURIComponent(id) + '/status', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ status }),
-  });
-  await loadCandidates();
-}
-
-document.getElementById('syncBtn').addEventListener('click', async () => {
-  const btn = document.getElementById('syncBtn');
-  btn.disabled = true; btn.textContent = '... جاري المزامنة';
+async function doLogin() {
   try {
-    const r = await (await fetch('/api/sync', { method: 'POST' })).json();
-    if (r.error) alert('فشلت المزامنة: ' + r.error);
-  } finally {
-    btn.disabled = false; btn.textContent = '🔄 مزامنة الآن';
-    await loadStatus(); await loadCandidates();
-  }
-});
-document.getElementById('q').addEventListener('input', () => loadCandidates());
-document.getElementById('filter').addEventListener('change', render);
+    await api('/api/auth/login', { method:'POST', body:{ email:$('loginEmail').value, password:$('loginPass').value } });
+    location.reload();
+  } catch (e) { $('loginErr').textContent = e.message; }
+}
+$('logoutBtn').onclick = async () => { await api('/api/auth/logout', { method:'POST' }); location.reload(); };
+document.querySelectorAll('#nav button').forEach(b => b.onclick = () => showTab(b.dataset.tab));
+function showTab(t) {
+  document.querySelectorAll('#nav button').forEach(b => b.classList.toggle('active', b.dataset.tab === t));
+  $('tab-mail').style.display = t === 'mail' ? '' : 'none';
+  $('tab-admin').style.display = t === 'admin' ? '' : 'none';
+}
+function toggle(id) { $(id).style.display = $(id).style.display === 'none' ? '' : 'none'; }
 
-loadStatus();
-loadCandidates();
+/* ================= MAIL ================= */
+async function loadMailboxesForMail() {
+  MAILBOXES = await api('/api/mail/mailboxes');
+  $('mailboxList').innerHTML = `
+    <div class="list-item ${!currentMailbox ? 'active' : ''}" onclick="selectMailbox(null)">🔍 كل الصناديق</div>` +
+    MAILBOXES.map(m => `
+    <div class="list-item ${currentMailbox === m.id ? 'active' : ''}" onclick="selectMailbox(${m.id})">
+      <div style="font-weight:600">${esc(m.displayName || m.address)}</div>
+      <div class="sub" style="direction:ltr;text-align:right">${esc(m.address)}</div>
+      <span class="tag ${m.detectedType}">${TYPE_AR[m.detectedType] || m.detectedType}</span>
+      ${m.isPilot ? '<span class="tag ok">Pilot</span>' : ''}
+    </div>`).join('');
+  loadMessages();
+}
+async function selectMailbox(id) {
+  currentMailbox = id;
+  await loadMailboxesForMail();
+}
+async function loadMessages() {
+  const q = $('q').value.trim();
+  const params = new URLSearchParams();
+  if (currentMailbox) params.set('mailbox_id', currentMailbox);
+  if (q) params.set('q', q);
+  $('mailScope').textContent = currentMailbox
+    ? 'النطاق: ' + (MAILBOXES.find(m => m.id === currentMailbox)?.address || '')
+    : 'النطاق: كل الصناديق المصرّح لك بها';
+  const msgs = await api('/api/mail/messages?' + params);
+  $('messageList').innerHTML = msgs.length ? msgs.map(m => `
+    <div class="list-item" onclick="openMessage(${m.id})">
+      <div class="msg-from">${esc(m.from_name || m.from_address)}</div>
+      <div class="msg-sub">${esc(m.subject)}</div>
+      <div class="msg-snip">${esc((m.snippet || '').slice(0, 90))}</div>
+      <div class="msg-time">${fmtT(m.received_at)} ${m.has_attachments ? '📎' : ''} ${m.direction === 'out' ? '↗ صادر' : ''}</div>
+    </div>`).join('') : '<div class="sub" style="padding:20px">لا توجد رسائل بعد — شغّل المزامنة أو استورد الأرشيف من لوحة الإدارة</div>';
+}
+$('q').addEventListener('keydown', e => { if (e.key === 'Enter') loadMessages(); });
+async function openMessage(id) {
+  const m = await api('/api/mail/messages/' + id);
+  $('messageView').innerHTML = `
+    <h3 style="margin:0 0 4px">${esc(m.subject)}</h3>
+    <div class="sub">من: <b>${esc(m.from_name)}</b> &lt;${esc(m.from_address)}&gt; — ${fmtT(m.received_at)}</div>
+    <div class="sub">إلى: ${esc(m.to_addresses)} ${m.cc_addresses ? ' | نسخة: ' + esc(m.cc_addresses) : ''}</div>
+    <div style="margin:8px 0">${(m.attachments || []).map(a =>
+      `<a class="attach" href="/api/mail/attachments/${a.id}" target="_blank">📎 ${esc(a.name)} <small>(${Math.round(a.size/1024)}KB)</small></a>`).join('')}</div>
+    <iframe class="body-frame" sandbox="" srcdoc="${esc(m.body_html || '<p>' + esc(m.snippet) + '</p>')}"></iframe>`;
+}
+
+/* ================= ADMIN ================= */
+async function loadAdmin() {
+  await Promise.all([loadConnections(), loadDiscovery(), loadMailboxesAdmin(), loadUsers(), loadAudit()]);
+}
+async function loadConnections() {
+  const conns = await api('/api/mail/connections');
+  $('connTable').innerHTML = '<tr><th>الاسم</th><th>المزوّد</th><th>Client ID</th><th>الحالة</th><th></th></tr>' +
+    conns.map(c => `<tr>
+      <td>${esc(c.label)}</td><td>${esc(c.provider)}</td>
+      <td style="direction:ltr">${esc(String(c.client_id).slice(0, 18))}…</td>
+      <td><span class="tag ${c.authorized ? 'ok' : 'warn'}">${c.authorized ? 'مصرّح' : 'بانتظار الموافقة'}</span></td>
+      <td class="row">
+        ${!c.authorized ? `<button class="btn" onclick="authorizeConn(${c.id})">ربط OAuth</button>` : ''}
+        <button class="btn primary" onclick="runDiscover(${c.id})">🔎 اكتشاف الصناديق</button>
+      </td></tr>`).join('');
+}
+async function createConnection() {
+  await api('/api/mail/connections', { method:'POST', body:{
+    label:$('cLabel').value, client_id:$('cClientId').value, client_secret:$('cClientSecret').value,
+    accounts_base:$('cAccounts').value, api_base:$('cApi').value } });
+  toggle('connForm'); loadConnections();
+}
+async function authorizeConn(id) {
+  const r = await api(`/api/mail/connections/${id}/authorize-url`);
+  location.href = r.url;
+}
+async function runDiscover(id) {
+  banners('<div class="banner warn">جاري الاكتشاف من Zoho API...</div>');
+  try {
+    await api('/api/mail/discover', { method:'POST', body:{ connection_id:id } });
+    banners('');
+    await loadAdmin(); await loadMailboxesForMail();
+  } catch (e) { banners(`<div class="banner bad">فشل الاكتشاف: ${esc(e.message)}</div>`); }
+}
+function banners(html) { $('adminBanners').innerHTML = html; }
+
+async function loadDiscovery() {
+  const d = await api('/api/mail/discovery-status');
+  const c = d.comparison;
+  if (!c) { $('comparison').innerHTML = '<div class="sub">لم يتم تشغيل الاكتشاف بعد — أضف اتصالًا واضغط "اكتشاف الصناديق".</div>'; return; }
+  $('adminStats').innerHTML = `
+    <div class="stat"><div class="n">${c.expectedCount}</div><div class="l">Shared Mailboxes متوقعة (المرجع)</div></div>
+    <div class="stat"><div class="n">${c.discoveredCount}</div><div class="l">اكتشفها الـAPI</div></div>
+    <div class="stat"><div class="n" style="color:var(--ok)">${c.matched.length}</div><div class="l">مطابقة</div></div>
+    <div class="stat"><div class="n" style="color:${c.missing.length ? 'var(--bad)' : 'var(--ok)'}">${c.missing.length}</div><div class="l">مفقودة</div></div>
+    <div class="stat"><div class="n">${c.extra.length}</div><div class="l">إضافية غير متوقعة</div></div>`;
+  $('comparison').innerHTML = `
+    ${c.missing.length ? `<div class="banner bad">صناديق في المرجع لم يكتشفها الـAPI: ${c.missing.map(esc).join('، ')}</div>` : '<div class="banner ok">كل الصناديق المرجعية المتوقعة اكتُشفت عبر الـAPI ✓</div>'}
+    ${c.extra.length ? `<div class="banner warn">عناوين إضافية اكتشفها الـAPI وليست في المرجع: ${c.extra.map(esc).join('، ')}</div>` : ''}
+    <div class="sub">آخر اكتشاف: ${fmtT(d.at)} — <a href="#" onclick="showEvidence();return false">عرض الأدلة الخام (Sanitized)</a></div>`;
+  window._lastEvidence = d.evidence;
+}
+function showEvidence(obj, title) {
+  $('dlgTitle').textContent = title || 'أدلة الاكتشاف الخام (بدون توكنات)';
+  $('dlgBody').innerHTML = `<pre class="evidence">${esc(JSON.stringify(obj || window._lastEvidence, null, 2))}</pre>`;
+  $('dlg').showModal();
+}
+
+async function loadMailboxesAdmin() {
+  const boxes = await api('/api/mail/mailboxes');
+  $('mbCount').textContent = `(${boxes.length})`;
+  $('mbTable').innerHTML = `<tr><th>العنوان</th><th>النوع</th><th>مستوى الوصول</th><th>طريقة الربط</th><th>الحالة</th><th>Aliases</th><th>مراجعة</th><th>Pilot</th><th></th></tr>` +
+    boxes.map(m => `<tr>
+      <td><b>${esc(m.displayName)}</b><div class="sub" style="direction:ltr;text-align:right">${esc(m.address)}</div></td>
+      <td><span class="tag ${m.detectedType}">${TYPE_AR[m.detectedType] || esc(m.detectedType)}</span></td>
+      <td><span class="tag gray">${esc(m.accessLevel || '—')}</span></td>
+      <td><span class="tag ${m.strategy === 'mail_api' ? 'ok' : 'warn'}">${STRAT_AR[m.strategy] || esc(m.strategy)}</span></td>
+      <td><span class="tag ${esc(m.status)}">${esc(m.status)}</span><div class="sub">${esc((m.statusDetail || '').slice(0, 80))}</div></td>
+      <td>${m.aliases.map(a => `<span class="tag gray" style="direction:ltr">${esc(a)}</span>`).join('') || '—'}</td>
+      <td>${m.moderationCount ? `<span class="tag warn">${m.moderationCount} معلقة</span>` : '—'}</td>
+      <td><input type="checkbox" ${m.isPilot ? 'checked' : ''} onchange="setPilot(${m.id}, this.checked)"></td>
+      <td class="row">
+        <button class="btn" onclick="openMailboxDetail(${m.id})">التفاصيل</button>
+        ${m.strategy === 'mail_api' ? `<button class="btn primary" ${m.isPilot ? '' : 'disabled title="فعّل Pilot أولًا"'} onclick="runSync(${m.id})">مزامنة</button>` : ''}
+        ${m.strategy === 'ediscovery_import' ? `<button class="btn" onclick="uploadArchive(${m.id})">رفع أرشيف ZIP</button>` : ''}
+      </td></tr>`).join('');
+}
+async function setPilot(id, on) {
+  await api(`/api/mail/mailboxes/${id}/pilot`, { method:'POST', body:{ on } });
+  loadMailboxesAdmin();
+}
+async function runSync(id) {
+  banners('<div class="banner warn">مزامنة قراءة-فقط جارية (ملتزمة بحد المعدل ~25 طلب/دقيقة)...</div>');
+  try {
+    const s = await api(`/api/mail/mailboxes/${id}/sync`, { method:'POST' });
+    banners(`<div class="banner ok">اكتملت المزامنة: ${s.newMessages} رسالة جديدة، ${s.attachments} مرفق، ${s.folders} مجلد.</div>`);
+    loadMailboxesAdmin(); loadMailboxesForMail();
+  } catch (e) { banners(`<div class="banner bad">فشلت المزامنة: ${esc(e.message)}</div>`); }
+}
+function uploadArchive(id) {
+  const inp = document.createElement('input');
+  inp.type = 'file'; inp.accept = '.zip';
+  inp.onchange = async () => {
+    const f = inp.files[0]; if (!f) return;
+    banners('<div class="banner warn">جاري استيراد الأرشيف (استيراد أرشيفي رسمي — ليس مزامنة حية)...</div>');
+    const r = await fetch(`/api/mail/mailboxes/${id}/import-archive`, { method:'POST', headers:{ 'Content-Type':'application/zip' }, body:f });
+    const j = await r.json();
+    banners(r.ok
+      ? `<div class="banner ok">استيراد الأرشيف: ${j.imported} رسالة، ${j.attachments} مرفق، تكرارات مُنعت: ${j.duplicates}.</div>`
+      : `<div class="banner bad">${esc(j.error)}</div>`);
+    loadMailboxesAdmin(); loadMailboxesForMail();
+  };
+  inp.click();
+}
+async function openMailboxDetail(id) {
+  const m = await api('/api/mail/mailboxes/' + id);
+  $('dlgTitle').textContent = m.address;
+  $('dlgBody').innerHTML = `
+    <table>
+      <tr><th>النوع المكتشف</th><td>${TYPE_AR[m.detectedType] || esc(m.detectedType)}</td></tr>
+      <tr><th>طريقة الربط الحالية</th><td>${STRAT_AR[m.strategy]} <span class="sub">(قابلة للتغيير دون فقدان البيانات)</span></td></tr>
+      <tr><th>الحالة</th><td>${esc(m.status)} — ${esc(m.statusDetail)}</td></tr>
+      <tr><th>Zoho Group ID</th><td style="direction:ltr">${esc(m.providerGroupId || '—')}</td></tr>
+      <tr><th>Zoho Account ID</th><td style="direction:ltr">${esc(m.providerAccountId || 'لا يوجد — لم يُرجعه أي endpoint')}</td></tr>
+      <tr><th>مستوى الوصول</th><td>${esc(m.accessLevel || '—')}</td></tr>
+      <tr><th>الأعضاء</th><td>${m.members.map(x => `<span class="tag gray" style="direction:ltr">${esc(x.email)} (${esc(x.role)})</span>`).join('') || '—'}</td></tr>
+      <tr><th>المشرفون</th><td>${m.moderators.map(x => `<span class="tag gray" style="direction:ltr">${esc(x)}</span>`).join('') || '—'}</td></tr>
+      <tr><th>القدرات المثبتة بالفحص</th><td>
+        مجلدات: ${m.capabilities.folders ? '✅' : '❌'} —
+        رسائل: ${m.capabilities.messages ? '✅' : '❌'} —
+        مرفقات: ${m.capabilities.attachments === null ? '؟' : m.capabilities.attachments ? '✅' : '❌'} —
+        Sent: ${m.capabilities.sent ? '✅' : '❌'} —
+        طابور المراجعة: ${m.capabilities.moderationQueueReadable ? '✅ (المراجعة فقط، ليس الأرشيف)' : '—'}</td></tr>
+    </table>
+    <h4>الدليل الخام (نتائج API الحرفية بعد التعقيم)</h4>
+    <pre class="evidence">${esc(JSON.stringify(m.lastDetection, null, 2))}</pre>`;
+  $('dlg').showModal();
+}
+
+async function loadUsers() {
+  const users = await api('/api/admin/users');
+  const boxes = await api('/api/mail/mailboxes');
+  $('usersTable').innerHTML = '<tr><th>البريد</th><th>الاسم</th><th>الدور</th><th>الصلاحيات على الصناديق</th></tr>' +
+    users.map(u => `<tr>
+      <td style="direction:ltr;text-align:right">${esc(u.email)}</td><td>${esc(u.name)}</td>
+      <td><span class="tag ${u.role === 'admin' ? 'ok' : 'gray'}">${u.role}</span></td>
+      <td>${u.role === 'admin' ? '<span class="sub">كل الصناديق</span>' : boxes.map(b => {
+        const g = u.grants.find(x => x.mailbox_id === b.id);
+        return `<label style="white-space:nowrap;margin-inline-end:10px;font-size:12px">
+          <input type="checkbox" ${g ? 'checked' : ''} onchange="setGrant(${u.id},${b.id},this.checked)"> ${esc(b.address)}</label>`;
+      }).join('')}</td></tr>`).join('');
+}
+async function createUser() {
+  await api('/api/admin/users', { method:'POST', body:{ email:$('uEmail').value, name:$('uName').value, password:$('uPass').value, role:$('uRole').value } });
+  toggle('userForm'); loadUsers();
+}
+async function setGrant(userId, mailboxId, on) {
+  await api('/api/admin/grants', { method:'POST', body:{ user_id:userId, mailbox_id:mailboxId, permission:on ? 'read' : null } });
+}
+async function loadAudit() {
+  const rows = await api('/api/admin/audit');
+  $('auditTable').innerHTML = '<tr><th>الوقت</th><th>المستخدم</th><th>الإجراء</th><th>الهدف</th></tr>' +
+    rows.slice(0, 40).map(a => `<tr><td>${fmtT(a.at)}</td><td style="direction:ltr;text-align:right">${esc(a.user_email || 'النظام')}</td>
+      <td>${esc(a.action)}</td><td style="direction:ltr;text-align:right">${esc(a.target)}</td></tr>`).join('');
+}
+
+boot();
 </script>
 </body>
 </html>

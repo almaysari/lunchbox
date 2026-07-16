@@ -1,0 +1,22 @@
+[
+  { "address": "pro@exoticcolors.org",          "name": "Central Relations Mailbox",   "type": "shared_mailbox", "accessLevel": "everyone" },
+  { "address": "finance@exoticcolors.org",      "name": "Central Finance Mailbox",     "type": "shared_mailbox", "accessLevel": "everyone" },
+  { "address": "hr@exoticcolors.org",           "name": "Central HR Mailbox",          "type": "shared_mailbox", "accessLevel": "everyone" },
+  { "address": "logistics@exoticcolors.org",    "name": "Logistics exotiColors",       "type": "shared_mailbox", "accessLevel": "everyone" },
+  { "address": "logistics@thetaurus.world",     "name": "Logistics The Taurus",        "type": "shared_mailbox", "accessLevel": "everyone" },
+  { "address": "former.staff@exoticcolors.org", "name": "Departed Employees",          "type": "shared_mailbox", "accessLevel": "everyone" },
+  { "address": "tax@exoticcolors.org",          "name": "Central Tax Mailbox",         "type": "shared_mailbox", "accessLevel": "everyone" },
+  { "address": "inventory@exoticcolors.org",    "name": "Central Inventory Mailbox",   "type": "shared_mailbox", "accessLevel": "everyone" },
+  { "address": "info@exoticcolors.org",         "name": "Central Info Mailbox",        "type": "shared_mailbox", "accessLevel": "everyone" },
+  { "address": "retail@exoticcolors.org",       "name": "Central Retail Mailbox",      "type": "shared_mailbox", "accessLevel": "everyone" },
+  { "address": "legal@exoticcolors.org",        "name": "Central Legal Mailbox",       "type": "shared_mailbox", "accessLevel": "everyone" },
+  { "address": "marketing@exoticcolors.org",    "name": "Central Marketing Mailbox",   "type": "shared_mailbox", "accessLevel": "everyone" },
+  { "address": "ai@exoticcolors.org",           "name": "AI Commercial Operations",    "type": "shared_mailbox", "accessLevel": "everyone" },
+  { "address": "scan@exoticcolors.org",         "name": "Printer Scan",                "type": "shared_mailbox", "accessLevel": "only_moderators" },
+  { "address": "sms@exoticcolors.org",          "name": "Central SMS Mailbox",         "type": "shared_mailbox", "accessLevel": "organization_members", "moderationCount": 4 },
+  { "address": "procurement@exoticcolors.org",  "name": "Central Procurement Mailbox", "type": "shared_mailbox", "accessLevel": "everyone" },
+  { "address": "e-commerce@exoticcolors.org",   "name": "Central e-commerce Mailbox",  "type": "shared_mailbox", "accessLevel": "everyone", "moderationCount": 1 },
+  { "address": "timesheet@exoticcolors.org",    "name": "Time Sheet Submissions",      "type": "shared_mailbox", "accessLevel": "everyone" },
+  { "address": "referral@exoticcolors.org",     "name": "Employee Referral Program",   "type": "shared_mailbox", "accessLevel": "organization_members" },
+  { "address": "pos@exoticcolors.org",          "name": "POS Operations",              "type": "shared_mailbox", "accessLevel": "everyone" }
+]

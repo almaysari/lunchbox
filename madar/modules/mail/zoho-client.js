@@ -1,0 +1,116 @@
+// Low-level Zoho Mail API client bound to an organization connection.
+// Every call returns { url, status, body } WITHOUT throwing on HTTP errors —
+// the detection engine needs literal API responses as evidence.
+// Docs: https://www.zoho.com/mail/help/api/
+const { getDb } = require('../../core/db');
+const { decrypt, encrypt } = require('../../core/crypto');
+
+const READ_SCOPES = [
+  'ZohoMail.accounts.READ',
+  'ZohoMail.folders.READ',
+  'ZohoMail.messages.READ',
+  'ZohoMail.organization.accounts.READ',
+  'ZohoMail.organization.groups.READ',
+].join(',');
+
+class ZohoClient {
+  constructor(connection) {
+    this.conn = connection;
+    this.accessToken = null;
+    this.expiry = 0;
+  }
+
+  static forConnection(connectionId) {
+    const conn = getDb().prepare('SELECT * FROM connections WHERE id = ?').get(connectionId);
+    if (!conn) throw new Error('Connection not found: ' + connectionId);
+    return new ZohoClient(conn);
+  }
+
+  authorizeUrl(redirectUri) {
+    const u = new URL('/oauth/v2/auth', this.conn.accounts_base);
+    u.searchParams.set('response_type', 'code');
+    u.searchParams.set('client_id', this.conn.client_id);
+    u.searchParams.set('scope', this.conn.scopes || READ_SCOPES);
+    u.searchParams.set('redirect_uri', redirectUri);
+    u.searchParams.set('access_type', 'offline');
+    u.searchParams.set('prompt', 'consent');
+    return u.toString();
+  }
+
+  async exchangeCode(code, redirectUri) {
+    const res = await fetch(new URL('/oauth/v2/token', this.conn.accounts_base), {
+      method: 'POST',
+      body: new URLSearchParams({
+        grant_type: 'authorization_code', code,
+        client_id: this.conn.client_id,
+        client_secret: decrypt(this.conn.client_secret_enc),
+        redirect_uri: redirectUri,
+      }),
+    });
+    const json = await res.json();
+    if (!res.ok || json.error || !json.refresh_token) {
+      throw new Error('Zoho token exchange failed: ' + (json.error || res.status));
+    }
+    getDb().prepare("UPDATE connections SET refresh_token_enc = ?, status = 'connected', status_detail = '' WHERE id = ?")
+      .run(encrypt(json.refresh_token), this.conn.id);
+    this.accessToken = json.access_token;
+    this.expiry = Date.now() + (json.expires_in - 60) * 1000;
+  }
+
+  async token() {
+    if (this.accessToken && Date.now() < this.expiry) return this.accessToken;
+    if (!this.conn.refresh_token_enc) throw new Error('Connection not authorized yet (no refresh token).');
+    const res = await fetch(new URL('/oauth/v2/token', this.conn.accounts_base), {
+      method: 'POST',
+      body: new URLSearchParams({
+        grant_type: 'refresh_token',
+        refresh_token: decrypt(this.conn.refresh_token_enc),
+        client_id: this.conn.client_id,
+        client_secret: decrypt(this.conn.client_secret_enc),
+      }),
+    });
+    const json = await res.json();
+    if (!res.ok || json.error) throw new Error('Zoho token refresh failed: ' + (json.error || res.status));
+    this.accessToken = json.access_token;
+    this.expiry = Date.now() + (json.expires_in - 60) * 1000;
+    return this.accessToken;
+  }
+
+  // Raw GET: never throws on HTTP errors; body is parsed JSON or raw text.
+  async get(pathname, { raw = false } = {}) {
+    const url = new URL(pathname, this.conn.api_base).toString();
+    try {
+      const token = await this.token();
+      const res = await fetch(url, { headers: { Authorization: 'Zoho-oauthtoken ' + token } });
+      if (raw && res.ok) return { url, status: res.status, body: Buffer.from(await res.arrayBuffer()) };
+      const text = await res.text();
+      let body; try { body = JSON.parse(text); } catch { body = text.slice(0, 2000); }
+      return { url, status: res.status, body };
+    } catch (err) {
+      return { url, status: 0, body: { transportError: String(err.message || err) } };
+    }
+  }
+
+  // ---- Official endpoints under test (see ARCHITECTURE.md access matrix) ----
+  getAccounts()                 { return this.get('/api/accounts'); }
+  getOrganization()             { return this.get('/api/organization'); }
+  getOrgAccounts(zoid)          { return this.get(`/api/organization/${zoid}/accounts?start=0&limit=500`); }
+  getGroups(zoid)               { return this.get(`/api/organization/${zoid}/groups`); }
+  getGroupDetails(zoid, gid)    { return this.get(`/api/organization/${zoid}/groups/${gid}`); }
+  getGroupModeration(zoid, gid) { return this.get(`/api/organization/${zoid}/groups/${gid}/messages?start=0&limit=25`); }
+  getFolders(accountId)         { return this.get(`/api/accounts/${accountId}/folders`); }
+  listMessages(accountId, folderId, { limit = 100, start = 1 } = {}) {
+    return this.get(`/api/accounts/${accountId}/messages/view?folderId=${folderId}&limit=${limit}&start=${start}`);
+  }
+  getMessageContent(accountId, folderId, messageId) {
+    return this.get(`/api/accounts/${accountId}/folders/${folderId}/messages/${messageId}/content`);
+  }
+  getAttachmentInfo(accountId, folderId, messageId) {
+    return this.get(`/api/accounts/${accountId}/folders/${folderId}/messages/${messageId}/attachmentinfo`);
+  }
+  downloadAttachment(accountId, folderId, messageId, attachmentId) {
+    return this.get(`/api/accounts/${accountId}/folders/${folderId}/messages/${messageId}/attachments/${attachmentId}`, { raw: true });
+  }
+}
+
+module.exports = { ZohoClient, READ_SCOPES };

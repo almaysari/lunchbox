@@ -1,0 +1,302 @@
+// Detection Engine — organization-wide discovery + per-mailbox capability probes.
+//
+// Principles:
+//  * Zoho API responses are the ONLY source of truth at runtime.
+//  * The expected-mailboxes baseline (test/fixtures) is a validation reference,
+//    never a data source.
+//  * Every conclusion carries literal (sanitized) API evidence.
+//  * Read-only: GET requests only.
+const { getDb } = require('../../core/db');
+
+const lc = s => String(s || '').toLowerCase().trim();
+
+function sanitize(result) {
+  // Evidence stored in DB: keep url/status/body but cap body size.
+  const body = typeof result.body === 'string'
+    ? result.body.slice(0, 4000)
+    : JSON.parse(JSON.stringify(result.body ?? null, (k, v) =>
+        typeof v === 'string' && v.length > 2000 ? v.slice(0, 2000) + '…' : v));
+  return { url: result.url, status: result.status, body };
+}
+
+function extractEmails(value) {
+  // Zoho group/account payloads vary; collect every email-looking string field.
+  const found = new Set();
+  (function walk(v) {
+    if (typeof v === 'string') {
+      const m = v.match(/[\w.+-]+@[\w-]+(\.[\w-]+)+/g);
+      if (m) m.forEach(e => found.add(lc(e)));
+    } else if (Array.isArray(v)) v.forEach(walk);
+    else if (v && typeof v === 'object') Object.values(v).forEach(walk);
+  })(value);
+  return [...found];
+}
+
+// ---- classify a raw Zoho group object ----
+function classifyGroup(g) {
+  const raw = JSON.stringify(g).toLowerCase();
+  // Zoho marks shared mailboxes / collaborative inboxes on the group object.
+  // We match known indicator fields, and keep the raw object as evidence.
+  const looksShared =
+    g.isCollaborativeInbox === true || g.isCollaborativeInbox === 'true' ||
+    g.isSharedMailbox === true || g.isSharedMailbox === 'true' ||
+    lc(g.groupType).includes('shared') || lc(g.mailboxType).includes('shared') ||
+    raw.includes('"collaborativeinbox":true') || raw.includes('sharedmailbox');
+  const looksStream = g.isStreamGroup === true || g.streamsEnabled === true || lc(g.groupType).includes('stream');
+  if (looksShared) return 'shared_mailbox';
+  if (looksStream) return 'stream_group';
+  return 'distribution_list';
+}
+
+function groupEmail(g) {
+  return lc(g.emailId || g.groupEmailId || g.mailId || g.groupName || '');
+}
+
+function groupAliases(g) {
+  const primary = groupEmail(g);
+  const all = new Set();
+  for (const key of ['aliasList', 'aliases', 'emailIds', 'groupAliases']) {
+    const v = g[key];
+    if (Array.isArray(v)) v.forEach(a => all.add(lc(typeof a === 'string' ? a : a.alias || a.mailId || a.emailId || '')));
+  }
+  all.delete(''); all.delete(primary);
+  return [...all];
+}
+
+function accessLevel(g) {
+  const v = lc(g.accessLevel || g.accessType || g.whoCanSend || '');
+  if (v.includes('moderat')) return 'only_moderators';
+  if (v.includes('org')) return 'organization_members';
+  if (v.includes('every') || v.includes('all')) return 'everyone';
+  return v || '';
+}
+
+// ---- organization-wide discovery ----
+async function discoverOrganization(zoho) {
+  const evidence = {};
+  const out = { mailboxes: [], evidence };
+
+  // 1) Mailboxes visible to the OAuth user directly.
+  const accResp = await zoho.getAccounts();
+  evidence.accounts = sanitize(accResp);
+  const accounts = (accResp.body && accResp.body.data) || [];
+
+  // 2) Organization id.
+  const orgResp = await zoho.getOrganization();
+  evidence.organization = sanitize(orgResp);
+  let zoid = null;
+  const od = orgResp.body && orgResp.body.data;
+  if (od) zoid = od.zoid || od.zgid || od.orgId || (Array.isArray(od) && od[0] && (od[0].zoid || od[0].orgId)) || null;
+
+  // 3) Org-level account list (admin scope) — some entities may only appear here.
+  let orgAccounts = [];
+  if (zoid) {
+    const oaResp = await zoho.getOrgAccounts(zoid);
+    evidence.orgAccounts = sanitize(oaResp);
+    orgAccounts = (oaResp.body && oaResp.body.data) || [];
+    if (!Array.isArray(orgAccounts)) orgAccounts = [];
+  }
+
+  // 4) Groups — where shared mailboxes live (Admin Console → Groups → Shared Mailbox).
+  let groups = [];
+  if (zoid) {
+    const gResp = await zoho.getGroups(zoid);
+    evidence.groups = sanitize(gResp);
+    groups = (gResp.body && gResp.body.data) || [];
+    if (!Array.isArray(groups)) groups = [];
+  }
+
+  const findAccountFor = (email) =>
+    accounts.find(a => extractEmails(a).includes(email)) ||
+    orgAccounts.find(a => extractEmails(a).includes(email));
+
+  // Group-backed entities (shared mailboxes are the primary case here).
+  for (const g of groups) {
+    const email = groupEmail(g);
+    if (!email) continue;
+    const gid = String(g.zgid || g.groupId || g.id || '');
+    const acct = findAccountFor(email);
+    const detail = zoid && gid ? await zoho.getGroupDetails(zoid, gid) : null;
+    const detailData = detail && detail.body && detail.body.data ? detail.body.data : g;
+    out.mailboxes.push({
+      address: email,
+      displayName: g.groupName || g.name || detailData.groupName || '',
+      detectedType: classifyGroup({ ...g, ...detailData }),
+      orgId: zoid ? String(zoid) : null,
+      providerGroupId: gid || null,
+      providerAccountId: acct ? String(acct.accountId) : null,
+      aliases: groupAliases({ ...g, ...detailData }),
+      accessLevel: accessLevel({ ...g, ...detailData }),
+      members: extractMembers(detailData),
+      moderators: extractModerators(detailData),
+      moderationCount: Number(g.pendingModerationCount || detailData.pendingModerationCount || 0) || 0,
+      evidence: { group: sanitize({ url: 'groups[]', status: 200, body: g }), detail: detail ? sanitize(detail) : null },
+    });
+  }
+
+  // User mailboxes visible via /api/accounts that are NOT group-backed.
+  const groupEmails = new Set(out.mailboxes.map(m => m.address));
+  for (const a of accounts) {
+    const email = lc(a.mailboxAddress || a.primaryEmailAddress || '');
+    if (!email || groupEmails.has(email)) continue;
+    out.mailboxes.push({
+      address: email,
+      displayName: a.accountDisplayName || a.accountName || '',
+      detectedType: 'user',
+      orgId: zoid ? String(zoid) : null,
+      providerGroupId: null,
+      providerAccountId: String(a.accountId),
+      aliases: (Array.isArray(a.emailAddress) ? a.emailAddress.map(e => lc(e.mailId || e)) : []).filter(e => e && e !== email),
+      accessLevel: '',
+      members: [], moderators: [], moderationCount: 0,
+      evidence: { account: sanitize({ url: '/api/accounts[]', status: 200, body: a }) },
+    });
+  }
+
+  return out;
+}
+
+function extractMembers(g) {
+  for (const key of ['members', 'memberList', 'groupMembers']) {
+    if (Array.isArray(g[key])) {
+      return g[key].map(m => ({ email: lc(typeof m === 'string' ? m : m.memberEmailId || m.mailId || m.emailId || ''), role: lc(m.role || m.memberType || 'member') }))
+        .filter(m => m.email);
+    }
+  }
+  return [];
+}
+
+function extractModerators(g) {
+  const fromMembers = extractMembers(g).filter(m => m.role.includes('moderat')).map(m => m.email);
+  for (const key of ['moderators', 'moderatorList']) {
+    if (Array.isArray(g[key])) {
+      return [...new Set([...fromMembers, ...g[key].map(m => lc(typeof m === 'string' ? m : m.memberEmailId || m.mailId || ''))])].filter(Boolean);
+    }
+  }
+  return fromMembers;
+}
+
+// ---- per-mailbox capability probe (read-only) ----
+// Never invents an API: tries the documented endpoints with every candidate id
+// and records the literal outcome.
+async function probeCapabilities(zoho, mailbox) {
+  const caps = { folders: false, messages: false, attachments: null, sent: false, evidence: {} };
+  const candidates = [];
+  if (mailbox.providerAccountId) candidates.push({ kind: 'accountId', id: mailbox.providerAccountId });
+  if (mailbox.providerGroupId) candidates.push({ kind: 'groupIdAsAccountId', id: mailbox.providerGroupId });
+
+  for (const cand of candidates) {
+    const f = await zoho.getFolders(cand.id);
+    caps.evidence[`folders.${cand.kind}`] = sanitize(f);
+    const folders = (f.body && f.body.data) || [];
+    if (f.status === 200 && Array.isArray(folders) && folders.length) {
+      caps.folders = true;
+      caps.workingId = cand.id;
+      caps.workingIdKind = cand.kind;
+      const inbox = folders.find(x => lc(x.folderType) === 'inbox' || lc(x.folderName) === 'inbox') || folders[0];
+      const sent = folders.find(x => lc(x.folderType) === 'sent' || lc(x.folderName).includes('sent'));
+      caps.sent = Boolean(sent);
+      const m = await zoho.listMessages(cand.id, inbox.folderId, { limit: 3 });
+      caps.evidence[`messages.${cand.kind}`] = sanitize(m);
+      const msgs = (m.body && m.body.data) || [];
+      if (m.status === 200 && Array.isArray(msgs)) {
+        caps.messages = true;
+        const withAtt = msgs.find(x => x.hasAttachment === '1' || x.hasAttachment === 1 || x.hasAttachment === true);
+        if (withAtt) {
+          const ai = await zoho.getAttachmentInfo(cand.id, inbox.folderId, withAtt.messageId);
+          caps.evidence['attachments'] = sanitize(ai);
+          caps.attachments = ai.status === 200;
+        }
+      }
+      break; // a working id was found — no need to try the next candidate
+    }
+  }
+
+  // Moderation queue is metadata-only visibility — NEVER counted as archive access.
+  if (mailbox.orgId && mailbox.providerGroupId) {
+    const mod = await zoho.getGroupModeration(mailbox.orgId, mailbox.providerGroupId);
+    caps.evidence['moderationQueue'] = sanitize(mod);
+    caps.moderationQueueReadable = mod.status === 200;
+  }
+  return caps;
+}
+
+function chooseStrategy(mailbox, caps) {
+  if (caps.messages) return { strategy: 'mail_api', status: 'ready', detail: `Live read via ${caps.workingIdKind}=${caps.workingId}` };
+  if (mailbox.detectedType === 'shared_mailbox') {
+    return {
+      strategy: 'ediscovery_import', status: 'no_live_api',
+      detail: 'No live message read via any tested official endpoint (see evidence). ' +
+              'Official paths available: admin eDiscovery/Backup export import (archive, NOT live sync)' +
+              (caps.moderationQueueReadable ? ' + moderation queue (held mail only, NOT the archive)' : '') + '.',
+    };
+  }
+  return { strategy: 'none', status: 'error', detail: 'No read path proven for this mailbox type. See evidence.' };
+}
+
+// ---- registry upsert with alias-duplicate protection ----
+function upsertMailbox(connectionId, m, caps, choice) {
+  const db = getDb();
+  // An alias must never become a second mailbox.
+  const aliasHit = db.prepare('SELECT mailbox_id FROM mailbox_aliases WHERE address = ?').get(m.address);
+  const existing = aliasHit
+    ? db.prepare('SELECT * FROM mailboxes WHERE id = ?').get(aliasHit.mailbox_id)
+    : db.prepare('SELECT * FROM mailboxes WHERE address = ?').get(m.address);
+
+  const fields = {
+    display_name: m.displayName || '',
+    provider: 'zoho',
+    connection_id: connectionId,
+    detected_type: m.detectedType,
+    strategy: choice.strategy,
+    provider_account_id: m.providerAccountId,
+    provider_group_id: m.providerGroupId,
+    org_id: m.orgId,
+    access_level: m.accessLevel || '',
+    members: JSON.stringify(m.members || []),
+    moderators: JSON.stringify(m.moderators || []),
+    moderation_count: m.moderationCount || 0,
+    capabilities: JSON.stringify(caps || {}),
+    status: choice.status,
+    status_detail: choice.detail,
+  };
+
+  let id;
+  if (existing) {
+    // Strategy is switchable without data loss: messages stay keyed to mailbox id.
+    db.prepare(`UPDATE mailboxes SET display_name=?, provider=?, connection_id=?, detected_type=?, strategy=?,
+      provider_account_id=?, provider_group_id=?, org_id=?, access_level=?, members=?, moderators=?,
+      moderation_count=?, capabilities=?, status=?, status_detail=? WHERE id=?`)
+      .run(...Object.values(fields), existing.id);
+    id = existing.id;
+  } else {
+    id = Number(db.prepare(`INSERT INTO mailboxes (address, display_name, provider, connection_id, detected_type,
+      strategy, provider_account_id, provider_group_id, org_id, access_level, members, moderators,
+      moderation_count, capabilities, status, status_detail, created_at)
+      VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`)
+      .run(m.address, ...Object.values(fields), Date.now()).lastInsertRowid);
+  }
+  for (const alias of m.aliases || []) {
+    if (alias === m.address) continue;
+    db.prepare('INSERT INTO mailbox_aliases (address, mailbox_id) VALUES (?,?) ON CONFLICT(address) DO UPDATE SET mailbox_id = excluded.mailbox_id')
+      .run(alias, id);
+  }
+  db.prepare('INSERT INTO detection_reports (mailbox_id, at, report) VALUES (?,?,?)')
+    .run(id, Date.now(), JSON.stringify({ discovery: m.evidence, capabilities: caps, choice }));
+  return id;
+}
+
+// ---- baseline comparison (validation only — never a data source) ----
+function compareWithBaseline(discovered, baseline) {
+  const discoveredSet = new Map(discovered.map(m => [lc(m.address), m]));
+  const baselineSet = new Set((baseline || []).map(b => lc(b.address)));
+  return {
+    expectedCount: baselineSet.size,
+    discoveredCount: discovered.length,
+    matched: [...baselineSet].filter(a => discoveredSet.has(a)),
+    missing: [...baselineSet].filter(a => !discoveredSet.has(a)),
+    extra: [...discoveredSet.keys()].filter(a => !baselineSet.has(a)),
+  };
+}
+
+module.exports = { discoverOrganization, probeCapabilities, chooseStrategy, upsertMailbox, compareWithBaseline, classifyGroup, sanitize };

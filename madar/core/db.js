@@ -4,7 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const { DatabaseSync } = require('node:sqlite');
 
-const DATA_DIR = path.join(__dirname, '..', 'data');
+const DATA_DIR = process.env.MADAR_DATA_DIR || path.join(__dirname, '..', 'data');
 const ATTACH_DIR = path.join(DATA_DIR, 'attachments');
 
 let db = null;
@@ -58,23 +58,41 @@ CREATE TABLE IF NOT EXISTS connections (
 );
 
 -- ============ mail module ============
+-- Shared mailboxes are the PRIMARY case in this organization (20 of them
+-- across exoticcolors.org and thetaurus.world) — the schema treats group
+-- metadata (aliases, members, access level, moderation) as first-class.
 CREATE TABLE IF NOT EXISTS mailboxes (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   address TEXT NOT NULL UNIQUE,
   display_name TEXT NOT NULL DEFAULT '',
   provider TEXT NOT NULL DEFAULT 'zoho',
   connection_id INTEGER REFERENCES connections(id),
-  detected_type TEXT NOT NULL DEFAULT 'unknown',   -- user | shared | group | stream | unknown
-  strategy TEXT NOT NULL DEFAULT 'none',           -- mail_api | source_member | ediscovery_import | none
-  provider_account_id TEXT,                        -- Zoho accountId when strategy=mail_api
-  status TEXT NOT NULL DEFAULT 'new',              -- new | detecting | ready | syncing | error | unsupported
+  detected_type TEXT NOT NULL DEFAULT 'unknown',   -- shared_mailbox | user | distribution_list | stream_group | unknown
+  strategy TEXT NOT NULL DEFAULT 'none',           -- mail_api | ediscovery_import | moderation_only | none (switchable without data loss)
+  provider_account_id TEXT,                        -- Zoho accountId IF the API exposes one
+  provider_group_id TEXT,                          -- Zoho group id (zgid) for group-backed mailboxes
+  org_id TEXT,                                     -- Zoho zoid
+  access_level TEXT NOT NULL DEFAULT '',           -- everyone | organization_members | only_moderators | ...
+  members TEXT NOT NULL DEFAULT '[]',              -- JSON [{email, role}]
+  moderators TEXT NOT NULL DEFAULT '[]',           -- JSON [email]
+  moderation_count INTEGER NOT NULL DEFAULT 0,
+  capabilities TEXT NOT NULL DEFAULT '{}',         -- JSON: proven-by-probe read access {folders, messages, attachments, sent, evidence}
+  is_pilot INTEGER NOT NULL DEFAULT 0,             -- sync runs ONLY for pilot-selected mailboxes
+  status TEXT NOT NULL DEFAULT 'new',              -- new | detecting | detected | ready | syncing | error | no_live_api
   status_detail TEXT NOT NULL DEFAULT '',
   created_at INTEGER NOT NULL
 );
 
+-- Aliases (+N addresses in the admin console). Unique platform-wide so an
+-- alias can never be registered as a second, duplicate mailbox.
+CREATE TABLE IF NOT EXISTS mailbox_aliases (
+  address TEXT PRIMARY KEY,
+  mailbox_id INTEGER NOT NULL REFERENCES mailboxes(id)
+);
+
 CREATE TABLE IF NOT EXISTS detection_reports (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
-  mailbox_id INTEGER NOT NULL REFERENCES mailboxes(id),
+  mailbox_id INTEGER NOT NULL,                      -- mailbox id, or 0 for organization-scope reports
   at INTEGER NOT NULL,
   report TEXT NOT NULL                              -- raw JSON evidence
 );
