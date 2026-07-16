@@ -2,3 +2,4 @@
 data/
 data-demo/
 .env
+node_modules/
