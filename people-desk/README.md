@@ -60,6 +60,36 @@ Zoho **لا يسمح** بقراءة رسائل الـShared Mailbox مباشرة
 لماذا حساب تكامل وليس حساب موظف؟ لأن الربط لا يتعطل عند مغادرة الموظف أو
 تغيير صلاحياته، وصلاحيات النظام تبقى محصورة في صندوق واحد مخصص.
 
+## أداة الفحص: هل يمكن قراءة الصندوق المشترك مباشرة؟
+
+قبل أي قرار معماري (حساب تكامل / تحويل)، شغّل أداة التشخيص للحصول على دليل فعلي
+من واجهات Zoho الرسمية نفسها:
+
+```bash
+node scripts/diagnose.js
+```
+
+تحتاج أولًا إنشاء **Self Client** من <https://api-console.zoho.com> وتوليد Code
+(صلاحية 10 دقائق) بهذه الصلاحيات — قراءة فقط:
+
+```
+ZohoMail.accounts.READ,ZohoMail.folders.READ,ZohoMail.messages.READ,ZohoMail.organization.accounts.READ,ZohoMail.organization.groups.READ
+```
+
+الأداة تنفّذ طلبات GET فقط وتختبر بالترتيب:
+
+1. `GET /api/accounts` — هل يظهر الصندوق المستهدف بـ`accountId` خاص به؟
+2. `GET /api/organization` ثم `GET /api/organization/{zoid}/groups` — هل هو مسجّل
+   كمجموعة؟ وما نوعه بالضبط (البيانات الخام كاملة)؟
+3. `GET .../groups/{groupId}/messages` — ماذا يرجع مسار رسائل المجموعة الرسمي فعليًا؟
+4. استخدام `groupId` مكان `accountId` — لتوثيق نص الخطأ الحقيقي (`Invalid Account ID` أو غيره).
+5. `GET /api/organization/{zoid}/accounts` — هل يظهر الصندوق بحساب على مستوى المؤسسة
+   يمكن القراءة منه؟
+6. قراءة مجلدات وأول رسائل كل صندوق ظاهر — لإثبات ما هو متاح فعلًا.
+
+النتيجة تُكتب في `data/diagnose-report.json` (بدون أي توكنات — تُحذف قبل الكتابة)
+ويمكن مشاركتها للتحليل بأمان.
+
 ## كيف تعمل المزامنة
 
 ```
