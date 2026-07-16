@@ -293,19 +293,25 @@ async function runDiscover(id) {
 }
 function banners(html) { $('adminBanners').innerHTML = html; }
 
+let PLATFORM_MODE = null;
 async function loadDiscovery() {
+  if (!PLATFORM_MODE) PLATFORM_MODE = (await api('/api/status')).mode;
   const d = await api('/api/mail/discovery-status');
   const c = d.comparison;
   if (!c) { $('comparison').innerHTML = '<div class="sub">لم يتم تشغيل الاكتشاف بعد — أضف اتصالًا واضغط "اكتشاف الصناديق".</div>'; return; }
+  // Terminology is strict: Mock Discovery (demo) vs Live Zoho API Discovery.
+  const modeBanner = PLATFORM_MODE === 'demo'
+    ? '<div class="banner warn">⚠️ هذه نتائج <b>Mock Discovery</b> من محاكي محلي في الوضع التجريبي — ليست استجابة Zoho الحقيقية، ولا تثبت شيئًا عن حسابكم. المقارنة أدناه هي Fixture Validation فقط.</div>'
+    : '<div class="banner ok">✅ <b>Live Zoho API Discovery</b> — النتائج أدناه من استجابات Zoho الفعلية بعد OAuth.</div>';
   $('adminStats').innerHTML = `
-    <div class="stat"><div class="n">${c.expectedCount}</div><div class="l">Shared Mailboxes متوقعة (المرجع)</div></div>
-    <div class="stat"><div class="n">${c.discoveredCount}</div><div class="l">اكتشفها الـAPI</div></div>
-    <div class="stat"><div class="n" style="color:var(--ok)">${c.matched.length}</div><div class="l">مطابقة</div></div>
-    <div class="stat"><div class="n" style="color:${c.missing.length ? 'var(--bad)' : 'var(--ok)'}">${c.missing.length}</div><div class="l">مفقودة</div></div>
-    <div class="stat"><div class="n">${c.extra.length}</div><div class="l">إضافية غير متوقعة</div></div>`;
-  $('comparison').innerHTML = `
-    ${c.missing.length ? `<div class="banner bad">صناديق في المرجع لم يكتشفها الـAPI: ${c.missing.map(esc).join('، ')}</div>` : '<div class="banner ok">كل الصناديق المرجعية المتوقعة اكتُشفت عبر الـAPI ✓</div>'}
-    ${c.extra.length ? `<div class="banner warn">عناوين إضافية اكتشفها الـAPI وليست في المرجع: ${c.extra.map(esc).join('، ')}</div>` : ''}
+    <div class="stat"><div class="n">${c.expectedCount}</div><div class="l">Expected (المرجع)</div></div>
+    <div class="stat"><div class="n">${c.discoveredCount}</div><div class="l">${PLATFORM_MODE === 'demo' ? 'أعادها الـMock' : 'Returned by Zoho API'}</div></div>
+    <div class="stat"><div class="n" style="color:var(--ok)">${c.matched.length}</div><div class="l">Matched</div></div>
+    <div class="stat"><div class="n" style="color:${c.missing.length ? 'var(--bad)' : 'var(--ok)'}">${c.missing.length}</div><div class="l">Missing</div></div>
+    <div class="stat"><div class="n">${c.extra.length}</div><div class="l">Unexpected</div></div>`;
+  $('comparison').innerHTML = modeBanner + `
+    ${c.missing.length ? `<div class="banner bad">صناديق في المرجع لم تُعِدها الاستجابة: ${c.missing.map(esc).join('، ')}</div>` : '<div class="banner ok">كل صناديق المرجع ظهرت في الاستجابة ✓</div>'}
+    ${c.extra.length ? `<div class="banner warn">عناوين في الاستجابة وليست في المرجع: ${c.extra.map(esc).join('، ')}</div>` : ''}
     <div class="sub">آخر اكتشاف: ${fmtT(d.at)} — <a href="#" onclick="showEvidence();return false">عرض الأدلة الخام (Sanitized)</a></div>`;
   window._lastEvidence = d.evidence;
 }
@@ -330,13 +336,38 @@ async function loadMailboxesAdmin() {
       <td><input type="checkbox" ${m.isPilot ? 'checked' : ''} onchange="setPilot(${m.id}, this.checked)"></td>
       <td class="row">
         <button class="btn" onclick="openMailboxDetail(${m.id})">التفاصيل</button>
-        ${m.strategy === 'mail_api' ? `<button class="btn primary" ${m.isPilot ? '' : 'disabled title="فعّل Pilot أولًا"'} onclick="runSync(${m.id})">مزامنة</button>` : ''}
+        ${m.strategy === 'mail_api' ? `<button class="btn primary" ${m.isPilot ? '' : 'disabled title="فعّل Pilot أولًا"'} onclick="openPilotReview(${m.id})">مراجعة وبدء Pilot Sync</button>` : ''}
         ${m.strategy === 'ediscovery_import' ? `<button class="btn" onclick="uploadArchive(${m.id})">رفع أرشيف ZIP</button>` : ''}
       </td></tr>`).join('');
 }
 async function setPilot(id, on) {
   await api(`/api/mail/mailboxes/${id}/pilot`, { method:'POST', body:{ on } });
   loadMailboxesAdmin();
+}
+// Mandatory pre-sync review: nothing syncs until the admin reads this and
+// explicitly presses "Start Read-Only Pilot Sync".
+async function openPilotReview(id) {
+  const m = await api('/api/mail/mailboxes/' + id);
+  const caps = m.capabilities || {}; const ids = caps.ids || {};
+  $('dlgTitle').textContent = 'مراجعة ما قبل المزامنة — ' + m.address;
+  $('dlgBody').innerHTML = `
+    <table>
+      <tr><th>النوع كما أعادته الاستجابة</th><td>${TYPE_AR[m.detectedType] || esc(m.detectedType)}</td></tr>
+      <tr><th>Provider IDs</th><td style="direction:ltr">groupId: ${esc(ids.groupId || '—')} | accountId: ${esc(ids.accountId || '—')} | mailboxId: ${esc(ids.mailboxId || '—')} | in Org Accounts: ${ids.appearsInOrgAccounts ? 'yes' : 'no'}</td></tr>
+      <tr><th>طريقة الوصول المختبرة</th><td>${esc(caps.workingIdKind || '—')} = <span style="direction:ltr">${esc(caps.workingId || '—')}</span></td></tr>
+      <tr><th>عدد المجلدات</th><td>${caps.folderCount ?? '—'}</td></tr>
+      <tr><th>الأرشيف القديم عبر API</th><td>${caps.messages ? '✅ متاح بالترقيم (Backfill)' : '❌ غير متاح'}</td></tr>
+      <tr><th>Sent</th><td>${caps.sent ? '✅ متاح' : '❌ لم يظهر'}</td></tr>
+      <tr><th>المرفقات</th><td>معلومات: ${caps.attachmentInfo === null ? 'لم تُختبر (لا رسالة بمرفق في العينة)' : caps.attachmentInfo ? '✅' : '❌'} — تنزيل فعلي: ${caps.attachmentDownload === null || caps.attachmentDownload === undefined ? 'لم يُختبر' : caps.attachmentDownload ? '✅' : '❌'}</td></tr>
+      <tr><th>محتوى الرسائل (Content)</th><td>${caps.content ? '✅' : '❌'}</td></tr>
+      <tr><th>endpoint المجموعة</th><td>${caps.groupMessagesEndpoint === 'moderation_queue_only' ? 'طابور مراجعة فقط — ليس الأرشيف' : esc(caps.groupMessagesEndpoint || 'لا ينطبق')}</td></tr>
+      <tr><th>الاستراتيجية</th><td><b>${STRAT_AR[m.strategy]}</b></td></tr>
+      <tr><th>سبب اختيارها</th><td>${esc(m.statusDetail || 'قدرة قراءة حية مثبتة بالفحص أعلاه')}</td></tr>
+      <tr><th>ما لن يصل إليه النظام</th><td>${caps.messages ? (caps.sent ? 'لا شيء معروف ضمن المجلدات الظاهرة' : 'مجلد Sent لم يظهر في الفحص') : 'الرسائل الحية بالكامل — الأرشيف يتطلب استيراد eDiscovery'}</td></tr>
+    </table>
+    <div class="banner warn" style="margin-top:10px">المزامنة قراءة فقط: لا تعديل، لا تعليم كمقروء، لا حذف، لا نقل، ولا أي كتابة على جانب Zoho.</div>
+    <button class="btn primary" style="width:100%" onclick="document.getElementById('dlg').close(); runSync(${m.id})">Start Read-Only Pilot Sync ▶</button>`;
+  $('dlg').showModal();
 }
 async function runSync(id) {
   banners('<div class="banner warn">مزامنة قراءة-فقط جارية (ملتزمة بحد المعدل ~25 طلب/دقيقة)...</div>');
@@ -375,9 +406,10 @@ async function openMailboxDetail(id) {
       <tr><th>الأعضاء</th><td>${m.members.map(x => `<span class="tag gray" style="direction:ltr">${esc(x.email)} (${esc(x.role)})</span>`).join('') || '—'}</td></tr>
       <tr><th>المشرفون</th><td>${m.moderators.map(x => `<span class="tag gray" style="direction:ltr">${esc(x)}</span>`).join('') || '—'}</td></tr>
       <tr><th>القدرات المثبتة بالفحص</th><td>
-        مجلدات: ${m.capabilities.folders ? '✅' : '❌'} —
+        مجلدات: ${m.capabilities.folders ? '✅ (' + (m.capabilities.folderCount || 0) + ')' : '❌'} —
         رسائل: ${m.capabilities.messages ? '✅' : '❌'} —
-        مرفقات: ${m.capabilities.attachments === null ? '؟' : m.capabilities.attachments ? '✅' : '❌'} —
+        محتوى: ${m.capabilities.content ? '✅' : '❌'} —
+        مرفقات: ${m.capabilities.attachmentInfo == null ? '؟' : m.capabilities.attachmentInfo ? '✅' : '❌'}${m.capabilities.attachmentDownload ? ' (تنزيل فعلي ✅)' : ''} —
         Sent: ${m.capabilities.sent ? '✅' : '❌'} —
         طابور المراجعة: ${m.capabilities.moderationQueueReadable ? '✅ (المراجعة فقط، ليس الأرشيف)' : '—'}</td></tr>
     </table>

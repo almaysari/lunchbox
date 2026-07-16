@@ -125,6 +125,10 @@ async function handle(req, res, url, user, body, helpers) {
   }
   if ((m = p.match(/^\/api\/mail\/mailboxes\/(\d+)\/sync$/)) && req.method === 'POST') {
     if (!requireAdmin()) return true;
+    // Explicit admin action — this is the ONLY thing that enables scheduled
+    // incremental sync afterwards. Discovery never triggers sync by itself.
+    db.prepare('UPDATE mailboxes SET sync_enabled=1 WHERE id=?').run(Number(m[1]));
+    audit(user.id, 'mail.pilot_sync.start', 'mailbox:' + m[1]);
     const summary = await syncMailbox(Number(m[1]));
     return send(200, summary);
   }

@@ -6,6 +6,11 @@
 > **بيئة الشركة الحالية:** 20 Zoho Shared Mailboxes عبر النطاقين
 > `exoticcolors.org` و`thetaurus.world` — الصندوق المشترك هو الحالة الأساسية
 > في التصميم، وليس حالة جانبية. راجع `docs/COMPANY-ENVIRONMENT.md`.
+>
+> **مصطلحات صارمة:** نتائج الوضع التجريبي تُسمى Mock Discovery، والمقارنة
+> بالقائمة المرجعية Fixture Validation؛ عبارة «Zoho أعاد X» محجوزة حصريًا
+> لنتائج Live Zoho API Discovery بعد OAuth حقيقي.
+> ما ثبت وما لم يثبت بعد: `docs/VERIFICATION-STATUS.md`.
 
 بدون تبعيات خارجية إطلاقًا — يتطلب Node.js ≥ 22 فقط.
 

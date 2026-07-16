@@ -78,6 +78,7 @@ CREATE TABLE IF NOT EXISTS mailboxes (
   moderation_count INTEGER NOT NULL DEFAULT 0,
   capabilities TEXT NOT NULL DEFAULT '{}',         -- JSON: proven-by-probe read access {folders, messages, attachments, sent, evidence}
   is_pilot INTEGER NOT NULL DEFAULT 0,             -- sync runs ONLY for pilot-selected mailboxes
+  sync_enabled INTEGER NOT NULL DEFAULT 0,         -- set when an admin explicitly starts the first sync
   status TEXT NOT NULL DEFAULT 'new',              -- new | detecting | detected | ready | syncing | error | no_live_api
   status_detail TEXT NOT NULL DEFAULT '',
   created_at INTEGER NOT NULL

@@ -5,13 +5,19 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 const { loadEnv } = require('./core/env');
+
+const cfg = loadEnv(__dirname);
+// Demo data NEVER mixes with live data: demo mode gets its own database
+// directory, so mock-discovered mailboxes can never leak into a live registry.
+if (cfg.MODE === 'demo' && !process.env.MADAR_DATA_DIR) {
+  process.env.MADAR_DATA_DIR = path.join(__dirname, 'data-demo');
+}
+
 const cryptoCore = require('./core/crypto');
 const { getDb } = require('./core/db');
 const auth = require('./core/auth');
 const { audit, recentAudit } = require('./core/audit');
 const mailRoutes = require('./modules/mail/routes');
-
-const cfg = loadEnv(__dirname);
 if (!cfg.MADAR_SECRET) {
   if (cfg.MODE === 'demo') {
     cfg.MADAR_SECRET = 'demo-secret-not-for-production';
@@ -142,8 +148,10 @@ async function start() {
     console.log(`[madar] running on http://localhost:${cfg.PORT} (mode: ${cfg.MODE})`);
   });
   if (cfg.SYNC_INTERVAL_MINUTES > 0) {
+    // Scheduled incremental sync runs ONLY for pilot mailboxes whose first
+    // sync was explicitly started by an admin from the UI (sync_enabled=1).
     setInterval(async () => {
-      const pilots = getDb().prepare("SELECT id, address FROM mailboxes WHERE is_pilot=1 AND strategy='mail_api'").all();
+      const pilots = getDb().prepare("SELECT id, address FROM mailboxes WHERE is_pilot=1 AND sync_enabled=1 AND strategy='mail_api'").all();
       for (const mb of pilots) {
         try { await require('./modules/mail/sync').syncMailbox(mb.id); }
         catch (e) { console.error('[madar] scheduled sync failed for', mb.address, e.message); }

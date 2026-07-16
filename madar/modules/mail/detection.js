@@ -109,6 +109,7 @@ async function discoverOrganization(zoho) {
   const findAccountFor = (email) =>
     accounts.find(a => extractEmails(a).includes(email)) ||
     orgAccounts.find(a => extractEmails(a).includes(email));
+  const inOrgAccounts = (email) => orgAccounts.some(a => extractEmails(a).includes(email));
 
   // Group-backed entities (shared mailboxes are the primary case here).
   for (const g of groups) {
@@ -125,6 +126,8 @@ async function discoverOrganization(zoho) {
       orgId: zoid ? String(zoid) : null,
       providerGroupId: gid || null,
       providerAccountId: acct ? String(acct.accountId) : null,
+      providerMailboxId: String((acct && acct.mailboxId) || g.mailboxId || detailData.mailboxId || '') || null,
+      foundInOrgAccounts: inOrgAccounts(email),
       aliases: groupAliases({ ...g, ...detailData }),
       accessLevel: accessLevel({ ...g, ...detailData }),
       members: extractMembers(detailData),
@@ -146,6 +149,8 @@ async function discoverOrganization(zoho) {
       orgId: zoid ? String(zoid) : null,
       providerGroupId: null,
       providerAccountId: String(a.accountId),
+      providerMailboxId: String(a.mailboxId || '') || null,
+      foundInOrgAccounts: inOrgAccounts(email),
       aliases: (Array.isArray(a.emailAddress) ? a.emailAddress.map(e => lc(e.mailId || e)) : []).filter(e => e && e !== email),
       accessLevel: '',
       members: [], moderators: [], moderationCount: 0,
@@ -178,11 +183,26 @@ function extractModerators(g) {
 
 // ---- per-mailbox capability probe (read-only) ----
 // Never invents an API: tries the documented endpoints with every candidate id
-// and records the literal outcome.
+// and records the literal outcome. Answers, per mailbox:
+//   groupId? accountId? mailboxId? appears in org accounts? folders readable?
+//   messages? full content? attachment info? real attachment download? Sent?
+//   does the group messages endpoint expose the archive or moderation only?
 async function probeCapabilities(zoho, mailbox) {
-  const caps = { folders: false, messages: false, attachments: null, sent: false, evidence: {} };
+  const caps = {
+    ids: {
+      groupId: mailbox.providerGroupId || null,
+      accountId: mailbox.providerAccountId || null,
+      mailboxId: mailbox.providerMailboxId || null,
+      appearsInOrgAccounts: Boolean(mailbox.foundInOrgAccounts),
+    },
+    folders: false, folderCount: 0, messages: false, content: false,
+    attachmentInfo: null, attachmentDownload: null, sent: false, evidence: {},
+  };
   const candidates = [];
   if (mailbox.providerAccountId) candidates.push({ kind: 'accountId', id: mailbox.providerAccountId });
+  if (mailbox.providerMailboxId && mailbox.providerMailboxId !== mailbox.providerAccountId) {
+    candidates.push({ kind: 'mailboxId', id: mailbox.providerMailboxId });
+  }
   if (mailbox.providerGroupId) candidates.push({ kind: 'groupIdAsAccountId', id: mailbox.providerGroupId });
 
   for (const cand of candidates) {
@@ -191,6 +211,7 @@ async function probeCapabilities(zoho, mailbox) {
     const folders = (f.body && f.body.data) || [];
     if (f.status === 200 && Array.isArray(folders) && folders.length) {
       caps.folders = true;
+      caps.folderCount = folders.length;
       caps.workingId = cand.id;
       caps.workingIdKind = cand.kind;
       const inbox = folders.find(x => lc(x.folderType) === 'inbox' || lc(x.folderName) === 'inbox') || folders[0];
@@ -201,22 +222,40 @@ async function probeCapabilities(zoho, mailbox) {
       const msgs = (m.body && m.body.data) || [];
       if (m.status === 200 && Array.isArray(msgs)) {
         caps.messages = true;
+        if (msgs[0]) {
+          const c = await zoho.getMessageContent(cand.id, inbox.folderId, msgs[0].messageId);
+          caps.evidence['content'] = sanitize(c);
+          caps.content = c.status === 200;
+        }
         const withAtt = msgs.find(x => x.hasAttachment === '1' || x.hasAttachment === 1 || x.hasAttachment === true);
         if (withAtt) {
           const ai = await zoho.getAttachmentInfo(cand.id, inbox.folderId, withAtt.messageId);
-          caps.evidence['attachments'] = sanitize(ai);
-          caps.attachments = ai.status === 200;
+          caps.evidence['attachmentInfo'] = sanitize(ai);
+          caps.attachmentInfo = ai.status === 200;
+          const first = ai.status === 200 && (((ai.body || {}).data || {}).attachments || [])[0];
+          if (first) {
+            // real download probe: fetch one attachment, record size only
+            const dl = await zoho.downloadAttachment(cand.id, inbox.folderId, withAtt.messageId, first.attachmentId);
+            caps.attachmentDownload = dl.status === 200 && Buffer.isBuffer(dl.body);
+            caps.evidence['attachmentDownload'] = { url: dl.url, status: dl.status, bytes: Buffer.isBuffer(dl.body) ? dl.body.length : 0 };
+          }
         }
       }
       break; // a working id was found — no need to try the next candidate
     }
   }
 
-  // Moderation queue is metadata-only visibility — NEVER counted as archive access.
+  // Group messages endpoint nature: per Zoho docs it is the MODERATION queue.
+  // We verify against the mailbox's live message list when both are readable,
+  // and never count it as archive access.
   if (mailbox.orgId && mailbox.providerGroupId) {
     const mod = await zoho.getGroupModeration(mailbox.orgId, mailbox.providerGroupId);
     caps.evidence['moderationQueue'] = sanitize(mod);
     caps.moderationQueueReadable = mod.status === 200;
+    const modCount = Array.isArray((mod.body || {}).data) ? mod.body.data.length : null;
+    caps.groupMessagesEndpoint = mod.status !== 200 ? 'unreadable'
+      : (modCount === 0 || modCount === mailbox.moderationCount) && modCount !== null
+        ? 'moderation_queue_only' : 'returned_data_needs_review';
   }
   return caps;
 }

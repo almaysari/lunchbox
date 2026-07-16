@@ -1,3 +1,4 @@
-# Runtime data: OAuth tokens, imported CVs, local db — never commit.
+# Runtime data: OAuth tokens, messages, attachments, local db — never commit.
 data/
+data-demo/
 .env
