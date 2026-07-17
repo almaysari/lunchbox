@@ -74,6 +74,20 @@ jobs:
       MADAR_CSRF_SECRET: "cccc3333cccc3333cccc3333cccc3333cccc3333cccc3333cccc3333cccc3333" 
     steps:
       - uses: actions/checkout@v4
+      - name: Create host .env exactly like a real operator (0600, CI-only values)
+        run: |
+          umask 077
+          cat > .env <<EOF
+          MODE=live
+          PORT=3000
+          BASE_URL=http://localhost:3000
+          POSTGRES_PASSWORD=$POSTGRES_PASSWORD
+          MADAR_ENCRYPTION_KEY=$MADAR_ENCRYPTION_KEY
+          MADAR_SESSION_SECRET=$MADAR_SESSION_SECRET
+          MADAR_CSRF_SECRET=$MADAR_CSRF_SECRET
+          EOF
+          chmod 600 .env
+          test "$(stat -c %a .env)" = "600"
       - name: Build and start the full stack
         run: docker compose up -d --build
       - name: Stack status
@@ -88,6 +102,19 @@ jobs:
           curl -fsS http://localhost:3000/health/ready
       - name: App container runs as non-root
         run: test "$(docker compose exec -T app whoami)" = "node"
+      - name: .env never enters the container or the image layers
+        run: |
+          docker compose exec -T app sh -c 'test ! -e /app/.env'
+          docker run --rm --entrypoint sh madar-app -c 'test ! -e /app/.env'
+      - name: Secrets present in process.env (length-checked, never printed)
+        run: |
+          docker compose exec -T app node -e "
+            for (const k of ['MADAR_ENCRYPTION_KEY','MADAR_SESSION_SECRET','MADAR_CSRF_SECRET']) {
+              if (!/^[0-9a-fA-F]{64,}$/.test(process.env[k] || '')) { console.error(k + ' missing/invalid in process.env'); process.exit(1); }
+            }
+            console.log('secrets OK (from env_file, not from /app/.env)');"
+      - name: No EACCES anywhere in app logs
+        run: '! docker compose logs app | grep -i EACCES'
       - name: Create admin non-interactively (CI-only credentials)
         run: |
           docker compose exec -T -e MADAR_ADMIN_EMAIL=ci@example.com -e MADAR_ADMIN_NAME=CI \

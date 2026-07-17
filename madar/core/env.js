@@ -3,9 +3,14 @@ const fs = require('fs');
 const path = require('path');
 
 function loadEnv(dir) {
+  // Local-dev convenience only: inside Docker the file does not exist
+  // (.dockerignore) and configuration arrives via process.env (env_file).
+  // Missing or unreadable file is silently fine — never fatal, never logged.
   const file = path.join(dir, '.env');
-  if (fs.existsSync(file)) {
-    for (const line of fs.readFileSync(file, 'utf8').split(/\r?\n/)) {
+  let text = null;
+  try { fs.accessSync(file, fs.constants.R_OK); text = fs.readFileSync(file, 'utf8'); } catch { /* env-only mode */ }
+  if (text) {
+    for (const line of text.split(/\r?\n/)) {
       const m = line.match(/^\s*([A-Z0-9_]+)\s*=\s*(.*)\s*$/);
       if (m && !(m[1] in process.env)) process.env[m[1]] = m[2];
     }
