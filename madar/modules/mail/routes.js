@@ -128,10 +128,14 @@ async function handle(req, res, url, user, body, helpers) {
     const comparison = detection.compareWithBaseline(
       discovery.mailboxes.filter(x => x.detectedType === 'shared_mailbox'),
       baseline.filter(b => (b.type || 'shared_mailbox') === 'shared_mailbox'));
+    // record WHICH Zoho account authorized this connection (admin verification)
+    const authorizedAs = (((discovery.evidence.accounts || {}).body || {}).data || [])
+      .map(a => a.mailboxAddress || a.primaryEmailAddress).filter(Boolean).join(', ');
+    if (authorizedAs) await q('UPDATE connections SET status_detail = $1 WHERE id = $2', ['authorized as: ' + authorizedAs, connId]);
     await q('INSERT INTO detection_reports (mailbox_id, report) VALUES (0, $1)',
-      [JSON.stringify({ scope: 'organization', evidence: discovery.evidence, comparison })]);
+      [JSON.stringify({ scope: 'organization', evidence: discovery.evidence, comparison, integrity: discovery.integrity, authorizedAs })]);
     await audit(user.id, 'mail.discover', 'connection:' + connId, comparison);
-    return send(200, { results, comparison, evidence: discovery.evidence });
+    return send(200, { results, comparison, integrity: discovery.integrity, authorizedAs, evidence: discovery.evidence });
   }
   if (p === '/api/mail/discovery-status' && req.method === 'GET') {
     if (!requireMailAdmin()) return true;

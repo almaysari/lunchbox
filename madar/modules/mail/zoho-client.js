@@ -13,11 +13,24 @@ const READ_SCOPES = [
   'ZohoMail.organization.groups.READ',
 ].join(',');
 
+const REQUEST_TIMEOUT_MS = Number(process.env.MADAR_REQUEST_TIMEOUT_MS || 20000);
+const MIN_INTERVAL_MS = Math.ceil(60000 / Number(process.env.MADAR_MAX_RPM || 25));
+
 class ZohoClient {
   constructor(connection) {
     this.conn = connection;
     this.accessToken = null;
     this.expiry = 0;
+    this._lastCall = 0;
+  }
+
+  // Client-level rate budget: EVERY call (discovery probes included) is
+  // spaced to stay under Zoho's documented ~30 req/min, with a hard
+  // per-request timeout. No endpoint is ever hammered or retried blindly.
+  async _pace() {
+    const wait = this._lastCall + MIN_INTERVAL_MS - Date.now();
+    if (wait > 0) await new Promise(r => setTimeout(r, wait));
+    this._lastCall = Date.now();
   }
 
   static async forConnection(connectionId) {
@@ -89,8 +102,12 @@ class ZohoClient {
   async get(pathname, { raw = false } = {}) {
     const url = new URL(pathname, this.conn.api_base).toString();
     try {
+      await this._pace();
       const token = await this.token();
-      const res = await fetch(url, { headers: { Authorization: 'Zoho-oauthtoken ' + token } });
+      const res = await fetch(url, {
+        headers: { Authorization: 'Zoho-oauthtoken ' + token },
+        signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
+      });
       if (raw && res.ok) return { url, status: res.status, body: Buffer.from(await res.arrayBuffer()) };
       const text = await res.text();
       let body; try { body = JSON.parse(text); } catch { body = text.slice(0, 2000); }

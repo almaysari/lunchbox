@@ -10,6 +10,32 @@ const { q, one } = require('../../core/db');
 
 const lc = s => String(s || '').toLowerCase().trim();
 
+// PII-safe evidence for message-level probes: status + shape only —
+// never subjects, senders, recipients, bodies or attachment names.
+function sanitizeMessageList(result) {
+  const data = result.body && result.body.data;
+  return {
+    url: result.url, status: result.status,
+    count: Array.isArray(data) ? data.length : null,
+    fieldsPresent: Array.isArray(data) && data[0] ? Object.keys(data[0]).sort() : [],
+    error: result.status >= 400 ? sanitize(result).body : undefined,
+  };
+}
+function sanitizeContent(result) {
+  const c = result.body && result.body.data && result.body.data.content;
+  return { url: result.url, status: result.status, hasContent: Boolean(c), contentLength: c ? String(c).length : 0 };
+}
+function sanitizeAttachmentInfo(result) {
+  const atts = (((result.body || {}).data) || {}).attachments;
+  return {
+    url: result.url, status: result.status,
+    attachmentCount: Array.isArray(atts) ? atts.length : null,
+    // sizes/types only — filenames may be sensitive
+    shapes: Array.isArray(atts) ? atts.slice(0, 3).map(a => ({ size: a.attachmentSize, type: a.attachmentType })) : [],
+    error: result.status >= 400 ? sanitize(result).body : undefined,
+  };
+}
+
 function sanitize(result) {
   // Evidence stored in DB: keep url/status/body but cap body size.
   const body = typeof result.body === 'string'
@@ -158,6 +184,21 @@ async function discoverOrganization(zoho) {
     });
   }
 
+  // Integrity checks for the discovery report
+  const byAddr = {};
+  for (const mb of out.mailboxes) (byAddr[mb.address] = byAddr[mb.address] || []).push(mb);
+  const providerIds = {};
+  for (const mb of out.mailboxes) {
+    for (const pid of [mb.providerGroupId, mb.providerAccountId].filter(Boolean)) {
+      (providerIds[pid] = providerIds[pid] || []).push(mb.address);
+    }
+  }
+  const primaries = new Set(out.mailboxes.map(m => m.address));
+  out.integrity = {
+    sameAddressFromMultipleEndpoints: Object.entries(byAddr).filter(([, v]) => v.length > 1).map(([a]) => a),
+    duplicateProviderIds: Object.entries(providerIds).filter(([, v]) => v.length > 1).map(([id, v]) => ({ id, addresses: v })),
+    aliasCollisions: out.mailboxes.flatMap(m => (m.aliases || []).filter(a => primaries.has(a)).map(a => ({ alias: a, mailbox: m.address }))),
+  };
   return out;
 }
 
@@ -218,28 +259,25 @@ async function probeCapabilities(zoho, mailbox) {
       const sent = folders.find(x => lc(x.folderType) === 'sent' || lc(x.folderName).includes('sent'));
       caps.sent = Boolean(sent);
       const m = await zoho.listMessages(cand.id, inbox.folderId, { limit: 3 });
-      caps.evidence[`messages.${cand.kind}`] = sanitize(m);
+      caps.evidence[`messages.${cand.kind}`] = sanitizeMessageList(m); // shape only — no PII
       const msgs = (m.body && m.body.data) || [];
       if (m.status === 200 && Array.isArray(msgs)) {
         caps.messages = true;
         if (msgs[0]) {
+          // content endpoint test: status + length only, body never stored
           const c = await zoho.getMessageContent(cand.id, inbox.folderId, msgs[0].messageId);
-          caps.evidence['content'] = sanitize(c);
+          caps.evidence['content'] = sanitizeContent(c);
           caps.content = c.status === 200;
         }
         const withAtt = msgs.find(x => x.hasAttachment === '1' || x.hasAttachment === 1 || x.hasAttachment === true);
         if (withAtt) {
           const ai = await zoho.getAttachmentInfo(cand.id, inbox.folderId, withAtt.messageId);
-          caps.evidence['attachmentInfo'] = sanitize(ai);
+          caps.evidence['attachmentInfo'] = sanitizeAttachmentInfo(ai);
           caps.attachmentInfo = ai.status === 200;
-          const first = ai.status === 200 && (((ai.body || {}).data || {}).attachments || [])[0];
-          if (first) {
-            // real download probe: fetch one attachment, record size only
-            const dl = await zoho.downloadAttachment(cand.id, inbox.folderId, withAtt.messageId, first.attachmentId);
-            caps.attachmentDownload = dl.status === 200 && Buffer.isBuffer(dl.body);
-            caps.evidence['attachmentDownload'] = { url: dl.url, status: dl.status, bytes: Buffer.isBuffer(dl.body) ? dl.body.length : 0 };
-          }
         }
+        // POLICY (Live Discovery phase): attachment DOWNLOAD is never probed —
+        // metadata proves the endpoint; bytes flow only in an approved pilot sync.
+        caps.attachmentDownload = 'not_probed_by_policy';
       }
       break; // a working id was found — no need to try the next candidate
     }
@@ -261,16 +299,20 @@ async function probeCapabilities(zoho, mailbox) {
 }
 
 function chooseStrategy(mailbox, caps) {
-  if (caps.messages) return { strategy: 'mail_api', status: 'ready', detail: `Live read via ${caps.workingIdKind}=${caps.workingId}` };
+  // confidence: high = conclusive probe result (works, or a definitive
+  // documented rejection); medium = metadata only / ambiguous statuses
+  const conclusiveDenial = Object.values(caps.evidence || {}).some(e => e && (e.status === 400 || e.status === 404));
+  const confidence = caps.messages ? 'high' : conclusiveDenial ? 'high' : 'medium';
+  if (caps.messages) return { strategy: 'mail_api', status: 'ready', confidence, detail: `Live read via ${caps.workingIdKind}=${caps.workingId}` };
   if (mailbox.detectedType === 'shared_mailbox') {
     return {
-      strategy: 'ediscovery_import', status: 'no_live_api',
+      strategy: 'ediscovery_import', status: 'no_live_api', confidence,
       detail: 'No live message read via any tested official endpoint (see evidence). ' +
               'Official paths available: admin eDiscovery/Backup export import (archive, NOT live sync)' +
               (caps.moderationQueueReadable ? ' + moderation queue (held mail only, NOT the archive)' : '') + '.',
     };
   }
-  return { strategy: 'none', status: 'error', detail: 'No read path proven for this mailbox type. See evidence.' };
+  return { strategy: 'none', status: 'error', confidence, detail: 'No read path proven for this mailbox type. See evidence.' };
 }
 
 // ---- registry upsert with alias-duplicate protection (PostgreSQL) ----
@@ -285,7 +327,7 @@ async function upsertMailbox(connectionId, m, caps, choice) {
     m.displayName || '', 'zoho', connectionId, m.detectedType, choice.strategy,
     m.providerAccountId, m.providerGroupId, m.orgId, m.accessLevel || '',
     JSON.stringify(m.members || []), JSON.stringify(m.moderators || []),
-    m.moderationCount || 0, JSON.stringify(caps || {}), choice.status, choice.detail,
+    m.moderationCount || 0, JSON.stringify({ ...(caps || {}), confidence: choice.confidence }), choice.status, choice.detail,
   ];
 
   let id;

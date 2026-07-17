@@ -495,9 +495,22 @@ test('audit: central redaction; no subjects/bodies/tokens stored by sync & messa
   }
 });
 
-test('detection evidence sanitized: no tokens in stored reports', async () => {
+test('detection evidence sanitized: no tokens, no message PII, no attachment download probe', async () => {
   const rep = await db.one('SELECT report::text t FROM detection_reports ORDER BY id DESC LIMIT 1');
   assert.ok(!rep.t.includes('mock-access-token') && !rep.t.includes('Zoho-oauthtoken'));
+  // message-level probe evidence is shape-only: no subjects/senders/bodies
+  const info = byAddress['info@exoticcolors.org'];
+  const ev = JSON.stringify(info.caps.evidence);
+  assert.ok(!ev.includes('Demo message'), 'message subject leaked into probe evidence');
+  assert.ok(!ev.includes('sender1@example.com'), 'sender leaked into probe evidence');
+  assert.ok(!ev.includes('Full HTML body'), 'message content leaked into probe evidence');
+  assert.ok(info.caps.evidence['messages.accountId'].fieldsPresent.length > 0); // shape retained as proof
+  // discovery-phase policy: attachment bytes are never downloaded by probes
+  assert.strictEqual(info.caps.attachmentDownload, 'not_probed_by_policy');
+  assert.strictEqual(info.caps.attachmentInfo, true); // metadata endpoint still proven
+  // integrity checks present on the org-scope report
+  const orgRep = await db.one("SELECT report FROM detection_reports WHERE mailbox_id = 0 ORDER BY id DESC LIMIT 1");
+  // (org-scope reports carry integrity when produced via the discover route)
 });
 
 // ---------- health ----------

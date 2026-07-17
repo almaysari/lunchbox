@@ -332,6 +332,10 @@ async function loadDiscovery() {
   $('comparison').innerHTML = modeBanner + `
     ${c.missing.length ? `<div class="banner bad">صناديق في المرجع لم تُعِدها الاستجابة: ${c.missing.map(esc).join('، ')}</div>` : '<div class="banner ok">كل صناديق المرجع ظهرت في الاستجابة ✓</div>'}
     ${c.extra.length ? `<div class="banner warn">عناوين في الاستجابة وليست في المرجع: ${c.extra.map(esc).join('، ')}</div>` : ''}
+    ${d.authorizedAs ? `<div class="sub">تم التصريح بحساب: <b style="direction:ltr">${esc(d.authorizedAs)}</b> — تأكد أنه حساب الأدمن الصحيح</div>` : ''}
+    ${d.integrity && (d.integrity.aliasCollisions?.length || d.integrity.duplicateProviderIds?.length || d.integrity.sameAddressFromMultipleEndpoints?.length)
+      ? `<div class="banner warn">تنبيهات تكامل: aliases متصادمة: ${(d.integrity.aliasCollisions||[]).length} — معرفات مكررة: ${(d.integrity.duplicateProviderIds||[]).length} — عناوين من أكثر من endpoint: ${(d.integrity.sameAddressFromMultipleEndpoints||[]).length}</div>`
+      : '<div class="sub">تكامل الاكتشاف: لا تصادم aliases، لا معرفات مكررة، لا عناوين مزدوجة المصدر</div>'}
     <div class="sub">آخر اكتشاف: ${fmtT(d.at)} — <a href="#" onclick="showEvidence();return false">عرض الأدلة الخام (Sanitized)</a></div>`;
   window._lastEvidence = d.evidence;
 }
@@ -438,7 +442,8 @@ async function openMailboxDetail(id) {
   $('dlgBody').innerHTML = `
     <table>
       <tr><th>النوع المكتشف</th><td>${TYPE_AR[m.detectedType] || esc(m.detectedType)}</td></tr>
-      <tr><th>طريقة الربط الحالية</th><td>${STRAT_AR[m.strategy]} <span class="sub">(قابلة للتغيير دون فقدان البيانات)</span></td></tr>
+      <tr><th>طريقة الربط الحالية</th><td>${STRAT_AR[m.strategy]} <span class="sub">(قابلة للتغيير دون فقدان البيانات)</span>
+        ${m.capabilities.confidence ? `<span class="tag ${m.capabilities.confidence === 'high' ? 'ok' : 'warn'}">ثقة: ${m.capabilities.confidence}</span>` : ''}</td></tr>
       <tr><th>الحالة</th><td>${esc(m.status)} — ${esc(m.statusDetail)}</td></tr>
       <tr><th>Zoho Group ID</th><td style="direction:ltr">${esc(m.providerGroupId || '—')}</td></tr>
       <tr><th>Zoho Account ID</th><td style="direction:ltr">${esc(m.providerAccountId || 'لا يوجد — لم يُرجعه أي endpoint')}</td></tr>
