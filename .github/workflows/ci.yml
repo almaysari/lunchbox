@@ -29,6 +29,7 @@ jobs:
       DATABASE_URL: postgresql://madar:madar_ci_only@localhost:5432/madar_test
     steps:
       - uses: actions/checkout@v4
+        with: { fetch-depth: 0 } # gitleaks needs the whole history, not a shallow clone
       - uses: actions/setup-node@v4
         with: { node-version: 22, cache: npm, cache-dependency-path: madar/package-lock.json }
       - run: npm ci
@@ -54,11 +55,16 @@ jobs:
         run: npm run verify:security
       - name: Shell scripts syntax
         run: for f in scripts/*.sh; do bash -n "$f"; done
+      # Pinned binary run directly: gitleaks-action@v2 ignores custom args and
+      # builds an event-dependent commit range (it broke on pull_request with a
+      # shallow clone, scanning 0 bytes). This command is identical on every
+      # event and genuinely covers the full history of every ref.
       - name: Gitleaks (full history secret scan)
-        uses: gitleaks/gitleaks-action@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with: { args: detect --source . --log-opts=--all --verbose --redact }
+        working-directory: .
+        run: |
+          curl -sSfL -o /tmp/gitleaks.tgz https://github.com/gitleaks/gitleaks/releases/download/v8.24.3/gitleaks_8.24.3_linux_x64.tar.gz
+          tar -xzf /tmp/gitleaks.tgz -C /tmp gitleaks
+          /tmp/gitleaks detect --source . --log-opts=--all --redact --verbose
 
   docker:
     name: Docker runtime verification (build, health, persistence)
