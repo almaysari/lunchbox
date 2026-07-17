@@ -132,6 +132,15 @@
     </div>
 
     <div class="card">
+      <div class="row" style="justify-content:space-between">
+        <h3 style="margin:0">استلام أرشيفات المؤسسة <span class="sub" id="intakeSummary"></span></h3>
+        <button class="btn primary" onclick="batchIntake()">📦 رفع أرشيفات متعددة (ربط تلقائي بالصناديق)</button>
+      </div>
+      <div class="sub" style="margin:6px 0">التصدير من Zoho eDiscovery يدوي حتمًا (موثّق في DECISIONS) — كل ما بعد التنزيل يجري هنا: اختر كل ملفات ZIP دفعة واحدة، وسيُقترح ربط كل ملف بصندوقه من اسمه، وتؤكد الربط قبل البدء.</div>
+      <table id="intakeTable"></table>
+    </div>
+
+    <div class="card">
       <h3 style="margin-top:0">سجل الصناديق <span class="sub" id="mbCount"></span></h3>
       <table id="mbTable"></table>
     </div>
@@ -304,7 +313,111 @@ async function openMessage(occId) {
 
 /* ================= ADMIN ================= */
 async function loadAdmin() {
-  await Promise.all([loadConnections(), loadDiscovery(), loadMailboxesAdmin(), loadUsers(), loadAudit()]);
+  await Promise.all([loadConnections(), loadDiscovery(), loadMailboxesAdmin(), loadIntake(), loadUsers(), loadAudit()]);
+}
+
+/* ---------- org-wide archive intake ---------- */
+const INTAKE_STATE = {
+  pending: ['Pending — بانتظار الأرشيف', 'gray'],
+  importing: ['Importing — جاري الاستيراد', 'warn'],
+  completed: ['Completed — مكتمل', 'ok'],
+  failed: ['Failed — فشل', 'bad'],
+};
+async function loadIntake() {
+  const d = await api('/api/mail/archive-intake');
+  window._intake = d;
+  $('intakeSummary').textContent =
+    `(${d.summary.completed}/${d.summary.total} مكتمل — ${d.summary.pending} بانتظار — ${d.summary.failed} فاشل)`;
+  $('intakeTable').innerHTML = `<tr><th>الصندوق</th><th>الحالة</th><th>رسائل مستوردة</th><th>مرفقات</th><th>أجزاء</th><th>آخر الملفات</th><th></th></tr>` +
+    d.mailboxes.map(r => {
+      const [label, cls] = INTAKE_STATE[r.state] || [r.state, 'gray'];
+      return `<tr>
+      <td><b>${esc(r.displayName)}</b><div class="sub" style="direction:ltr;text-align:right">${esc(r.address)}</div></td>
+      <td><span class="tag ${cls}">${esc(label)}</span></td>
+      <td>${r.imported}</td><td>${r.attachments}</td>
+      <td>${r.completedParts}${r.failedParts ? ` <span class="tag bad">فشل: ${r.failedParts}</span>` : ''}</td>
+      <td class="sub" style="direction:ltr;text-align:left;font-size:11px">${r.imports.slice(0, 3).map(i =>
+        `${esc(i.filename || '#' + i.id)} — ${esc(i.status)}${i.error ? ' (' + esc(i.error) + ')' : ''}`).join('<br>') || '—'}</td>
+      <td><button class="btn" onclick="uploadArchive(${r.mailboxId})">رفع ZIP لهذا الصندوق</button></td>
+    </tr>`;
+    }).join('');
+}
+// Filename -> mailbox proposal. Proposal ONLY: the admin confirms every binding
+// before anything is imported (message-source correctness is non-negotiable).
+function guessMailboxForFile(name, mailboxes) {
+  const n = name.toLowerCase();
+  for (const m of mailboxes) {
+    const addr = m.address.toLowerCase();
+    const variants = [addr, addr.replace(/[@.]/g, '_'), addr.replace(/[@.]/g, '-'), addr.replace('@', '_at_')];
+    if (variants.some(v => n.includes(v))) return m.mailboxId;
+  }
+  // local-part match only if it is unambiguous across all shared mailboxes
+  const locals = {};
+  for (const m of mailboxes) {
+    const lp = m.address.toLowerCase().split('@')[0];
+    (locals[lp] = locals[lp] || []).push(m.mailboxId);
+  }
+  for (const [lp, ids] of Object.entries(locals)) {
+    if (ids.length === 1 && new RegExp('(^|[^a-z0-9])' + lp.replace(/[.*+?^${}()|[\]\\-]/g, '\\$&') + '([^a-z0-9]|$)').test(n)) return ids[0];
+  }
+  return null;
+}
+function batchIntake() {
+  const inp = document.createElement('input');
+  inp.type = 'file'; inp.accept = '.zip'; inp.multiple = true;
+  inp.onchange = () => {
+    const files = [...inp.files]; if (!files.length) return;
+    const boxes = (window._intake && window._intake.mailboxes) || [];
+    window._batchFiles = files;
+    const rows = files.map((f, i) => {
+      const guess = guessMailboxForFile(f.name, boxes);
+      return `<tr>
+        <td style="direction:ltr;text-align:left">${esc(f.name)}<div class="sub">${(f.size / 1048576).toFixed(1)}MB</div></td>
+        <td><select id="bmap${i}">
+          <option value="">— اختر الصندوق —</option>
+          ${boxes.map(b => `<option value="${b.mailboxId}" ${guess === b.mailboxId ? 'selected' : ''}>${esc(b.address)}</option>`).join('')}
+        </select>${guess ? '' : ' <span class="tag warn">لم يُتعرف من الاسم</span>'}</td>
+      </tr>`;
+    }).join('');
+    $('dlgTitle').textContent = 'تأكيد ربط الأرشيفات بالصناديق قبل الاستيراد';
+    $('dlgBody').innerHTML = `
+      <div class="sub">الربط أدناه اقتراح من أسماء الملفات — راجعه وصحّح أي ملف قبل البدء. لن يُستورد أي ملف بلا صندوق محدد.</div>
+      <table><tr><th>الملف</th><th>الصندوق الهدف</th></tr>${rows}</table>
+      <div class="row" style="margin-top:10px;justify-content:flex-end">
+        <button class="btn primary" onclick="runBatchIntake()">ابدأ استيراد الكل</button>
+      </div>
+      <div id="batchProgress" style="margin-top:8px"></div>`;
+    $('dlg').showModal();
+  };
+  inp.click();
+}
+async function runBatchIntake() {
+  const files = window._batchFiles || [];
+  const plan = [];
+  for (let i = 0; i < files.length; i++) {
+    const v = $('bmap' + i).value;
+    if (!v) { $('batchProgress').innerHTML = `<div class="banner bad">الملف «${esc(files[i].name)}» بلا صندوق — حدده أو أزل اختياره.</div>`; return; }
+    plan.push({ file: files[i], mailboxId: Number(v) });
+  }
+  let done = 0, imported = 0, attachments = 0, duplicates = 0;
+  const failures = [];
+  for (const p of plan) {
+    $('batchProgress').innerHTML = `<div class="banner warn">جاري ${done + 1}/${plan.length}: ${esc(p.file.name)}…</div>`;
+    const r = await fetch(`/api/mail/mailboxes/${p.mailboxId}/import-archive`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/zip', 'X-CSRF-Token': CSRF, 'X-File-Name': encodeURIComponent(p.file.name) },
+      body: p.file,
+    });
+    const j = await r.json();
+    if (r.ok) { imported += j.imported; attachments += j.attachments; duplicates += j.duplicates; }
+    else failures.push(`${p.file.name}: ${j.error}`);
+    done++;
+    loadIntake();
+  }
+  $('batchProgress').innerHTML = (failures.length
+    ? `<div class="banner bad">فشل ${failures.length} ملف:<br>${failures.map(esc).join('<br>')}</div>` : '')
+    + `<div class="banner ok">اكتمل ${plan.length - failures.length}/${plan.length}: ${imported} رسالة، ${attachments} مرفق، تكرارات مُنعت: ${duplicates}.</div>`;
+  loadIntake(); loadMailboxesAdmin(); loadMailboxesForMail();
 }
 async function loadConnections() {
   const conns = await api('/api/mail/connections');
@@ -494,13 +607,13 @@ function uploadArchive(id) {
     let imported = 0, attachments = 0, duplicates = 0;
     for (let i = 0; i < files.length; i++) {
       banners(`<div class="banner warn">جاري استيراد الأرشيف ${i + 1}/${files.length}: ${esc(files[i].name)} (استيراد أرشيفي رسمي — ليس مزامنة حية)...</div>`);
-      const r = await fetch(`/api/mail/mailboxes/${id}/import-archive`, { method:'POST', headers:{ 'Content-Type':'application/zip', 'X-CSRF-Token': CSRF }, body:files[i] });
+      const r = await fetch(`/api/mail/mailboxes/${id}/import-archive`, { method:'POST', headers:{ 'Content-Type':'application/zip', 'X-CSRF-Token': CSRF, 'X-File-Name': encodeURIComponent(files[i].name) }, body:files[i] });
       const j = await r.json();
-      if (!r.ok) { banners(`<div class="banner bad">فشل الملف ${esc(files[i].name)}: ${esc(j.error)}</div>`); return; }
+      if (!r.ok) { banners(`<div class="banner bad">فشل الملف ${esc(files[i].name)}: ${esc(j.error)}</div>`); loadIntake(); return; }
       imported += j.imported; attachments += j.attachments; duplicates += j.duplicates;
     }
     banners(`<div class="banner ok">استيراد الأرشيف (${files.length} ملف): ${imported} رسالة، ${attachments} مرفق، تكرارات مُنعت: ${duplicates}.</div>`);
-    loadMailboxesAdmin(); loadMailboxesForMail();
+    loadIntake(); loadMailboxesAdmin(); loadMailboxesForMail();
   };
   inp.click();
 }

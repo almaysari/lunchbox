@@ -227,6 +227,96 @@ test('endpoint matrix: per-endpoint evidence rows with honest classifications', 
   assert.strictEqual(denied.status, 403);
 });
 
+// ---------- org-wide archive intake pipeline ----------
+// Minimal stored-entry ZIP builder (the importer reads stored + deflate).
+function buildZip(entries) {
+  const parts = [], central = [];
+  let offset = 0;
+  for (const e of entries) {
+    const name = Buffer.from(e.name, 'utf8');
+    const data = Buffer.from(e.data, 'utf8');
+    const local = Buffer.alloc(30);
+    local.writeUInt32LE(0x04034b50, 0); local.writeUInt16LE(20, 4);
+    local.writeUInt16LE(0, 8); // method 0 = stored
+    local.writeUInt32LE(data.length, 18); local.writeUInt32LE(data.length, 22);
+    local.writeUInt16LE(name.length, 26);
+    parts.push(local, name, data);
+    const cd = Buffer.alloc(46);
+    cd.writeUInt32LE(0x02014b50, 0); cd.writeUInt16LE(20, 6);
+    cd.writeUInt16LE(0, 10); cd.writeUInt32LE(data.length, 20); cd.writeUInt32LE(data.length, 24);
+    cd.writeUInt16LE(name.length, 28); cd.writeUInt32LE(offset, 42);
+    central.push(cd, name);
+    offset += 30 + name.length + data.length;
+  }
+  const cdBuf = Buffer.concat(central);
+  const eocd = Buffer.alloc(22);
+  eocd.writeUInt32LE(0x06054b50, 0);
+  eocd.writeUInt16LE(entries.length, 8); eocd.writeUInt16LE(entries.length, 10);
+  eocd.writeUInt32LE(cdBuf.length, 12); eocd.writeUInt32LE(offset, 16);
+  return Buffer.concat([...parts, cdBuf, eocd]);
+}
+const eml = (id, subject, to) => [
+  `Message-ID: <${id}@corp.example>`, `From: "Vendor" <vendor@example.com>`, `To: ${to}`,
+  `Subject: ${subject}`, `Date: Mon, 13 Jul 2026 10:00:00 +0400`, '', `Body of ${subject}.`,
+].join('\r\n');
+
+test('archive intake: multi-mailbox pipeline — status rows, cross-mailbox dedup with per-source occurrences', async () => {
+  const hr = byAddress['hr@exoticcolors.org'];
+  const fin = byAddress['finance@exoticcolors.org'];
+
+  // hr@ part: two messages (one will repeat in finance@'s archive)
+  const zipHr = buildZip([
+    { name: 'Inbox/msg1.eml', data: eml('inv-1001', 'Invoice 1001', 'hr@exoticcolors.org') },
+    { name: 'Inbox/msg2.eml', data: eml('cv-77', 'CV Submission', 'hr@exoticcolors.org') },
+  ]);
+  const r1 = await fakeCall('POST', `/api/mail/mailboxes/${hr.id}/import-archive`,
+    { user: adminUser, body: zipHr, reqHeaders: { 'x-file-name': 'hr%40exoticcolors.org-part1.zip' } });
+  assert.strictEqual(r1.status, 200);
+  assert.strictEqual(r1.body.imported, 2);
+  assert.ok(r1.body.importId);
+
+  // finance@ part contains the SAME Message-ID as one hr@ message:
+  // one canonical globally, but finance@ gets its own occurrence (source kept).
+  const zipFin = buildZip([
+    { name: 'Inbox/msg1.eml', data: eml('inv-1001', 'Invoice 1001', 'finance@exoticcolors.org') },
+  ]);
+  const r2 = await fakeCall('POST', `/api/mail/mailboxes/${fin.id}/import-archive`,
+    { user: adminUser, body: zipFin, reqHeaders: { 'x-file-name': 'finance-part1.zip' } });
+  assert.strictEqual(r2.status, 200);
+  assert.strictEqual(r2.body.imported, 1);
+  const canon = await db.one(`SELECT COUNT(DISTINCT c.id)::int n, COUNT(o.id)::int occ
+    FROM canonical_messages c JOIN message_occurrences o ON o.canonical_message_id = c.id
+    WHERE c.rfc_message_id = '<inv-1001@corp.example>'`);
+  assert.deepStrictEqual({ n: canon.n, occ: canon.occ }, { n: 1, occ: 2 }); // dedup across mailboxes, both sources preserved
+  // re-importing the same part is a no-op (duplicates blocked, nothing lost)
+  const r3 = await fakeCall('POST', `/api/mail/mailboxes/${fin.id}/import-archive`,
+    { user: adminUser, body: zipFin, reqHeaders: { 'x-file-name': 'finance-part1-again.zip' } });
+  assert.strictEqual(r3.body.imported, 0);
+  assert.strictEqual(r3.body.duplicates, 1);
+
+  // corrupt upload → clear failure recorded, nothing imported
+  const r4 = await fakeCall('POST', `/api/mail/mailboxes/${hr.id}/import-archive`,
+    { user: adminUser, body: Buffer.from('not a zip at all'), reqHeaders: { 'x-file-name': 'broken.zip' } });
+  assert.strictEqual(r4.status, 422);
+  const failedRow = await db.one(`SELECT status, error_detail, filename FROM archive_imports
+    WHERE mailbox_id = $1 ORDER BY id DESC LIMIT 1`, [hr.id]);
+  assert.strictEqual(failedRow.status, 'failed');
+  assert.match(failedRow.error_detail, /ZIP/i);
+
+  // intake board: per-mailbox states over ALL shared mailboxes
+  const board = await fakeCall('GET', '/api/mail/archive-intake', { user: adminUser });
+  assert.strictEqual(board.status, 200);
+  assert.strictEqual(board.body.summary.total, 20);
+  const byAddr = Object.fromEntries(board.body.mailboxes.map(x => [x.address, x]));
+  assert.strictEqual(byAddr['hr@exoticcolors.org'].state, 'completed'); // completed parts outweigh the failed one
+  assert.strictEqual(byAddr['hr@exoticcolors.org'].failedParts, 1);
+  assert.strictEqual(byAddr['finance@exoticcolors.org'].state, 'completed');
+  assert.strictEqual(byAddr['tax@exoticcolors.org'].state, 'pending');
+  assert.strictEqual(board.body.summary.pending, 18);
+  // members cannot see the intake board
+  assert.strictEqual((await fakeCall('GET', '/api/mail/archive-intake', { user: memberUser })).status, 403);
+});
+
 // ---------- canonical + occurrences ----------
 test('canonical model: same message in two mailboxes = 1 canonical, 2 occurrences (nothing lost)', async () => {
   const info = byAddress['info@exoticcolors.org'];

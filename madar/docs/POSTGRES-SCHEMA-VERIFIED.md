@@ -8,6 +8,29 @@
 ```sql
 COMMENT ON SCHEMA public IS '';
 
+CREATE TABLE public.archive_imports (
+    id bigint NOT NULL,
+    mailbox_id bigint NOT NULL,
+    filename text DEFAULT ''::text NOT NULL,
+    size_bytes bigint DEFAULT 0 NOT NULL,
+    status text DEFAULT 'pending'::text NOT NULL,
+    totals jsonb,
+    error_detail text,
+    uploaded_by bigint,
+    created_at timestamp with time zone DEFAULT now() NOT NULL,
+    finished_at timestamp with time zone,
+    CONSTRAINT archive_imports_status_check CHECK ((status = ANY (ARRAY['pending'::text, 'importing'::text, 'completed'::text, 'failed'::text])))
+);
+
+CREATE SEQUENCE public.archive_imports_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+ALTER SEQUENCE public.archive_imports_id_seq OWNED BY public.archive_imports.id;
+
 CREATE TABLE public.attachments (
     id bigint NOT NULL,
     canonical_message_id bigint NOT NULL,
@@ -334,6 +357,8 @@ CREATE SEQUENCE public.users_id_seq
 
 ALTER SEQUENCE public.users_id_seq OWNED BY public.users.id;
 
+ALTER TABLE ONLY public.archive_imports ALTER COLUMN id SET DEFAULT nextval('public.archive_imports_id_seq'::regclass);
+
 ALTER TABLE ONLY public.attachments ALTER COLUMN id SET DEFAULT nextval('public.attachments_id_seq'::regclass);
 
 ALTER TABLE ONLY public.audit_log ALTER COLUMN id SET DEFAULT nextval('public.audit_log_id_seq'::regclass);
@@ -357,6 +382,9 @@ ALTER TABLE ONLY public.roles ALTER COLUMN id SET DEFAULT nextval('public.roles_
 ALTER TABLE ONLY public.sync_jobs ALTER COLUMN id SET DEFAULT nextval('public.sync_jobs_id_seq'::regclass);
 
 ALTER TABLE ONLY public.users ALTER COLUMN id SET DEFAULT nextval('public.users_id_seq'::regclass);
+
+ALTER TABLE ONLY public.archive_imports
+    ADD CONSTRAINT archive_imports_pkey PRIMARY KEY (id);
 
 ALTER TABLE ONLY public.attachments
     ADD CONSTRAINT attachments_canonical_message_id_sha256_original_filename_key UNIQUE (canonical_message_id, sha256, original_filename);
@@ -448,6 +476,8 @@ ALTER TABLE ONLY public.users
 ALTER TABLE ONLY public.users
     ADD CONSTRAINT users_pkey PRIMARY KEY (id);
 
+CREATE INDEX idx_archive_imports_mailbox ON public.archive_imports USING btree (mailbox_id, id DESC);
+
 CREATE INDEX idx_audit_at ON public.audit_log USING btree (at DESC);
 
 CREATE INDEX idx_canonical_fts ON public.canonical_messages USING gin (fts);
@@ -467,6 +497,12 @@ CREATE INDEX idx_sessions_expiry ON public.sessions USING btree (expires_at);
 CREATE INDEX idx_sync_jobs_mailbox ON public.sync_jobs USING btree (mailbox_id, id DESC);
 
 CREATE UNIQUE INDEX idx_sync_jobs_one_active ON public.sync_jobs USING btree (mailbox_id) WHERE (status = ANY (ARRAY['queued'::text, 'running'::text, 'paused'::text]));
+
+ALTER TABLE ONLY public.archive_imports
+    ADD CONSTRAINT archive_imports_mailbox_id_fkey FOREIGN KEY (mailbox_id) REFERENCES public.mailboxes(id);
+
+ALTER TABLE ONLY public.archive_imports
+    ADD CONSTRAINT archive_imports_uploaded_by_fkey FOREIGN KEY (uploaded_by) REFERENCES public.users(id);
 
 ALTER TABLE ONLY public.attachments
     ADD CONSTRAINT attachments_canonical_message_id_fkey FOREIGN KEY (canonical_message_id) REFERENCES public.canonical_messages(id) ON DELETE CASCADE;

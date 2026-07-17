@@ -294,4 +294,24 @@ async function importArchiveZip(mailboxId, zipBuffer, userId) {
   return summary;
 }
 
-module.exports = { syncMailbox, importArchiveZip, insertMessage, upsertFolder, dedupHash, HASH_VERSION, storeAttachment, createJob, setJobControl, recoverStaleJobs };
+// Recorded variant used by the org-wide intake pipeline: every uploaded ZIP
+// part gets a status row (pending -> importing -> completed | failed), so the
+// admin sees per-mailbox intake state across all shared mailboxes.
+async function importArchiveRecorded(mailboxId, zipBuffer, userId, filename = '') {
+  const row = await one(
+    `INSERT INTO archive_imports (mailbox_id, filename, size_bytes, status, uploaded_by)
+     VALUES ($1, $2, $3, 'importing', $4) RETURNING id`,
+    [mailboxId, String(filename).slice(0, 300), zipBuffer.length, userId]);
+  try {
+    const summary = await importArchiveZip(mailboxId, zipBuffer, userId);
+    await q(`UPDATE archive_imports SET status = 'completed', totals = $1, finished_at = now() WHERE id = $2`,
+      [JSON.stringify(summary), row.id]);
+    return { importId: Number(row.id), ...summary };
+  } catch (e) {
+    await q(`UPDATE archive_imports SET status = 'failed', error_detail = $1, finished_at = now() WHERE id = $2`,
+      [String(e.message).slice(0, 500), row.id]);
+    throw e;
+  }
+}
+
+module.exports = { syncMailbox, importArchiveZip, importArchiveRecorded, insertMessage, upsertFolder, dedupHash, HASH_VERSION, storeAttachment, createJob, setJobControl, recoverStaleJobs };

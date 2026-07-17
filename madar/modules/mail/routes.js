@@ -14,7 +14,7 @@ const { audit } = require('../../core/audit');
 const auth = require('../../core/auth');
 const { ZohoClient, READ_SCOPES } = require('./zoho-client');
 const detection = require('./detection');
-const { syncMailbox, importArchiveZip, setJobControl } = require('./sync');
+const { syncMailbox, importArchiveRecorded, setJobControl } = require('./sync');
 
 const OAUTH_STATE_TTL_MS = 10 * 60 * 1000;
 
@@ -204,7 +204,54 @@ async function handle(req, res, url, user, body, helpers) {
   if ((m = p.match(/^\/api\/mail\/mailboxes\/(\d+)\/import-archive$/)) && req.method === 'POST') {
     if (!requireMailAdmin()) return true;
     if (!Buffer.isBuffer(body) || !body.length) return send(400, { error: 'upload the eDiscovery/Backup export ZIP as the raw request body (Content-Type: application/zip)' });
-    return send(200, await importArchiveZip(Number(m[1]), body, user.id));
+    const filename = decodeURIComponent(String(req.headers['x-file-name'] || ''));
+    try {
+      return send(200, await importArchiveRecorded(Number(m[1]), body, user.id, filename));
+    } catch (e) {
+      return send(422, { error: 'فشل استيراد الأرشيف: ' + e.message });
+    }
+  }
+  // Org-wide intake board: every shared mailbox with its archive-import state.
+  // Pending = no import yet; otherwise the latest row's status + totals.
+  if (p === '/api/mail/archive-intake' && req.method === 'GET') {
+    if (!requireMailAdmin()) return true;
+    const boxes = await all(`SELECT id, address, display_name, detected_type, strategy FROM mailboxes
+                             WHERE detected_type = 'shared_mailbox' ORDER BY address`);
+    const rows = [];
+    for (const b of boxes) {
+      const imports = await all(
+        `SELECT id, filename, size_bytes, status, totals, error_detail, created_at, finished_at
+         FROM archive_imports WHERE mailbox_id = $1 ORDER BY id DESC LIMIT 5`, [b.id]);
+      const agg = await one(
+        `SELECT COALESCE(SUM((totals->>'imported')::int),0)::int AS imported,
+                COALESCE(SUM((totals->>'attachments')::int),0)::int AS attachments,
+                COUNT(*) FILTER (WHERE status = 'completed')::int AS completed_parts,
+                COUNT(*) FILTER (WHERE status = 'failed')::int AS failed_parts,
+                COUNT(*) FILTER (WHERE status = 'importing')::int AS importing_parts
+         FROM archive_imports WHERE mailbox_id = $1`, [b.id]);
+      const state = agg.importing_parts > 0 ? 'importing'
+        : agg.failed_parts > 0 && agg.completed_parts === 0 ? 'failed'
+        : agg.completed_parts > 0 ? 'completed' : 'pending';
+      rows.push({
+        mailboxId: Number(b.id), address: b.address, displayName: b.display_name,
+        state, imported: agg.imported, attachments: agg.attachments,
+        completedParts: agg.completed_parts, failedParts: agg.failed_parts,
+        imports: imports.map(r => ({
+          id: Number(r.id), filename: r.filename, sizeBytes: Number(r.size_bytes), status: r.status,
+          totals: jsonCol(r.totals), error: r.error_detail || null,
+          at: new Date(r.created_at).getTime(),
+          finishedAt: r.finished_at ? new Date(r.finished_at).getTime() : null,
+        })),
+      });
+    }
+    const summary = {
+      total: rows.length,
+      completed: rows.filter(r => r.state === 'completed').length,
+      importing: rows.filter(r => r.state === 'importing').length,
+      failed: rows.filter(r => r.state === 'failed').length,
+      pending: rows.filter(r => r.state === 'pending').length,
+    };
+    return send(200, { summary, mailboxes: rows });
   }
   if ((m = p.match(/^\/api\/mail\/mailboxes\/(\d+)\/folders$/)) && req.method === 'GET') {
     const id = Number(m[1]);
