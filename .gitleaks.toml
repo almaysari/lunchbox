@@ -1,0 +1,13 @@
+# Gitleaks configuration — extends the default ruleset.
+# Allowlist is intentionally NARROW: only the exact dummy fixtures used by the
+# redaction tests (they exist precisely to prove secrets get redacted).
+# Do NOT allowlist whole directories.
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Known dummy fixtures in redaction tests"
+regexes = [
+  '''refresh_token: abcdef1234567890''',
+  '''supersecretvalue123''',
+]

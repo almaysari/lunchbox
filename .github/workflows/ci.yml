@@ -62,11 +62,13 @@ jobs:
     runs-on: ubuntu-latest
     defaults: { run: { working-directory: madar } }
     env:
-      # CI-only values — no real secrets, no Zoho credentials anywhere
-      POSTGRES_PASSWORD: ci_pg_password_not_secret
-      MADAR_ENCRYPTION_KEY: 1111111111111111111111111111111111111111111111111111111111111111
-      MADAR_SESSION_SECRET: 2222222222222222222222222222222222222222222222222222222222222222
-      MADAR_CSRF_SECRET: 3333333333333333333333333333333333333333333333333333333333333333
+      # CI-only values — no real secrets, no Zoho credentials anywhere.
+      # Quoted + non-numeric: pure-digit YAML scalars become numbers and break
+      # the 64-hex validation (learned from run 29565293533).
+      POSTGRES_PASSWORD: "ci_pg_password_not_secret"
+      MADAR_ENCRYPTION_KEY: "aaaa1111aaaa1111aaaa1111aaaa1111aaaa1111aaaa1111aaaa1111aaaa1111"
+      MADAR_SESSION_SECRET: "bbbb2222bbbb2222bbbb2222bbbb2222bbbb2222bbbb2222bbbb2222bbbb2222"
+      MADAR_CSRF_SECRET: "cccc3333cccc3333cccc3333cccc3333cccc3333cccc3333cccc3333cccc3333" 
     steps:
       - uses: actions/checkout@v4
       - name: Build and start the full stack
