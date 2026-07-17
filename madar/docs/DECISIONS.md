@@ -120,3 +120,32 @@ Local Storage: منفذ ومختبر. S3-compatible: **غير منفذ** — ا�
 endpoint رسمي مختبَر؛ مسار الأرشيف الرسمي الوحيد هو تصدير eDiscovery
 واستيراده (ZIP/EML) عبر «رفع أرشيف ZIP»، مع طابور المراجعة للمحتجز فقط.
 يُعاد النظر تلقائيًا إذا أظهرت مصفوفة لاحقة أي `success` لصندوق مشترك.
+
+### لماذا لا يمكن أتمتة تصدير eDiscovery نفسه (إثبات موثّق، 2026-07-17)
+
+سؤال فُحص بالوثائق الرسمية قبل الإجابة: هل لتصدير eDiscovery أي API أو
+واجهة مدعومة قابلة للبرمجة؟ **النتيجة: لا.**
+
+1. **فهرس Zoho Mail API الرسمي** (zoho.com/mail/help/api/) يعدّد فئات
+   الـAPI كاملة: Organization, Domain, Users, Mail Policy, Accounts,
+   Folders, Labels, Email Messages, Signatures, Threads, Tasks,
+   Bookmarks, Notes, Logs — **لا توجد فئة eDiscovery أو Export أو
+   Backup** ضمن الواجهات المنشورة.
+2. **فضاء نطاقات OAuth الموثّق** (`ZohoMail.*` في using-oauth-2.html
+   وscope.html) لا يحتوي أي نطاق `ediscovery` — أي لا يمكن حتى طلب
+   تصريح لهذه الوظيفة عبر OAuth.
+3. **وثائق eDiscovery نفسها** (email-investigations.html,
+   manage-ediscovery.html) تصف التصدير حصريًا كتدفق داخل Admin Console:
+   eDiscovery → Investigations/Export → «Export search results» →
+   تبويب Exports → تنزيل ZIP/PST — مع **إدخال كلمة مرور الأدمن يدويًا
+   عند التصدير** (حاجز بشري مقصود من Zoho)، وخيار كلمة تشفير للملف،
+   وتنظيف الملفات المصدَّرة بعد 90 يومًا. لا ذكر لأي endpoint.
+4. أتمتة البوابة بجلسة متصفح (تسجيل دخول + MFA + إعادة كلمة المرور)
+   ليست «واجهة مدعومة»، وتخالف قيود أمان المشروع (لا كلمات مرور خارج
+   OAuth الرسمي) — مرفوضة مبدئيًا.
+
+الحد الأدنى البشري المعتمد: (أ) تشغيل التصدير من بوابة eDiscovery
+وتنزيل الـZIP، (ب) اختيار الملف/الملفات في «رفع أرشيف ZIP». كل ما بعد
+ذلك آلي بالكامل (فك، تحليل EML، مجلدات، dedup، مرفقات+حجر، فهرسة، تقرير
+sync_jobs). الرفع يقبل أجزاء تصدير متعددة دفعة واحدة، وحد الحجم لكل جزء
+`MADAR_MAX_UPLOAD_MB` (افتراضي 1024MB) برسالة 413 واضحة.

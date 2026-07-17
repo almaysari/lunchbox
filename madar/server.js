@@ -41,9 +41,20 @@ function parseCookies(req) {
   return out;
 }
 
+// Uploads (eDiscovery ZIP parts) are buffered in memory — enforce an explicit
+// cap with a clear 413 instead of letting a multi-GB body exhaust the process.
+const MAX_BODY_BYTES = (Number(process.env.MADAR_MAX_UPLOAD_MB) || 1024) * 1024 * 1024;
+
 async function readBody(req) {
+  const declared = Number(req.headers['content-length'] || 0);
+  if (declared > MAX_BODY_BYTES) { const e = new Error('payload too large'); e.tooLarge = true; throw e; }
   const chunks = [];
-  for await (const c of req) chunks.push(c);
+  let size = 0;
+  for await (const c of req) {
+    size += c.length;
+    if (size > MAX_BODY_BYTES) { const e = new Error('payload too large'); e.tooLarge = true; throw e; }
+    chunks.push(c);
+  }
   const buf = Buffer.concat(chunks);
   const ct = String(req.headers['content-type'] || '');
   if (ct.includes('application/json')) {
@@ -87,7 +98,14 @@ const server = http.createServer(async (req, res) => {
     if (rotatedToken) {
       extraCookies.push(`madar_session=${cryptoCore.signSession(rotatedToken)}; ${cookieFlags}; Max-Age=43200`);
     }
-    const body = ['POST', 'PUT', 'PATCH', 'DELETE'].includes(req.method) ? await readBody(req) : {};
+    let body = {};
+    if (['POST', 'PUT', 'PATCH', 'DELETE'].includes(req.method)) {
+      try { body = await readBody(req); }
+      catch (e) {
+        if (!e.tooLarge) throw e;
+        return send(413, { error: `الملف أكبر من الحد المسموح (${Math.round(MAX_BODY_BYTES / 1024 / 1024)}MB) — قسّم تصدير eDiscovery إلى أجزاء أصغر (مثلًا بنطاقات زمنية) وارفعها معًا، أو ارفع MADAR_MAX_UPLOAD_MB` });
+      }
+    }
 
     // ---------- auth ----------
     if (p === '/api/auth/login' && req.method === 'POST') {
