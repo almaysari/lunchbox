@@ -31,7 +31,7 @@ services:
       PORT: 3000
       DATABASE_URL: postgresql://madar:${POSTGRES_PASSWORD}@postgres:5432/madar
       MADAR_ATTACH_DIR: /var/lib/madar/attachments
-      SYNC_INTERVAL_MINUTES: ${SYNC_INTERVAL_MINUTES:-10}
+      MADAR_LIVE_SYNC_INTERVAL_SEC: ${MADAR_LIVE_SYNC_INTERVAL_SEC:-120}
       MAX_ATTACHMENT_MB: ${MAX_ATTACHMENT_MB:-25}
     volumes:
       - madar_attachments:/var/lib/madar/attachments

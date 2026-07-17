@@ -55,7 +55,9 @@ function demoMessages(prefix, n) {
       threadId: `t${prefix}${i % 3}`,
       fromAddress: `sender${i}@example.com`,
       senderName: `Sender ${i}`,
-      toAddress: 'info@exoticcolors.org',
+      // one admin message is addressed to a shared mailbox — exercises live
+      // routing of member copies into the group's registry mailbox
+      toAddress: prefix === 'a' && i === 1 ? 'hr@exoticcolors.org' : 'info@exoticcolors.org',
       subject: `Demo message ${i} (${prefix})`,
       summary: `This is the summary of demo message number ${i}.`,
       receivedTime: String(1784200000000 - i * 3600000),

@@ -24,7 +24,6 @@ function loadEnv(dir) {
     MADAR_ENCRYPTION_KEY: process.env.MADAR_ENCRYPTION_KEY || '',
     MADAR_SESSION_SECRET: process.env.MADAR_SESSION_SECRET || '',
     MADAR_CSRF_SECRET: process.env.MADAR_CSRF_SECRET || '',
-    SYNC_INTERVAL_MINUTES: Number(process.env.SYNC_INTERVAL_MINUTES || 10),
     MAX_ATTACHMENT_MB: Number(process.env.MAX_ATTACHMENT_MB || 25),
   };
   return cfg;

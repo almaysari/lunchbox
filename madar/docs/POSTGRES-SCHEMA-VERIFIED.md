@@ -438,6 +438,9 @@ ALTER TABLE ONLY public.message_labels
     ADD CONSTRAINT message_labels_pkey PRIMARY KEY (canonical_message_id, label_id);
 
 ALTER TABLE ONLY public.message_occurrences
+    ADD CONSTRAINT message_occurrences_mailbox_canonical_key UNIQUE (mailbox_id, canonical_message_id);
+
+ALTER TABLE ONLY public.message_occurrences
     ADD CONSTRAINT message_occurrences_mailbox_id_folder_id_canonical_message__key UNIQUE (mailbox_id, folder_id, canonical_message_id);
 
 ALTER TABLE ONLY public.message_occurrences

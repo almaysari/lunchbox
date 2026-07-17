@@ -378,7 +378,8 @@ test('sync jobs: gating, progress, pause blocks parallel start, cancel, resume, 
   const s3 = await sync.syncMailbox(info.id, { maxPages: 5 });          // idempotent
   assert.strictEqual(s3.newOccurrences, 0);
   // 250 synced + 1 manual occurrence from the canonical-model test
-  assert.strictEqual((await db.one('SELECT COUNT(*)::int n FROM message_occurrences WHERE mailbox_id=$1', [info.id])).n, 251);
+  // + 11 routed member copies (admin live sync: messages addressed to info@)
+  assert.strictEqual((await db.one('SELECT COUNT(*)::int n FROM message_occurrences WHERE mailbox_id=$1', [info.id])).n, 262);
 
   // cancel MID-RUN on a fresh mailbox state: cancelled job finishes as cancelled
   await db.q('DELETE FROM sync_state WHERE mailbox_id=$1', [admin2.id]);
@@ -398,6 +399,76 @@ test('sync jobs: gating, progress, pause blocks parallel start, cancel, resume, 
   await sync.setJobControl(Number(liveJob2.id), 'cancelled');
   await assert.rejects(() => running2, /cancelled/);
   assert.strictEqual((await db.one('SELECT status FROM sync_jobs WHERE id=$1', [liveJob2.id])).status, 'cancelled');
+});
+
+// ---------- live sync worker + routing + archive convergence ----------
+test('live sync: routing to shared mailboxes, worker tick/backoff, live→archive convergence (zero duplication)', async () => {
+  const liveSync = require('../modules/mail/live-sync');
+  const hr = byAddress['hr@exoticcolors.org'];
+  const fin = byAddress['finance@exoticcolors.org'];
+
+  // worker tick first: re-syncs the admin mailbox (whose occurrences the
+  // cancellation test surgically removed) and every other enabled mailbox
+  const t1 = await liveSync.tickOnce();
+  assert.ok(t1.synced >= 1, 'tick synced enabled mailboxes');
+
+  // member-copy routing: the admin's live-synced message addressed to hr@
+  // produced an occurrence in hr@'s registry mailbox (same canonical)
+  const routed = await db.one(`SELECT o.provider, c.rfc_message_id FROM message_occurrences o
+    JOIN canonical_messages c ON c.id = o.canonical_message_id
+    JOIN folders f ON f.id = o.folder_id
+    WHERE o.mailbox_id = $1 AND f.provider_folder_id = 'live:routed'`, [hr.id]);
+  assert.ok(routed, 'routed occurrence exists in hr@');
+  assert.strictEqual(routed.provider, 'zoho:member_copy');
+  assert.strictEqual(routed.rfc_message_id, '<a1001@mock.zoho>');
+  const conv1 = await db.one(`SELECT COUNT(DISTINCT c.id)::int canon, COUNT(o.id)::int occ
+    FROM canonical_messages c JOIN message_occurrences o ON o.canonical_message_id = c.id
+    WHERE c.rfc_message_id = '<a1001@mock.zoho>'`);
+  assert.deepStrictEqual(conv1, { canon: 1, occ: 2 }); // admin copy + hr routed copy
+
+  // live→archive convergence: the SAME message later arrives inside hr@'s
+  // eDiscovery export → ZERO duplication (one occurrence per mailbox, ever)
+  const emlRaw = (mid, subject, to) => ['Message-ID: ' + mid, 'From: Sender <sender1@example.com>',
+    'To: ' + to, 'Subject: ' + subject, 'Date: Mon, 13 Jul 2026 10:00:00 +0400', '', 'Body.'].join('\r\n');
+  const zipSame = buildZip([{ name: 'Inbox/a1001.eml', data: emlRaw('<a1001@mock.zoho>', 'Demo message 1 (a)', 'hr@exoticcolors.org') }]);
+  const rConv = await fakeCall('POST', `/api/mail/mailboxes/${hr.id}/import-archive`,
+    { user: adminUser, body: zipSame, reqHeaders: { 'x-file-name': 'hr-convergence.zip' } });
+  assert.strictEqual(rConv.status, 200);
+  assert.deepStrictEqual({ imported: rConv.body.imported, duplicates: rConv.body.duplicates },
+    { imported: 0, duplicates: 1 }); // live copy already there → archive merges silently
+  // ...but the same archive message into a THIRD mailbox is a legitimate new occurrence
+  const rFin = await fakeCall('POST', `/api/mail/mailboxes/${fin.id}/import-archive`,
+    { user: adminUser, body: zipSame, reqHeaders: { 'x-file-name': 'fin-convergence.zip' } });
+  assert.strictEqual(rFin.body.imported, 1);
+  const conv2 = await db.one(`SELECT COUNT(DISTINCT c.id)::int canon, COUNT(o.id)::int occ
+    FROM canonical_messages c JOIN message_occurrences o ON o.canonical_message_id = c.id
+    WHERE c.rfc_message_id = '<a1001@mock.zoho>'`);
+  assert.deepStrictEqual(conv2, { canon: 1, occ: 3 }); // still ONE canonical
+
+  // worker: a broken mailbox fails and backs off without affecting the others
+  // NULL connection → ZohoClient.forConnection fails → recorded per-mailbox failure
+  await db.q(`INSERT INTO mailboxes (address, display_name, provider, detected_type, strategy, is_pilot, sync_enabled, status)
+    VALUES ('broken@exoticcolors.org','Broken','zoho','user','mail_api',TRUE,TRUE,'ready')`);
+  const t2 = await liveSync.tickOnce();
+  assert.ok(t2.failed >= 1, 'broken mailbox recorded as failed');
+  const t3 = await liveSync.tickOnce();
+  assert.ok(t3.skippedBackoff >= 1, 'broken mailbox backing off, others unaffected');
+
+  // monitoring endpoint
+  const st = await fakeCall('GET', '/api/mail/live-sync/status', { user: adminUser });
+  assert.strictEqual(st.status, 200);
+  const byAddr = Object.fromEntries(st.body.mailboxes.map(x => [x.address, x]));
+  assert.strictEqual(byAddr['hr@exoticcolors.org'].captureVia, 'routed_member_copy');
+  assert.ok(byAddr['hr@exoticcolors.org'].newLast24h >= 1);
+  assert.strictEqual(byAddr['m.almaysari@exoticcolors.org'].captureVia, 'direct_api');
+  assert.ok(byAddr['m.almaysari@exoticcolors.org'].lastUid, 'last UID exposed');
+  assert.ok(byAddr['m.almaysari@exoticcolors.org'].lastSyncAt, 'last sync time exposed');
+  assert.ok(byAddr['broken@exoticcolors.org'].worker.lastError, 'error surfaced with backoff for retry');
+  assert.ok(byAddr['broken@exoticcolors.org'].worker.backoffUntil > Date.now());
+  assert.strictEqual((await fakeCall('GET', '/api/mail/live-sync/status', { user: memberUser })).status, 403);
+  const mt = await fakeCall('POST', '/api/mail/live-sync/tick', { user: adminUser, body: {} });
+  assert.strictEqual(mt.status, 200);
+  await db.q(`UPDATE mailboxes SET sync_enabled = FALSE, is_pilot = FALSE WHERE address = 'broken@exoticcolors.org'`);
 });
 
 // ---------- attachments ----------

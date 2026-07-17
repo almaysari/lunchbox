@@ -180,6 +180,18 @@ async function handle(req, res, url, user, body, helpers) {
     return send(200, { ok: true });
   }
 
+  // ---------- live sync monitoring ----------
+  if (p === '/api/mail/live-sync/status' && req.method === 'GET') {
+    if (!requireMailAdmin()) return true;
+    return send(200, await require('./live-sync').liveStatus());
+  }
+  if (p === '/api/mail/live-sync/tick' && req.method === 'POST') {
+    if (!requireMailAdmin()) return true; // manual "sync now" across all enabled mailboxes
+    const r = await require('./live-sync').tickOnce();
+    await audit(user.id, 'mail.livesync.manual_tick', '', r);
+    return send(200, r);
+  }
+
   // ---------- sync jobs: start / pause / resume / cancel / progress ----------
   if ((m = p.match(/^\/api\/mail\/mailboxes\/(\d+)\/sync$/)) && req.method === 'POST') {
     if (!requireMailAdmin()) return true;

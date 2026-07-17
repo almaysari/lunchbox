@@ -165,6 +165,41 @@ async function connectorFor(mailbox) {
   return new ZohoMailApiConnector(zoho, mailbox);
 }
 
+// Address -> shared-mailbox routing map (primary addresses + aliases).
+// Live capture for shared mailboxes: Zoho exposes no message API for groups
+// (proven, DECISIONS.md), but group mail delivered to a synced MEMBER account
+// is API-readable there — any synced message addressed to a registered shared
+// mailbox also gets an occurrence in that mailbox (same canonical, source kept).
+async function sharedAddressMap() {
+  const { all } = require('../../core/db');
+  const map = new Map();
+  for (const r of await all(`SELECT id, address FROM mailboxes WHERE detected_type = 'shared_mailbox'`)) {
+    map.set(r.address.toLowerCase(), Number(r.id));
+  }
+  for (const r of await all(`SELECT a.address, a.mailbox_id FROM mailbox_aliases a
+                             JOIN mailboxes m ON m.id = a.mailbox_id WHERE m.detected_type = 'shared_mailbox'`)) {
+    if (!map.has(r.address.toLowerCase())) map.set(r.address.toLowerCase(), Number(r.mailbox_id));
+  }
+  return { map, folderCache: new Map() };
+}
+
+async function routeToSharedMailboxes(msg, sourceMailboxId, routing, summary) {
+  if (!routing) return;
+  const recipients = new Set((String(msg.to || '') + ' ' + String(msg.cc || ''))
+    .toLowerCase().match(/[\w.+-]+@[\w-]+(\.[\w-]+)+/g) || []);
+  for (const addr of recipients) {
+    const targetId = routing.map.get(addr);
+    if (!targetId || targetId === sourceMailboxId) continue;
+    let folderId = routing.folderCache.get(targetId);
+    if (!folderId) {
+      folderId = await upsertFolder(targetId, { providerFolderId: 'live:routed', name: 'Live (وارد موجّه)', type: 'inbox' });
+      routing.folderCache.set(targetId, folderId);
+    }
+    const { occurrenceId } = await insertMessage(targetId, folderId, msg, 'zoho:member_copy');
+    if (occurrenceId) summary.routed++;
+  }
+}
+
 async function syncMailbox(mailboxId, { maxPages = 5, userId = null } = {}) {
   const mailbox = await one('SELECT * FROM mailboxes WHERE id = $1', [mailboxId]);
   if (!mailbox) throw new Error('mailbox not found');
@@ -174,7 +209,8 @@ async function syncMailbox(mailboxId, { maxPages = 5, userId = null } = {}) {
   const jobId = await createJob(mailboxId, userId);
   await q("UPDATE sync_jobs SET status='running', started_at = COALESCE(started_at, now()) WHERE id = $1", [jobId]);
   await q("UPDATE mailboxes SET status='syncing' WHERE id=$1", [mailboxId]);
-  const summary = { jobId, mailbox: mailbox.address, folders: 0, newMessages: 0, newOccurrences: 0, attachments: 0, skipped: 0 };
+  const routing = await sharedAddressMap();
+  const summary = { jobId, mailbox: mailbox.address, folders: 0, newMessages: 0, newOccurrences: 0, attachments: 0, skipped: 0, routed: 0 };
 
   try {
     const folders = await connector.listFolders(); await budgetDelay();
@@ -191,7 +227,7 @@ async function syncMailbox(mailboxId, { maxPages = 5, userId = null } = {}) {
       await q('UPDATE sync_jobs SET discovered = discovered + $1 WHERE id = $2', [newest.length, jobId]);
       for (const msg of newest) {
         await checkpoint(jobId);
-        const fresh = await ingestOne(connector, f, mailboxId, folderId, msg, summary, jobId);
+        const fresh = await ingestOne(connector, f, mailboxId, folderId, msg, summary, jobId, routing);
         if (!fresh) break;
       }
 
@@ -206,7 +242,7 @@ async function syncMailbox(mailboxId, { maxPages = 5, userId = null } = {}) {
           await q('UPDATE sync_jobs SET discovered = discovered + $1, current_cursor = $2 WHERE id = $3', [batch.length, start, jobId]);
           for (const msg of batch) {
             await checkpoint(jobId);
-            await ingestOne(connector, f, mailboxId, folderId, msg, summary, jobId);
+            await ingestOne(connector, f, mailboxId, folderId, msg, summary, jobId, routing);
           }
           if (batch.length < PAGE_SIZE) {
             await q('UPDATE sync_state SET backfill_done=TRUE, next_start=$1, last_sync_at=now() WHERE mailbox_id=$2 AND folder_id=$3',
@@ -238,13 +274,14 @@ async function syncMailbox(mailboxId, { maxPages = 5, userId = null } = {}) {
   return summary;
 }
 
-async function ingestOne(connector, folder, mailboxId, folderId, msg, summary, jobId) {
+async function ingestOne(connector, folder, mailboxId, folderId, msg, summary, jobId, routing = null) {
   const { canonicalId, occurrenceId, isNewCanonical } = await insertMessage(mailboxId, folderId, msg);
   if (!occurrenceId) {
     summary.skipped++;
     await q('UPDATE sync_jobs SET skipped = skipped + 1 WHERE id = $1', [jobId]);
     return false;
   }
+  await routeToSharedMailboxes(msg, mailboxId, routing, summary);
   summary.newOccurrences++;
   await q('UPDATE sync_jobs SET imported = imported + 1 WHERE id = $1', [jobId]);
   if (!isNewCanonical) return true; // body/attachments already captured for this canonical

@@ -141,6 +141,15 @@
     </div>
 
     <div class="card">
+      <div class="row" style="justify-content:space-between">
+        <h3 style="margin:0">مراقبة المزامنة الحية <span class="sub" id="liveWorker"></span></h3>
+        <button class="btn" onclick="liveTickNow()">⟳ مزامنة الآن</button>
+      </div>
+      <div class="sub" style="margin:6px 0">القراءة الحية المباشرة ممكنة فقط للصناديق ذات accountId (مثبت بالأدلة). الصناديق المشتركة تُلتقط رسائلها الجديدة عبر التوجيه: أي رسالة مزامنة معنونة لصندوق مشترك مسجّل تنشأ لها نسخة في صندوقها (نفس الرسالة الكانونية — صفر ازدواج مع الأرشيف لاحقًا).</div>
+      <table id="liveTable"></table>
+    </div>
+
+    <div class="card">
       <h3 style="margin-top:0">سجل الصناديق <span class="sub" id="mbCount"></span></h3>
       <table id="mbTable"></table>
     </div>
@@ -313,7 +322,52 @@ async function openMessage(occId) {
 
 /* ================= ADMIN ================= */
 async function loadAdmin() {
-  await Promise.all([loadConnections(), loadDiscovery(), loadMailboxesAdmin(), loadIntake(), loadUsers(), loadAudit()]);
+  await Promise.all([loadConnections(), loadDiscovery(), loadMailboxesAdmin(), loadIntake(), loadLiveSync(), loadUsers(), loadAudit()]);
+  if (!window._liveTimer) window._liveTimer = setInterval(() => { if (location.hash !== '#mail') { loadLiveSync().catch(() => {}); loadIntake().catch(() => {}); } }, 30000);
+}
+
+/* ---------- live sync monitoring ---------- */
+async function loadLiveSync() {
+  const d = await api('/api/mail/live-sync/status');
+  const w = d.worker;
+  $('liveWorker').textContent = w.enabled
+    ? `(نشطة — كل ${w.intervalSec}ث — آخر دورة: ${w.lastTickAt ? fmtT(w.lastTickAt) : '—'})`
+    : '(متوقفة — MADAR_LIVE_SYNC=off)';
+  $('liveTable').innerHTML = `<tr><th>الصندوق</th><th>مسار الالتقاط</th><th>آخر مزامنة</th><th>آخر رسالة</th><th>آخر UID</th><th>جديد 24س</th><th>الحالة/الأخطاء</th><th></th></tr>` +
+    d.mailboxes.map(r => {
+      const cap = r.captureVia === 'direct_api' ? '<span class="tag ok">API مباشر</span>'
+        : r.captureVia === 'routed_member_copy' ? '<span class="tag warn">توجيه نسخة العضو</span>' : '—';
+      const err = r.worker.lastError || (r.lastJob && r.lastJob.status === 'failed' ? r.lastJob.error : null);
+      const state = err
+        ? `<span class="tag bad">خطأ</span><div class="sub">${esc(err)}</div>${r.worker.backoffUntil ? `<div class="sub">إعادة محاولة: ${fmtT(r.worker.backoffUntil)}</div>` : ''}`
+        : r.liveEligible
+          ? (r.syncEnabled && r.isPilot ? '<span class="tag ok">تعمل</span>' : '<span class="tag gray">غير مفعّلة (Pilot/بدء صريح)</span>')
+          : '<span class="tag gray">عبر التوجيه فقط</span>';
+      return `<tr>
+        <td><b>${esc(r.displayName)}</b><div class="sub" style="direction:ltr;text-align:right">${esc(r.address)}</div></td>
+        <td>${cap}</td>
+        <td>${r.lastSyncAt ? fmtT(r.lastSyncAt) : '—'}</td>
+        <td>${r.lastMessageAt ? fmtT(r.lastMessageAt) : '—'}</td>
+        <td class="sub" style="direction:ltr">${esc(r.lastUid || '—')}</td>
+        <td>${r.newLast24h}</td>
+        <td>${state}</td>
+        <td>${r.liveEligible ? `<button class="btn" onclick="retryLive(${r.mailboxId})">Retry</button>` : ''}</td>
+      </tr>`;
+    }).join('');
+}
+async function liveTickNow() {
+  banners('<div class="banner warn">دورة مزامنة يدوية جارية لكل الصناديق المفعّلة...</div>');
+  const r = await api('/api/mail/live-sync/tick', { method: 'POST', body: {} });
+  banners(`<div class="banner ok">دورة المزامنة: نجحت ${r.synced} — مؤجلة backoff: ${r.skippedBackoff} — مشغولة: ${r.skippedBusy} — فشلت: ${r.failed}</div>`);
+  loadLiveSync(); loadMailboxesForMail();
+}
+async function retryLive(id) {
+  banners('<div class="banner warn">إعادة محاولة المزامنة...</div>');
+  try {
+    const s = await api(`/api/mail/mailboxes/${id}/sync`, { method: 'POST', body: {} });
+    banners(`<div class="banner ok">تمت: ${s.newOccurrences} حدث جديد${s.routed ? `، وُجّه للصناديق المشتركة: ${s.routed}` : ''}.</div>`);
+  } catch (e) { banners(`<div class="banner bad">${esc(e.message)}</div>`); }
+  loadLiveSync();
 }
 
 /* ---------- org-wide archive intake ---------- */

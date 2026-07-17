@@ -254,14 +254,10 @@ async function start() {
   server.listen(cfg.PORT, () => {
     console.log(`[madar] running on http://localhost:${cfg.PORT} (mode: ${cfg.MODE}, db: postgresql)`);
   });
-  if (cfg.SYNC_INTERVAL_MINUTES > 0) {
-    setInterval(async () => {
-      const pilots = await db.all("SELECT id, address FROM mailboxes WHERE is_pilot AND sync_enabled AND strategy = 'mail_api'");
-      for (const mb of pilots) {
-        try { await require('./modules/mail/sync').syncMailbox(Number(mb.id)); }
-        catch (e) { if (!/already (queued|running|paused)/.test(e.message)) console.error('[madar] scheduled sync failed for', mb.address, e.message); }
-      }
-    }, cfg.SYNC_INTERVAL_MINUTES * 60 * 1000);
+  // Live Sync worker: polls every admin-enabled mail_api mailbox (default 120s,
+  // MADAR_LIVE_SYNC_INTERVAL_SEC), with per-mailbox backoff. MADAR_LIVE_SYNC=off disables.
+  if (require('./modules/mail/live-sync').startLiveSync()) {
+    console.log(`[madar] live sync worker started (every ${Math.round((Number(process.env.MADAR_LIVE_SYNC_INTERVAL_SEC) || 120))}s; per-mailbox backoff on errors)`);
   }
 }
 
