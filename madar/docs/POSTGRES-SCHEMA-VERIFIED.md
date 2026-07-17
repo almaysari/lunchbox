@@ -321,7 +321,8 @@ CREATE TABLE public.users (
     name text DEFAULT ''::text NOT NULL,
     password_hash text NOT NULL,
     disabled boolean DEFAULT false NOT NULL,
-    created_at timestamp with time zone DEFAULT now() NOT NULL
+    created_at timestamp with time zone DEFAULT now() NOT NULL,
+    must_change_password boolean DEFAULT false NOT NULL
 );
 
 CREATE SEQUENCE public.users_id_seq
