@@ -144,7 +144,13 @@
       <div id="userForm" style="display:none;margin-top:10px" class="row">
         <input id="uEmail" placeholder="email"><input id="uName" placeholder="الاسم">
         <input id="uPass" placeholder="كلمة المرور" type="password">
-        <select id="uRole"><option value="member">member</option><option value="admin">admin</option></select>
+        <select id="uRole">
+          <option value="member">member</option>
+          <option value="auditor">auditor</option>
+          <option value="mail_admin">mail_admin</option>
+          <option value="security_admin">security_admin</option>
+          <option value="platform_admin">platform_admin</option>
+        </select>
         <button class="btn primary" onclick="createUser()">إنشاء</button>
       </div>
       <table id="usersTable" style="margin-top:10px"></table>
@@ -167,13 +173,16 @@
 let ME = null, MAILBOXES = [], currentMailbox = null;
 const $ = id => document.getElementById(id);
 const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+let CSRF = '';
 const api = async (path, opts = {}) => {
-  const r = await fetch(path, { headers: { 'Content-Type': 'application/json' }, ...opts,
+  const r = await fetch(path, { ...opts,
+    headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': CSRF, ...(opts.headers || {}) },
     body: opts.body && typeof opts.body !== 'string' && !(opts.body instanceof Blob) ? JSON.stringify(opts.body) : opts.body });
   const j = await r.json().catch(() => ({}));
   if (!r.ok) throw new Error(j.error || r.status);
   return j;
 };
+const isAdminUser = u => u && u.roles && (u.roles.includes('platform_admin') || u.roles.includes('mail_admin'));
 const fmtT = t => t ? new Date(Number(t)).toLocaleString('ar', { dateStyle:'medium', timeStyle:'short' }) : '—';
 const TYPE_AR = { shared_mailbox:'صندوق مشترك', user:'صندوق مستخدم', distribution_list:'قائمة توزيع', stream_group:'مجموعة Streams', unknown:'غير معروف' };
 const STRAT_AR = { mail_api:'قراءة حية (Mail API)', ediscovery_import:'استيراد أرشيف eDiscovery', moderation_only:'مراجعة فقط', none:'—' };
@@ -187,12 +196,13 @@ async function boot() {
     history.replaceState(null, '', location.pathname + (location.search || ''));
   }
   if (!ME) { $('login').style.display=''; return; }
+  CSRF = ME.csrf || '';
   $('login').style.display='none';
-  $('nav').style.display = ME.role === 'admin' ? '' : 'none';
-  $('userChip').style.display=''; $('userChip').textContent = ME.email + ' (' + ME.role + ')';
+  $('nav').style.display = isAdminUser(ME) ? '' : 'none';
+  $('userChip').style.display=''; $('userChip').textContent = ME.email + ' (' + (ME.roles || []).join('،') + ')';
   $('logoutBtn').style.display='';
-  showTab(new URLSearchParams(location.search).get('tab') === 'admin' && ME.role === 'admin' ? 'admin' : 'mail');
-  if (ME.role === 'admin') loadAdmin();
+  showTab(new URLSearchParams(location.search).get('tab') === 'admin' && isAdminUser(ME) ? 'admin' : 'mail');
+  if (isAdminUser(ME)) loadAdmin();
   loadMailboxesForMail();
 }
 async function doLogin() {
@@ -238,7 +248,7 @@ async function loadMessages() {
     : 'النطاق: كل الصناديق المصرّح لك بها';
   const msgs = await api('/api/mail/messages?' + params);
   $('messageList').innerHTML = msgs.length ? msgs.map(m => `
-    <div class="list-item" onclick="openMessage(${m.id})">
+    <div class="list-item" onclick="openMessage(${m.occurrence_id})">
       <div class="msg-from">${esc(m.from_name || m.from_address)}</div>
       <div class="msg-sub">${esc(m.subject)}</div>
       <div class="msg-snip">${esc((m.snippet || '').slice(0, 90))}</div>
@@ -246,14 +256,17 @@ async function loadMessages() {
     </div>`).join('') : '<div class="sub" style="padding:20px">لا توجد رسائل بعد — شغّل المزامنة أو استورد الأرشيف من لوحة الإدارة</div>';
 }
 $('q').addEventListener('keydown', e => { if (e.key === 'Enter') loadMessages(); });
-async function openMessage(id) {
-  const m = await api('/api/mail/messages/' + id);
+async function openMessage(occId) {
+  const m = await api('/api/mail/occurrences/' + occId);
   $('messageView').innerHTML = `
     <h3 style="margin:0 0 4px">${esc(m.subject)}</h3>
     <div class="sub">من: <b>${esc(m.from_name)}</b> &lt;${esc(m.from_address)}&gt; — ${fmtT(m.received_at)}</div>
     <div class="sub">إلى: ${esc(m.to_addresses)} ${m.cc_addresses ? ' | نسخة: ' + esc(m.cc_addresses) : ''}</div>
-    <div style="margin:8px 0">${(m.attachments || []).map(a =>
-      `<a class="attach" href="/api/mail/attachments/${a.id}" target="_blank">📎 ${esc(a.name)} <small>(${Math.round(a.size/1024)}KB)</small></a>`).join('')}</div>
+    ${(m.appearsIn || []).length > 1 ? `<div class="sub">تظهر أيضًا في: ${m.appearsIn.map(o => esc(o.address + (o.folder ? ' / ' + o.folder : ''))).join('، ')}</div>` : ''}
+    <div style="margin:8px 0">${(m.attachments || []).map(a => a.quarantine_status === 'quarantined'
+      ? `<span class="attach" style="background:var(--bad-soft);color:var(--bad)">🚫 ${esc(a.name)} (محجور — النوع الفعلي يخالف المعلن)</span>`
+      : `<a class="attach" href="/api/mail/attachments/${a.id}" target="_blank">📎 ${esc(a.name)} <small>(${Math.round(a.size/1024)}KB)</small></a>
+         <a class="attach" href="/api/mail/attachments/${a.id}?download=1">⬇</a>`).join('')}</div>
     <iframe class="body-frame" sandbox="" srcdoc="${esc(m.body_html || '<p>' + esc(m.snippet) + '</p>')}"></iframe>`;
 }
 
@@ -336,9 +349,29 @@ async function loadMailboxesAdmin() {
       <td><input type="checkbox" ${m.isPilot ? 'checked' : ''} onchange="setPilot(${m.id}, this.checked)"></td>
       <td class="row">
         <button class="btn" onclick="openMailboxDetail(${m.id})">التفاصيل</button>
-        ${m.strategy === 'mail_api' ? `<button class="btn primary" ${m.isPilot ? '' : 'disabled title="فعّل Pilot أولًا"'} onclick="openPilotReview(${m.id})">مراجعة وبدء Pilot Sync</button>` : ''}
+        ${m.strategy === 'mail_api' ? `<button class="btn primary" ${m.isPilot ? '' : 'disabled title="فعّل Pilot أولًا"'} onclick="openPilotReview(${m.id})">مراجعة وبدء Pilot Sync</button>
+        <button class="btn" onclick="openJobs(${m.id})">المهام</button>` : ''}
         ${m.strategy === 'ediscovery_import' ? `<button class="btn" onclick="uploadArchive(${m.id})">رفع أرشيف ZIP</button>` : ''}
       </td></tr>`).join('');
+}
+async function openJobs(mailboxId) {
+  const jobs = await api(`/api/mail/mailboxes/${mailboxId}/sync-jobs`);
+  $('dlgTitle').textContent = 'مهام المزامنة';
+  $('dlgBody').innerHTML = jobs.length ? `<table>
+    <tr><th>#</th><th>الحالة</th><th>مكتشَف</th><th>مستورد</th><th>متخطى</th><th>أخطاء</th><th>Cursor</th><th></th></tr>` +
+    jobs.map(j => `<tr>
+      <td>${j.id}</td><td><span class="tag ${j.status === 'completed' ? 'ok' : j.status === 'failed' ? 'bad' : 'warn'}">${esc(j.status)}</span></td>
+      <td>${j.discovered}</td><td>${j.imported}</td><td>${j.skipped}</td><td>${j.errors}</td><td>${j.current_cursor}</td>
+      <td class="row">
+        ${['queued','running'].includes(j.status) ? `<button class="btn" onclick="jobCtl(${j.id},'pause',${mailboxId})">⏸ إيقاف مؤقت</button>` : ''}
+        ${j.status === 'paused' ? `<button class="btn primary" onclick="document.getElementById('dlg').close();runSync(${mailboxId})">▶ استئناف</button>` : ''}
+        ${['queued','running','paused'].includes(j.status) ? `<button class="btn" onclick="jobCtl(${j.id},'cancel',${mailboxId})">✕ إلغاء</button>` : ''}
+      </td></tr>`).join('') + '</table>' : '<div class="sub">لا مهام بعد</div>';
+  $('dlg').showModal();
+}
+async function jobCtl(jobId, action, mailboxId) {
+  await api(`/api/mail/sync-jobs/${jobId}/${action}`, { method:'POST', body:{} });
+  openJobs(mailboxId);
 }
 async function setPilot(id, on) {
   await api(`/api/mail/mailboxes/${id}/pilot`, { method:'POST', body:{ on } });
@@ -421,22 +454,27 @@ async function openMailboxDetail(id) {
 async function loadUsers() {
   const users = await api('/api/admin/users');
   const boxes = await api('/api/mail/mailboxes');
-  $('usersTable').innerHTML = '<tr><th>البريد</th><th>الاسم</th><th>الدور</th><th>الصلاحيات على الصناديق</th></tr>' +
-    users.map(u => `<tr>
+  $('usersTable').innerHTML = '<tr><th>البريد</th><th>الاسم</th><th>الأدوار</th><th>الصلاحيات على الصناديق (قراءة + عرض/تنزيل مرفقات)</th></tr>' +
+    users.map(u => {
+      const admin = (u.roles || []).some(r => ['platform_admin', 'mail_admin'].includes(r));
+      return `<tr>
       <td style="direction:ltr;text-align:right">${esc(u.email)}</td><td>${esc(u.name)}</td>
-      <td><span class="tag ${u.role === 'admin' ? 'ok' : 'gray'}">${u.role}</span></td>
-      <td>${u.role === 'admin' ? '<span class="sub">كل الصناديق</span>' : boxes.map(b => {
-        const g = u.grants.find(x => x.mailbox_id === b.id);
+      <td>${(u.roles || []).map(r => `<span class="tag ${r.includes('admin') ? 'ok' : 'gray'}">${esc(r)}</span>`).join('')}</td>
+      <td>${admin ? '<span class="sub">كل الصناديق (عبر الدور)</span>' : boxes.map(b => {
+        const g = u.grants.find(x => Number(x.mailbox_id) === b.id && x.can_view_messages);
         return `<label style="white-space:nowrap;margin-inline-end:10px;font-size:12px">
           <input type="checkbox" ${g ? 'checked' : ''} onchange="setGrant(${u.id},${b.id},this.checked)"> ${esc(b.address)}</label>`;
-      }).join('')}</td></tr>`).join('');
+      }).join('')}</td></tr>`;
+    }).join('');
 }
 async function createUser() {
-  await api('/api/admin/users', { method:'POST', body:{ email:$('uEmail').value, name:$('uName').value, password:$('uPass').value, role:$('uRole').value } });
+  await api('/api/admin/users', { method:'POST', body:{ email:$('uEmail').value, name:$('uName').value, password:$('uPass').value, roles:[$('uRole').value] } });
   toggle('userForm'); loadUsers();
 }
+// UI preset "قراءة": view messages + view/download attachments. Finer flags via API.
 async function setGrant(userId, mailboxId, on) {
-  await api('/api/admin/grants', { method:'POST', body:{ user_id:userId, mailbox_id:mailboxId, permission:on ? 'read' : null } });
+  await api('/api/admin/grants', { method:'POST', body:{ user_id:userId, mailbox_id:mailboxId,
+    flags: on ? { can_view_messages:true, can_view_attachments:true, can_download_attachments:true } : null } });
 }
 async function loadAudit() {
   const rows = await api('/api/admin/audit');

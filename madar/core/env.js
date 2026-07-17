@@ -15,9 +15,10 @@ function loadEnv(dir) {
     PORT: Number(process.env.PORT || 3000),
     BASE_URL: process.env.BASE_URL || `http://localhost:${process.env.PORT || 3000}`,
     DATABASE_URL: process.env.DATABASE_URL || '',
-    // Split secrets: token/secret encryption vs session cookie signing.
+    // Split secrets: at-rest encryption / session signing / CSRF tokens.
     MADAR_ENCRYPTION_KEY: process.env.MADAR_ENCRYPTION_KEY || '',
     MADAR_SESSION_SECRET: process.env.MADAR_SESSION_SECRET || '',
+    MADAR_CSRF_SECRET: process.env.MADAR_CSRF_SECRET || '',
     SYNC_INTERVAL_MINUTES: Number(process.env.SYNC_INTERVAL_MINUTES || 10),
     MAX_ATTACHMENT_MB: Number(process.env.MAX_ATTACHMENT_MB || 25),
   };
@@ -28,16 +29,28 @@ function loadEnv(dir) {
 // Generate with: openssl rand -hex 32
 function validateSecrets(cfg) {
   const errors = [];
-  for (const key of ['MADAR_ENCRYPTION_KEY', 'MADAR_SESSION_SECRET']) {
-    const v = cfg[key];
-    if (!/^[0-9a-fA-F]{64,}$/.test(v)) {
+  const keys = ['MADAR_ENCRYPTION_KEY', 'MADAR_SESSION_SECRET', 'MADAR_CSRF_SECRET'];
+  for (const key of keys) {
+    if (!/^[0-9a-fA-F]{64,}$/.test(cfg[key])) {
       errors.push(`${key} must be at least 64 hex characters (openssl rand -hex 32).`);
     }
   }
-  if (cfg.MADAR_ENCRYPTION_KEY && cfg.MADAR_ENCRYPTION_KEY === cfg.MADAR_SESSION_SECRET) {
-    errors.push('MADAR_ENCRYPTION_KEY and MADAR_SESSION_SECRET must be different values.');
+  const values = keys.map(k => cfg[k]).filter(Boolean);
+  if (new Set(values).size !== values.length) {
+    errors.push('MADAR_ENCRYPTION_KEY / MADAR_SESSION_SECRET / MADAR_CSRF_SECRET must all be different values.');
   }
   return errors;
 }
 
-module.exports = { loadEnv, validateSecrets };
+// Encryption keyring for rotation: MADAR_ENCRYPTION_KEY is version 1,
+// MADAR_ENCRYPTION_KEY_V2, _V3... add newer versions (highest wins for new writes).
+function encryptionKeyring(cfg) {
+  const ring = { 1: cfg.MADAR_ENCRYPTION_KEY };
+  for (const [name, value] of Object.entries(process.env)) {
+    const m = name.match(/^MADAR_ENCRYPTION_KEY_V(\d+)$/);
+    if (m && /^[0-9a-fA-F]{64,}$/.test(value)) ring[Number(m[1])] = value;
+  }
+  return ring;
+}
+
+module.exports = { loadEnv, validateSecrets, encryptionKeyring };

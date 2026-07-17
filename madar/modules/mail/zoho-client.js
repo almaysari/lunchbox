@@ -60,20 +60,29 @@ class ZohoClient {
   async token() {
     if (this.accessToken && Date.now() < this.expiry) return this.accessToken;
     if (!this.conn.refresh_token_enc) throw new Error('Connection not authorized yet (no refresh token).');
-    const res = await fetch(new URL('/oauth/v2/token', this.conn.accounts_base), {
-      method: 'POST',
-      body: new URLSearchParams({
-        grant_type: 'refresh_token',
-        refresh_token: decrypt(this.conn.refresh_token_enc),
-        client_id: this.conn.client_id,
-        client_secret: decrypt(this.conn.client_secret_enc),
-      }),
+    // Refresh-token concurrency guard: a PostgreSQL advisory lock per
+    // connection serializes refreshes across every process/worker, so
+    // parallel syncs can never race Zoho's token endpoint.
+    const { tx } = require('../../core/db');
+    return tx(async (client) => {
+      await client.query('SELECT pg_advisory_xact_lock($1, $2)', [0x4d41, Number(this.conn.id)]);
+      if (this.accessToken && Date.now() < this.expiry) return this.accessToken; // refreshed while waiting
+      const fresh = await client.query('SELECT refresh_token_enc FROM connections WHERE id = $1', [this.conn.id]);
+      const res = await fetch(new URL('/oauth/v2/token', this.conn.accounts_base), {
+        method: 'POST',
+        body: new URLSearchParams({
+          grant_type: 'refresh_token',
+          refresh_token: decrypt(fresh.rows[0].refresh_token_enc),
+          client_id: this.conn.client_id,
+          client_secret: decrypt(this.conn.client_secret_enc),
+        }),
+      });
+      const json = await res.json();
+      if (!res.ok || json.error) throw new Error('Zoho token refresh failed: ' + (json.error || res.status));
+      this.accessToken = json.access_token; // memory only — never persisted or logged
+      this.expiry = Date.now() + (json.expires_in - 60) * 1000;
+      return this.accessToken;
     });
-    const json = await res.json();
-    if (!res.ok || json.error) throw new Error('Zoho token refresh failed: ' + (json.error || res.status));
-    this.accessToken = json.access_token;
-    this.expiry = Date.now() + (json.expires_in - 60) * 1000;
-    return this.accessToken;
   }
 
   // Raw GET: never throws on HTTP errors; body is parsed JSON or raw text.

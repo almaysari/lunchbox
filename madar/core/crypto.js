@@ -1,35 +1,56 @@
-// AES-256-GCM encryption for stored secrets (OAuth tokens, client secrets),
-// scrypt password hashing, and HMAC session-cookie signing.
-// Two independent secrets (validated in core/env.js):
-//   MADAR_ENCRYPTION_KEY — encrypts data at rest
-//   MADAR_SESSION_SECRET — signs session cookies
+// Crypto core:
+//  * AES-256-GCM at-rest encryption with KEY VERSIONING (rotation-ready)
+//  * scrypt password hashing (explicit strong parameters)
+//  * HMAC session-cookie signing and CSRF tokens (independent secrets)
+//
+// What is stored how (see docs/DECISIONS.md):
+//  * client_id       — plaintext (public identifier, not a secret)
+//  * client_secret   — AES-256-GCM at rest (versioned)
+//  * refresh_token   — AES-256-GCM at rest (versioned)
+//  * access_token    — NEVER persisted; process memory only, short-lived
 const crypto = require('crypto');
 
-let ENC_KEY = null;
+let KEYS = {};            // version -> derived 32-byte key
+let CURRENT_VERSION = 1;
 let SESSION_KEY = null;
+let CSRF_KEY = null;
 
-function init(encryptionKeyHex, sessionSecretHex) {
-  if (!encryptionKeyHex || !sessionSecretHex) throw new Error('Both MADAR_ENCRYPTION_KEY and MADAR_SESSION_SECRET are required.');
-  ENC_KEY = crypto.scryptSync(Buffer.from(encryptionKeyHex, 'hex'), 'madar-enc-v1', 32);
+// keyring: { 1: hex, 2: hex, ... } — highest version is used for new writes.
+function init(keyring, sessionSecretHex, csrfSecretHex) {
+  if (!keyring || !Object.keys(keyring).length) throw new Error('encryption keyring required');
+  if (!sessionSecretHex || !csrfSecretHex) throw new Error('MADAR_SESSION_SECRET and MADAR_CSRF_SECRET are required');
+  KEYS = {};
+  for (const [v, hex] of Object.entries(keyring)) {
+    KEYS[Number(v)] = crypto.scryptSync(Buffer.from(hex, 'hex'), 'madar-enc-v' + v, 32);
+  }
+  CURRENT_VERSION = Math.max(...Object.keys(KEYS).map(Number));
   SESSION_KEY = crypto.scryptSync(Buffer.from(sessionSecretHex, 'hex'), 'madar-sess-v1', 32);
+  CSRF_KEY = crypto.scryptSync(Buffer.from(csrfSecretHex, 'hex'), 'madar-csrf-v1', 32);
 }
 
+function currentKeyVersion() { return CURRENT_VERSION; }
+
+// ciphertext embeds its key version: k<ver>:iv:tag:data
 function encrypt(plain) {
   const iv = crypto.randomBytes(12);
-  const cipher = crypto.createCipheriv('aes-256-gcm', ENC_KEY, iv);
+  const cipher = crypto.createCipheriv('aes-256-gcm', KEYS[CURRENT_VERSION], iv);
   const enc = Buffer.concat([cipher.update(String(plain), 'utf8'), cipher.final()]);
-  return ['v1', iv.toString('hex'), cipher.getAuthTag().toString('hex'), enc.toString('hex')].join(':');
+  return [`k${CURRENT_VERSION}`, iv.toString('hex'), cipher.getAuthTag().toString('hex'), enc.toString('hex')].join(':');
 }
 
 function decrypt(stored) {
-  const [v, ivHex, tagHex, dataHex] = String(stored).split(':');
-  if (v !== 'v1') throw new Error('Unknown ciphertext version');
-  const decipher = crypto.createDecipheriv('aes-256-gcm', ENC_KEY, Buffer.from(ivHex, 'hex'));
+  const [vTag, ivHex, tagHex, dataHex] = String(stored).split(':');
+  const version = vTag === 'v1' ? 1 : Number((vTag.match(/^k(\d+)$/) || [])[1]); // 'v1' = legacy prefix
+  const key = KEYS[version];
+  if (!key) throw new Error(`No encryption key for version ${vTag} — add it to the keyring (key rotation)`);
+  const decipher = crypto.createDecipheriv('aes-256-gcm', key, Buffer.from(ivHex, 'hex'));
   decipher.setAuthTag(Buffer.from(tagHex, 'hex'));
   return Buffer.concat([decipher.update(Buffer.from(dataHex, 'hex')), decipher.final()]).toString('utf8');
 }
 
-// scrypt with explicit strong parameters (N=2^15, r=8, p=1)
+// Rotation: re-encrypt a stored value under the newest key.
+function reencrypt(stored) { return encrypt(decrypt(stored)); }
+
 const SCRYPT_OPTS = { N: 32768, r: 8, p: 1, maxmem: 128 * 1024 * 1024 };
 
 function hashPassword(password) {
@@ -48,21 +69,31 @@ function verifyPassword(password, stored) {
 
 function randomToken() { return crypto.randomBytes(32).toString('hex'); }
 
-// Session cookie value: token.signature — tampering invalidates it.
-function signSession(token) {
-  const sig = crypto.createHmac('sha256', SESSION_KEY).update(token).digest('hex');
-  return token + '.' + sig;
-}
+function hmac(key, value) { return crypto.createHmac('sha256', key).update(value).digest('hex'); }
+
+function signSession(token) { return token + '.' + hmac(SESSION_KEY, token); }
 
 function verifySessionCookie(cookieValue) {
   const [token, sig] = String(cookieValue || '').split('.');
   if (!token || !sig) return null;
-  const expected = crypto.createHmac('sha256', SESSION_KEY).update(token).digest('hex');
   try {
-    return crypto.timingSafeEqual(Buffer.from(sig, 'hex'), Buffer.from(expected, 'hex')) ? token : null;
+    return crypto.timingSafeEqual(Buffer.from(sig, 'hex'), Buffer.from(hmac(SESSION_KEY, token), 'hex')) ? token : null;
   } catch { return null; }
+}
+
+// CSRF: double-submit token bound to the session token.
+function csrfTokenFor(sessionToken) { return hmac(CSRF_KEY, 'csrf:' + sessionToken); }
+function verifyCsrf(sessionToken, headerValue) {
+  if (!sessionToken || !headerValue) return false;
+  try {
+    return crypto.timingSafeEqual(Buffer.from(String(headerValue), 'hex'), Buffer.from(csrfTokenFor(sessionToken), 'hex'));
+  } catch { return false; }
 }
 
 function sha256(buf) { return crypto.createHash('sha256').update(buf).digest('hex'); }
 
-module.exports = { init, encrypt, decrypt, hashPassword, verifyPassword, randomToken, signSession, verifySessionCookie, sha256 };
+module.exports = {
+  init, encrypt, decrypt, reencrypt, currentKeyVersion,
+  hashPassword, verifyPassword, randomToken,
+  signSession, verifySessionCookie, csrfTokenFor, verifyCsrf, sha256,
+};

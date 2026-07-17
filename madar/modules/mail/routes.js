@@ -1,14 +1,16 @@
-// Mail module REST API (PostgreSQL, async).
+// Mail module REST API (PostgreSQL, canonical-message model, RBAC).
 const fs = require('fs');
 const path = require('path');
 const { q, one, all } = require('../../core/db');
-const { encrypt } = require('../../core/crypto');
+const { encrypt, sha256, randomToken } = require('../../core/crypto');
 const { getStorage } = require('../../core/storage');
 const { audit } = require('../../core/audit');
 const auth = require('../../core/auth');
 const { ZohoClient, READ_SCOPES } = require('./zoho-client');
 const detection = require('./detection');
-const { syncMailbox, importArchiveZip, cancelSync } = require('./sync');
+const { syncMailbox, importArchiveZip, setJobControl } = require('./sync');
+
+const OAUTH_STATE_TTL_MS = 10 * 60 * 1000;
 
 // Expected-mailboxes baseline: validation reference ONLY (never a data source).
 function loadBaseline() {
@@ -38,40 +40,66 @@ async function mailboxRow(m) {
 }
 
 async function handle(req, res, url, user, body, helpers) {
-  const { send, requireAdmin } = helpers;
+  const { send } = helpers;
   const p = url.pathname;
   let m;
+  const requireMailAdmin = () => {
+    if (auth.isMailAdmin(user)) return true;
+    send(403, { error: 'mail admin role required' });
+    return false;
+  };
+  const requireSecurityAdmin = () => {
+    if (auth.isSecurityAdmin(user)) return true;
+    send(403, { error: 'security admin role required' });
+    return false;
+  };
 
-  // ---------- connections (organization-owned, admin only) ----------
+  // ---------- connections (organization-owned) ----------
   if (p === '/api/mail/connections' && req.method === 'GET') {
-    if (!requireAdmin()) return true;
+    if (!requireMailAdmin()) return true;
     return send(200, await all(`SELECT id, provider, label, accounts_base, api_base, client_id, scopes, status,
-      status_detail, created_at, (refresh_token_enc IS NOT NULL) AS authorized FROM connections ORDER BY id`));
+      status_detail, created_at, encryption_key_version, (refresh_token_enc IS NOT NULL) AS authorized
+      FROM connections ORDER BY id`));
   }
   if (p === '/api/mail/connections' && req.method === 'POST') {
-    if (!requireAdmin()) return true;
+    if (!requireSecurityAdmin()) return true;
     const { label, client_id, client_secret, accounts_base, api_base } = body;
     if (!client_id || !client_secret) return send(400, { error: 'client_id and client_secret are required' });
-    const r = await one(`INSERT INTO connections (provider, label, accounts_base, api_base, client_id, client_secret_enc, scopes, created_by)
-      VALUES ('zoho',$1,$2,$3,$4,$5,$6,$7) RETURNING id`,
+    const { currentKeyVersion } = require('../../core/crypto');
+    const r = await one(`INSERT INTO connections (provider, label, accounts_base, api_base, client_id,
+      client_secret_enc, scopes, created_by, encryption_key_version)
+      VALUES ('zoho',$1,$2,$3,$4,$5,$6,$7,$8) RETURNING id`,
       [label || 'Zoho Organization', accounts_base || 'https://accounts.zoho.com', api_base || 'https://mail.zoho.com',
-        client_id, encrypt(client_secret), READ_SCOPES, user.id]);
+        client_id, encrypt(client_secret), READ_SCOPES, user.id, currentKeyVersion()]);
     await audit(user.id, 'mail.connection.create', label || client_id);
     return send(200, { id: Number(r.id) });
   }
+
+  // ---------- OAuth: state is random, hashed at rest, one-time, expiring ----------
   if ((m = p.match(/^\/api\/mail\/connections\/(\d+)\/authorize-url$/)) && req.method === 'GET') {
-    if (!requireAdmin()) return true;
+    if (!requireSecurityAdmin()) return true;
     const zoho = await ZohoClient.forConnection(Number(m[1]));
+    const state = randomToken();
+    await q('INSERT INTO oauth_states (state_hash, connection_id, created_by, expires_at) VALUES ($1,$2,$3,$4)',
+      [sha256(Buffer.from(state)), Number(m[1]), user.id, new Date(Date.now() + OAUTH_STATE_TTL_MS)]);
     const redirect = helpers.baseUrl + '/oauth/callback';
-    return send(200, { url: zoho.authorizeUrl(redirect) + '&state=' + m[1], redirectUri: redirect });
+    return send(200, { url: zoho.authorizeUrl(redirect) + '&state=' + state, redirectUri: redirect });
   }
   if (p === '/oauth/callback' && req.method === 'GET') {
-    const code = url.searchParams.get('code');
-    const connId = Number(url.searchParams.get('state'));
-    if (!code || !connId) return send(400, 'Missing code/state', 'text/plain');
-    const zoho = await ZohoClient.forConnection(connId);
+    const code = url.searchParams.get('code');   // never logged, never stored
+    const state = url.searchParams.get('state') || '';
+    if (!code || !state) return send(400, 'Missing code/state', 'text/plain');
+    // one-time consumption: only an unused, unexpired state row matches
+    const row = await one(`UPDATE oauth_states SET used_at = now()
+      WHERE state_hash = $1 AND used_at IS NULL AND expires_at > now()
+      RETURNING connection_id`, [sha256(Buffer.from(state))]);
+    if (!row) {
+      await audit(user && user.id, 'mail.oauth.state_rejected', 'invalid/expired/reused state');
+      return send(403, 'Invalid, expired or already-used OAuth state', 'text/plain');
+    }
+    const zoho = await ZohoClient.forConnection(Number(row.connection_id));
     await zoho.exchangeCode(code, helpers.baseUrl + '/oauth/callback');
-    await audit(user && user.id, 'mail.connection.authorized', String(connId));
+    await audit(user && user.id, 'mail.connection.authorized', 'connection:' + row.connection_id);
     res.writeHead(302, { Location: '/?connected=1' });
     res.end();
     return true;
@@ -79,7 +107,7 @@ async function handle(req, res, url, user, body, helpers) {
 
   // ---------- organization-wide discovery ----------
   if (p === '/api/mail/discover' && req.method === 'POST') {
-    if (!requireAdmin()) return true;
+    if (!requireMailAdmin()) return true;
     const connId = Number(body.connection_id);
     const zoho = await ZohoClient.forConnection(connId);
     const discovery = await detection.discoverOrganization(zoho);
@@ -100,7 +128,7 @@ async function handle(req, res, url, user, body, helpers) {
     return send(200, { results, comparison, evidence: discovery.evidence });
   }
   if (p === '/api/mail/discovery-status' && req.method === 'GET') {
-    if (!requireAdmin()) return true;
+    if (!requireMailAdmin()) return true;
     const last = await one('SELECT * FROM detection_reports WHERE mailbox_id = 0 ORDER BY id DESC LIMIT 1');
     return send(200, last ? { at: new Date(last.at).getTime(), ...jsonCol(last.report) } : { comparison: null });
   }
@@ -108,7 +136,7 @@ async function handle(req, res, url, user, body, helpers) {
   // ---------- mailboxes ----------
   if (p === '/api/mail/mailboxes' && req.method === 'GET') {
     const ids = new Set(await auth.readableMailboxIds(user));
-    const rows = (await all('SELECT * FROM mailboxes ORDER BY address')).filter(r => user.role === 'admin' || ids.has(Number(r.id)));
+    const rows = (await all('SELECT * FROM mailboxes ORDER BY address')).filter(r => auth.isMailAdmin(user) || ids.has(Number(r.id)));
     return send(200, await Promise.all(rows.map(mailboxRow)));
   }
   if ((m = p.match(/^\/api\/mail\/mailboxes\/(\d+)$/)) && req.method === 'GET') {
@@ -122,26 +150,35 @@ async function handle(req, res, url, user, body, helpers) {
     });
   }
   if ((m = p.match(/^\/api\/mail\/mailboxes\/(\d+)\/pilot$/)) && req.method === 'POST') {
-    if (!requireAdmin()) return true;
+    if (!requireMailAdmin()) return true;
     await q('UPDATE mailboxes SET is_pilot = $1 WHERE id = $2', [Boolean(body.on), Number(m[1])]);
     await audit(user.id, 'mail.pilot.' + (body.on ? 'on' : 'off'), 'mailbox:' + m[1]);
     return send(200, { ok: true });
   }
+
+  // ---------- sync jobs: start / pause / resume / cancel / progress ----------
   if ((m = p.match(/^\/api\/mail\/mailboxes\/(\d+)\/sync$/)) && req.method === 'POST') {
-    if (!requireAdmin()) return true;
-    // Explicit admin action — the only thing that enables scheduled sync later.
+    if (!requireMailAdmin()) return true;
     await q('UPDATE mailboxes SET sync_enabled = TRUE WHERE id = $1', [Number(m[1])]);
     await audit(user.id, 'mail.pilot_sync.start', 'mailbox:' + m[1]);
-    return send(200, await syncMailbox(Number(m[1])));
+    // a paused job is resumed automatically (createJob reuses it)
+    return send(200, await syncMailbox(Number(m[1]), { userId: user.id }));
   }
-  if ((m = p.match(/^\/api\/mail\/mailboxes\/(\d+)\/sync\/cancel$/)) && req.method === 'POST') {
-    if (!requireAdmin()) return true;
-    cancelSync(Number(m[1]));
-    await audit(user.id, 'mail.pilot_sync.cancel', 'mailbox:' + m[1]);
+  if ((m = p.match(/^\/api\/mail\/sync-jobs\/(\d+)\/(pause|cancel)$/)) && req.method === 'POST') {
+    if (!requireMailAdmin()) return true;
+    await setJobControl(Number(m[1]), m[2] === 'pause' ? 'paused' : 'cancelled');
+    await audit(user.id, 'mail.sync_job.' + m[2], 'job:' + m[1]);
     return send(200, { ok: true });
   }
+  if ((m = p.match(/^\/api\/mail\/mailboxes\/(\d+)\/sync-jobs$/)) && req.method === 'GET') {
+    if (!requireMailAdmin()) return true;
+    return send(200, await all(`SELECT id, status, discovered, imported, skipped, errors, current_cursor,
+      current_folder_id, error_detail, started_at, finished_at, created_at
+      FROM sync_jobs WHERE mailbox_id = $1 ORDER BY id DESC LIMIT 10`, [Number(m[1])]));
+  }
+
   if ((m = p.match(/^\/api\/mail\/mailboxes\/(\d+)\/import-archive$/)) && req.method === 'POST') {
-    if (!requireAdmin()) return true;
+    if (!requireMailAdmin()) return true;
     if (!Buffer.isBuffer(body) || !body.length) return send(400, { error: 'upload the eDiscovery/Backup export ZIP as the raw request body (Content-Type: application/zip)' });
     return send(200, await importArchiveZip(Number(m[1]), body, user.id));
   }
@@ -151,7 +188,7 @@ async function handle(req, res, url, user, body, helpers) {
     return send(200, await all('SELECT id, name, folder_type FROM folders WHERE mailbox_id = $1 ORDER BY name', [id]));
   }
 
-  // ---------- messages / search / attachments ----------
+  // ---------- messages: occurrences joined to canonical; permissions INSIDE the SQL ----------
   if (p === '/api/mail/messages' && req.method === 'GET') {
     const allowed = await auth.readableMailboxIds(user);
     if (!allowed.length) return send(200, []);
@@ -161,31 +198,81 @@ async function handle(req, res, url, user, body, helpers) {
     const qtext = (url.searchParams.get('q') || '').trim();
     const scope = mailboxId ? [mailboxId] : allowed;
     const params = [scope];
-    let where = 'mailbox_id = ANY($1)';
-    if (folderId) { params.push(folderId); where += ` AND folder_id = $${params.length}`; }
-    if (qtext) { params.push(qtext.split(/\s+/).join(' & ')); where += ` AND fts @@ to_tsquery('simple', $${params.length})`; }
-    const rows = await all(`SELECT id, mailbox_id, folder_id, provider_message_id, from_address, from_name,
-      subject, snippet, received_at, direction, has_attachments
-      FROM messages WHERE ${where} ORDER BY received_at DESC LIMIT 100`, params);
+    let where = 'o.mailbox_id = ANY($1)';
+    if (folderId) { params.push(folderId); where += ` AND o.folder_id = $${params.length}`; }
+    if (qtext) { params.push(qtext.split(/\s+/).join(' & ')); where += ` AND c.fts @@ to_tsquery('simple', $${params.length})`; }
+    const rows = await all(`SELECT o.id AS occurrence_id, o.mailbox_id, o.folder_id, o.direction, o.received_at,
+        c.id AS canonical_id, c.from_address, c.from_name, c.subject, c.snippet, c.has_attachments
+      FROM message_occurrences o JOIN canonical_messages c ON c.id = o.canonical_message_id
+      WHERE ${where} ORDER BY o.received_at DESC LIMIT 100`, params);
     return send(200, rows.map(r => ({ ...r, received_at: new Date(r.received_at).getTime() })));
   }
-  if ((m = p.match(/^\/api\/mail\/messages\/(\d+)$/)) && req.method === 'GET') {
-    const row = await one('SELECT * FROM messages WHERE id = $1', [Number(m[1])]);
+  if ((m = p.match(/^\/api\/mail\/occurrences\/(\d+)$/)) && req.method === 'GET') {
+    const row = await one(`SELECT o.*, c.* , o.id AS occurrence_id, c.id AS canonical_id
+      FROM message_occurrences o JOIN canonical_messages c ON c.id = o.canonical_message_id WHERE o.id = $1`, [Number(m[1])]);
     if (!row) return send(404, { error: 'not found' });
     if (!(await auth.canReadMailbox(user, Number(row.mailbox_id)))) return send(403, { error: 'forbidden' });
-    await audit(user.id, 'mail.message.read', 'message:' + row.id);
-    const atts = await all('SELECT id, name, size, mime FROM attachments WHERE message_id = $1', [row.id]);
-    return send(200, { ...row, fts: undefined, received_at: new Date(row.received_at).getTime(), attachments: atts });
+    await audit(user.id, 'mail.message.read', 'occurrence:' + row.occurrence_id);
+    const canSeeAtt = await auth.mailboxPermission(user, Number(row.mailbox_id), 'can_view_attachments');
+    const atts = canSeeAtt
+      ? await all('SELECT id, sanitized_filename AS name, size, detected_mime_type AS mime, quarantine_status FROM attachments WHERE canonical_message_id = $1', [row.canonical_id])
+      : [];
+    const occurrences = await all(`SELECT o2.id, o2.mailbox_id, mb.address, f.name AS folder
+      FROM message_occurrences o2 JOIN mailboxes mb ON mb.id = o2.mailbox_id LEFT JOIN folders f ON f.id = o2.folder_id
+      WHERE o2.canonical_message_id = $1`, [row.canonical_id]);
+    return send(200, {
+      occurrenceId: Number(row.occurrence_id), canonicalId: Number(row.canonical_id),
+      mailboxId: Number(row.mailbox_id), direction: row.direction,
+      from_address: row.from_address, from_name: row.from_name, to_addresses: row.to_addresses,
+      cc_addresses: row.cc_addresses, subject: row.subject, snippet: row.snippet, body_html: row.body_html,
+      received_at: new Date(row.received_at).getTime(), attachments: atts,
+      // occurrences shown only where the user can read that mailbox
+      appearsIn: (await Promise.all(occurrences.map(async o =>
+        (await auth.canReadMailbox(user, Number(o.mailbox_id))) ? { address: o.address, folder: o.folder } : null)))
+        .filter(Boolean),
+    });
   }
+
+  // ---------- attachments: view/download split, safe headers, quarantine, Range ----------
   if ((m = p.match(/^\/api\/mail\/attachments\/(\d+)$/)) && req.method === 'GET') {
-    const att = await one(`SELECT a.*, msg.mailbox_id FROM attachments a JOIN messages msg ON msg.id = a.message_id WHERE a.id = $1`, [Number(m[1])]);
+    const att = await one(`SELECT a.*, o.mailbox_id FROM attachments a
+      JOIN message_occurrences o ON o.canonical_message_id = a.canonical_message_id
+      WHERE a.id = $1 LIMIT 1`, [Number(m[1])]);
     if (!att) return send(404, { error: 'not found' });
-    if (!(await auth.canReadMailbox(user, Number(att.mailbox_id)))) return send(403, { error: 'forbidden' });
-    await audit(user.id, 'mail.attachment.read', att.name);
+    // ANY readable occurrence's mailbox grants access — but the flag must match the action.
+    const occRows = await all('SELECT DISTINCT mailbox_id FROM message_occurrences WHERE canonical_message_id = $1', [att.canonical_message_id]);
+    const wantDownload = url.searchParams.get('download') === '1';
+    const flag = wantDownload ? 'can_download_attachments' : 'can_view_attachments';
+    let permitted = false;
+    for (const o of occRows) if (await auth.mailboxPermission(user, Number(o.mailbox_id), flag)) { permitted = true; break; }
+    if (!permitted) return send(403, { error: 'forbidden' });
+    if (att.quarantine_status === 'quarantined' && !auth.isSecurityAdmin(user)) {
+      return send(423, { error: 'attachment quarantined (declared type does not match detected content)' });
+    }
+    await audit(user.id, wantDownload ? 'mail.attachment.download' : 'mail.attachment.view', 'attachment:' + att.id);
     const storage = getStorage();
     if (!storage.exists(att.storage_key)) return send(404, { error: 'file missing' });
-    res.writeHead(200, { 'Content-Type': att.mime || 'application/octet-stream', 'Content-Disposition': `inline; filename="${encodeURIComponent(att.name)}"` });
-    storage.getStream(att.storage_key).pipe(res);
+
+    const headers = {
+      'Content-Type': att.detected_mime_type || 'application/octet-stream', // detected, never provider-claimed
+      'X-Content-Type-Options': 'nosniff',
+      'Content-Security-Policy': "default-src 'none'; sandbox",
+      'Content-Disposition': `${wantDownload ? 'attachment' : 'inline'}; filename="${att.sanitized_filename}"`,
+      'Cache-Control': 'private, no-store',
+      'Accept-Ranges': 'bytes',
+    };
+    // Range support (PDF viewers request byte ranges)
+    const range = String(req.headers.range || '').match(/^bytes=(\d+)-(\d*)$/);
+    if (range) {
+      const start = Number(range[1]);
+      const end = range[2] ? Math.min(Number(range[2]), Number(att.size) - 1) : Number(att.size) - 1;
+      if (start >= Number(att.size)) { res.writeHead(416, { 'Content-Range': `bytes */${att.size}` }); res.end(); return true; }
+      res.writeHead(206, { ...headers, 'Content-Range': `bytes ${start}-${end}/${att.size}`, 'Content-Length': end - start + 1 });
+      storage.getObject(att.storage_key, { start, end }).pipe(res);
+    } else {
+      res.writeHead(200, { ...headers, 'Content-Length': Number(att.size) });
+      storage.getObject(att.storage_key).pipe(res);
+    }
     return true;
   }
 
@@ -194,16 +281,18 @@ async function handle(req, res, url, user, body, helpers) {
     return send(200, await all('SELECT * FROM labels ORDER BY name'));
   }
   if (p === '/api/mail/labels' && req.method === 'POST') {
-    if (!requireAdmin()) return true;
+    if (!requireMailAdmin()) return true;
     const r = await one(`INSERT INTO labels (name, color) VALUES ($1,$2)
       ON CONFLICT (name) DO UPDATE SET color = EXCLUDED.color RETURNING id`, [body.name, body.color || '#2545d3']);
     return send(200, { id: Number(r.id) });
   }
-  if ((m = p.match(/^\/api\/mail\/messages\/(\d+)\/labels$/)) && req.method === 'POST') {
-    const row = await one('SELECT mailbox_id FROM messages WHERE id = $1', [Number(m[1])]);
-    if (!row || !(await auth.canReadMailbox(user, Number(row.mailbox_id)))) return send(403, { error: 'forbidden' });
-    if (body.add) await q('INSERT INTO message_labels (message_id, label_id) VALUES ($1,$2) ON CONFLICT DO NOTHING', [Number(m[1]), Number(body.add)]);
-    if (body.remove) await q('DELETE FROM message_labels WHERE message_id = $1 AND label_id = $2', [Number(m[1]), Number(body.remove)]);
+  if ((m = p.match(/^\/api\/mail\/canonical\/(\d+)\/labels$/)) && req.method === 'POST') {
+    const occ = await all('SELECT DISTINCT mailbox_id FROM message_occurrences WHERE canonical_message_id = $1', [Number(m[1])]);
+    let permitted = false;
+    for (const o of occ) if (await auth.mailboxPermission(user, Number(o.mailbox_id), 'can_manage_labels')) { permitted = true; break; }
+    if (!permitted) return send(403, { error: 'forbidden' });
+    if (body.add) await q('INSERT INTO message_labels (canonical_message_id, label_id) VALUES ($1,$2) ON CONFLICT DO NOTHING', [Number(m[1]), Number(body.add)]);
+    if (body.remove) await q('DELETE FROM message_labels WHERE canonical_message_id = $1 AND label_id = $2', [Number(m[1]), Number(body.remove)]);
     return send(200, { ok: true });
   }
 

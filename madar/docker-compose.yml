@@ -28,6 +28,7 @@ services:
       DATABASE_URL: postgresql://madar:${POSTGRES_PASSWORD}@postgres:5432/madar
       MADAR_ENCRYPTION_KEY: ${MADAR_ENCRYPTION_KEY:?openssl rand -hex 32}
       MADAR_SESSION_SECRET: ${MADAR_SESSION_SECRET:?openssl rand -hex 32}
+      MADAR_CSRF_SECRET: ${MADAR_CSRF_SECRET:?openssl rand -hex 32}
       MADAR_ATTACH_DIR: /var/lib/madar/attachments
       SYNC_INTERVAL_MINUTES: ${SYNC_INTERVAL_MINUTES:-10}
       MAX_ATTACHMENT_MB: ${MAX_ATTACHMENT_MB:-25}
