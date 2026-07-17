@@ -476,6 +476,101 @@ async function upsertMailbox(connectionId, m, caps, choice) {
   return id;
 }
 
+// ---- endpoint access matrix (evidence aggregation — no new API calls) ----
+// Compiles, from the stored per-mailbox detection reports, one row per official
+// endpoint attempt: URL, HTTP status, sanitized response, and a classification:
+//   success                      — 200 with data (live read works via this id)
+//   success_moderation_only      — 200 but the endpoint is documented as the
+//                                  moderation queue, never the mailbox archive
+//   empty_data                   — 200 with an empty payload
+//   identifier_rejected          — Zoho rejected the id (e.g. "Invalid Account
+//                                  ID"): the endpoint family requires a real
+//                                  accountId, which groups do not have
+//   permission_denied            — 401/403 (scope/authorization refusal)
+//   not_attempted_no_account_id  — the accounts-scoped family was never
+//                                  callable: no accountId exists for the entity
+//   not_attempted_dependency     — depends on an earlier probe that failed
+function classifyProbe(kind, e) {
+  const bodyText = JSON.stringify(e.body ?? e.error ?? '').toLowerCase();
+  if (e.status === 200) {
+    if (kind === 'moderationQueue') return ['success_moderation_only',
+      'استجابت 200، لكن هذه النقطة موثّقة كطابور المراجعة (المحتجز) فقط — ليست أرشيف الصندوق ولا تصلح للقراءة الحية.'];
+    const count = typeof e.count === 'number' ? e.count
+      : Array.isArray(e.body && e.body.data) ? e.body.data.length
+      : e.hasContent === true ? 1 : e.hasContent === false ? 0
+      : typeof e.attachmentCount === 'number' ? e.attachmentCount : null;
+    if (count === 0) return ['empty_data', 'استجابت 200 لكن دون أي بيانات.'];
+    return ['success', 'استجابت 200 وأعادت بيانات — القراءة عبر هذا المعرف تعمل.'];
+  }
+  if (e.status === 401 || e.status === 403 || bodyText.includes('invalid_oauthscope') || bodyText.includes('authfail'))
+    return ['permission_denied', `رفض تصريح (HTTP ${e.status}) — نطاق/صلاحية.`];
+  if (bodyText.includes('invalid account') || bodyText.includes('invalid_account'))
+    return ['identifier_rejected', `Zoho رفض المعرف حرفيًا ("Invalid Account ID"، HTTP ${e.status}) — عائلة ‎/api/accounts تتطلب accountId حقيقيًا، وZoho لا يصدر accountId للمجموعات. غير مدعوم لهذا الكيان، وليس نقص صلاحية.`];
+  return ['error_' + e.status, `فشل HTTP ${e.status} — انظر الاستجابة المعقّمة.`];
+}
+
+const PROBE_LABELS = {
+  'folders.accountId': 'GET /api/accounts/{accountId}/folders — بمعرف حساب من organization/accounts',
+  'folders.mailboxId': 'GET /api/accounts/{id}/folders — بمحاولة mailboxId الخاص بالمجموعة',
+  'folders.groupIdAsAccountId': 'GET /api/accounts/{id}/folders — بمحاولة zgid (معرف المجموعة) مكان accountId',
+  'messages.accountId': 'GET /api/accounts/{accountId}/messages/view — قائمة الرسائل',
+  'messages.mailboxId': 'GET /api/accounts/{id}/messages/view — بمعرف mailboxId',
+  'messages.groupIdAsAccountId': 'GET /api/accounts/{id}/messages/view — بمعرف zgid',
+  'content': 'GET /api/accounts/{id}/folders/{fid}/messages/{mid}/content — محتوى رسالة',
+  'attachmentInfo': 'GET /api/accounts/{id}/folders/{fid}/messages/{mid}/attachmentinfo — بيانات المرفقات',
+  'moderationQueue': 'GET /api/organization/{zoid}/groups/{zgid}/messages — طابور المراجعة (موثّق: المحتجز فقط)',
+};
+
+function endpointMatrix(reportRows) {
+  const rows = [];
+  for (const r of reportRows) {
+    const caps = (r.report && r.report.capabilities) || {};
+    const ev = caps.evidence || {};
+    const ids = caps.ids || {};
+    for (const [kind, e] of Object.entries(ev)) {
+      if (!e || typeof e !== 'object') continue;
+      const [classification, reason] = classifyProbe(kind, e);
+      rows.push({
+        mailbox: r.address, detectedType: r.detectedType,
+        endpoint: PROBE_LABELS[kind] || kind, url: e.url || null, status: e.status ?? null,
+        response: (({ url, status, ...rest }) => rest)(e),
+        classification, reason,
+      });
+    }
+    // What was structurally impossible to attempt — recorded explicitly so the
+    // matrix distinguishes "tried and failed" from "no identifier existed".
+    if (r.detectedType === 'shared_mailbox' && !ids.accountId) {
+      rows.push({
+        mailbox: r.address, detectedType: r.detectedType,
+        endpoint: 'عائلة ‎GET /api/accounts/{accountId}/…‎ (folders/messages/content/attachmentinfo) بمعرف accountId رسمي',
+        url: null, status: null, response: null,
+        classification: 'not_attempted_no_account_id',
+        reason: 'لا يوجد accountId لهذا الصندوق: لم يظهر في organization/{zoid}/accounts'
+          + (ids.appearsInOrgAccounts ? '' : ' (appearsInOrgAccounts=false)')
+          + ' — واجهة رسائل Zoho Mail كلها accounts-scoped، فلا مسار قراءة حية بدون هذا المعرف. جرى بدلًا من ذلك اختبار mailboxId وzgid (انظر الصفوف أعلاه).',
+      });
+    }
+    if (!caps.folders && !Object.keys(ev).some(k => k.startsWith('messages.'))) {
+      rows.push({
+        mailbox: r.address, detectedType: r.detectedType,
+        endpoint: 'GET …/messages/view + …/content + …/attachmentinfo',
+        url: null, status: null, response: null,
+        classification: 'not_attempted_dependency',
+        reason: 'تعتمد على نجاح folders أولًا، وكل محاولات folders فشلت (انظر صفوفها).',
+      });
+    }
+  }
+  const summary = {};
+  for (const row of rows) summary[row.classification] = (summary[row.classification] || 0) + 1;
+  const liveSharedReads = rows.filter(r => r.detectedType === 'shared_mailbox'
+    && r.classification === 'success' && /messages\/view|content/.test(r.endpoint));
+  return {
+    rows, summary,
+    liveSharedMailboxReadProven: liveSharedReads.length > 0,
+    liveSharedReadMailboxes: [...new Set(liveSharedReads.map(r => r.mailbox))],
+  };
+}
+
 // ---- baseline comparison (validation only — never a data source) ----
 function compareWithBaseline(discovered, baseline) {
   const discoveredSet = new Map(discovered.map(m => [lc(m.address), m]));
@@ -489,4 +584,4 @@ function compareWithBaseline(discovered, baseline) {
   };
 }
 
-module.exports = { discoverOrganization, probeCapabilities, chooseStrategy, upsertMailbox, compareWithBaseline, classifyGroup, sanitize };
+module.exports = { discoverOrganization, probeCapabilities, chooseStrategy, upsertMailbox, compareWithBaseline, classifyGroup, sanitize, endpointMatrix };

@@ -142,6 +142,19 @@ async function handle(req, res, url, user, body, helpers) {
     const last = await one('SELECT * FROM detection_reports WHERE mailbox_id = 0 ORDER BY id DESC LIMIT 1');
     return send(200, last ? { at: new Date(last.at).getTime(), ...jsonCol(last.report) } : { comparison: null });
   }
+  // Per-endpoint access matrix, compiled from the STORED probe evidence of the
+  // latest detection report per mailbox. No Zoho call is made here.
+  if (p === '/api/mail/discovery/endpoint-matrix' && req.method === 'GET') {
+    if (!requireMailAdmin()) return true;
+    const boxes = await all('SELECT id, address, detected_type FROM mailboxes ORDER BY address');
+    const reportRows = [];
+    for (const b of boxes) {
+      const rep = await one('SELECT at, report FROM detection_reports WHERE mailbox_id = $1 ORDER BY id DESC LIMIT 1', [b.id]);
+      if (rep) reportRows.push({ address: b.address, detectedType: b.detected_type, at: new Date(rep.at).getTime(), report: jsonCol(rep.report) });
+    }
+    const matrix = detection.endpointMatrix(reportRows);
+    return send(200, { ...matrix, mailboxesCovered: reportRows.length, reportDates: reportRows.map(r => r.at) });
+  }
 
   // ---------- mailboxes ----------
   if (p === '/api/mail/mailboxes' && req.method === 'GET') {

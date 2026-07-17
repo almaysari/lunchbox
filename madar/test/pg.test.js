@@ -203,6 +203,30 @@ test('discovery: 20 fixture shared mailboxes, no duplicates, alias uniqueness', 
   assert.strictEqual(Number(alias.mailbox_id), byAddress['info@exoticcolors.org'].id);
 });
 
+// ---------- endpoint access matrix ----------
+test('endpoint matrix: per-endpoint evidence rows with honest classifications', async () => {
+  const r = await fakeCall('GET', '/api/mail/discovery/endpoint-matrix', { user: adminUser });
+  assert.strictEqual(r.status, 200);
+  const mx = r.body;
+  assert.ok(mx.rows.length > 0 && mx.mailboxesCovered >= 21);
+  // group id used as accountId → literal Zoho rejection, classified as such
+  const rejected = mx.rows.filter(x => x.classification === 'identifier_rejected');
+  assert.ok(rejected.length > 0);
+  assert.ok(rejected.every(x => x.status === 400 && /Invalid Account ID/i.test(JSON.stringify(x.response))));
+  // shared mailboxes without any accountId carry an explicit not-attempted row
+  assert.ok(mx.rows.some(x => x.classification === 'not_attempted_no_account_id' && x.detectedType === 'shared_mailbox'));
+  // fixture scenario: info@ IS readable via its org accountId → matrix must
+  // surface it (the verdict is honest in both directions)
+  assert.strictEqual(mx.liveSharedMailboxReadProven, true);
+  assert.deepStrictEqual(mx.liveSharedReadMailboxes, ['info@exoticcolors.org']);
+  // matrix is compiled from stored evidence — sanitized, no tokens
+  const text = JSON.stringify(mx);
+  assert.ok(!text.includes('mock-access-token') && !text.includes('mock-refresh-token'));
+  // members-only route: a plain member gets 403
+  const denied = await fakeCall('GET', '/api/mail/discovery/endpoint-matrix', { user: memberUser });
+  assert.strictEqual(denied.status, 403);
+});
+
 // ---------- canonical + occurrences ----------
 test('canonical model: same message in two mailboxes = 1 canonical, 2 occurrences (nothing lost)', async () => {
   const info = byAddress['info@exoticcolors.org'];

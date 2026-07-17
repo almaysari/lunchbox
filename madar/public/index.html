@@ -361,8 +361,46 @@ async function loadDiscovery() {
     ${d.integrity && (d.integrity.aliasCollisions?.length || d.integrity.duplicateProviderIds?.length || d.integrity.sameAddressFromMultipleEndpoints?.length)
       ? `<div class="banner warn">تنبيهات تكامل: aliases متصادمة: ${(d.integrity.aliasCollisions||[]).length} — معرفات مكررة: ${(d.integrity.duplicateProviderIds||[]).length} — عناوين من أكثر من endpoint: ${(d.integrity.sameAddressFromMultipleEndpoints||[]).length}</div>`
       : '<div class="sub">تكامل الاكتشاف: لا تصادم aliases، لا معرفات مكررة، لا عناوين مزدوجة المصدر</div>'}
-    <div class="sub">آخر اكتشاف: ${fmtT(d.at)} — <a href="#" onclick="showEvidence();return false">عرض الأدلة الخام (Sanitized)</a></div>`;
+    <div class="sub">آخر اكتشاف: ${fmtT(d.at)} —
+      <a href="#" onclick="showEvidence();return false">عرض الأدلة الخام (Sanitized)</a> —
+      <a href="#" onclick="showEndpointMatrix();return false">مصفوفة الوصول لكل Endpoint (أدلة القراءة الحية)</a></div>`;
   window._lastEvidence = d.evidence;
+}
+
+const MATRIX_CLS = {
+  success: ['✅ نجاح', 'ok'],
+  success_moderation_only: ['🟡 طابور المراجعة فقط', 'warn'],
+  empty_data: ['⚪ 200 بلا بيانات', 'warn'],
+  identifier_rejected: ['⛔ معرف مرفوض (غير مدعوم للكيان)', 'bad'],
+  permission_denied: ['🔒 رفض صلاحية', 'bad'],
+  not_attempted_no_account_id: ['— لا accountId (تعذر المحاولة بنيويًا)', 'warn'],
+  not_attempted_dependency: ['— لم تُجرَّب (تعتمد على فشل سابق)', 'warn'],
+};
+async function showEndpointMatrix() {
+  const mx = await api('/api/mail/discovery/endpoint-matrix');
+  const rows = mx.rows.map(r => {
+    const [label] = MATRIX_CLS[r.classification] || [r.classification];
+    return `<tr>
+      <td style="white-space:nowrap"><b>${esc(r.mailbox)}</b><br><span class="sub">${esc(r.detectedType)}</span></td>
+      <td style="direction:ltr;text-align:left;font-size:11px">${esc(r.endpoint)}${r.url ? `<br><span class="sub">${esc(r.url)}</span>` : ''}</td>
+      <td style="direction:ltr">${r.status ?? '—'}</td>
+      <td>${esc(label)}<br><span class="sub">${esc(r.reason)}</span></td>
+      <td style="direction:ltr;text-align:left;font-size:10.5px">${r.response ? esc(JSON.stringify(r.response)) : '—'}</td>
+    </tr>`;
+  }).join('');
+  $('dlgTitle').textContent = 'مصفوفة الوصول — كل endpoint رسمي جُرّب لقراءة الرسائل (من الأدلة المخزنة، بلا نداء جديد)';
+  $('dlgBody').innerHTML = `
+    ${mx.liveSharedMailboxReadProven
+      ? `<div class="banner warn">تنبيه: ثبتت قراءة حية لصناديق مشتركة عبر: ${mx.liveSharedReadMailboxes.map(esc).join('، ')} — راجع الصفوف الخضراء قبل اعتماد eDiscovery وحيدًا.</div>`
+      : `<div class="banner ok">كل المسارات الرسمية المختبرة تثبت عدم إمكانية القراءة الحية لرسائل الصناديق المشتركة — مسار الأرشيف الوحيد: استيراد eDiscovery (+ طابور المراجعة للمحتجز فقط).</div>`}
+    <div class="sub">ملخص التصنيفات: ${Object.entries(mx.summary).map(([k, v]) => `${esc((MATRIX_CLS[k] || [k])[0])}: ${v}`).join(' — ')} | صناديق مغطاة: ${mx.mailboxesCovered}</div>
+    <div style="overflow:auto;max-height:56vh"><table>
+      <tr><th>الصندوق</th><th>Endpoint / URL</th><th>Status</th><th>التصنيف والسبب</th><th>Response (Sanitized)</th></tr>
+      ${rows}
+    </table></div>
+    <div class="sub" style="margin-top:8px"><a href="#" onclick='showEvidence(window._lastMatrix, "مصفوفة الوصول — JSON خام");return false'>عرض JSON الخام للمصفوفة</a></div>`;
+  window._lastMatrix = mx;
+  $('dlg').showModal();
 }
 function showEvidence(obj, title) {
   $('dlgTitle').textContent = title || 'أدلة الاكتشاف الخام (بدون توكنات)';
