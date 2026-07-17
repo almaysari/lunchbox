@@ -8,7 +8,8 @@
 //   * info@ additionally exposed with an org-level accountId whose messages
 //     ARE readable (fixture for the "API allows message read" scenario)
 //   * scan@ metadata-only (folders request rejected)
-//   * groupId used as accountId → literal {"Invalid Account ID"} error
+//   * mailboxId/zgid used as accountId → literal observed rejection
+//     (404 "Invalid Input" / "Account id N is invalid")
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
@@ -73,7 +74,9 @@ function startMockZoho(port = 0) {
     const p = url.pathname;
     const send = (status, body) => { res.writeHead(status, { 'Content-Type': 'application/json' }); res.end(JSON.stringify(body)); };
     const ok = data => send(200, { status: { code: 200, description: 'success' }, data });
-    const invalidAccount = () => send(400, { status: { code: 400, description: 'Invalid Account ID' }, data: { errorCode: 'INVALID_ACCOUNT_ID' } });
+    // Literal rejection observed on the live tenant when a non-account id is
+    // used against the accounts-scoped family (mailboxId or zgid).
+    const invalidAccount = (id) => send(404, { status: { code: 404, description: 'Invalid Input' }, data: { moreInfo: `Account id ${id} is invalid` } });
 
     if (p === '/oauth/v2/token') {
       return send(200, { access_token: 'mock-access-token', refresh_token: 'mock-refresh-token', expires_in: 3600 });
@@ -137,11 +140,11 @@ function startMockZoho(port = 0) {
           { folderId: id + '-f2', folderName: 'Sent', folderType: 'Sent' },
         ]);
       }
-      return invalidAccount(); // any groupId used as accountId → literal documented error
+      return invalidAccount(id); // non-account id → literal observed rejection
     }
     if ((m = p.match(/^\/api\/accounts\/([^/]+)\/messages\/view$/))) {
       const id = m[1];
-      if (!MESSAGES[id]) return invalidAccount();
+      if (!MESSAGES[id]) return invalidAccount(id);
       const start = Number(url.searchParams.get('start') || 1);
       const limit = Number(url.searchParams.get('limit') || 100);
       const folderId = url.searchParams.get('folderId') || '';
@@ -149,16 +152,16 @@ function startMockZoho(port = 0) {
       return ok(all.slice(start - 1, start - 1 + limit));
     }
     if ((m = p.match(/^\/api\/accounts\/([^/]+)\/folders\/[^/]+\/messages\/([^/]+)\/content$/))) {
-      if (!MESSAGES[m[1]]) return invalidAccount();
+      if (!MESSAGES[m[1]]) return invalidAccount(m[1]);
       return ok({ messageId: m[2], content: `<p>Full HTML body of message <b>${m[2]}</b> from the mock Zoho API.</p>` });
     }
     if ((m = p.match(/^\/api\/accounts\/([^/]+)\/folders\/[^/]+\/messages\/([^/]+)\/attachmentinfo$/))) {
-      if (!MESSAGES[m[1]]) return invalidAccount();
+      if (!MESSAGES[m[1]]) return invalidAccount(m[1]);
       const msg = MESSAGES[m[1]].find(x => x.messageId === m[2]);
       return ok({ attachments: msg && msg.hasAttachment === '1' ? [{ attachmentId: 'att-' + m[2], attachmentName: `document-${m[2]}.pdf`, attachmentSize: PDF.length, attachmentType: 'application/pdf' }] : [] });
     }
     if ((m = p.match(/^\/api\/accounts\/([^/]+)\/folders\/[^/]+\/messages\/[^/]+\/attachments\/[^/]+$/))) {
-      if (!MESSAGES[m[1]]) return invalidAccount();
+      if (!MESSAGES[m[1]]) return invalidAccount(m[1]);
       res.writeHead(200, { 'Content-Type': 'application/pdf' });
       return res.end(PDF);
     }

@@ -209,10 +209,10 @@ test('endpoint matrix: per-endpoint evidence rows with honest classifications', 
   assert.strictEqual(r.status, 200);
   const mx = r.body;
   assert.ok(mx.rows.length > 0 && mx.mailboxesCovered >= 21);
-  // group id used as accountId → literal Zoho rejection, classified as such
+  // mailboxId/zgid used as accountId → literal Zoho rejection, classified as such
   const rejected = mx.rows.filter(x => x.classification === 'identifier_rejected');
   assert.ok(rejected.length > 0);
-  assert.ok(rejected.every(x => x.status === 400 && /Invalid Account ID/i.test(JSON.stringify(x.response))));
+  assert.ok(rejected.every(x => x.status === 404 && /Account id .* is invalid/i.test(JSON.stringify(x.response))));
   // shared mailboxes without any accountId carry an explicit not-attempted row
   assert.ok(mx.rows.some(x => x.classification === 'not_attempted_no_account_id' && x.detectedType === 'shared_mailbox'));
   // fixture scenario: info@ IS readable via its org accountId → matrix must

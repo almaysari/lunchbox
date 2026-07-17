@@ -504,8 +504,11 @@ function classifyProbe(kind, e) {
   }
   if (e.status === 401 || e.status === 403 || bodyText.includes('invalid_oauthscope') || bodyText.includes('authfail'))
     return ['permission_denied', `رفض تصريح (HTTP ${e.status}) — نطاق/صلاحية.`];
-  if (bodyText.includes('invalid account') || bodyText.includes('invalid_account'))
-    return ['identifier_rejected', `Zoho رفض المعرف حرفيًا ("Invalid Account ID"، HTTP ${e.status}) — عائلة ‎/api/accounts تتطلب accountId حقيقيًا، وZoho لا يصدر accountId للمجموعات. غير مدعوم لهذا الكيان، وليس نقص صلاحية.`];
+  // Both observed spellings: documented `400 "Invalid Account ID"` and the live
+  // tenant's `404 "Invalid Input" / "Account id N is invalid"`.
+  if (bodyText.includes('invalid account') || bodyText.includes('invalid_account')
+      || /account id[^"']*is invalid/.test(bodyText))
+    return ['identifier_rejected', `Zoho رفض المعرف حرفيًا (HTTP ${e.status}) — عائلة ‎/api/accounts تتطلب accountId حقيقيًا، وZoho لا يصدر accountId للمجموعات. غير مدعوم لهذا الكيان، وليس نقص صلاحية.`];
   return ['error_' + e.status, `فشل HTTP ${e.status} — انظر الاستجابة المعقّمة.`];
 }
 
