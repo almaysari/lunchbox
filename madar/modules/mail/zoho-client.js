@@ -121,7 +121,7 @@ class ZohoClient {
   getAccounts()                 { return this.get('/api/accounts'); }
   getOrganization()             { return this.get('/api/organization'); }
   getOrgAccounts(zoid)          { return this.get(`/api/organization/${zoid}/accounts?start=0&limit=500`); }
-  getGroups(zoid)               { return this.get(`/api/organization/${zoid}/groups`); }
+  getGroups(zoid, start = 0, limit = 100) { return this.get(`/api/organization/${zoid}/groups?start=${start}&limit=${limit}`); }
   getGroupDetails(zoid, gid)    { return this.get(`/api/organization/${zoid}/groups/${gid}`); }
   getGroupModeration(zoid, gid) { return this.get(`/api/organization/${zoid}/groups/${gid}/messages?start=0&limit=25`); }
   getFolders(accountId)         { return this.get(`/api/accounts/${accountId}/folders`); }

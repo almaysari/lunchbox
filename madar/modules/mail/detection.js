@@ -45,6 +45,54 @@ function sanitize(result) {
   return { url: result.url, status: result.status, body };
 }
 
+// Live tenant payloads for accounts/groups carry personal data (phone numbers,
+// home addresses, dates of birth). Stored evidence keeps only the structural
+// fields discovery actually reasons about — allowlist, never blocklist.
+function sanitizeAccountRecord(a) {
+  if (!a || typeof a !== 'object') return a;
+  return {
+    accountId: a.accountId, zuid: a.zuid, role: a.role, iamUserRole: a.iamUserRole,
+    status: a.status, mailboxStatus: a.mailboxStatus,
+    mailboxAddress: a.mailboxAddress, primaryEmailAddress: a.primaryEmailAddress,
+    emailAddress: Array.isArray(a.emailAddress)
+      ? a.emailAddress.map(e => ({ mailId: e.mailId, isPrimary: e.isPrimary, isAlias: e.isAlias })) : undefined,
+    emailAlias: a.emailAlias,
+    policyId: a.policyId && a.policyId.zoid ? { zoid: a.policyId.zoid } : undefined,
+    groupList: Array.isArray(a.groupList)
+      ? a.groupList.map(g => ({ zgid: g.zgid, name: g.name, emailId: g.emailId, role: g.role })) : undefined,
+    iamGroupList: Array.isArray(a.iamGroupList)
+      ? a.iamGroupList.map(g => ({ zgid: g.zgid, name: g.name, emailId: g.emailId, role: g.role })) : undefined,
+  };
+}
+function sanitizeGroupRecord(g) {
+  if (!g || typeof g !== 'object') return g;
+  return {
+    zgid: g.zgid, name: g.name || g.groupName, emailId: g.emailId, mbtype: g.mbtype,
+    mailboxId: g.mailboxId, accessType: g.accessType, accessLevel: g.accessLevel,
+    isCollaborativeInbox: g.isCollaborativeInbox, streamsEnabled: g.streamsEnabled,
+    groupMemberCount: g.groupMemberCount,
+    mailModerationcount: g.mailModerationcount, pendingModerationCount: g.pendingModerationCount,
+    aliasList: g.aliasList,
+    members: extractMembers(g), // business email + role only
+  };
+}
+function sanitizeAccountsResponse(result) {
+  const data = result.body && result.body.data;
+  return { url: result.url, status: result.status,
+    body: result.status >= 400 ? sanitize(result).body
+      : { count: Array.isArray(data) ? data.length : null,
+          data: Array.isArray(data) ? data.map(sanitizeAccountRecord) : data } };
+}
+
+// Zoho returns the group list either as data:[...] (docs) or as
+// data:{count,groups:[...],domains:[...]} (observed live on the tenant).
+function parseGroupsBody(body) {
+  const d = body && body.data;
+  if (Array.isArray(d)) return d;
+  if (d && Array.isArray(d.groups)) return d.groups;
+  return [];
+}
+
 function extractEmails(value) {
   // Zoho group/account payloads vary; collect every email-looking string field.
   const found = new Set();
@@ -61,11 +109,14 @@ function extractEmails(value) {
 // ---- classify a raw Zoho group object ----
 function classifyGroup(g) {
   const raw = JSON.stringify(g).toLowerCase();
-  // Zoho marks shared mailboxes / collaborative inboxes on the group object.
-  // We match known indicator fields, and keep the raw object as evidence.
+  // Live tenant evidence: mail-enabled groups (the Admin Console "Shared
+  // Mailbox" entries) carry mbtype:"2" + a mailboxId + an emailId. IAM-only
+  // org groups (departments) have no emailId at all.
+  if (!groupEmail(g)) return 'org_group';
   const looksShared =
     g.isCollaborativeInbox === true || g.isCollaborativeInbox === 'true' ||
     g.isSharedMailbox === true || g.isSharedMailbox === 'true' ||
+    String(g.mbtype) === '2' || g.mailboxId != null ||
     lc(g.groupType).includes('shared') || lc(g.mailboxType).includes('shared') ||
     raw.includes('"collaborativeinbox":true') || raw.includes('sharedmailbox');
   const looksStream = g.isStreamGroup === true || g.streamsEnabled === true || lc(g.groupType).includes('stream');
@@ -75,7 +126,8 @@ function classifyGroup(g) {
 }
 
 function groupEmail(g) {
-  return lc(g.emailId || g.groupEmailId || g.mailId || g.groupName || '');
+  const v = lc(g.emailId || g.groupEmailId || g.mailId || '');
+  return v.includes('@') ? v : ''; // a group name is never an address
 }
 
 function groupAliases(g) {
@@ -93,7 +145,7 @@ function accessLevel(g) {
   const v = lc(g.accessLevel || g.accessType || g.whoCanSend || '');
   if (v.includes('moderat')) return 'only_moderators';
   if (v.includes('org')) return 'organization_members';
-  if (v.includes('every') || v.includes('all')) return 'everyone';
+  if (v.includes('every') || v.includes('all') || v === 'public') return 'everyone';
   return v || '';
 }
 
@@ -104,7 +156,7 @@ async function discoverOrganization(zoho) {
 
   // 1) Mailboxes visible to the OAuth user directly.
   const accResp = await zoho.getAccounts();
-  evidence.accounts = sanitize(accResp);
+  evidence.accounts = sanitizeAccountsResponse(accResp); // PII-reduced (allowlist)
   const accounts = (accResp.body && accResp.body.data) || [];
 
   // 2) Organization id — two evidence-based sources:
@@ -130,48 +182,106 @@ async function discoverOrganization(zoho) {
   let orgAccounts = [];
   if (zoid) {
     const oaResp = await zoho.getOrgAccounts(zoid);
-    evidence.orgAccounts = sanitize(oaResp);
+    evidence.orgAccounts = sanitizeAccountsResponse(oaResp); // PII-reduced (allowlist)
     orgAccounts = (oaResp.body && oaResp.body.data) || [];
     if (!Array.isArray(orgAccounts)) orgAccounts = [];
   }
 
   // 4) Groups — where shared mailboxes live (Admin Console → Groups → Shared Mailbox).
+  //    Live evidence showed the endpoint pages its results (first call returned
+  //    only the 10 lowest zgids of ~30 groups), so we paginate until a short or
+  //    stagnant page, then union with a second evidence source: every group the
+  //    org accounts list their memberships in (groupList/iamGroupList).
   let groups = [];
   if (zoid) {
-    const gResp = await zoho.getGroups(zoid);
-    evidence.groups = sanitize(gResp);
-    groups = (gResp.body && gResp.body.data) || [];
-    if (!Array.isArray(groups)) groups = [];
+    const PAGE = 100;
+    const seenZgids = new Set();
+    const pages = [];
+    for (let start = 0, page = 0; page < 20; page++) {
+      const gResp = await zoho.getGroups(zoid, start, PAGE);
+      pages.push({ url: gResp.url, status: gResp.status });
+      if (gResp.status !== 200) { if (page === 0) evidence.groupsError = sanitize(gResp); break; }
+      const batch = parseGroupsBody(gResp.body);
+      const fresh = batch.filter(g => g && g.zgid != null && !seenZgids.has(String(g.zgid)));
+      if (!fresh.length) break; // short page, or server ignored `start` and repeated itself
+      fresh.forEach(g => { seenZgids.add(String(g.zgid)); groups.push(g); });
+      if (batch.length < PAGE) break;
+      start += batch.length;
+    }
+    evidence.groups = {
+      pages, totalFetched: groups.length,
+      body: { data: groups.map(sanitizeGroupRecord) }, // PII-reduced (allowlist)
+    };
+
+    // Second source (same tenant responses, no extra scope): group memberships.
+    const fromMembership = new Map();
+    for (const a of orgAccounts) {
+      for (const list of [a.groupList, a.iamGroupList]) {
+        if (!Array.isArray(list)) continue;
+        for (const g of list) {
+          const zg = g && g.zgid != null ? String(g.zgid) : '';
+          if (zg && !seenZgids.has(zg) && !fromMembership.has(zg)) fromMembership.set(zg, g);
+        }
+      }
+    }
+    evidence.groupsFromMembership = [...fromMembership.values()]
+      .map(g => ({ zgid: g.zgid, name: g.name, emailId: g.emailId, source: 'orgAccounts.groupList' }));
+    for (const [zg, stub] of fromMembership) {
+      // Fetch the authoritative group object; fall back to the membership stub.
+      const det = await zoho.getGroupDetails(zoid, zg);
+      const detData = det && det.status === 200 && det.body && det.body.data ? det.body.data : null;
+      const merged = detData ? { ...stub, ...detData } : { ...stub };
+      merged.zgid = merged.zgid ?? zg;
+      merged._source = detData ? 'membership+groupDetails' : 'membership_stub';
+      seenZgids.add(zg);
+      groups.push(merged);
+    }
   }
 
+  // Match accounts strictly by their OWN addresses. A whole-payload email walk
+  // is wrong here: real org accounts embed groupList (memberships), so hr@ etc.
+  // would bind to a MEMBER's accountId and probes would read the wrong mailbox.
+  const accountOwnEmails = (a) => {
+    const out = new Set();
+    [a.mailboxAddress, a.primaryEmailAddress, a.incomingUserName].forEach(e => e && out.add(lc(e)));
+    if (Array.isArray(a.emailAddress)) a.emailAddress.forEach(e => { const v = lc(typeof e === 'string' ? e : e.mailId || ''); if (v) out.add(v); });
+    if (Array.isArray(a.emailAlias)) a.emailAlias.forEach(e => e && out.add(lc(e)));
+    out.delete('');
+    return [...out];
+  };
   const findAccountFor = (email) =>
-    accounts.find(a => extractEmails(a).includes(email)) ||
-    orgAccounts.find(a => extractEmails(a).includes(email));
-  const inOrgAccounts = (email) => orgAccounts.some(a => extractEmails(a).includes(email));
+    accounts.find(a => accountOwnEmails(a).includes(email)) ||
+    orgAccounts.find(a => accountOwnEmails(a).includes(email));
+  const inOrgAccounts = (email) => orgAccounts.some(a => accountOwnEmails(a).includes(email));
 
   // Group-backed entities (shared mailboxes are the primary case here).
   for (const g of groups) {
     const email = groupEmail(g);
-    if (!email) continue;
+    if (!email) continue; // IAM-only org groups (departments) have no address
     const gid = String(g.zgid || g.groupId || g.id || '');
     const acct = findAccountFor(email);
-    const detail = zoid && gid ? await zoho.getGroupDetails(zoid, gid) : null;
+    // Membership-derived groups already merged their /groups/{zgid} detail.
+    const detail = zoid && gid && !g._source ? await zoho.getGroupDetails(zoid, gid) : null;
     const detailData = detail && detail.body && detail.body.data ? detail.body.data : g;
+    const full = { ...g, ...detailData };
     out.mailboxes.push({
       address: email,
-      displayName: g.groupName || g.name || detailData.groupName || '',
-      detectedType: classifyGroup({ ...g, ...detailData }),
+      displayName: full.name || full.groupName || '',
+      detectedType: classifyGroup(full),
       orgId: zoid ? String(zoid) : null,
       providerGroupId: gid || null,
       providerAccountId: acct ? String(acct.accountId) : null,
-      providerMailboxId: String((acct && acct.mailboxId) || g.mailboxId || detailData.mailboxId || '') || null,
+      providerMailboxId: String((acct && acct.mailboxId) || full.mailboxId || '') || null,
       foundInOrgAccounts: inOrgAccounts(email),
-      aliases: groupAliases({ ...g, ...detailData }),
-      accessLevel: accessLevel({ ...g, ...detailData }),
-      members: extractMembers(detailData),
-      moderators: extractModerators(detailData),
-      moderationCount: Number(g.pendingModerationCount || detailData.pendingModerationCount || 0) || 0,
-      evidence: { group: sanitize({ url: 'groups[]', status: 200, body: g }), detail: detail ? sanitize(detail) : null },
+      aliases: groupAliases(full),
+      accessLevel: accessLevel(full),
+      members: extractMembers(full),
+      moderators: extractModerators(full),
+      moderationCount: Number(full.mailModerationcount ?? full.pendingModerationCount ?? 0) || 0,
+      evidence: {
+        group: { url: g._source || 'groups[]', status: 200, body: sanitizeGroupRecord(g) },
+        detail: detail ? { url: detail.url, status: detail.status, body: sanitizeGroupRecord(detailData) } : null,
+      },
     });
   }
 
@@ -192,7 +302,7 @@ async function discoverOrganization(zoho) {
       aliases: (Array.isArray(a.emailAddress) ? a.emailAddress.map(e => lc(e.mailId || e)) : []).filter(e => e && e !== email),
       accessLevel: '',
       members: [], moderators: [], moderationCount: 0,
-      evidence: { account: sanitize({ url: '/api/accounts[]', status: 200, body: a }) },
+      evidence: { account: { url: '/api/accounts[]', status: 200, body: sanitizeAccountRecord(a) } },
     });
   }
 
@@ -215,7 +325,7 @@ async function discoverOrganization(zoho) {
 }
 
 function extractMembers(g) {
-  for (const key of ['members', 'memberList', 'groupMembers']) {
+  for (const key of ['mailGroupMemberList', 'members', 'memberList', 'groupMembers']) {
     if (Array.isArray(g[key])) {
       return g[key].map(m => ({ email: lc(typeof m === 'string' ? m : m.memberEmailId || m.mailId || m.emailId || ''), role: lc(m.role || m.memberType || 'member') }))
         .filter(m => m.email);

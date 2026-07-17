@@ -19,20 +19,31 @@ const INFO_ORG_ACCOUNT_ID = '5001000777';
 
 const baseline = JSON.parse(fs.readFileSync(path.join(__dirname, 'fixtures', 'expected-mailboxes.json'), 'utf8'));
 
+// Field names mirror the LIVE tenant responses (observed evidence): mail-enabled
+// groups carry name/emailId/mbtype:"2"/mailboxId/accessType/mailModerationcount/
+// mailGroupMemberList; IAM-only department groups have no emailId at all.
 const GROUPS = baseline.map((b, i) => ({
-  zgid: String(600100 + i),
-  groupName: b.name,
+  zgid: 600100 + i,
+  name: b.name,
   emailId: b.address,
-  isCollaborativeInbox: true,
-  accessLevel: b.accessLevel === 'only_moderators' ? 'Only Moderators'
-    : b.accessLevel === 'organization_members' ? 'Organization Members' : 'Everyone',
-  pendingModerationCount: b.moderationCount || 0,
+  mbtype: '2',
+  mailboxId: 9990000000 + i,
+  accessType: b.accessLevel === 'only_moderators' ? 'Moderated'
+    : b.accessLevel === 'organization_members' ? 'Organization Members' : 'Public',
+  streamsEnabled: false,
+  mailModerationcount: b.moderationCount || 0,
   aliasList: b.address === 'info@exoticcolors.org' ? ['contact@exoticcolors.org', 'welcome@exoticcolors.org'] : [],
-  members: [
-    { memberEmailId: 'm.almaysari@exoticcolors.org', role: 'moderator' },
-    { memberEmailId: 'staff1@exoticcolors.org', role: 'member' },
+  mailGroupMemberList: [
+    { role: 'moderator', status: 'active', memberEmailId: 'm.almaysari@exoticcolors.org' },
+    { role: 'member', status: 'active', memberEmailId: 'staff1@exoticcolors.org' },
   ],
 }));
+const IAM_GROUPS = ['Senior Management Department', 'Operation Department', 'Project Department', 'IT Department']
+  .map((n, i) => ({
+    zgid: 600090 + i, name: n, iamGroupExist: true, groupMemberCount: 2,
+    mailGroupMemberList: [{ role: 'moderator', status: 'active', memberEmailId: 'm.almaysari@exoticcolors.org' }],
+  }));
+const ALL_GROUPS = [...IAM_GROUPS, ...GROUPS].sort((a, b) => a.zgid - b.zgid);
 
 function demoMessages(prefix, n) {
   const out = [];
@@ -85,22 +96,35 @@ function startMockZoho(port = 0) {
     }
     if (p === `/api/organization/${ZOID}/accounts`) {
       return ok([
-        { accountId: ADMIN_ACCOUNT_ID, primaryEmailAddress: 'm.almaysari@exoticcolors.org', role: 'super_admin' },
+        {
+          accountId: ADMIN_ACCOUNT_ID, primaryEmailAddress: 'm.almaysari@exoticcolors.org', role: 'super_admin',
+          // Real tenants list every group the user belongs to — discovery's
+          // second source when the paged /groups endpoint stops early.
+          groupList: GROUPS.map(g => ({ zgid: g.zgid, name: g.name, emailId: g.emailId, role: 'moderator' })),
+          iamGroupList: IAM_GROUPS.map(g => ({ zgid: g.zgid, name: g.name, role: 'member' })),
+        },
         // Fixture scenario: one shared mailbox exposed with an org-level accountId.
         { accountId: INFO_ORG_ACCOUNT_ID, primaryEmailAddress: 'info@exoticcolors.org', role: 'shared' },
       ]);
     }
-    if (p === `/api/organization/${ZOID}/groups`) return ok(GROUPS);
+    if (p === `/api/organization/${ZOID}/groups`) {
+      // Mirrors production behaviour observed in live evidence: the endpoint
+      // returns an OBJECT {count, groups, domains}, pages by 10 lowest zgids,
+      // and (as observed) does not advance with `start` — discovery must
+      // detect the stagnant page and fall back to membership-derived groups.
+      const page = ALL_GROUPS.slice(0, 10);
+      return ok({ count: page.length, groups: page, domains: ['exoticcolors.org', 'thetaurus.world'] });
+    }
     let m;
     if ((m = p.match(new RegExp(`^/api/organization/${ZOID}/groups/(\\d+)$`)))) {
-      const g = GROUPS.find(x => x.zgid === m[1]);
+      const g = ALL_GROUPS.find(x => String(x.zgid) === m[1]);
       return g ? ok(g) : send(404, { status: { code: 404, description: 'Group not found' } });
     }
     if ((m = p.match(new RegExp(`^/api/organization/${ZOID}/groups/(\\d+)/messages$`)))) {
-      const g = GROUPS.find(x => x.zgid === m[1]);
+      const g = ALL_GROUPS.find(x => String(x.zgid) === m[1]);
       if (!g) return send(404, { status: { code: 404, description: 'Group not found' } });
       // Moderation queue ONLY — never the mailbox archive.
-      return ok(Array.from({ length: g.pendingModerationCount }, (_, i) => ({
+      return ok(Array.from({ length: g.mailModerationcount || 0 }, (_, i) => ({
         messageId: `mod-${g.zgid}-${i + 1}`, fromAddress: `held${i + 1}@example.com`,
         subject: `Held for moderation #${i + 1}`, receivedTime: String(1784200000000 - i * 60000),
       })));
