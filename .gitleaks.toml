@@ -7,6 +7,7 @@ useDefault = true
 
 [allowlist]
 description = "Known dummy fixtures in redaction tests"
+regexTarget = "line"
 regexes = [
   '''refresh_token: abcdef1234567890''',
   '''supersecretvalue123''',

@@ -87,7 +87,7 @@ jobs:
         run: test "$(docker compose exec -T app whoami)" = "node"
       - name: Create admin non-interactively (CI-only credentials)
         run: |
-          docker compose exec -T -e MADAR_ADMIN_EMAIL=ci@local -e MADAR_ADMIN_NAME=CI \
+          docker compose exec -T -e MADAR_ADMIN_EMAIL=ci@example.com -e MADAR_ADMIN_NAME=CI \
             -e MADAR_ADMIN_PASSWORD=ci-only-password-123 app npm run create-admin
       - name: Persistence seed (user row + attachment object)
         run: |
@@ -112,7 +112,7 @@ jobs:
           docker compose exec -T app node -e "
             const {loadEnv}=require('./core/env'); loadEnv('.');
             const db=require('./core/db');
-            db.one('SELECT email FROM users WHERE email=\\'ci@local\\'').then(u=>{
+            db.one('SELECT email FROM users WHERE email=\\'ci@example.com\\'').then(u=>{
               if(!u) throw new Error('user row lost');
               const {getStorage}=require('./core/storage');
               const key=require('fs').readFileSync('/var/lib/madar/attachments/.probe-key','utf8');
