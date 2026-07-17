@@ -471,6 +471,43 @@ test('live sync: routing to shared mailboxes, worker tick/backoff, live→archiv
   await db.q(`UPDATE mailboxes SET sync_enabled = FALSE, is_pilot = FALSE WHERE address = 'broken@exoticcolors.org'`);
 });
 
+// ---------- diagnostics ----------
+test('diagnostics: failed sync records full typed context (stage, endpoint, stack); success records ok row; UI/500 surface a trace id', async () => {
+  // success path first: the admin mailbox sync recorded an 'ok' diagnostics row
+  const okRow = await db.one(`SELECT * FROM sync_diagnostics WHERE mailbox_id = $1 AND outcome = 'ok' ORDER BY id DESC LIMIT 1`,
+    [byAddress['m.almaysari@exoticcolors.org'].id]);
+  assert.ok(okRow, 'ok diagnostics row exists');
+  assert.strictEqual(okRow.stage, 'done');
+  assert.ok(okRow.read_count >= 1 && okRow.trace_id.startsWith('sync-'));
+
+  // failure path: a mail_api mailbox with a valid connection but NO probe-proven
+  // working id → connector construction fails inside the Zoho connector
+  await db.q(`INSERT INTO mailboxes (address, display_name, provider, connection_id, detected_type, strategy, capabilities, is_pilot, sync_enabled, status)
+    VALUES ('diag-broken@exoticcolors.org','Diag Broken','zoho',$1,'user','mail_api','{}'::jsonb, TRUE, TRUE, 'ready')`, [connId]);
+  const broken = await db.one(`SELECT id FROM mailboxes WHERE address = 'diag-broken@exoticcolors.org'`);
+  await assert.rejects(() => sync.syncMailbox(Number(broken.id)), /working id/);
+  const failRow = await db.one(`SELECT * FROM sync_diagnostics WHERE mailbox_id = $1 AND outcome = 'error' ORDER BY id DESC LIMIT 1`, [broken.id]);
+  assert.strictEqual(failRow.stage, 'connect');
+  assert.strictEqual(failRow.error_class, 'Error');
+  assert.match(failRow.error_message, /working id/);
+  assert.ok(failRow.error_stack && failRow.error_stack.includes('zoho-mail-api'), 'full stack captured');
+
+  // diagnostics endpoint: latest-by-mailbox + recent errors, admin-only
+  const diag = await fakeCall('GET', '/api/mail/diagnostics', { user: adminUser });
+  assert.strictEqual(diag.status, 200);
+  assert.ok(diag.body.recentErrors.some(r => r.mailbox === 'diag-broken@exoticcolors.org' && r.error.stack));
+  const byTrace = await fakeCall('GET', `/api/mail/diagnostics?trace_id=${failRow.trace_id}`, { user: adminUser });
+  assert.strictEqual(byTrace.body.stage, 'connect');
+  assert.ok(byTrace.body.error.stack.length > 20);
+  assert.strictEqual((await fakeCall('GET', '/api/mail/diagnostics', { user: memberUser })).status, 403);
+
+  // the sync route surfaces the trace id instead of a bare error
+  await db.q(`UPDATE mailboxes SET is_pilot = TRUE, sync_enabled = TRUE WHERE id = $1`, [broken.id]);
+  const routeFail = await fakeCall('POST', `/api/mail/mailboxes/${broken.id}/sync`, { user: adminUser, body: {} });
+  assert.ok(routeFail.status >= 400);
+  await db.q(`DELETE FROM mailboxes WHERE id = $1`, [broken.id]);
+});
+
 // ---------- attachments ----------
 test('attachments: MIME detected from bytes, provider MIME distrusted, quarantine on mismatch', async () => {
   assert.strictEqual(detectMime(Buffer.from('%PDF-1.4 test')), 'application/pdf');

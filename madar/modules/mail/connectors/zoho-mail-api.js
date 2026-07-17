@@ -3,6 +3,27 @@
 // mailboxes and for shared mailboxes if/when Zoho exposes live read for them.
 const lc = s => String(s || '').toLowerCase();
 
+// Typed API error: carries endpoint + HTTP status + a sanitized response
+// sample (status/field-names only — never bodies/PII) so diagnostics can show
+// the real cause instead of a flattened string.
+class ZohoApiError extends Error {
+  constructor(stage, endpoint, status, body) {
+    super(`Zoho ${stage} failed: HTTP ${status} at ${endpoint}`);
+    this.name = 'ZohoApiError';
+    this.stage = stage;
+    this.endpoint = endpoint;
+    this.httpStatus = status;
+    const data = body && body.data;
+    this.responseSample = {
+      status,
+      description: (body && body.status && body.status.description) || undefined,
+      moreInfo: (data && data.moreInfo) || undefined,
+      errorCode: (body && body.status && body.status.code) || (body && body.errorCode) || undefined,
+      fields: Array.isArray(data) && data[0] ? Object.keys(data[0]).sort() : undefined,
+    };
+  }
+}
+
 class ZohoMailApiConnector {
   constructor(zoho, mailbox) {
     this.zoho = zoho;
@@ -17,8 +38,9 @@ class ZohoMailApiConnector {
   capabilities() { return this.caps; }
 
   async listFolders() {
+    this.lastEndpoint = `/api/accounts/${this.id}/folders`;
     const r = await this.zoho.getFolders(this.id);
-    if (r.status !== 200) throw new Error(`folders failed (${r.status}): ${JSON.stringify(r.body).slice(0, 200)}`);
+    if (r.status !== 200) throw new ZohoApiError('list_folders', r.url || this.lastEndpoint, r.status, r.body);
     return ((r.body && r.body.data) || []).map(f => ({
       providerFolderId: String(f.folderId),
       name: f.folderName,
@@ -27,11 +49,14 @@ class ZohoMailApiConnector {
   }
 
   async listMessages(folder, { start = 1, limit = 100 } = {}) {
+    this.lastEndpoint = `/api/accounts/${this.id}/messages/view?folderId=${folder.providerFolderId}`;
     const r = await this.zoho.listMessages(this.id, folder.providerFolderId, { start, limit });
-    if (r.status !== 200) throw new Error(`messages failed (${r.status}): ${JSON.stringify(r.body).slice(0, 200)}`);
+    if (r.status !== 200) throw new ZohoApiError('fetch_messages', r.url || this.lastEndpoint, r.status, r.body);
     return ((r.body && r.body.data) || []).map(m => ({
       providerMessageId: String(m.messageId),
-      rfcMessageId: m.messageIdHeader || '',
+      // Real tenants' messages/view carries NO RFC header field — dedup uses the
+      // v2 fingerprint. Kept optional so a future header source can fill it.
+      rfcMessageId: m.messageIdHeader || m.messageId_header || m.rfcMessageId || '',
       threadId: String(m.threadId || ''),
       from: m.fromAddress || m.sender || '',
       fromName: m.senderName || '',
@@ -70,4 +95,4 @@ class ZohoMailApiConnector {
   }
 }
 
-module.exports = { ZohoMailApiConnector };
+module.exports = { ZohoMailApiConnector, ZohoApiError };

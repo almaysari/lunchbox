@@ -297,6 +297,38 @@ CREATE TABLE public.sessions (
     expires_at timestamp with time zone NOT NULL
 );
 
+CREATE TABLE public.sync_diagnostics (
+    id bigint NOT NULL,
+    trace_id text NOT NULL,
+    mailbox_id bigint,
+    mailbox_address text DEFAULT ''::text NOT NULL,
+    stage text DEFAULT ''::text NOT NULL,
+    endpoint text,
+    http_status integer,
+    response_sample jsonb,
+    read_count integer DEFAULT 0 NOT NULL,
+    inserted_count integer DEFAULT 0 NOT NULL,
+    skipped_count integer DEFAULT 0 NOT NULL,
+    routed_count integer DEFAULT 0 NOT NULL,
+    outcome text DEFAULT 'ok'::text NOT NULL,
+    error_class text,
+    error_message text,
+    error_stack text,
+    sql_state text,
+    constraint_name text,
+    routing_context jsonb,
+    created_at timestamp with time zone DEFAULT now() NOT NULL
+);
+
+CREATE SEQUENCE public.sync_diagnostics_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+ALTER SEQUENCE public.sync_diagnostics_id_seq OWNED BY public.sync_diagnostics.id;
+
 CREATE TABLE public.sync_jobs (
     id bigint NOT NULL,
     mailbox_id bigint NOT NULL,
@@ -378,6 +410,8 @@ ALTER TABLE ONLY public.mailboxes ALTER COLUMN id SET DEFAULT nextval('public.ma
 ALTER TABLE ONLY public.message_occurrences ALTER COLUMN id SET DEFAULT nextval('public.message_occurrences_id_seq'::regclass);
 
 ALTER TABLE ONLY public.roles ALTER COLUMN id SET DEFAULT nextval('public.roles_id_seq'::regclass);
+
+ALTER TABLE ONLY public.sync_diagnostics ALTER COLUMN id SET DEFAULT nextval('public.sync_diagnostics_id_seq'::regclass);
 
 ALTER TABLE ONLY public.sync_jobs ALTER COLUMN id SET DEFAULT nextval('public.sync_jobs_id_seq'::regclass);
 
@@ -464,6 +498,9 @@ ALTER TABLE ONLY public.schema_migrations
 ALTER TABLE ONLY public.sessions
     ADD CONSTRAINT sessions_pkey PRIMARY KEY (token);
 
+ALTER TABLE ONLY public.sync_diagnostics
+    ADD CONSTRAINT sync_diagnostics_pkey PRIMARY KEY (id);
+
 ALTER TABLE ONLY public.sync_jobs
     ADD CONSTRAINT sync_jobs_pkey PRIMARY KEY (id);
 
@@ -496,6 +533,10 @@ CREATE INDEX idx_occ_canonical ON public.message_occurrences USING btree (canoni
 CREATE INDEX idx_occ_mailbox_time ON public.message_occurrences USING btree (mailbox_id, received_at DESC);
 
 CREATE INDEX idx_sessions_expiry ON public.sessions USING btree (expires_at);
+
+CREATE INDEX idx_sync_diag_mailbox ON public.sync_diagnostics USING btree (mailbox_id, id DESC);
+
+CREATE INDEX idx_sync_diag_trace ON public.sync_diagnostics USING btree (trace_id);
 
 CREATE INDEX idx_sync_jobs_mailbox ON public.sync_jobs USING btree (mailbox_id, id DESC);
 
@@ -554,6 +595,9 @@ ALTER TABLE ONLY public.oauth_states
 
 ALTER TABLE ONLY public.sessions
     ADD CONSTRAINT sessions_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id) ON DELETE CASCADE;
+
+ALTER TABLE ONLY public.sync_diagnostics
+    ADD CONSTRAINT sync_diagnostics_mailbox_id_fkey FOREIGN KEY (mailbox_id) REFERENCES public.mailboxes(id) ON DELETE CASCADE;
 
 ALTER TABLE ONLY public.sync_jobs
     ADD CONSTRAINT sync_jobs_current_folder_id_fkey FOREIGN KEY (current_folder_id) REFERENCES public.folders(id) ON DELETE SET NULL;

@@ -150,6 +150,16 @@
     </div>
 
     <div class="card">
+      <div class="row" style="justify-content:space-between">
+        <h3 style="margin:0">تشخيص المزامنة (Diagnostics) <span class="sub" id="diagSummary"></span></h3>
+        <button class="btn" onclick="loadDiagnostics()">↻ تحديث</button>
+      </div>
+      <div class="sub" style="margin:6px 0">آخر دورة لكل صندوق: المرحلة، آخر Endpoint، المقروء/المُدرج/المتجاهل/الموجّه، وآخر استثناء كامل (Stack + سياق HTTP/SQL/Routing).</div>
+      <table id="diagTable"></table>
+      <div id="diagErrors" style="margin-top:8px"></div>
+    </div>
+
+    <div class="card">
       <h3 style="margin-top:0">سجل الصناديق <span class="sub" id="mbCount"></span></h3>
       <table id="mbTable"></table>
     </div>
@@ -203,7 +213,11 @@ const api = async (path, opts = {}, retried = false) => {
       const me = await fetch('/api/auth/me').then(x => x.json()).catch(() => null);
       if (me && me.csrf) { CSRF = me.csrf; return api(path, opts, true); }
     }
-    throw new Error(j.error || r.status);
+    // surface the traceable id/class instead of a bare status — the operator
+    // can paste the trace into the Diagnostics page for the full stack
+    const e = new Error(j.error || ('HTTP ' + r.status));
+    e.errorId = j.errorId; e.traceId = j.traceId; e.stage = j.stage; e.errorClass = j.errorClass;
+    throw e;
   }
   return j;
 };
@@ -322,8 +336,49 @@ async function openMessage(occId) {
 
 /* ================= ADMIN ================= */
 async function loadAdmin() {
-  await Promise.all([loadConnections(), loadDiscovery(), loadMailboxesAdmin(), loadIntake(), loadLiveSync(), loadUsers(), loadAudit()]);
-  if (!window._liveTimer) window._liveTimer = setInterval(() => { if (location.hash !== '#mail') { loadLiveSync().catch(() => {}); loadIntake().catch(() => {}); } }, 30000);
+  await Promise.all([loadConnections(), loadDiscovery(), loadMailboxesAdmin(), loadIntake(), loadLiveSync(), loadDiagnostics(), loadUsers(), loadAudit()]);
+  if (!window._liveTimer) window._liveTimer = setInterval(() => { if (location.hash !== '#mail') { loadLiveSync().catch(() => {}); loadIntake().catch(() => {}); loadDiagnostics().catch(() => {}); } }, 30000);
+}
+
+/* ---------- diagnostics ---------- */
+async function loadDiagnostics() {
+  const d = await api('/api/mail/diagnostics');
+  window._diag = d;
+  const errs = d.recentErrors.length;
+  $('diagSummary').textContent = errs ? `(${errs} خطأ حديث)` : '(لا أخطاء حديثة)';
+  $('diagTable').innerHTML = `<tr><th>الصندوق</th><th>النتيجة</th><th>المرحلة</th><th>آخر Endpoint</th><th>مقروء/مُدرج/متجاهل/موجّه</th><th>آخر تشغيل</th><th></th></tr>` +
+    (d.latestByMailbox.length ? d.latestByMailbox.map(r => `<tr>
+      <td class="sub" style="direction:ltr;text-align:right">${esc(r.mailbox || '—')}</td>
+      <td>${r.outcome === 'error' ? '<span class="tag bad">خطأ</span>' : '<span class="tag ok">سليم</span>'}</td>
+      <td>${esc(r.stage)}</td>
+      <td class="sub" style="direction:ltr;text-align:left;font-size:11px">${esc(r.endpoint || '—')}${r.httpStatus ? ` (HTTP ${r.httpStatus})` : ''}</td>
+      <td>${r.read}/${r.inserted}/${r.skipped}/${r.routed}</td>
+      <td>${fmtT(r.at)}</td>
+      <td><button class="btn" onclick="showDiag('${esc(r.traceId)}')">تفاصيل</button></td>
+    </tr>`).join('') : '<tr><td colspan="7" class="sub">لا دورات مزامنة بعد.</td></tr>');
+  $('diagErrors').innerHTML = errs
+    ? `<div class="banner bad">أحدث الأخطاء: ${d.recentErrors.slice(0, 5).map(r => `${esc(r.mailbox)} — [${esc(r.stage)}] ${esc((r.error && r.error.message) || '')} <a href="#" onclick="showDiag('${esc(r.traceId)}');return false">${esc(r.traceId)}</a>`).join(' • ')}</div>`
+    : '';
+}
+async function showDiag(traceId) {
+  const r = await api('/api/mail/diagnostics?trace_id=' + encodeURIComponent(traceId));
+  const e = r.error || {};
+  $('dlgTitle').textContent = 'تشخيص المزامنة — ' + traceId;
+  $('dlgBody').innerHTML = `
+    <table>
+      <tr><th>الصندوق</th><td>${esc(r.mailbox || '—')}</td></tr>
+      <tr><th>النتيجة</th><td>${esc(r.outcome)}</td></tr>
+      <tr><th>المرحلة عند التوقف</th><td><b>${esc(r.stage)}</b></td></tr>
+      <tr><th>آخر Endpoint</th><td style="direction:ltr;text-align:left">${esc(r.endpoint || '—')}${r.httpStatus ? ` — HTTP ${r.httpStatus}` : ''}</td></tr>
+      <tr><th>عدّادات</th><td>مقروء: ${r.read} — مُدرج: ${r.inserted} — متجاهل: ${r.skipped} — موجّه: ${r.routed}</td></tr>
+      ${r.responseSample ? `<tr><th>عيّنة الاستجابة</th><td style="direction:ltr;text-align:left"><code>${esc(JSON.stringify(r.responseSample))}</code></td></tr>` : ''}
+      ${e.class ? `<tr><th>نوع الخطأ</th><td>${esc(e.class)}</td></tr>` : ''}
+      ${e.message ? `<tr><th>الرسالة</th><td>${esc(e.message)}</td></tr>` : ''}
+      ${e.sqlState ? `<tr><th>SQLSTATE / Constraint</th><td style="direction:ltr;text-align:left">${esc(e.sqlState)}${e.constraint ? ' / ' + esc(e.constraint) : ''}</td></tr>` : ''}
+      ${e.routing ? `<tr><th>سياق التوجيه</th><td style="direction:ltr;text-align:left"><code>${esc(JSON.stringify(e.routing))}</code></td></tr>` : ''}
+    </table>
+    ${e.stack ? `<h4>Stack trace كامل</h4><pre class="evidence">${esc(e.stack)}</pre>` : '<div class="sub">لا استثناء — الدورة اكتملت بنجاح.</div>'}`;
+  $('dlg').showModal();
 }
 
 /* ---------- live sync monitoring ---------- */
@@ -365,9 +420,9 @@ async function retryLive(id) {
   banners('<div class="banner warn">إعادة محاولة المزامنة...</div>');
   try {
     const s = await api(`/api/mail/mailboxes/${id}/sync`, { method: 'POST', body: {} });
-    banners(`<div class="banner ok">تمت: ${s.newOccurrences} حدث جديد${s.routed ? `، وُجّه للصناديق المشتركة: ${s.routed}` : ''}.</div>`);
-  } catch (e) { banners(`<div class="banner bad">${esc(e.message)}</div>`); }
-  loadLiveSync();
+    banners(`<div class="banner ok">تمت: ${s.newOccurrences} حدث جديد${s.routed ? `، وُجّه للصناديق المشتركة: ${s.routed}` : ''}. (تتبّع: ${esc(s.traceId || '—')})</div>`);
+  } catch (e) { errBanner(e, 'فشلت إعادة المحاولة'); }
+  loadLiveSync(); loadDiagnostics();
 }
 
 /* ---------- org-wide archive intake ---------- */
@@ -504,6 +559,14 @@ async function runDiscover(id) {
   } catch (e) { banners(`<div class="banner bad">فشل الاكتشاف: ${esc(e.message)}</div>`); }
 }
 function banners(html) { $('adminBanners').innerHTML = html; }
+// Rich error banner: shows the real message + class + trace id with a direct
+// link into Diagnostics — never a bare "internal error".
+function errBanner(e, prefix) {
+  const trace = e.traceId ? ` — <a href="#" onclick="showDiag('${e.traceId}');return false">تتبّع ${esc(e.traceId)}</a>` : '';
+  const meta = [e.errorClass, e.stage ? 'مرحلة: ' + e.stage : '', e.errorId ? 'رقم: ' + e.errorId : '']
+    .filter(Boolean).map(esc).join(' — ');
+  banners(`<div class="banner bad">${esc(prefix)}: ${esc(e.message)}${meta ? ` <span class="sub">(${meta})</span>` : ''}${trace}</div>`);
+}
 
 let PLATFORM_MODE = null;
 async function loadDiscovery() {

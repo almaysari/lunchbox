@@ -228,8 +228,20 @@ const server = http.createServer(async (req, res) => {
 
     return send(404, { error: 'not found' });
   } catch (err) {
-    console.error(err.message); // production-safe: no stack traces to clients
-    return send(500, { error: cfg.MODE === 'demo' ? String(err.message || err) : 'internal error' });
+    // Never a bare "internal error": emit a traceable id, log the FULL stack
+    // server-side, and return the real (sanitized) cause + any sync trace id so
+    // the operator can open the diagnostics row.
+    const errId = 'err-' + Date.now().toString(36) + '-' + Math.floor(process.hrtime()[1] % 1e6).toString(36);
+    console.error(`[madar] ${errId} on ${req.method} ${p}:`, err && err.stack ? err.stack : err);
+    // scrub any credential-shaped substring before it reaches the client
+    const scrub = s => String(s || '').replace(/(\w+:\/\/[^:@\s]+:)[^@\s]+(@)/g, '$1***$2');
+    return send(500, {
+      error: scrub(err.message || err),
+      errorClass: (err && err.name) || 'Error',
+      errorId: errId,
+      traceId: (err && err.traceId) || undefined,   // sync-cycle diagnostics id, if any
+      stage: (err && err.stage) || undefined,
+    });
   }
 });
 

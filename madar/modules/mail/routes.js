@@ -31,6 +31,21 @@ function loadBaseline() {
 
 const jsonCol = v => typeof v === 'string' ? JSON.parse(v || 'null') : (v ?? null);
 
+function diagRow(r) {
+  return {
+    traceId: r.trace_id, mailboxId: r.mailbox_id ? Number(r.mailbox_id) : null, mailbox: r.mailbox_address,
+    stage: r.stage, endpoint: r.endpoint, httpStatus: r.http_status,
+    responseSample: jsonCol(r.response_sample),
+    read: r.read_count, inserted: r.inserted_count, skipped: r.skipped_count, routed: r.routed_count,
+    outcome: r.outcome,
+    error: r.outcome === 'error' ? {
+      class: r.error_class, message: r.error_message, stack: r.error_stack,
+      sqlState: r.sql_state, constraint: r.constraint_name, routing: jsonCol(r.routing_context),
+    } : null,
+    at: new Date(r.created_at).getTime(),
+  };
+}
+
 async function mailboxRow(m) {
   return {
     id: Number(m.id), address: m.address, displayName: m.display_name, provider: m.provider,
@@ -191,6 +206,22 @@ async function handle(req, res, url, user, body, helpers) {
     await audit(user.id, 'mail.livesync.manual_tick', '', r);
     return send(200, r);
   }
+  // Diagnostics: last cycle per mailbox with full typed context (stage,
+  // endpoint, HTTP/SQL/routing, complete stack). Optional ?mailbox_id / ?trace_id.
+  if (p === '/api/mail/diagnostics' && req.method === 'GET') {
+    if (!requireMailAdmin()) return true;
+    const traceId = url.searchParams.get('trace_id');
+    if (traceId) {
+      const row = await one('SELECT * FROM sync_diagnostics WHERE trace_id = $1 ORDER BY id DESC LIMIT 1', [traceId]);
+      return send(200, row ? diagRow(row) : { error: 'trace not found' });
+    }
+    const mid = Number(url.searchParams.get('mailbox_id')) || null;
+    const latest = await all(`SELECT DISTINCT ON (mailbox_id) * FROM sync_diagnostics
+      ${mid ? 'WHERE mailbox_id = $1' : ''} ORDER BY mailbox_id, id DESC`, mid ? [mid] : []);
+    const recentErrors = await all(`SELECT * FROM sync_diagnostics WHERE outcome = 'error'
+      ${mid ? 'AND mailbox_id = $1' : ''} ORDER BY id DESC LIMIT 20`, mid ? [mid] : []);
+    return send(200, { latestByMailbox: latest.map(diagRow), recentErrors: recentErrors.map(diagRow) });
+  }
 
   // ---------- sync jobs: start / pause / resume / cancel / progress ----------
   if ((m = p.match(/^\/api\/mail\/mailboxes\/(\d+)\/sync$/)) && req.method === 'POST') {
@@ -198,7 +229,14 @@ async function handle(req, res, url, user, body, helpers) {
     await q('UPDATE mailboxes SET sync_enabled = TRUE WHERE id = $1', [Number(m[1])]);
     await audit(user.id, 'mail.pilot_sync.start', 'mailbox:' + m[1]);
     // a paused job is resumed automatically (createJob reuses it)
-    return send(200, await syncMailbox(Number(m[1]), { userId: user.id }));
+    try {
+      return send(200, await syncMailbox(Number(m[1]), { userId: user.id }));
+    } catch (err) {
+      // never a bare error — return the sync-cycle trace id + stage so the
+      // operator can open the full diagnostics row
+      return send(422, { error: String(err.message || err), errorClass: err.name || 'Error',
+        traceId: err.traceId, stage: err.stage });
+    }
   }
   if ((m = p.match(/^\/api\/mail\/sync-jobs\/(\d+)\/(pause|cancel)$/)) && req.method === 'POST') {
     if (!requireMailAdmin()) return true;

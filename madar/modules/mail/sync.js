@@ -11,6 +11,48 @@ const { ZohoClient } = require('./zoho-client');
 const { ZohoMailApiConnector } = require('./connectors/zoho-mail-api');
 const { messagesFromExportZip } = require('./connectors/ediscovery-import');
 
+// ---- diagnostics: one persisted row per sync cycle, full typed context ----
+let _traceSeq = 0;
+function newTraceId() {
+  _traceSeq = (_traceSeq + 1) % 1e6;
+  return 'sync-' + Date.now().toString(36) + '-' + _traceSeq.toString(36);
+}
+// A live per-cycle scratchpad the sync loop updates as it advances, so even a
+// hard crash leaves the last-reached stage + counts + endpoint recorded.
+function newDiag(mailbox) {
+  return {
+    traceId: newTraceId(), mailboxId: mailbox.id, mailboxAddress: mailbox.address,
+    stage: 'load_state', endpoint: null, httpStatus: null, responseSample: null,
+    read: 0, inserted: 0, skipped: 0, routed: 0, routingContext: null,
+  };
+}
+async function persistDiag(diag, err) {
+  const base = [diag.traceId, diag.mailboxId, diag.mailboxAddress, diag.stage,
+    diag.endpoint, diag.httpStatus, diag.responseSample ? JSON.stringify(diag.responseSample) : null,
+    diag.read, diag.inserted, diag.skipped, diag.routed];
+  if (!err) {
+    await q(`INSERT INTO sync_diagnostics (trace_id, mailbox_id, mailbox_address, stage, endpoint,
+      http_status, response_sample, read_count, inserted_count, skipped_count, routed_count, outcome)
+      VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,'ok')`, base);
+    return diag.traceId;
+  }
+  // Typed extraction: Zoho HTTP context, or pg SQL context, or routing context.
+  const isPg = err.code && /^\d/.test(String(err.code)) && err.severity;
+  await q(`INSERT INTO sync_diagnostics (trace_id, mailbox_id, mailbox_address, stage, endpoint,
+    http_status, response_sample, read_count, inserted_count, skipped_count, routed_count,
+    outcome, error_class, error_message, error_stack, sql_state, constraint_name, routing_context)
+    VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,'error',$12,$13,$14,$15,$16,$17)`,
+    [...base.slice(0, 4),
+      err.endpoint || diag.endpoint, err.httpStatus || diag.httpStatus,
+      err.responseSample ? JSON.stringify(err.responseSample) : (diag.responseSample ? JSON.stringify(diag.responseSample) : null),
+      diag.read, diag.inserted, diag.skipped, diag.routed,
+      err.name || 'Error', String(err.message || err).slice(0, 1000),
+      String(err.stack || '').slice(0, 6000),
+      isPg ? String(err.code) : null, isPg ? (err.constraint || null) : null,
+      diag.routingContext ? JSON.stringify(diag.routingContext) : null]);
+  return diag.traceId;
+}
+
 const MAX_RPM = Number(process.env.MADAR_MAX_RPM || 25);
 const PAGE_SIZE = 100;
 const delay = ms => new Promise(r => setTimeout(r, ms));
@@ -183,20 +225,22 @@ async function sharedAddressMap() {
   return { map, folderCache: new Map() };
 }
 
-async function routeToSharedMailboxes(msg, sourceMailboxId, routing, summary) {
+async function routeToSharedMailboxes(msg, sourceMailboxId, routing, summary, diag = null) {
   if (!routing) return;
   const recipients = new Set((String(msg.to || '') + ' ' + String(msg.cc || ''))
     .toLowerCase().match(/[\w.+-]+@[\w-]+(\.[\w-]+)+/g) || []);
   for (const addr of recipients) {
     const targetId = routing.map.get(addr);
     if (!targetId || targetId === sourceMailboxId) continue;
+    if (diag) diag.routingContext = { messageId: msg.providerMessageId, rfcMessageId: msg.rfcMessageId || null,
+      sourceMailbox: sourceMailboxId, target: addr, decision: 'route_member_copy' };
     let folderId = routing.folderCache.get(targetId);
     if (!folderId) {
       folderId = await upsertFolder(targetId, { providerFolderId: 'live:routed', name: 'Live (وارد موجّه)', type: 'inbox' });
       routing.folderCache.set(targetId, folderId);
     }
     const { occurrenceId } = await insertMessage(targetId, folderId, msg, 'zoho:member_copy');
-    if (occurrenceId) summary.routed++;
+    if (occurrenceId) { summary.routed++; if (diag) diag.routed++; }
   }
 }
 
@@ -205,14 +249,26 @@ async function syncMailbox(mailboxId, { maxPages = 5, userId = null } = {}) {
   if (!mailbox) throw new Error('mailbox not found');
   if (!mailbox.is_pilot) throw new Error('sync refused: mailbox is not pilot-selected');
   if (!mailbox.sync_enabled) throw new Error('sync refused: not explicitly started by an admin');
-  const connector = await connectorFor(mailbox);
+  // Connector construction can fail (e.g. no probe-proven working id, missing
+  // connection) — record it as a diagnostics row too, at the 'connect' stage.
+  let connector;
+  try {
+    connector = await connectorFor(mailbox);
+  } catch (err) {
+    const d = newDiag(mailbox); d.stage = 'connect';
+    err.traceId = await persistDiag(d, err).catch(() => d.traceId); err.stage = 'connect';
+    throw err;
+  }
   const jobId = await createJob(mailboxId, userId);
   await q("UPDATE sync_jobs SET status='running', started_at = COALESCE(started_at, now()) WHERE id = $1", [jobId]);
   await q("UPDATE mailboxes SET status='syncing' WHERE id=$1", [mailboxId]);
   const routing = await sharedAddressMap();
-  const summary = { jobId, mailbox: mailbox.address, folders: 0, newMessages: 0, newOccurrences: 0, attachments: 0, skipped: 0, routed: 0 };
+  const diag = newDiag(mailbox);
+  const summary = { jobId, mailbox: mailbox.address, traceId: diag.traceId, folders: 0, newMessages: 0, newOccurrences: 0, attachments: 0, skipped: 0, routed: 0 };
 
   try {
+    diag.stage = 'list_folders';
+    diag.endpoint = `/api/accounts/${connector.id}/folders`;
     const folders = await connector.listFolders(); await budgetDelay();
     for (const f of folders) {
       await checkpoint(jobId);
@@ -223,11 +279,15 @@ async function syncMailbox(mailboxId, { maxPages = 5, userId = null } = {}) {
       const state = await one('SELECT * FROM sync_state WHERE mailbox_id=$1 AND folder_id=$2', [mailboxId, folderId]);
 
       // incremental newest page
+      diag.stage = 'fetch_messages';
+      diag.endpoint = connector.lastEndpoint;
       const newest = await connector.listMessages(f, { start: 1, limit: PAGE_SIZE }); await budgetDelay();
+      diag.read += newest.length;
+      diag.responseSample = { fields: newest[0] ? Object.keys(newest[0]).sort() : [], count: newest.length };
       await q('UPDATE sync_jobs SET discovered = discovered + $1 WHERE id = $2', [newest.length, jobId]);
       for (const msg of newest) {
         await checkpoint(jobId);
-        const fresh = await ingestOne(connector, f, mailboxId, folderId, msg, summary, jobId, routing);
+        const fresh = await ingestOne(connector, f, mailboxId, folderId, msg, summary, jobId, routing, diag);
         if (!fresh) break;
       }
 
@@ -237,12 +297,14 @@ async function syncMailbox(mailboxId, { maxPages = 5, userId = null } = {}) {
         let pages = 0;
         while (pages < maxPages) {
           await checkpoint(jobId);
+          diag.stage = 'fetch_messages'; diag.endpoint = connector.lastEndpoint;
           const batch = await connector.listMessages(f, { start, limit: PAGE_SIZE }); await budgetDelay();
+          diag.read += batch.length;
           pages++;
           await q('UPDATE sync_jobs SET discovered = discovered + $1, current_cursor = $2 WHERE id = $3', [batch.length, start, jobId]);
           for (const msg of batch) {
             await checkpoint(jobId);
-            await ingestOne(connector, f, mailboxId, folderId, msg, summary, jobId, routing);
+            await ingestOne(connector, f, mailboxId, folderId, msg, summary, jobId, routing, diag);
           }
           if (batch.length < PAGE_SIZE) {
             await q('UPDATE sync_state SET backfill_done=TRUE, next_start=$1, last_sync_at=now() WHERE mailbox_id=$2 AND folder_id=$3',
@@ -255,6 +317,8 @@ async function syncMailbox(mailboxId, { maxPages = 5, userId = null } = {}) {
       }
       await q("UPDATE sync_state SET last_sync_at=now(), last_error='' WHERE mailbox_id=$1 AND folder_id=$2", [mailboxId, folderId]);
     }
+    diag.stage = 'done';
+    await persistDiag(diag, null);
     await q("UPDATE sync_jobs SET status='completed', finished_at=now() WHERE id=$1", [jobId]);
     await q("UPDATE mailboxes SET status='ready', status_detail='' WHERE id=$1", [mailboxId]);
   } catch (err) {
@@ -264,9 +328,14 @@ async function syncMailbox(mailboxId, { maxPages = 5, userId = null } = {}) {
       await q("UPDATE mailboxes SET status='ready', status_detail=$1 WHERE id=$2",
         [`Last sync ${err.kind} — cursor persisted, resume any time.`, mailboxId]);
     } else {
+      // Persist the FULL typed diagnostic (stage, endpoint, HTTP/SQL/routing,
+      // complete stack) and put a traceable id on the job + mailbox status.
+      const traceId = await persistDiag(diag, err).catch(() => diag.traceId);
+      const shortMsg = `[${diag.stage}] ${String(err.message || err)}`.slice(0, 380) + ` (trace ${traceId})`;
       await q("UPDATE sync_jobs SET status='failed', error_detail=$1, errors = errors + 1, finished_at=now() WHERE id=$2",
-        [String(err.message || err), jobId]);
-      await q("UPDATE mailboxes SET status='error', status_detail=$1 WHERE id=$2", [String(err.message || err), mailboxId]);
+        [shortMsg, jobId]);
+      await q("UPDATE mailboxes SET status='error', status_detail=$1 WHERE id=$2", [shortMsg, mailboxId]);
+      err.traceId = traceId; err.stage = diag.stage;
     }
     throw err;
   }
@@ -274,22 +343,27 @@ async function syncMailbox(mailboxId, { maxPages = 5, userId = null } = {}) {
   return summary;
 }
 
-async function ingestOne(connector, folder, mailboxId, folderId, msg, summary, jobId, routing = null) {
+async function ingestOne(connector, folder, mailboxId, folderId, msg, summary, jobId, routing = null, diag = null) {
+  if (diag) diag.stage = 'db_tx';
   const { canonicalId, occurrenceId, isNewCanonical } = await insertMessage(mailboxId, folderId, msg);
   if (!occurrenceId) {
     summary.skipped++;
+    if (diag) diag.skipped++;
     await q('UPDATE sync_jobs SET skipped = skipped + 1 WHERE id = $1', [jobId]);
     return false;
   }
-  await routeToSharedMailboxes(msg, mailboxId, routing, summary);
+  if (diag) { diag.stage = 'routing'; diag.inserted++; }
+  await routeToSharedMailboxes(msg, mailboxId, routing, summary, diag);
   summary.newOccurrences++;
   await q('UPDATE sync_jobs SET imported = imported + 1 WHERE id = $1', [jobId]);
   if (!isNewCanonical) return true; // body/attachments already captured for this canonical
 
   summary.newMessages++;
+  if (diag) diag.stage = 'body';
   const body = await connector.getBody(folder, msg.providerMessageId); await budgetDelay();
   if (body) await q('UPDATE canonical_messages SET body_html=$1 WHERE id=$2', [body, canonicalId]);
   if (msg.hasAttachments) {
+    if (diag) diag.stage = 'attachments';
     const atts = await connector.listAttachments(folder, msg.providerMessageId); await budgetDelay();
     for (const a of atts) {
       try {
@@ -351,4 +425,4 @@ async function importArchiveRecorded(mailboxId, zipBuffer, userId, filename = ''
   }
 }
 
-module.exports = { syncMailbox, importArchiveZip, importArchiveRecorded, insertMessage, upsertFolder, dedupHash, HASH_VERSION, storeAttachment, createJob, setJobControl, recoverStaleJobs };
+module.exports = { syncMailbox, importArchiveZip, importArchiveRecorded, insertMessage, upsertFolder, dedupHash, HASH_VERSION, storeAttachment, createJob, setJobControl, recoverStaleJobs, persistDiag, newDiag };
