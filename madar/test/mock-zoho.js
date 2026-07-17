@@ -71,12 +71,18 @@ function startMockZoho(port = 0) {
       return ok([{
         accountId: ADMIN_ACCOUNT_ID,
         accountDisplayName: 'Org Admin',
+        role: 'super_admin',
+        policyId: { zoid: Number(ZOID) }, // real tenants expose the org id here
         mailboxAddress: 'm.almaysari@exoticcolors.org',
         primaryEmailAddress: 'm.almaysari@exoticcolors.org',
         emailAddress: [{ mailId: 'm.almaysari@exoticcolors.org', isPrimary: true }],
       }]);
     }
-    if (p === '/api/organization') return ok({ zoid: ZOID, orgName: 'Exotic Colors' });
+    // Observed in production: this endpoint rejects the token even for a
+    // super admin — discovery must survive it via the accounts fallback.
+    if (p === '/api/organization') {
+      return send(401, [2, { msg: 'Error while processing!', status: '401', authFail: 'true', errorCode: 'INVALID_OAUTHSCOPE' }]);
+    }
     if (p === `/api/organization/${ZOID}/accounts`) {
       return ok([
         { accountId: ADMIN_ACCOUNT_ID, primaryEmailAddress: 'm.almaysari@exoticcolors.org', role: 'super_admin' },

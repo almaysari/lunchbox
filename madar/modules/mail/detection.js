@@ -107,12 +107,24 @@ async function discoverOrganization(zoho) {
   evidence.accounts = sanitize(accResp);
   const accounts = (accResp.body && accResp.body.data) || [];
 
-  // 2) Organization id.
+  // 2) Organization id — two evidence-based sources:
+  //    a) GET /api/organization (may fail with INVALID_OAUTHSCOPE on real
+  //       tenants even for super admins — observed in production evidence)
+  //    b) fallback: the /api/accounts payload itself carries the org id
+  //       (policyId.zoid) — proven by live evidence on the company tenant.
   const orgResp = await zoho.getOrganization();
   evidence.organization = sanitize(orgResp);
   let zoid = null;
   const od = orgResp.body && orgResp.body.data;
   if (od) zoid = od.zoid || od.zgid || od.orgId || (Array.isArray(od) && od[0] && (od[0].zoid || od[0].orgId)) || null;
+  if (!zoid) {
+    for (const a of accounts) {
+      const cand = (a.policyId && a.policyId.zoid) || a.zoid || a.orgId || null;
+      if (cand) { zoid = String(cand); evidence.zoidSource = 'accounts.policyId.zoid (fallback — /api/organization unavailable)'; break; }
+    }
+  } else {
+    evidence.zoidSource = '/api/organization';
+  }
 
   // 3) Org-level account list (admin scope) — some entities may only appear here.
   let orgAccounts = [];
