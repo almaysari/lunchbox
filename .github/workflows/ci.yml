@@ -44,7 +44,8 @@ jobs:
         run: |
           psql "$DATABASE_URL" -c 'DROP SCHEMA public CASCADE; CREATE SCHEMA public;'
           npm run migrate & npm run migrate & wait
-          psql "$DATABASE_URL" -c 'SELECT COUNT(*) FROM schema_migrations;' | grep -q 3
+          # applied count must equal the number of migration files (no double-apply)
+          test "$(psql "$DATABASE_URL" -tAc 'SELECT COUNT(*) FROM schema_migrations;')" -eq "$(ls migrations/*.sql | wc -l)" 
       - name: Integration tests (25)
         run: npm test
       - name: verify:schema (docs must match the live schema)

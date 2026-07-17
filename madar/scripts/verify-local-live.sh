@@ -17,5 +17,6 @@ docker compose exec -T app node -e "
   require('./core/db').all('SELECT name FROM schema_migrations ORDER BY name')
     .then(r=>{console.log(r.map(x=>x.name).join('\n'));process.exit(0)})
     .catch(e=>{console.error('FAIL:',e.message);process.exit(1)});"
-echo "== MODE ==";  grep -E '^MODE=' .env | cut -d= -f2
+echo "== MODE =="
+if [ -f .env ]; then grep -E '^MODE=' .env | cut -d= -f2 || echo "unset"; else echo "${MODE:-unset (env-provided)}"; fi
 echo "== لوحة الإدارة =="; echo "http://localhost:3000/?tab=admin"
