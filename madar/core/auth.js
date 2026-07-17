@@ -85,7 +85,21 @@ async function userForToken(token) {
 }
 
 async function publicUser(u) {
-  return { id: Number(u.id), email: u.email, name: u.name, roles: await rolesForUser(u.id) };
+  return { id: Number(u.id), email: u.email, name: u.name, roles: await rolesForUser(u.id),
+    mustChangePassword: Boolean(u.must_change_password) };
+}
+
+// Self-service password change (first-login enforcement). Verifies the
+// current password, applies the new one, clears the flag and revokes ALL
+// sessions — the user must sign in again with the new password.
+async function changeOwnPassword(userId, currentPassword, newPassword) {
+  if (!newPassword || newPassword.length < 12) throw new Error('Password must be at least 12 characters.');
+  const u = await one('SELECT * FROM users WHERE id = $1', [userId]);
+  if (!u || !verifyPassword(currentPassword, u.password_hash)) throw new Error('Current password is incorrect.');
+  if (verifyPassword(newPassword, u.password_hash)) throw new Error('New password must differ from the current one.');
+  await q('UPDATE users SET password_hash = $1, must_change_password = FALSE WHERE id = $2',
+    [hashPassword(newPassword), userId]);
+  await revokeAllSessions(userId);
 }
 
 function listUsers() {
@@ -151,7 +165,7 @@ async function readableMailboxIds(user) {
 }
 
 module.exports = {
-  login, logout, userForToken, revokeAllSessions, resetPassword, loginLocked,
+  login, logout, userForToken, revokeAllSessions, resetPassword, loginLocked, changeOwnPassword,
   listUsers, createUser, rolesForUser, assignRole, revokeRole,
   hasRole, isPlatformAdmin, isMailAdmin, isSecurityAdmin, isAuditor,
   grantsForUser, setGrant, mailboxPermission, canReadMailbox, readableMailboxIds,

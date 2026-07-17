@@ -117,6 +117,11 @@ const server = http.createServer(async (req, res) => {
 
     if (!user) return send(401, { error: 'unauthenticated' });
 
+    // First-login policy: initial credentials must be changed before anything else.
+    if (user.mustChangePassword && !['/api/auth/change-password', '/api/auth/logout', '/api/auth/me'].includes(p)) {
+      return send(428, { error: 'password change required', code: 'MUST_CHANGE_PASSWORD' });
+    }
+
     // ---------- CSRF: every mutating request needs the header ----------
     // Defense-in-depth: session-bound HMAC token (NOT plain double-submit) on
     // every mutating request; SameSite=Lax is a second layer, not the only one.
@@ -127,6 +132,16 @@ const server = http.createServer(async (req, res) => {
         await audit(user.id, 'security.csrf_rejected', p);
         return send(403, { error: 'CSRF token missing or invalid' });
       }
+    }
+
+    if (p === '/api/auth/change-password' && req.method === 'POST') {
+      try {
+        await auth.changeOwnPassword(user.id, body.current_password, body.new_password);
+      } catch (err) { return send(400, { error: String(err.message) }); }
+      await audit(user.id, 'auth.password.changed', user.email); // passwords never logged
+      res.writeHead(200, { 'Content-Type': 'application/json', 'Set-Cookie': 'madar_session=; Path=/; Max-Age=0' });
+      res.end(JSON.stringify({ ok: true, note: 'all sessions revoked — sign in again' }));
+      return;
     }
 
     const requireAdmin = () => {

@@ -51,6 +51,8 @@ jobs:
         run: npm run migrate && npm run verify:schema
       - name: verify:security (prohibited files + secret patterns)
         run: npm run verify:security
+      - name: Shell scripts syntax
+        run: for f in scripts/*.sh; do bash -n "$f"; done
       - name: Gitleaks (full history secret scan)
         uses: gitleaks/gitleaks-action@v2
         env:
@@ -89,6 +91,8 @@ jobs:
         run: |
           docker compose exec -T -e MADAR_ADMIN_EMAIL=ci@example.com -e MADAR_ADMIN_NAME=CI \
             -e MADAR_ADMIN_PASSWORD=ci-only-password-123 app npm run create-admin
+      - name: verify-local-live.sh against the running stack (no secrets printed)
+        run: ./scripts/verify-local-live.sh
       - name: Persistence seed (user row + attachment object)
         run: |
           docker compose exec -T app node -e "

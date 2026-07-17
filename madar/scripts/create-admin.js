@@ -40,10 +40,10 @@ async function main() {
   const existing = await one('SELECT id FROM users WHERE email = $1', [email]);
   if (existing) throw new Error('A user with this email already exists.');
 
-  const r = await one('INSERT INTO users (email, name, password_hash) VALUES ($1,$2,$3) RETURNING id',
+  const r = await one('INSERT INTO users (email, name, password_hash, must_change_password) VALUES ($1,$2,$3,TRUE) RETURNING id',
     [email, name, hashPassword(password)]);
   await q(`INSERT INTO user_roles (user_id, role_id) SELECT $1, id FROM roles WHERE name = 'platform_admin'`, [r.id]);
-  console.log(`Admin created: ${email} (role: platform_admin)`);
+  console.log(`Admin created: ${email} (role: platform_admin) — password change is REQUIRED at first sign-in`);
   await closeDb();
 }
 

@@ -204,6 +204,7 @@ async function boot() {
   }
   if (!ME) { $('login').style.display=''; return; }
   CSRF = ME.csrf || '';
+  if (ME.mustChangePassword) { renderForcedChange(); return; }
   $('login').style.display='none';
   $('nav').style.display = isAdminUser(ME) ? '' : 'none';
   $('userChip').style.display=''; $('userChip').textContent = ME.email + ' (' + (ME.roles || []).join('،') + ')';
@@ -211,6 +212,22 @@ async function boot() {
   showTab(new URLSearchParams(location.search).get('tab') === 'admin' && isAdminUser(ME) ? 'admin' : 'mail');
   if (isAdminUser(ME)) loadAdmin();
   loadMailboxesForMail();
+}
+function renderForcedChange() {
+  $('login').style.display = '';
+  $('login').innerHTML = `
+    <h3 style="margin-top:0">تغيير كلمة المرور إلزامي</h3>
+    <p class="sub">هذه أول جلسة بكلمة المرور المبدئية — يجب تغييرها قبل استخدام المنصة. بعد التغيير تُبطل كل الجلسات وتسجل الدخول من جديد.</p>
+    <input id="curPass" type="password" placeholder="كلمة المرور الحالية">
+    <input id="newPass" type="password" placeholder="كلمة المرور الجديدة (12+ حرفًا)">
+    <button class="btn primary" style="width:100%" onclick="doForcedChange()">تغيير وإعادة الدخول</button>
+    <p id="loginErr" style="color:var(--bad)"></p>`;
+}
+async function doForcedChange() {
+  try {
+    await api('/api/auth/change-password', { method:'POST', body:{ current_password:$('curPass').value, new_password:$('newPass').value } });
+    location.reload();
+  } catch (e) { $('loginErr').textContent = e.message; }
 }
 async function doLogin() {
   try {

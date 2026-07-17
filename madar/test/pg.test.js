@@ -131,6 +131,18 @@ test('auth: CSRF tokens verify and reject tampering; password reset revokes sess
   assert.ok(await auth.login('member@corp.test', 'brand-new-strong-pass-2'));
 });
 
+test('auth: forced first-login password change (gate, change, revoke, clear flag)', async () => {
+  const uid = await auth.createUser({ email: 'fresh@corp.test', name: 'F', password: 'initial-strong-pass-1', roles: ['member'] });
+  await db.q('UPDATE users SET must_change_password = TRUE WHERE id = $1', [uid]);
+  const login = await auth.login('fresh@corp.test', 'initial-strong-pass-1');
+  assert.strictEqual(login.user.mustChangePassword, true);
+  await assert.rejects(() => auth.changeOwnPassword(uid, 'wrong-current-pass-1', 'brand-new-strong-pass-9'), /incorrect/);
+  await auth.changeOwnPassword(uid, 'initial-strong-pass-1', 'brand-new-strong-pass-9');
+  assert.strictEqual((await auth.userForToken(login.token)).user, null); // all sessions revoked
+  const again = await auth.login('fresh@corp.test', 'brand-new-strong-pass-9');
+  assert.strictEqual(again.user.mustChangePassword, false);
+});
+
 // ---------- encryption ----------
 test('encryption: versioned at rest, key rotation via reencrypt, API leaks nothing', async () => {
   const row = await db.one('SELECT client_secret_enc, encryption_key_version FROM connections WHERE id = $1', [connId]);
