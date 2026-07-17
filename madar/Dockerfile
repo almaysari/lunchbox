@@ -3,6 +3,9 @@ WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci --omit=dev
 COPY . .
+# attachment volume mountpoint must be writable by the non-root user —
+# a named volume inherits this ownership on first use
+RUN mkdir -p /var/lib/madar/attachments && chown -R node:node /var/lib/madar
 EXPOSE 3000
 USER node
 # Official single-command runtime: migrations run first (safe under
