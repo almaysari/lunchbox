@@ -11,4 +11,8 @@ regexTarget = "line"
 regexes = [
   '''refresh_token: abcdef1234567890''',
   '''supersecretvalue123''',
+  # E2E auth-lifecycle test fixtures (test/e2e-auth.test.js) — dummy values
+  '''initial-pass-123456''',
+  '''permanent-pass-654321''',
+  '''anything-long-123''',
 ]
