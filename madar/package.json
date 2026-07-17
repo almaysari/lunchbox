@@ -11,7 +11,10 @@
     "migrate": "node scripts/migrate.js",
     "create-admin": "node scripts/create-admin.js",
     "test": "node --test test/pg.test.js",
-    "reset-password": "node scripts/reset-password.js"
+    "reset-password": "node scripts/reset-password.js",
+    "verify:schema": "node scripts/verify-schema.js",
+    "verify:security": "node scripts/verify-security.js",
+    "verify:tests": "npm test"
   },
   "dependencies": {
     "pg": "^8.13.0"

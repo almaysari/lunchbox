@@ -126,10 +126,17 @@ async function setGrant(userId, mailboxId, flags) {
     [userId, mailboxId, ...vals]);
 }
 
+// POLICY (documented in docs/DECISIONS.md): admin roles administer the
+// platform but do NOT read mail content automatically. Message subjects,
+// bodies and attachments require an explicit mailbox grant for EVERY user,
+// including platform_admin. Admin roles keep metadata + management access
+// (mailbox registry, detection evidence, sync jobs) via their role checks.
+// Admins CAN grant themselves access — but every grant change is audited
+// (admin.grant.set), so self-granting is always visible. No dual control in
+// this version (single-admin organization); revisit if the team grows.
 async function mailboxPermission(user, mailboxId, flag) {
   if (!user) return false;
   if (!GRANT_FLAGS.includes(flag)) throw new Error('unknown grant flag: ' + flag);
-  if (isMailAdmin(user)) return true;
   const row = await one(`SELECT ${flag} AS ok FROM mailbox_grants WHERE user_id = $1 AND mailbox_id = $2`,
     [user.id, mailboxId]);
   return Boolean(row && row.ok);
@@ -139,7 +146,6 @@ const canReadMailbox = (user, mailboxId) => mailboxPermission(user, mailboxId, '
 
 async function readableMailboxIds(user) {
   if (!user) return [];
-  if (isMailAdmin(user)) return (await all('SELECT id FROM mailboxes')).map(r => Number(r.id));
   return (await all('SELECT mailbox_id FROM mailbox_grants WHERE user_id = $1 AND can_view_messages', [user.id]))
     .map(g => Number(g.mailbox_id));
 }

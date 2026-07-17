@@ -1,24 +1,34 @@
 # حالة التحقق — ما ثبت محليًا وما لم يُختبر بعد
 
-> آخر تحديث: 2026-07-17.
+> آخر تحديث: 2026-07-17 (المراجعة الثانية).
 > القاعدة الصارمة في هذا المشروع: عبارة «Zoho اكتشف/أعاد X» لا تُستخدم إلا
 > لنتيجة جاءت من **Live Zoho API Discovery** بعد OAuth حقيقي. أي نتيجة من
 > الوضع التجريبي تُسمى **Mock Discovery**، وأي مقارنة بالقائمة المرجعية تُسمى
 > **Fixture Validation**.
 
-## المستويات الثلاثة
+## حالة الجاهزية الحالية (بدقة)
 
-- **A. Mock-verified:** سلوك ضد محاكي Zoho المحلي والـFixtures.
-- **B. Locally infrastructure-verified:** بنية مثبتة على PostgreSQL حقيقي محليًا.
-- **C. Live Zoho-verified:** مثبت على حساب Zoho الحقيقي بعد OAuth حي.
+| المستوى | الحالة |
+|---|---|
+| Mock-verified | ✅ ناجح |
+| Local PostgreSQL infrastructure-verified | ✅ ناجح (25 اختبارًا تكامليًا) |
+| Docker runtime-verified | ⏳ عبر CI (GitHub Actions) — غير مثبت حتى نجاح الـWorkflow |
+| S3 storage-verified | ❌ غير منفذ (العقد مصمم فقط؛ `MADAR_STORAGE=s3` يفشل عند الإقلاع برسالة واضحة) |
+| Zoho Live-verified | ❌ غير مختبر |
+
+**المنصة لا توصف بأنها جاهزة لـZoho Live قبل نجاح Docker Runtime وCI الكامل.**
 
 لا يُعتبر بند منجزًا لمجرد أن واجهته موجودة — الإنجاز يعني اختبارًا ناجحًا في مستواه.
 
-## B. Locally infrastructure-verified — 17 اختبار PostgreSQL تكاملي ناجح (آخر دورة: 2026-07-17)
+## B. Locally infrastructure-verified — 25 اختبار PostgreSQL تكاملي ناجح (آخر دورة: 2026-07-17)
 
 دورة التحقق المنفذة فعليًا: قاعدة فارغة → `npm run migrate` (طُبّق 001+002)
-→ `migrate` ثانية (up to date) → `npm test` (17/17) → `migrate` (up to date)
-→ `npm test` ثانية (17/17، صفر تكرار). تغطي: Schema (20 جدولًا)، RBAC بجداول
+→ `migrate` ثانية (up to date) → `npm test` (25/25). تغطي إضافة إلى ما سبق:
+سياسة platform_admin (إدارة بلا قراءة محتوى دون Grant)، سياسة 404 لمنع
+التعداد، Canonicalization v2 واختبارات التصادم، خصوصية Envelope/BCC عبر
+الصناديق، أمن FTS من الـOccurrences المصرّحة حصريًا، التزامن (بدءان
+متزامنان = مهمة واحدة + Conflict)، Crash Recovery (running → paused)،
+جاهزية Health بالحالتين، وCross-session CSRF. وتغطي: Schema، RBAC بجداول
 حقيقية، القفل بعد محاولات فاشلة، تدوير الجلسات وإبطالها، CSRF، تشفير مصنّف
 بنسخ مفاتيح + تدوير فعلي، oauth_states (تجزئة/انتهاء/استخدام واحد)،
 Canonical/Occurrences (رسالة في صندوقين = canonical واحد بلا فقدان)،

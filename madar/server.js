@@ -16,6 +16,10 @@ if (!cfg.DATABASE_URL) {
   console.error('DATABASE_URL is required (PostgreSQL). See .env.example / docker-compose.yml.');
   process.exit(1);
 }
+if (/CHANGE_ME/i.test(cfg.DATABASE_URL)) {
+  console.error('DATABASE_URL still contains a CHANGE_ME placeholder — set a real value.');
+  process.exit(1);
+}
 if (cfg.MODE === 'demo' && !process.env.MADAR_MAX_RPM) process.env.MADAR_MAX_RPM = '100000';
 
 const cryptoCore = require('./core/crypto');
@@ -61,9 +65,16 @@ const server = http.createServer(async (req, res) => {
   };
 
   try {
-    if (p === '/healthz') {
-      const ok = await db.healthy();
-      return send(ok ? 200 : 503, { status: ok ? 'ok' : 'db_unreachable' });
+    // liveness: process is up — touches no dependency
+    if (p === '/health/live') return send(200, { status: 'alive' });
+    // readiness: db + migrations + storage + encryption (details are booleans only)
+    if (p === '/health/ready' || p === '/healthz') {
+      const { readiness } = require('./core/health');
+      const r = await readiness({
+        db, storageDir: db.ATTACH_DIR, cryptoReady: true,
+        migrationsDir: path.join(__dirname, 'migrations'),
+      });
+      return send(r.ready ? 200 : 503, { status: r.ready ? 'ready' : 'not_ready', checks: r.checks });
     }
     if (p === '/' || p === '/index.html') {
       return send(200, fs.readFileSync(path.join(__dirname, 'public', 'index.html')), 'text/html; charset=utf-8');
@@ -107,7 +118,11 @@ const server = http.createServer(async (req, res) => {
     if (!user) return send(401, { error: 'unauthenticated' });
 
     // ---------- CSRF: every mutating request needs the header ----------
-    if (['POST', 'PUT', 'PATCH', 'DELETE'].includes(req.method) && p !== '/oauth/callback') {
+    // Defense-in-depth: session-bound HMAC token (NOT plain double-submit) on
+    // every mutating request; SameSite=Lax is a second layer, not the only one.
+    // /oauth/callback needs no exemption: it is GET-only and guarded by the
+    // one-time hashed state in oauth_states.
+    if (['POST', 'PUT', 'PATCH', 'DELETE'].includes(req.method)) {
       if (!cryptoCore.verifyCsrf(activeToken, req.headers['x-csrf-token'])) {
         await audit(user.id, 'security.csrf_rejected', p);
         return send(403, { error: 'CSRF token missing or invalid' });
@@ -186,6 +201,12 @@ async function start() {
     console.error('[madar] PostgreSQL is unreachable at DATABASE_URL. Start it first (docker compose up -d postgres).');
     process.exit(1);
   }
+  try { require('./core/storage').getStorage(); } catch (err) {
+    console.error('[madar] storage backend failed to initialize:', err.message);
+    process.exit(1); // e.g. MADAR_STORAGE=s3 while the S3 adapter is not implemented
+  }
+  const recovered = await require('./modules/mail/sync').recoverStaleJobs();
+  if (recovered.length) console.log(`[madar] recovered ${recovered.length} stale running sync job(s) → paused (resumable)`);
   if (cfg.MODE === 'demo') {
     const { startMockZoho } = require('./test/mock-zoho');
     const mockPort = await startMockZoho(0);

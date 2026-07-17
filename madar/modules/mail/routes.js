@@ -1,4 +1,10 @@
 // Mail module REST API (PostgreSQL, canonical-message model, RBAC).
+//
+// Direct-resource privacy policy (anti-enumeration): a user without
+// permission on a specific resource ID (mailbox / canonical / occurrence /
+// attachment / detection report) receives 404 — indistinguishable from a
+// nonexistent ID. Role-gated ADMIN endpoints return 403 (the endpoint's
+// existence is public knowledge, no resource ID is probed).
 const fs = require('fs');
 const path = require('path');
 const { q, one, all } = require('../../core/db');
@@ -142,7 +148,8 @@ async function handle(req, res, url, user, body, helpers) {
   if ((m = p.match(/^\/api\/mail\/mailboxes\/(\d+)$/)) && req.method === 'GET') {
     const row = await one('SELECT * FROM mailboxes WHERE id = $1', [Number(m[1])]);
     if (!row) return send(404, { error: 'not found' });
-    if (!(await auth.canReadMailbox(user, Number(row.id)))) return send(403, { error: 'forbidden' });
+    // metadata + evidence: admin roles OR granted users; others get 404 (anti-enumeration)
+    if (!auth.isMailAdmin(user) && !(await auth.canReadMailbox(user, Number(row.id)))) return send(404, { error: 'not found' });
     const report = await one('SELECT at, report FROM detection_reports WHERE mailbox_id = $1 ORDER BY id DESC LIMIT 1', [row.id]);
     return send(200, {
       ...(await mailboxRow(row)),
@@ -184,7 +191,7 @@ async function handle(req, res, url, user, body, helpers) {
   }
   if ((m = p.match(/^\/api\/mail\/mailboxes\/(\d+)\/folders$/)) && req.method === 'GET') {
     const id = Number(m[1]);
-    if (!(await auth.canReadMailbox(user, id))) return send(403, { error: 'forbidden' });
+    if (!(await auth.canReadMailbox(user, id))) return send(404, { error: 'not found' });
     return send(200, await all('SELECT id, name, folder_type FROM folders WHERE mailbox_id = $1 ORDER BY name', [id]));
   }
 
@@ -193,7 +200,7 @@ async function handle(req, res, url, user, body, helpers) {
     const allowed = await auth.readableMailboxIds(user);
     if (!allowed.length) return send(200, []);
     const mailboxId = url.searchParams.get('mailbox_id') ? Number(url.searchParams.get('mailbox_id')) : null;
-    if (mailboxId && !allowed.includes(mailboxId)) return send(403, { error: 'forbidden' });
+    if (mailboxId && !allowed.includes(mailboxId)) return send(404, { error: 'not found' });
     const folderId = url.searchParams.get('folder_id') ? Number(url.searchParams.get('folder_id')) : null;
     const qtext = (url.searchParams.get('q') || '').trim();
     const scope = mailboxId ? [mailboxId] : allowed;
@@ -211,7 +218,7 @@ async function handle(req, res, url, user, body, helpers) {
     const row = await one(`SELECT o.*, c.* , o.id AS occurrence_id, c.id AS canonical_id
       FROM message_occurrences o JOIN canonical_messages c ON c.id = o.canonical_message_id WHERE o.id = $1`, [Number(m[1])]);
     if (!row) return send(404, { error: 'not found' });
-    if (!(await auth.canReadMailbox(user, Number(row.mailbox_id)))) return send(403, { error: 'forbidden' });
+    if (!(await auth.canReadMailbox(user, Number(row.mailbox_id)))) return send(404, { error: 'not found' });
     await audit(user.id, 'mail.message.read', 'occurrence:' + row.occurrence_id);
     const canSeeAtt = await auth.mailboxPermission(user, Number(row.mailbox_id), 'can_view_attachments');
     const atts = canSeeAtt
@@ -223,8 +230,12 @@ async function handle(req, res, url, user, body, helpers) {
     return send(200, {
       occurrenceId: Number(row.occurrence_id), canonicalId: Number(row.canonical_id),
       mailboxId: Number(row.mailbox_id), direction: row.direction,
-      from_address: row.from_address, from_name: row.from_name, to_addresses: row.to_addresses,
-      cc_addresses: row.cc_addresses, subject: row.subject, snippet: row.snippet, body_html: row.body_html,
+      from_address: row.from_address, from_name: row.from_name,
+      // envelope privacy: recipients as THIS mailbox's copy saw them —
+      // never another occurrence's envelope (BCC etc. stay per-occurrence)
+      to_addresses: row.envelope_to,
+      cc_addresses: row.envelope_cc,
+      subject: row.subject, snippet: row.snippet, body_html: row.body_html,
       received_at: new Date(row.received_at).getTime(), attachments: atts,
       // occurrences shown only where the user can read that mailbox
       appearsIn: (await Promise.all(occurrences.map(async o =>
@@ -245,7 +256,7 @@ async function handle(req, res, url, user, body, helpers) {
     const flag = wantDownload ? 'can_download_attachments' : 'can_view_attachments';
     let permitted = false;
     for (const o of occRows) if (await auth.mailboxPermission(user, Number(o.mailbox_id), flag)) { permitted = true; break; }
-    if (!permitted) return send(403, { error: 'forbidden' });
+    if (!permitted) return send(404, { error: 'not found' });
     if (att.quarantine_status === 'quarantined' && !auth.isSecurityAdmin(user)) {
       return send(423, { error: 'attachment quarantined (declared type does not match detected content)' });
     }
@@ -290,7 +301,7 @@ async function handle(req, res, url, user, body, helpers) {
     const occ = await all('SELECT DISTINCT mailbox_id FROM message_occurrences WHERE canonical_message_id = $1', [Number(m[1])]);
     let permitted = false;
     for (const o of occ) if (await auth.mailboxPermission(user, Number(o.mailbox_id), 'can_manage_labels')) { permitted = true; break; }
-    if (!permitted) return send(403, { error: 'forbidden' });
+    if (!permitted) return send(404, { error: 'not found' });
     if (body.add) await q('INSERT INTO message_labels (canonical_message_id, label_id) VALUES ($1,$2) ON CONFLICT DO NOTHING', [Number(m[1]), Number(body.add)]);
     if (body.remove) await q('DELETE FROM message_labels WHERE canonical_message_id = $1 AND label_id = $2', [Number(m[1]), Number(body.remove)]);
     return send(200, { ok: true });

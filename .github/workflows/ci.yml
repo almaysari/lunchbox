@@ -1,0 +1,122 @@
+name: CI
+
+on:
+  push:
+    branches: ['claude/**', main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  tests:
+    name: PostgreSQL integration tests + verification gates
+    runs-on: ubuntu-latest
+    defaults: { run: { working-directory: madar } }
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: madar
+          POSTGRES_PASSWORD: madar_ci_only
+          POSTGRES_DB: madar_test
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U madar -d madar_test"
+          --health-interval 5s --health-timeout 3s --health-retries 10
+    env:
+      TEST_DATABASE_URL: postgresql://madar:madar_ci_only@localhost:5432/madar_test
+      DATABASE_URL: postgresql://madar:madar_ci_only@localhost:5432/madar_test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm, cache-dependency-path: madar/package-lock.json }
+      - run: npm ci
+      - name: Lint (syntax gate over all sources)
+        run: |
+          for f in $(git ls-files '*.js' | grep -v node_modules); do node --check "$f"; done
+        working-directory: .
+      - name: Migrations from an empty database
+        run: npm run migrate
+      - name: Migration idempotency (second run is a no-op)
+        run: npm run migrate | grep 'up to date'
+      - name: Concurrent migration safety (advisory lock)
+        run: |
+          psql "$DATABASE_URL" -c 'DROP SCHEMA public CASCADE; CREATE SCHEMA public;'
+          npm run migrate & npm run migrate & wait
+          psql "$DATABASE_URL" -c 'SELECT COUNT(*) FROM schema_migrations;' | grep -q 3
+      - name: Integration tests (25)
+        run: npm test
+      - name: verify:schema (docs must match the live schema)
+        run: npm run migrate && npm run verify:schema
+      - name: verify:security (prohibited files + secret patterns)
+        run: npm run verify:security
+      - name: Gitleaks (full history secret scan)
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with: { args: detect --source . --log-opts=--all --verbose --redact }
+
+  docker:
+    name: Docker runtime verification (build, health, persistence)
+    runs-on: ubuntu-latest
+    defaults: { run: { working-directory: madar } }
+    env:
+      # CI-only values — no real secrets, no Zoho credentials anywhere
+      POSTGRES_PASSWORD: ci_pg_password_not_secret
+      MADAR_ENCRYPTION_KEY: 1111111111111111111111111111111111111111111111111111111111111111
+      MADAR_SESSION_SECRET: 2222222222222222222222222222222222222222222222222222222222222222
+      MADAR_CSRF_SECRET: 3333333333333333333333333333333333333333333333333333333333333333
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build and start the full stack
+        run: docker compose up -d --build
+      - name: Stack status
+        run: docker compose ps
+      - name: Wait for PostgreSQL health
+        run: timeout 90 sh -c 'until docker compose ps postgres | grep -q healthy; do sleep 2; done'
+      - name: Wait for App health (entrypoint runs migrations first)
+        run: timeout 120 sh -c 'until docker compose ps app | grep -q healthy; do sleep 2; docker compose logs --tail 5 app; done'
+      - name: /health/live and /health/ready
+        run: |
+          curl -fsS http://localhost:3000/health/live
+          curl -fsS http://localhost:3000/health/ready
+      - name: App container runs as non-root
+        run: test "$(docker compose exec -T app whoami)" = "node"
+      - name: Create admin non-interactively (CI-only credentials)
+        run: |
+          docker compose exec -T -e MADAR_ADMIN_EMAIL=ci@local -e MADAR_ADMIN_NAME=CI \
+            -e MADAR_ADMIN_PASSWORD=ci-only-password-123 app npm run create-admin
+      - name: Persistence seed (user row + attachment object)
+        run: |
+          docker compose exec -T app node -e "
+            const {getStorage}=require('./core/storage');
+            const {key}=getStorage().putObject(Buffer.from('persistence-probe'));
+            require('fs').writeFileSync('/var/lib/madar/attachments/.probe-key', key);"
+      - name: Restart app container — data must survive
+        run: |
+          docker compose restart app
+          timeout 120 sh -c 'until docker compose ps app | grep -q healthy; do sleep 2; done'
+      - name: Restart postgres container — data must survive
+        run: |
+          docker compose restart postgres app
+          timeout 120 sh -c 'until docker compose ps app | grep -q healthy; do sleep 2; done'
+      - name: Rebuild app image — volumes must survive image replacement
+        run: |
+          docker compose up -d --build app
+          timeout 120 sh -c 'until docker compose ps app | grep -q healthy; do sleep 2; done'
+      - name: Verify persistence (db row + attachment bytes intact)
+        run: |
+          docker compose exec -T app node -e "
+            const {loadEnv}=require('./core/env'); loadEnv('.');
+            const db=require('./core/db');
+            db.one('SELECT email FROM users WHERE email=\\'ci@local\\'').then(u=>{
+              if(!u) throw new Error('user row lost');
+              const {getStorage}=require('./core/storage');
+              const key=require('fs').readFileSync('/var/lib/madar/attachments/.probe-key','utf8');
+              if(!getStorage().exists(key)) throw new Error('attachment object lost');
+              console.log('persistence OK'); process.exit(0);
+            }).catch(e=>{console.error(e.message);process.exit(1)});"
+      - name: Tear down (down -v)
+        if: always()
+        run: docker compose down -v

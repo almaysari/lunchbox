@@ -1,12 +1,11 @@
 # PostgreSQL Schema — Verified (extracted from a live database)
 
-> مستخرج مباشرة من PostgreSQL 16 بعد تطبيق كل الـMigrations بتاريخ 2026-07-17.
-> الأمر: `pg_dump --schema-only` + استعلامات الفهارس والقيود. لا يوجد أي وصف يدوي.
+> يُولَّد هذا الملف حصريًا بـ `npm run verify:schema -- --update` — لا يُحرر يدويًا.
+> `npm run verify:schema` يفشل إذا اختلف الـSchema الفعلي عن هذا الملف (يعمل في CI).
 
 ## الجداول والأعمدة والقيود (pg_dump --schema-only)
 
 ```sql
-
 COMMENT ON SCHEMA public IS '';
 
 CREATE TABLE public.attachments (
@@ -68,7 +67,8 @@ CREATE TABLE public.canonical_messages (
     sent_at timestamp with time zone NOT NULL,
     has_attachments boolean DEFAULT false NOT NULL,
     created_at timestamp with time zone DEFAULT now() NOT NULL,
-    fts tsvector GENERATED ALWAYS AS (to_tsvector('simple'::regconfig, ((((COALESCE(subject, ''::text) || ' '::text) || COALESCE(snippet, ''::text)) || ' '::text) || COALESCE(from_address, ''::text)))) STORED
+    fts tsvector GENERATED ALWAYS AS (to_tsvector('simple'::regconfig, ((((COALESCE(subject, ''::text) || ' '::text) || COALESCE(snippet, ''::text)) || ' '::text) || COALESCE(from_address, ''::text)))) STORED,
+    canonical_hash_version integer DEFAULT 2 NOT NULL
 );
 
 CREATE SEQUENCE public.canonical_messages_id_seq
@@ -223,6 +223,9 @@ CREATE TABLE public.message_occurrences (
     direction text DEFAULT 'in'::text NOT NULL,
     received_at timestamp with time zone NOT NULL,
     created_at timestamp with time zone DEFAULT now() NOT NULL,
+    envelope_to text DEFAULT ''::text NOT NULL,
+    envelope_cc text DEFAULT ''::text NOT NULL,
+    envelope_bcc text DEFAULT ''::text NOT NULL,
     CONSTRAINT message_occurrences_direction_check CHECK ((direction = ANY (ARRAY['in'::text, 'out'::text])))
 );
 
@@ -532,55 +535,4 @@ ALTER TABLE ONLY public.user_roles
 
 ALTER TABLE ONLY public.user_roles
     ADD CONSTRAINT user_roles_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id) ON DELETE CASCADE;
-
-```
-
-## الفهارس
-
-```
-                                                                            List of relations
- Schema |                              Name                               | Type  | Owner |        Table        | Persistence | Access method |    Size    | Description 
---------+-----------------------------------------------------------------+-------+-------+---------------------+-------------+---------------+------------+-------------
- public | attachments_canonical_message_id_sha256_original_filename_key   | index | madar | attachments         | permanent   | btree         | 32 kB      | 
- public | attachments_pkey                                                | index | madar | attachments         | permanent   | btree         | 16 kB      | 
- public | attachments_storage_key_key                                     | index | madar | attachments         | permanent   | btree         | 16 kB      | 
- public | audit_log_pkey                                                  | index | madar | audit_log           | permanent   | btree         | 16 kB      | 
- public | canonical_messages_dedup_hash_key                               | index | madar | canonical_messages  | permanent   | btree         | 56 kB      | 
- public | canonical_messages_pkey                                         | index | madar | canonical_messages  | permanent   | btree         | 16 kB      | 
- public | connections_pkey                                                | index | madar | connections         | permanent   | btree         | 16 kB      | 
- public | detection_reports_pkey                                          | index | madar | detection_reports   | permanent   | btree         | 16 kB      | 
- public | folders_mailbox_id_provider_folder_id_key                       | index | madar | folders             | permanent   | btree         | 16 kB      | 
- public | folders_pkey                                                    | index | madar | folders             | permanent   | btree         | 16 kB      | 
- public | idx_audit_at                                                    | index | madar | audit_log           | permanent   | btree         | 16 kB      | 
- public | idx_canonical_fts                                               | index | madar | canonical_messages  | permanent   | gin           | 144 kB     | 
- public | idx_canonical_rfc                                               | index | madar | canonical_messages  | permanent   | btree         | 32 kB      | 
- public | idx_detection_mailbox                                           | index | madar | detection_reports   | permanent   | btree         | 16 kB      | 
- public | idx_oauth_states_expiry                                         | index | madar | oauth_states        | permanent   | btree         | 16 kB      | 
- public | idx_occ_canonical                                               | index | madar | message_occurrences | permanent   | btree         | 16 kB      | 
- public | idx_occ_mailbox_time                                            | index | madar | message_occurrences | permanent   | btree         | 16 kB      | 
- public | idx_sessions_expiry                                             | index | madar | sessions            | permanent   | btree         | 16 kB      | 
- public | idx_sync_jobs_mailbox                                           | index | madar | sync_jobs           | permanent   | btree         | 16 kB      | 
- public | idx_sync_jobs_one_active                                        | index | madar | sync_jobs           | permanent   | btree         | 16 kB      | 
- public | labels_name_key                                                 | index | madar | labels              | permanent   | btree         | 8192 bytes | 
- public | labels_pkey                                                     | index | madar | labels              | permanent   | btree         | 8192 bytes | 
- public | mailbox_aliases_pkey                                            | index | madar | mailbox_aliases     | permanent   | btree         | 16 kB      | 
- public | mailbox_grants_pkey                                             | index | madar | mailbox_grants      | permanent   | btree         | 16 kB      | 
- public | mailboxes_address_key                                           | index | madar | mailboxes           | permanent   | btree         | 16 kB      | 
- public | mailboxes_pkey                                                  | index | madar | mailboxes           | permanent   | btree         | 16 kB      | 
- public | message_labels_pkey                                             | index | madar | message_labels      | permanent   | btree         | 8192 bytes | 
- public | message_occurrences_mailbox_id_folder_id_canonical_message__key | index | madar | message_occurrences | permanent   | btree         | 32 kB      | 
- public | message_occurrences_mailbox_id_folder_id_provider_message_i_key | index | madar | message_occurrences | permanent   | btree         | 32 kB      | 
- public | message_occurrences_pkey                                        | index | madar | message_occurrences | permanent   | btree         | 16 kB      | 
- public | oauth_states_pkey                                               | index | madar | oauth_states        | permanent   | btree         | 16 kB      | 
- public | roles_name_key                                                  | index | madar | roles               | permanent   | btree         | 16 kB      | 
- public | roles_pkey                                                      | index | madar | roles               | permanent   | btree         | 16 kB      | 
- public | schema_migrations_pkey                                          | index | madar | schema_migrations   | permanent   | btree         | 16 kB      | 
- public | sessions_pkey                                                   | index | madar | sessions            | permanent   | btree         | 16 kB      | 
- public | sync_jobs_pkey                                                  | index | madar | sync_jobs           | permanent   | btree         | 16 kB      | 
- public | sync_state_pkey                                                 | index | madar | sync_state          | permanent   | btree         | 16 kB      | 
- public | user_roles_pkey                                                 | index | madar | user_roles          | permanent   | btree         | 16 kB      | 
- public | users_email_key                                                 | index | madar | users               | permanent   | btree         | 16 kB      | 
- public | users_pkey                                                      | index | madar | users               | permanent   | btree         | 16 kB      | 
-(40 rows)
-
 ```

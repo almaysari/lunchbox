@@ -10,6 +10,12 @@ const { getPool, closeDb } = require('../core/db');
 
 async function main() {
   const pool = getPool();
+  // Concurrency guard: a session-level PostgreSQL advisory lock serializes
+  // migration runners across containers/processes — several app instances
+  // starting simultaneously can never apply migrations twice or interleave.
+  const lockClient = await pool.connect();
+  await lockClient.query('SELECT pg_advisory_lock($1, $2)', [0x4d41, 0x4d49]); // 'MA','MI'
+  try {
   await pool.query(`CREATE TABLE IF NOT EXISTS schema_migrations (
     name TEXT PRIMARY KEY,
     checksum TEXT NOT NULL,
@@ -48,6 +54,10 @@ async function main() {
     }
   }
   console.log(applied ? `done (${applied} new)` : 'up to date');
+  } finally {
+    await lockClient.query('SELECT pg_advisory_unlock($1, $2)', [0x4d41, 0x4d49]).catch(() => {});
+    lockClient.release();
+  }
   await closeDb();
 }
 

@@ -174,12 +174,19 @@ let ME = null, MAILBOXES = [], currentMailbox = null;
 const $ = id => document.getElementById(id);
 const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 let CSRF = '';
-const api = async (path, opts = {}) => {
+const api = async (path, opts = {}, retried = false) => {
   const r = await fetch(path, { ...opts,
     headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': CSRF, ...(opts.headers || {}) },
     body: opts.body && typeof opts.body !== 'string' && !(opts.body instanceof Blob) ? JSON.stringify(opts.body) : opts.body });
   const j = await r.json().catch(() => ({}));
-  if (!r.ok) throw new Error(j.error || r.status);
+  if (!r.ok) {
+    // session rotation refreshes the CSRF token — refetch it once and retry
+    if (r.status === 403 && String(j.error || '').includes('CSRF') && !retried) {
+      const me = await fetch('/api/auth/me').then(x => x.json()).catch(() => null);
+      if (me && me.csrf) { CSRF = me.csrf; return api(path, opts, true); }
+    }
+    throw new Error(j.error || r.status);
+  }
   return j;
 };
 const isAdminUser = u => u && u.roles && (u.roles.includes('platform_admin') || u.roles.includes('mail_admin'));
@@ -416,7 +423,7 @@ function uploadArchive(id) {
   inp.onchange = async () => {
     const f = inp.files[0]; if (!f) return;
     banners('<div class="banner warn">جاري استيراد الأرشيف (استيراد أرشيفي رسمي — ليس مزامنة حية)...</div>');
-    const r = await fetch(`/api/mail/mailboxes/${id}/import-archive`, { method:'POST', headers:{ 'Content-Type':'application/zip' }, body:f });
+    const r = await fetch(`/api/mail/mailboxes/${id}/import-archive`, { method:'POST', headers:{ 'Content-Type':'application/zip', 'X-CSRF-Token': CSRF }, body:f });
     const j = await r.json();
     banners(r.ok
       ? `<div class="banner ok">استيراد الأرشيف: ${j.imported} رسالة، ${j.attachments} مرفق، تكرارات مُنعت: ${j.duplicates}.</div>`

@@ -16,10 +16,25 @@ const PAGE_SIZE = 100;
 const delay = ms => new Promise(r => setTimeout(r, ms));
 const budgetDelay = () => delay(Math.ceil(60000 / MAX_RPM));
 
+// Canonicalization algorithm v2 (stored per-row as canonical_hash_version).
+// Priority 1: RFC Message-ID (globally unique by construction).
+// Priority 2 (Message-ID missing): fingerprint of from | to | cc | subject |
+//   exact timestamp | snippet-hash | has-attachments flag — so two different
+//   messages sharing sender+subject+date but differing in recipients, text or
+//   attachment presence do NOT merge. BCC is intentionally EXCLUDED: it is
+//   occurrence-envelope data (per-mailbox), never canonical identity.
+// Changing this algorithm requires bumping HASH_VERSION and a new migration;
+// old rows keep their version and are never re-merged retroactively.
+const HASH_VERSION = 2;
 function dedupHash(m) {
   const key = m.rfcMessageId
     ? 'rfc:' + m.rfcMessageId.trim()
-    : 'fp:' + [m.from, m.subject, m.receivedAt].join('|');
+    : 'fp2:' + [
+        m.from || '', m.to || '', m.cc || '', m.subject || '',
+        String(m.receivedAt || ''),
+        sha256(Buffer.from(String(m.snippet || m.bodyHtml || ''))).slice(0, 16),
+        m.hasAttachments ? '1' : '0',
+      ].join('|');
   return sha256(Buffer.from(key));
 }
 
@@ -30,36 +45,49 @@ async function upsertFolder(mailboxId, f) {
   return Number(r.id);
 }
 
-// Insert canonical (once platform-wide) + occurrence (once per mailbox/folder).
-// Returns { canonicalId, occurrenceId|null } — occurrenceId null = duplicate occurrence.
+// Insert canonical (once platform-wide) + occurrence (once per mailbox/folder),
+// atomically: a duplicate occurrence rolls back a just-created canonical, so
+// no canonical can ever exist without at least one occurrence.
+// Envelope fields (to/cc/bcc as THIS mailbox saw them) live on the occurrence.
 async function insertMessage(mailboxId, folderId, m, provider = 'zoho') {
   const hash = dedupHash(m);
-  let canonical = await one(`INSERT INTO canonical_messages (dedup_hash, rfc_message_id, thread_id, from_address,
-      from_name, to_addresses, cc_addresses, subject, snippet, body_html, sent_at, has_attachments)
-    VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)
-    ON CONFLICT (dedup_hash) DO NOTHING RETURNING id`,
-    [hash, m.rfcMessageId || '', m.threadId || '', m.from || '', m.fromName || '', m.to || '', m.cc || '',
-      m.subject || '', m.snippet || '', m.bodyHtml || null, new Date(Number(m.receivedAt) || Date.now()),
-      Boolean(m.hasAttachments)]);
-  const isNewCanonical = Boolean(canonical);
-  if (!canonical) canonical = await one('SELECT id FROM canonical_messages WHERE dedup_hash = $1', [hash]);
+  const { tx } = require('../../core/db');
+  return tx(async (client) => {
+    let canonical = (await client.query(`INSERT INTO canonical_messages (dedup_hash, canonical_hash_version,
+        rfc_message_id, thread_id, from_address, from_name, to_addresses, cc_addresses, subject, snippet,
+        body_html, sent_at, has_attachments)
+      VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13)
+      ON CONFLICT (dedup_hash) DO NOTHING RETURNING id`,
+      [hash, HASH_VERSION, m.rfcMessageId || '', m.threadId || '', m.from || '', m.fromName || '',
+        m.to || '', m.cc || '', m.subject || '', m.snippet || '', m.bodyHtml || null,
+        new Date(Number(m.receivedAt) || Date.now()), Boolean(m.hasAttachments)])).rows[0];
+    const isNewCanonical = Boolean(canonical);
+    if (!canonical) canonical = (await client.query('SELECT id FROM canonical_messages WHERE dedup_hash = $1', [hash])).rows[0];
 
-  const occ = await one(`INSERT INTO message_occurrences (canonical_message_id, mailbox_id, folder_id, provider,
-      provider_message_id, direction, received_at)
-    VALUES ($1,$2,$3,$4,$5,$6,$7) ON CONFLICT DO NOTHING RETURNING id`,
-    [canonical.id, mailboxId, folderId, provider, m.providerMessageId, m.direction || 'in',
-      new Date(Number(m.receivedAt) || Date.now())]);
+    const occ = (await client.query(`INSERT INTO message_occurrences (canonical_message_id, mailbox_id, folder_id,
+        provider, provider_message_id, direction, received_at, envelope_to, envelope_cc, envelope_bcc)
+      VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) ON CONFLICT DO NOTHING RETURNING id`,
+      [canonical.id, mailboxId, folderId, provider, m.providerMessageId, m.direction || 'in',
+        new Date(Number(m.receivedAt) || Date.now()), m.to || '', m.cc || '', m.bcc || ''])).rows[0];
 
-  return { canonicalId: Number(canonical.id), occurrenceId: occ ? Number(occ.id) : null, isNewCanonical };
+    if (!occ && isNewCanonical) throw Object.assign(new Error('rollback-orphan'), { _rollbackOrphan: true, canonicalId: Number(canonical.id) });
+    return { canonicalId: Number(canonical.id), occurrenceId: occ ? Number(occ.id) : null, isNewCanonical };
+  }).catch(err => {
+    if (err._rollbackOrphan) return { canonicalId: err.canonicalId, occurrenceId: null, isNewCanonical: false };
+    throw err;
+  });
 }
 
 // Attachments hang off the canonical message; MIME is detected from bytes,
 // never trusted from the provider. Mismatch → quarantined.
+// If the DB insert fails after the file was written, the object is deleted —
+// no partial attachments survive a pause/cancel/crash.
 async function storeAttachment(canonicalId, providerAttachmentId, name, providerMime, buf) {
   const dupe = await one('SELECT id FROM attachments WHERE canonical_message_id=$1 AND sha256=$2 AND original_filename=$3',
     [canonicalId, sha256(buf), name]);
   if (dupe) return false;
   const { key, sha256: hash, size } = getStorage().putObject(buf);
+  try {
   const detected = detectMime(buf);
   const claimed = String(providerMime || '').split(';')[0].trim().toLowerCase();
   // quarantine when the provider claims something materially different
@@ -72,6 +100,10 @@ async function storeAttachment(canonicalId, providerAttachmentId, name, provider
     [canonicalId, providerAttachmentId || '', name, sanitizeFilename(name), size,
       claimed, detected, compatible ? 'clean' : 'quarantined', key, hash]);
   return true;
+  } catch (err) {
+    getStorage().deleteObject(key); // no orphan objects on DB failure
+    throw err;
+  }
 }
 
 // ---- sync jobs ----
@@ -81,8 +113,26 @@ async function createJob(mailboxId, userId) {
     if (active.status === 'paused') return Number(active.id); // resume reuses the paused job
     throw new Error(`A sync job is already ${active.status} for this mailbox (job ${active.id}).`);
   }
-  const r = await one('INSERT INTO sync_jobs (mailbox_id, requested_by) VALUES ($1,$2) RETURNING id', [mailboxId, userId || null]);
-  return Number(r.id);
+  try {
+    // idx_sync_jobs_one_active (partial unique index) is the real guard:
+    // two concurrent starts race here and exactly one INSERT wins.
+    const r = await one('INSERT INTO sync_jobs (mailbox_id, requested_by) VALUES ($1,$2) RETURNING id', [mailboxId, userId || null]);
+    return Number(r.id);
+  } catch (err) {
+    if (String(err.code) === '23505') throw new Error('A sync job is already active for this mailbox (concurrent start rejected).');
+    throw err;
+  }
+}
+
+// Crash recovery: jobs left 'running' by a dead process become 'paused'
+// (cursor is persisted → safely resumable). Called at server startup.
+// Decision documented in docs/DECISIONS.md: paused, not failed/queued, so an
+// operator explicitly resumes and nothing restarts unattended.
+async function recoverStaleJobs() {
+  const rows = await (require('../../core/db').all)(
+    `UPDATE sync_jobs SET status='paused', error_detail='recovered after unclean shutdown'
+     WHERE status='running' RETURNING id, mailbox_id`);
+  return rows;
 }
 
 async function setJobControl(jobId, status) { // 'paused' | 'cancelled' (admin action)
@@ -244,4 +294,4 @@ async function importArchiveZip(mailboxId, zipBuffer, userId) {
   return summary;
 }
 
-module.exports = { syncMailbox, importArchiveZip, insertMessage, upsertFolder, dedupHash, storeAttachment, createJob, setJobControl };
+module.exports = { syncMailbox, importArchiveZip, insertMessage, upsertFolder, dedupHash, HASH_VERSION, storeAttachment, createJob, setJobControl, recoverStaleJobs };

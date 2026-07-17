@@ -16,20 +16,22 @@
 تكاملية). Node.js ≥ 20، والتبعية الوحيدة هي سائق `pg`.
 راجع `docs/DECISIONS.md` لسبب إزالة SQLite نهائيًا من مسار التشغيل.
 
-## التشغيل (الإنتاج/التطوير)
+## التشغيل — المسار الرسمي الوحيد: Docker
 
 ```bash
 cd madar
-cp .env.example .env    # عبّئ POSTGRES_PASSWORD والسرّين (openssl rand -hex 32)
-docker compose up -d postgres
-npm install
-npm run migrate
-npm run create-admin    # يطلب البريد وكلمة المرور بأمان — لا admin افتراضي
-npm start               # افتح http://localhost:3000
+cp .env.example .env    # عبّئ POSTGRES_PASSWORD والأسرار الثلاثة (openssl rand -hex 32)
+docker compose up -d --build
+docker compose exec app npm run create-admin   # أول Admin — لا admin افتراضي
+# افتح http://localhost:3000
 ```
 
-أو بالكامل عبر Docker: `docker compose up -d` (مع volumes دائمة للقاعدة
-والمرفقات وHealth checks — انظر `docker-compose.yml`).
+الـEntrypoint يشغّل الـMigrations تلقائيًا قبل التطبيق (بقفل PostgreSQL
+استشاري يمنع تطبيقها مرتين عند تشغيل عدة نسخ). Volumes دائمة للقاعدة
+والمرفقات، وHealth checks على `/health/ready`.
+
+للتطوير المحلي بدون Docker (غير رسمي): `docker compose up -d postgres`
+ثم `npm install && npm run migrate && npm run create-admin && npm start`.
 
 للوضع التجريبي (Mock Zoho كامل — منظمة وهمية بالصناديق العشرين): أنشئ قاعدة
 منفصلة `madar_demo`، وعيّن `MODE=demo` و`DATABASE_URL` عليها ثم نفس الأوامر.
