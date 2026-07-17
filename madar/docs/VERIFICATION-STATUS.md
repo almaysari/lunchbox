@@ -12,11 +12,11 @@
 |---|---|
 | Mock-verified | ✅ ناجح |
 | Local PostgreSQL infrastructure-verified | ✅ ناجح (25 اختبارًا تكامليًا) |
-| Docker runtime-verified | ⏳ عبر CI (GitHub Actions) — غير مثبت حتى نجاح الـWorkflow |
+| Docker runtime-verified | ✅ ناجح — [CI Run 29565794799](https://github.com/almaysari/lunchbox/actions/runs/29565794799): build، health live/ready، non-root، create-admin، بقاء البيانات والمرفقات عبر إعادة تشغيل App وPostgreSQL وإعادة بناء الـImage، ثم down -v |
 | S3 storage-verified | ❌ غير منفذ (العقد مصمم فقط؛ `MADAR_STORAGE=s3` يفشل عند الإقلاع برسالة واضحة) |
 | Zoho Live-verified | ❌ غير مختبر |
 
-**المنصة لا توصف بأنها جاهزة لـZoho Live قبل نجاح Docker Runtime وCI الكامل.**
+**Docker Runtime وCI الكامل نجحا في 2026-07-17 — المتبقي قبل Zoho Live: قرارك فقط. S3 يبقى غير منفذ (غير لازم للتشغيل المحلي/Docker).**
 
 لا يُعتبر بند منجزًا لمجرد أن واجهته موجودة — الإنجاز يعني اختبارًا ناجحًا في مستواه.
 
