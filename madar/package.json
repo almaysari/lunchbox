@@ -10,7 +10,7 @@
     "start": "node server.js",
     "migrate": "node scripts/migrate.js",
     "create-admin": "node scripts/create-admin.js",
-    "test": "node --test test/pg.test.js",
+    "test": "node --test test/pg.test.js test/e2e-auth.test.js",
     "reset-password": "node scripts/reset-password.js",
     "verify:schema": "node scripts/verify-schema.js",
     "verify:security": "node scripts/verify-security.js",

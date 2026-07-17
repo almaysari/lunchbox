@@ -81,11 +81,11 @@
   <!-- ================= LOGIN ================= -->
   <div id="login" class="card" style="display:none">
     <h3 style="margin-top:0">تسجيل الدخول</h3>
-    <input id="loginEmail" placeholder="البريد الإلكتروني" value="admin@local">
+    <input id="loginEmail" placeholder="البريد الإلكتروني" autocomplete="username">
     <input id="loginPass" type="password" placeholder="كلمة المرور">
     <button class="btn primary" style="width:100%" onclick="doLogin()">دخول</button>
     <p id="loginErr" style="color:var(--bad)"></p>
-    <p class="sub">في الوضع التجريبي: admin@local وكلمة المرور من ADMIN_PASSWORD في .env</p>
+    <p class="sub" id="loginHint"></p>
   </div>
 
   <!-- ================= MAIL ================= -->
@@ -202,7 +202,15 @@ async function boot() {
     try { await api('/api/auth/login', { method:'POST', body:{ email, password: pass } }); ME = await api('/api/auth/me'); } catch {}
     history.replaceState(null, '', location.pathname + (location.search || ''));
   }
-  if (!ME) { $('login').style.display=''; return; }
+  if (!ME) {
+    $('login').style.display='';
+    try { // hint appears ONLY on a fresh install with zero users
+      const st = await api('/api/auth/setup-status');
+      $('loginHint').textContent = st.hasUsers ? ''
+        : 'لا يوجد مستخدمون بعد — أنشئ أول Admin: docker compose exec app npm run create-admin';
+    } catch {}
+    return;
+  }
   CSRF = ME.csrf || '';
   if (ME.mustChangePassword) { renderForcedChange(); return; }
   $('login').style.display='none';

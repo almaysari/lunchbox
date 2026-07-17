@@ -111,6 +111,10 @@ const server = http.createServer(async (req, res) => {
       res.end('{}');
       return;
     }
+    if (p === '/api/auth/setup-status') {
+      const n = await db.one('SELECT COUNT(*)::int AS n FROM users');
+      return send(200, { hasUsers: n.n > 0 }); // nothing sensitive — login-screen hint only
+    }
     if (p === '/api/auth/me') {
       return send(200, user ? { ...user, csrf: cryptoCore.csrfTokenFor(activeToken) } : null);
     }

@@ -7,32 +7,17 @@
 // Non-interactive use (CI/integration tests only): MADAR_ADMIN_EMAIL,
 // MADAR_ADMIN_NAME, MADAR_ADMIN_PASSWORD env vars — never commit them.
 const path = require('path');
-const readline = require('readline');
+const { askVisible, askHiddenConfirmed } = require('./lib-prompt');
 const { loadEnv } = require('../core/env');
 loadEnv(path.join(__dirname, '..'));
 const { q, one, closeDb } = require('../core/db');
 const { hashPassword } = require('../core/crypto');
 
-function ask(question, { muted = false } = {}) {
-  return new Promise(resolve => {
-    const rl = readline.createInterface({ input: process.stdin, output: process.stdout, terminal: true });
-    if (muted) {
-      // do not echo password characters
-      rl.output.write(question);
-      rl.input.on('data', () => {});
-      const orig = rl._writeToOutput;
-      rl._writeToOutput = () => {};
-      rl.question('', answer => { rl._writeToOutput = orig; rl.close(); process.stdout.write('\n'); resolve(answer); });
-    } else {
-      rl.question(question, answer => { rl.close(); resolve(answer); });
-    }
-  });
-}
 
 async function main() {
-  const email = (process.env.MADAR_ADMIN_EMAIL || await ask('Admin email: ')).trim().toLowerCase();
-  const name = (process.env.MADAR_ADMIN_NAME || await ask('Admin name: ')).trim();
-  const password = process.env.MADAR_ADMIN_PASSWORD || await ask('Admin password (min 12 chars, hidden): ', { muted: true });
+  const email = (process.env.MADAR_ADMIN_EMAIL || await askVisible('Admin email: ')).trim().toLowerCase();
+  const name = (process.env.MADAR_ADMIN_NAME || await askVisible('Admin name: ')).trim();
+  const password = process.env.MADAR_ADMIN_PASSWORD || await askHiddenConfirmed('Admin password');
 
   if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) throw new Error('Invalid email.');
   if (!password || password.length < 12) throw new Error('Password must be at least 12 characters.');

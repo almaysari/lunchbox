@@ -4,27 +4,16 @@
 // user are revoked. The new password is prompted hidden and never printed.
 // Usage: npm run reset-password  (or MADAR_RESET_EMAIL / MADAR_RESET_PASSWORD env for CI)
 const path = require('path');
-const readline = require('readline');
+const { askVisible, askHiddenConfirmed } = require('./lib-prompt');
 const { loadEnv } = require('../core/env');
 loadEnv(path.join(__dirname, '..'));
 const { q, one, closeDb } = require('../core/db');
 const { hashPassword } = require('../core/crypto');
 
-function ask(question, { muted = false } = {}) {
-  return new Promise(resolve => {
-    const rl = readline.createInterface({ input: process.stdin, output: process.stdout, terminal: true });
-    if (muted) {
-      rl.output.write(question);
-      const orig = rl._writeToOutput;
-      rl._writeToOutput = () => {};
-      rl.question('', a => { rl._writeToOutput = orig; rl.close(); process.stdout.write('\n'); resolve(a); });
-    } else rl.question(question, a => { rl.close(); resolve(a); });
-  });
-}
 
 async function main() {
-  const email = (process.env.MADAR_RESET_EMAIL || await ask('User email: ')).trim().toLowerCase();
-  const password = process.env.MADAR_RESET_PASSWORD || await ask('New password (min 12 chars, hidden): ', { muted: true });
+  const email = (process.env.MADAR_RESET_EMAIL || await askVisible('User email: ')).trim().toLowerCase();
+  const password = process.env.MADAR_RESET_PASSWORD || await askHiddenConfirmed('New password');
   if (!password || password.length < 12) throw new Error('Password must be at least 12 characters.');
   const userRow = await one('SELECT id FROM users WHERE email = $1', [email]);
   if (!userRow) throw new Error('No user with this email.');
