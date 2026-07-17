@@ -153,3 +153,25 @@
 - تفويض الصندوق: <https://www.zoho.com/mail/help/mailbox-delegation.html>
 - Mail360: <https://www.zoho.com/mail360/> — والتسعير: <https://www.zoho.com/mail360/pricing.html>
 - OAuth 2.0: <https://www.zoho.com/mail/help/api/using-oauth-2.html>
+
+## خارطة الطريق بعد Live Discovery (متطلبات HR وFinance — ملزمة معماريًا)
+
+التصميم الحالي لا يمنع أيًا منها، والبنية جاهزة لها دون إعادة بناء:
+
+**HR:** عرض الرسائل والمرفقات داخل المنصة (موجود)، معاينة/تنزيل حسب صلاحية
+(`can_view_attachments`/`can_download_attachments` — موجودة)، **الرد من داخل
+المنصة من نفس عنوان HR** (أعلام `can_reply`/`can_send` محجوزة في
+`mailbox_grants` منذ الآن؛ التنفيذ يتطلب لاحقًا scope إضافيًا
+`ZohoMail.messages.CREATE` على الاتصال — لا يُطلب في مرحلة Discovery)،
+المحافظة على الـThread (`thread_id` + `rfc_message_id`/References في
+`canonical_messages`)، تسجيل من فتح أو رد (audit `mail.message.read` موجود؛
+يُضاف `mail.message.reply`)، ومنع غير المصرح لهم (نموذج الـGrants الحالي).
+
+**Finance:** استقبال وتنزيل التقارير والفواتير (موجود)، دعم PDF/Excel
+(كشف MIME بالبايتات موجود؛ يُضاف xlsx للتوقيعات)، استخراج بيانات المستندات
+ومطابقتها مع النظام المحاسبي (وحدة مستقبلية تقرأ من `attachments` عبر عقد
+التخزين — لا تغيير في Schema الرسائل)، اكتشاف الفواتير المفقودة/المكررة
+(dedup الموجود + جدول مطابقة مستقبلي)، مقارنة المبلغ/الضريبة/المورد/أمر
+الشراء/الفترة وحفظ الأصل مع نتيجة المقارنة (جداول وحدة Finance مستقلة تشير
+إلى `attachments.id` — الأصل محفوظ بالفعل بمفتاح ثابت وSHA-256)، والرد من
+عنوان Finance (نفس آلية HR).
