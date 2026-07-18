@@ -54,14 +54,25 @@ async function main() {
   const out = { mailbox: mb.address, mailboxId: id, strategy: mb.strategy, isPilot: mb.is_pilot,
     syncEnabled: mb.sync_enabled, detectedType: mb.detected_type, reader: reader.email, checks: {} };
 
-  // ---- Optional: force a REAL sync tick now (fetch from Zoho) ----
+  // ---- Worker status from the SHARED DB heartbeat (not this CLI process) ----
+  // This is THE fix for the false "worker is OFF": the CLI is a different process
+  // than the main server that runs the worker, so a process-local singleton is
+  // always empty here. The heartbeat is written by the worker to the database.
+  const ws = await live.workerStatus();
+  out.worker = ws;
+
+  // Main-worker vs forced-CLI cycles — proves the background loop's own
+  // success/failure independently of any --force we run below.
+  out.mainWorkerCycles = await live.recentCycles(5, 'worker');
+  out.cliCycles = await live.recentCycles(3, 'cli');
+
+  // ---- Optional: force a REAL sync tick now (fetch from Zoho), tagged 'cli' ----
   if (doForce) {
-    try { out.forcedTick = await live.tickOnce(); }
-    catch (e) { out.forcedTick = { error: String(e.message || e) }; }
+    try { out.forcedTick = await live.tickOnce({ source: 'cli' }); }
+    catch (e) { out.forcedTick = { error: String(e.message || e), stack: e.stack }; }
   }
 
   // ---- The seven checks (all from the live DB) ----
-  const st = live._state;
   const lastDiag = await one('SELECT * FROM sync_diagnostics WHERE mailbox_id=$1 ORDER BY id DESC LIMIT 1', [id]);
   const lastJob = await one(`SELECT id,status,error_detail,started_at,finished_at,discovered,imported,skipped
                              FROM sync_jobs WHERE mailbox_id=$1 ORDER BY id DESC LIMIT 1`, [id]);
@@ -76,15 +87,20 @@ async function main() {
   const anyReaders = await one('SELECT COUNT(*)::int n FROM mailbox_grants WHERE mailbox_id=$1 AND can_view_messages', [id]);
   let inReadable = (await auth.readableMailboxIds(reader)).includes(id);
 
-  out.checks['1_worker_running'] = { ok: Boolean(st.enabled), enabled: st.enabled,
-    intervalSec: st.intervalMs / 1000, lastTickAt: st.lastTickAt, nextTickAt: st.nextTickAt,
-    lastRecovery: st.lastRecovery || null };
+  out.checks['1_worker_running'] = { ok: ws.running, running: ws.running, enabled: ws.enabled, stale: ws.stale,
+    source: ws.source, pid: ws.pid, hostname: ws.hostname, intervalSec: ws.intervalSec,
+    startedAt: ws.startedAt, lastTickAt: ws.lastTickAt, nextTickAt: ws.nextTickAt, ageSec: ws.ageSec,
+    reason: ws.reason || null };
   out.checks['2_recent_cycle'] = { ok: Boolean(lastDiag),
     lastCycleAt: lastDiag ? new Date(lastDiag.created_at).getTime() : null,
     lastJobStatus: lastJob ? lastJob.status : null };
+  // response_sample carries the transport diagnosis on an HTTP-0 (transport) failure
+  const diagSample = lastDiag && lastDiag.response_sample
+    ? (typeof lastDiag.response_sample === 'string' ? JSON.parse(lastDiag.response_sample) : lastDiag.response_sample) : null;
   out.checks['3_fetched_from_zoho'] = { ok: Boolean(lastDiag && lastDiag.read_count > 0),
     read: lastDiag ? lastDiag.read_count : 0, endpoint: lastDiag ? lastDiag.endpoint : null,
-    httpStatus: lastDiag ? lastDiag.http_status : null };
+    httpStatus: lastDiag ? lastDiag.http_status : null,
+    transport: diagSample && diagSample.transport ? diagSample.transport : null };
   out.checks['4_inserted_or_cursor_dedup'] = { inserted: lastDiag ? lastDiag.inserted_count : 0,
     skipped: lastDiag ? lastDiag.skipped_count : 0, duplicatesPrevented: dup.n,
     cursors: cursors.map(c => ({ folder: c.name, backfillDone: c.backfill_done, nextStart: c.next_start,
@@ -97,7 +113,9 @@ async function main() {
     outcome: lastDiag.outcome, read: lastDiag.read_count, inserted: lastDiag.inserted_count,
     skipped: lastDiag.skipped_count, routed: lastDiag.routed_count,
     error: lastDiag.outcome === 'error' ? { class: lastDiag.error_class, message: lastDiag.error_message,
-      sqlState: lastDiag.sql_state, constraint: lastDiag.constraint_name } : null } : null;
+      sqlState: lastDiag.sql_state, constraint: lastDiag.constraint_name,
+      transport: diagSample && diagSample.transport ? diagSample.transport : null,
+      stack: lastDiag.error_stack ? String(lastDiag.error_stack).split('\n').slice(0, 6).join('\n') : null } : null } : null;
 
   // ---- Optional: prove the fix — grant read, then re-check ----
   if (doGrant && !(myGrant && myGrant.can_view_messages)) {
@@ -132,10 +150,16 @@ async function main() {
     verdict = 'Sync not enabled — enable Pilot then start Pilot Sync. The worker never touches a box not explicitly started.';
   else if (c['5_stored_but_hidden'].hiddenByGrant)
     verdict = `STORED BUT HIDDEN: ${occTotal.n} messages in DB, but reader ${reader.email} lacks can_view_messages on this box. Grant read (re-run with --grant) — the privacy policy blocks admins without an explicit grant.`;
-  else if (!st.enabled)
-    verdict = 'Live worker is OFF (MADAR_LIVE_SYNC=off) — turn it on.';
-  else if (lastDiag && lastDiag.outcome === 'error')
-    verdict = `Last cycle FAILED at stage "${lastDiag.stage}" — trace ${lastDiag.trace_id}. See check 7.`;
+  else if (!ws.running)
+    verdict = ws.stale
+      ? `Live worker NOT RESPONDING: last heartbeat ${ws.ageSec}s ago (> 2 intervals) — the main server process may be down; restart it.`
+      : 'Live worker is OFF (MADAR_LIVE_SYNC=off or never started) — turn it on.';
+  else if (lastDiag && lastDiag.outcome === 'error') {
+    const t = c['7_last_diagnostics'] && c['7_last_diagnostics'].error && c['7_last_diagnostics'].error.transport;
+    verdict = t
+      ? `Last cycle FAILED at stage "${lastDiag.stage}" — TRANSPORT ${t.kind}${t.code ? ' (' + t.code + ')' : ''} to ${t.hostname || t.host || '?'}${t.syscall ? ' syscall=' + t.syscall : ''}. This is a network/DNS/TLS problem reaching Zoho, not an app bug — trace ${lastDiag.trace_id}. See check 7 for the full cause chain.`
+      : `Last cycle FAILED at stage "${lastDiag.stage}" — HTTP ${lastDiag.http_status}, trace ${lastDiag.trace_id}. See check 7.`;
+  }
   else if (mb.status === 'syncing')
     verdict = 'Mailbox stuck on "syncing" — a dead cycle left it; the worker now auto-recovers age-gated. Re-run with --force.';
   else if (!lastDiag)

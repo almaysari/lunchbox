@@ -549,6 +549,80 @@ test('new mail is captured even when it is NOT the newest item, and a dead cycle
   await db.q('UPDATE mailboxes SET is_pilot=FALSE, sync_enabled=FALSE WHERE id = ANY($1::bigint[])', [[staleId, freshId]]);
 });
 
+// ---------- cross-process worker truth + transport diagnostics ----------
+test('worker status is read from the DB heartbeat (not a process singleton), and transport failures are fully diagnosed', async () => {
+  const liveSync = require('../modules/mail/live-sync');
+  const { ZohoApiError } = require('../modules/mail/connectors/zoho-mail-api');
+
+  // (1) Cross-process worker truth. The CLI doctor runs in a DIFFERENT process
+  // than the worker, so a process-local flag is always empty there. workerStatus
+  // must answer from the shared heartbeat row instead.
+  await db.q('DELETE FROM sync_worker_heartbeat');
+  let ws = await liveSync.workerStatus();
+  assert.strictEqual(ws.running, false, 'no heartbeat → not running');
+  assert.match(ws.reason || '', /never started|no heartbeat/i);
+
+  // worker alive & fresh → running true even though THIS test process never
+  // started the worker (proves it is not reading an in-process singleton)
+  await db.q(`INSERT INTO sync_worker_heartbeat (id, enabled, interval_sec, pid, hostname, started_at, last_tick_at, next_tick_at, updated_at)
+    VALUES (TRUE, TRUE, 120, 4242, 'server-1', now(), now(), now()+interval '120 seconds', now())`);
+  ws = await liveSync.workerStatus();
+  assert.strictEqual(ws.running, true, 'enabled + fresh heartbeat → running');
+  assert.strictEqual(ws.pid, 4242);
+  assert.strictEqual(ws.stale, false);
+
+  // heartbeat gone stale (main process died) → NOT running, even though enabled=true
+  await db.q("UPDATE sync_worker_heartbeat SET updated_at = now() - interval '10 minutes', last_tick_at = now() - interval '10 minutes'");
+  ws = await liveSync.workerStatus();
+  assert.strictEqual(ws.enabled, true);
+  assert.strictEqual(ws.running, false, 'enabled but stale heartbeat → not running (crash detectable cross-process)');
+  assert.strictEqual(ws.stale, true);
+
+  // explicitly disabled → not running
+  await db.q('UPDATE sync_worker_heartbeat SET enabled = FALSE, updated_at = now()');
+  ws = await liveSync.workerStatus();
+  assert.strictEqual(ws.running, false);
+
+  // (2) Every cycle is logged with its source, so the MAIN worker's own
+  // success/failure is provable independently of a forced CLI tick. Run a tick
+  // from each source with no eligible mailboxes (fast + deterministic).
+  const enabledIds = (await db.all("SELECT id FROM mailboxes WHERE sync_enabled AND is_pilot")).map(r => Number(r.id));
+  await db.q('UPDATE mailboxes SET sync_enabled = FALSE WHERE id = ANY($1::bigint[])', [enabledIds]);
+  try {
+    await liveSync.tickOnce({ source: 'cli' });
+    await liveSync.tickOnce({ source: 'worker' });
+    const cli = await liveSync.recentCycles(3, 'cli');
+    const wk = await liveSync.recentCycles(3, 'worker');
+    assert.ok(cli.length >= 1 && cli[0].source === 'cli', 'forced CLI tick logged as source=cli');
+    assert.ok(wk.length >= 1 && wk[0].source === 'worker', 'main-worker tick logged as source=worker');
+    assert.strictEqual(cli[0].ok, true, 'empty cycle is a clean success, not a false failure');
+  } finally {
+    await db.q('UPDATE mailboxes SET sync_enabled = TRUE WHERE id = ANY($1::bigint[])', [enabledIds]);
+  }
+
+  // (3) Transport failure (HTTP 0) is never opaque: the typed error names the
+  // real cause (dns/tls/socket/timeout + code/syscall/hostname) and carries it
+  // into responseSample so persistDiag stores it — this is exactly the
+  // "list_folders failed with HTTP 0" case, now fully diagnosed.
+  const tbody = { transportError: 'fetch failed', transport: { kind: 'dns', code: 'ENOTFOUND', errno: -3008,
+    syscall: 'getaddrinfo', hostname: 'mail.zoho.com', host: 'mail.zoho.com',
+    causeChain: [{ name: 'TypeError', message: 'fetch failed' }, { name: 'Error', code: 'ENOTFOUND', syscall: 'getaddrinfo' }],
+    stack: 'Error: getaddrinfo ENOTFOUND mail.zoho.com\n    at GetAddrInfoReqWrap' } };
+  const err = new ZohoApiError('list_folders', '/api/accounts/X/folders', 0, tbody);
+  assert.strictEqual(err.httpStatus, 0);
+  assert.strictEqual(err.transport.kind, 'dns');
+  assert.strictEqual(err.transport.code, 'ENOTFOUND');
+  assert.match(err.message, /transport failure \(dns ENOTFOUND\)/);
+  assert.strictEqual(err.responseSample.transport.syscall, 'getaddrinfo');
+  assert.strictEqual(err.responseSample.transport.hostname, 'mail.zoho.com');
+  assert.match(err.stack, /getaddrinfo ENOTFOUND/); // stack points at the real socket failure
+
+  // an ordinary HTTP error still reads as before (no transport block)
+  const http404 = new ZohoApiError('fetch_messages', '/x', 404, { status: { code: 404, description: 'Invalid' } });
+  assert.strictEqual(http404.transport, null);
+  assert.match(http404.message, /HTTP 404/);
+});
+
 // ---------- diagnostics ----------
 test('diagnostics: failed sync records full typed context (stage, endpoint, stack); success records ok row; UI/500 surface a trace id', async () => {
   // success path first: the admin mailbox sync recorded an 'ok' diagnostics row

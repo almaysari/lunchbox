@@ -5,6 +5,47 @@
 const { one, q } = require('../../core/db');
 const { decrypt, encrypt } = require('../../core/crypto');
 
+// Full transport diagnostics for a failed fetch. Node's undici throws a generic
+// "TypeError: fetch failed" whose REAL cause hangs off err.cause (possibly
+// several links deep), carrying code/errno/syscall/hostname/address/port. A hard
+// per-request timeout throws a TimeoutError/AbortError instead. We walk the whole
+// cause chain, classify the failure (dns | tls | connection_refused |
+// connection_reset | timeout | unreachable | …), and keep every field + stack, so
+// an "HTTP 0" is never opaque again.
+function transportDetail(err, url) {
+  const chain = [];
+  let e = err, depth = 0;
+  while (e && depth < 6) {
+    chain.push({
+      name: e.name, message: String(e.message || '').slice(0, 300),
+      code: e.code, errno: e.errno, syscall: e.syscall,
+      hostname: e.hostname, address: e.address, port: e.port,
+    });
+    e = e.cause; depth++;
+  }
+  const root = chain[chain.length - 1] || {};
+  const codeStr = [err.code, root.code, err.name, root.name, err.message, root.message].join(' ');
+  let kind = 'unknown';
+  if (err.name === 'TimeoutError' || err.name === 'AbortError' || /timeout|aborted/i.test(codeStr)) kind = 'timeout';
+  else if (root.code === 'ENOTFOUND' || root.syscall === 'getaddrinfo' || /EAI_AGAIN/.test(codeStr)) kind = 'dns';
+  else if (root.code === 'ECONNREFUSED') kind = 'connection_refused';
+  else if (root.code === 'ECONNRESET' || /ECONNRESET/.test(codeStr)) kind = 'connection_reset';
+  else if (root.code === 'EHOSTUNREACH' || root.code === 'ENETUNREACH') kind = 'unreachable';
+  else if (root.code === 'ETIMEDOUT') kind = 'timeout';
+  else if (root.code === 'EPROTO' || /CERT|TLS|SSL|self[- ]signed|altnames|DEPTH_ZERO|UNABLE_TO_VERIFY|HANDSHAKE/i.test(codeStr)) kind = 'tls';
+  let host = null; try { host = new URL(url).host; } catch { /* keep null */ }
+  return {
+    kind, host,
+    code: err.code || root.code || null,
+    errno: err.errno != null ? err.errno : (root.errno != null ? root.errno : null),
+    syscall: err.syscall || root.syscall || null,
+    hostname: err.hostname || root.hostname || host || null,
+    address: root.address || null, port: root.port || null,
+    causeChain: chain,
+    stack: String(err.stack || '').slice(0, 4000),
+  };
+}
+
 const READ_SCOPES = [
   'ZohoMail.accounts.READ',
   'ZohoMail.folders.READ',
@@ -113,7 +154,9 @@ class ZohoClient {
       let body; try { body = JSON.parse(text); } catch { body = text.slice(0, 2000); }
       return { url, status: res.status, body };
     } catch (err) {
-      return { url, status: 0, body: { transportError: String(err.message || err) } };
+      // status 0 = never reached HTTP; body carries the FULL transport diagnosis
+      // (kind + code/errno/syscall/hostname/address/port + cause chain + stack).
+      return { url, status: 0, body: { transportError: String(err.message || err), transport: transportDetail(err, url) } };
     }
   }
 

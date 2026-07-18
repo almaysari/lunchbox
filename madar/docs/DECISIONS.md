@@ -326,3 +326,24 @@ canonical من v2 يُعاد حساب fp3 من حقوله؛ إن وُجد توأ
 دورة حديثة، جُلب من Zoho، inserted/cursor/dedup، محفوظ-لكن-محجوب، syncing، أحدث
 diagnostics بـtraceId+read/inserted/skipped)، ثم **تُثبت** بلوغ رسالة حقيقية إلى
 واجهة القارئ عبر نفس مسار الصلاحيات، وتطبع حُكمًا حاسمًا. بلا محتوى رسائل وبلا توكنات.
+
+## حالة الـworker تُقرأ من نبضة في قاعدة البيانات، وأعطال النقل تُشخَّص كاملة (HTTP 0)
+
+**دليل حقيقي من الخادم**: `MADAR_LIVE_SYNC=true` وسجل التطبيق يؤكد
+"live sync worker started"، ومع ذلك قال الـdoctor "worker OFF". السبب: الـworker
+يعمل داخل العملية الرئيسية، وحالته كانت في **ذاكرة تلك العملية فقط**؛ الـCLI عملية
+منفصلة فيقرأ singleton فارغًا. القرار: **نبضة في القاعدة** (`sync_worker_heartbeat`)
+يكتبها الـworker عند البدء وكل دورة؛ `workerStatus()` يقرأ منها — "يعمل" = enabled
+**و** النبضة حديثة (خمول > دورتين + مهلة ⇒ العملية الرئيسية ماتت ⇒ ليس يعمل، ويُكتشف
+عبر العمليات). كل دورة تُسجَّل في `sync_worker_cycles` مع `source`
+(`worker`/`cli`/`manual`)، فيثبت نجاح/فشل الـworker الرئيسي **مستقلًّا** عن أي دورة
+CLI مفروضة.
+
+**العطل الحقيقي: `list_folders` فشل بـHTTP 0.** "HTTP 0" يعني أن الطلب **لم يبلغ HTTP**
+أصلًا (DNS/TLS/socket/timeout). كان `get()` يبتلع الخطأ في سطر واحد. الآن يستخرج
+سلسلة الأسباب كاملة (undici يضع السبب الحقيقي في `err.cause`): `kind` مصنّف
+(dns/tls/connection_refused/connection_reset/timeout/unreachable) +
+`code/errno/syscall/hostname/address/port` + `causeChain` + `stack`. تنتقل عبر
+`ZohoApiError` (رسالة تسمّي السبب: «transport failure (dns ENOTFOUND)» بدل «HTTP 0»)
+إلى `sync_diagnostics.response_sample`، فيعرضها الـdoctor في الفحص 3 و7 وفي الحُكم:
+«مشكلة شبكة/DNS/TLS في الوصول إلى Zoho، ليست خطأ تطبيق». **مُختبَر**: 36/36 أخضر.

@@ -229,7 +229,10 @@ async function handle(req, res, url, user, body, helpers) {
     const id = Number(m[1]);
     const mb = await one('SELECT * FROM mailboxes WHERE id=$1', [id]);
     if (!mb) return send(404, { error: 'not found' });
-    const live = require('./live-sync')._state;
+    // Worker status from the shared DB heartbeat — NOT this process's singleton.
+    // (The old ._state read wrongly said "OFF" whenever the reader ran in a
+    // different process than the worker, e.g. the CLI doctor.)
+    const ws = await require('./live-sync').workerStatus();
     const lastDiag = await one(`SELECT * FROM sync_diagnostics WHERE mailbox_id=$1 ORDER BY id DESC LIMIT 1`, [id]);
     const lastJob = await one(`SELECT id, status, error_detail, started_at, finished_at, discovered, imported, skipped FROM sync_jobs WHERE mailbox_id=$1 ORDER BY id DESC LIMIT 1`, [id]);
     const cursors = await all(`SELECT ss.folder_id, f.name, ss.backfill_done, ss.next_start, ss.last_sync_at, ss.last_error
@@ -242,8 +245,9 @@ async function handle(req, res, url, user, body, helpers) {
     const inMyReadable = (await auth.readableMailboxIds(user)).includes(id);
 
     const checks = {
-      '1_worker_running': { ok: Boolean(live.enabled), enabled: live.enabled, intervalSec: live.intervalMs / 1000,
-        lastTickAt: live.lastTickAt, nextTickAt: live.nextTickAt },
+      '1_worker_running': { ok: ws.running, enabled: ws.enabled, running: ws.running, stale: ws.stale,
+        source: ws.source, pid: ws.pid, hostname: ws.hostname, intervalSec: ws.intervalSec,
+        lastTickAt: ws.lastTickAt, nextTickAt: ws.nextTickAt, ageSec: ws.ageSec, reason: ws.reason || null },
       '2_recent_cycle': { ok: Boolean(lastDiag), lastCycleAt: lastDiag ? new Date(lastDiag.created_at).getTime() : null,
         lastJobStatus: lastJob ? lastJob.status : null },
       '3_fetched_from_zoho': { ok: Boolean(lastDiag && lastDiag.read_count > 0), read: lastDiag ? lastDiag.read_count : 0,
@@ -272,7 +276,9 @@ async function handle(req, res, url, user, body, helpers) {
     // gate below it: no amount of worker-running reveals mail you can't read. So if
     // messages exist in the DB but aren't in your readable set, that IS the reason.
     else if (occTotal.n > 0 && !inMyReadable) verdict = `الرسائل محفوظة (${occTotal.n} في القاعدة) لكنها محجوبة عنك: لا تملك صلاحية can_view_messages على هذا الصندوق. امنح نفسك (أو القارئ المقصود) القراءة من «المستخدمون والصلاحيات» — سياسة الخصوصية تمنع الأدمن من قراءة المحتوى دون منح صريح.`;
-    else if (!live.enabled) verdict = 'عامل المزامنة الحية متوقف (MADAR_LIVE_SYNC=off) — شغّله.';
+    else if (!ws.running) verdict = ws.stale
+      ? `عامل المزامنة الحية غير مستجيب: آخر نبضة قبل ${ws.ageSec}s (أكبر من دورتين) — العملية الرئيسية قد تكون متوقفة، أعد تشغيلها.`
+      : 'عامل المزامنة الحية متوقف (MADAR_LIVE_SYNC=off أو لم يبدأ) — شغّله.';
     else if (lastDiag && lastDiag.outcome === 'error') verdict = `آخر دورة فشلت في مرحلة «${lastDiag.stage}» — افتح التشخيص (trace ${lastDiag.trace_id}).`;
     else if (mb.status === 'syncing') verdict = 'الصندوق عالق على syncing — أعد التشغيل ليُصحَّح تلقائيًا، أو استأنف Pilot.';
     else if (!lastDiag) verdict = 'لا توجد أي دورة مزامنة بعد — اضغط «مزامنة الآن» أو انتظر الدورة التالية.';

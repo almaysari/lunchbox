@@ -8,15 +8,30 @@ const lc = s => String(s || '').toLowerCase();
 // the real cause instead of a flattened string.
 class ZohoApiError extends Error {
   constructor(stage, endpoint, status, body) {
-    super(`Zoho ${stage} failed: HTTP ${status} at ${endpoint}`);
+    // status 0 is a TRANSPORT failure (DNS/TLS/socket/timeout) — never reached
+    // HTTP. Name the real cause in the message instead of a bare "HTTP 0".
+    const t = body && body.transport;
+    const headline = status === 0
+      ? `Zoho ${stage} transport failure (${t ? t.kind : 'unknown'}${t && t.code ? ' ' + t.code : ''}) at ${endpoint}`
+      : `Zoho ${stage} failed: HTTP ${status} at ${endpoint}`;
+    super(headline);
     this.name = 'ZohoApiError';
     this.stage = stage;
     this.endpoint = endpoint;
     this.httpStatus = status;
+    this.transport = t || null; // full transport diagnosis on status 0
+    // Keep the transport root's stack as the error stack when there is one — it
+    // points at the actual socket/DNS/TLS failure, not this constructor.
+    if (t && t.stack) this.stack = `${this.name}: ${headline}\n${t.stack}`;
     const data = body && body.data;
     this.responseSample = {
       status,
-      description: (body && body.status && body.status.description) || undefined,
+      transport: t ? {
+        kind: t.kind, code: t.code, errno: t.errno, syscall: t.syscall,
+        hostname: t.hostname, address: t.address, port: t.port, host: t.host,
+        causeChain: t.causeChain,
+      } : undefined,
+      description: (body && body.status && body.status.description) || (status === 0 && body && body.transportError) || undefined,
       moreInfo: (data && data.moreInfo) || undefined,
       errorCode: (body && body.status && body.status.code) || (body && body.errorCode) || undefined,
       fields: Array.isArray(data) && data[0] ? Object.keys(data[0]).sort() : undefined,

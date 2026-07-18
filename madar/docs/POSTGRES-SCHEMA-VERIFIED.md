@@ -387,6 +387,46 @@ CREATE TABLE public.sync_state (
     last_error text DEFAULT ''::text NOT NULL
 );
 
+CREATE TABLE public.sync_worker_cycles (
+    id bigint NOT NULL,
+    source text DEFAULT 'worker'::text NOT NULL,
+    pid integer,
+    ok boolean DEFAULT true NOT NULL,
+    synced integer DEFAULT 0 NOT NULL,
+    failed integer DEFAULT 0 NOT NULL,
+    skipped_busy integer DEFAULT 0 NOT NULL,
+    skipped_backoff integer DEFAULT 0 NOT NULL,
+    recovered integer DEFAULT 0 NOT NULL,
+    duration_ms integer,
+    result jsonb,
+    error text,
+    created_at timestamp with time zone DEFAULT now() NOT NULL
+);
+
+CREATE SEQUENCE public.sync_worker_cycles_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+ALTER SEQUENCE public.sync_worker_cycles_id_seq OWNED BY public.sync_worker_cycles.id;
+
+CREATE TABLE public.sync_worker_heartbeat (
+    id boolean DEFAULT true NOT NULL,
+    enabled boolean DEFAULT false NOT NULL,
+    interval_sec integer DEFAULT 120 NOT NULL,
+    pid integer,
+    hostname text,
+    started_at timestamp with time zone,
+    last_tick_at timestamp with time zone,
+    next_tick_at timestamp with time zone,
+    ticking boolean DEFAULT false NOT NULL,
+    last_result jsonb,
+    updated_at timestamp with time zone DEFAULT now() NOT NULL,
+    CONSTRAINT sync_worker_heartbeat_singleton CHECK ((id = true))
+);
+
 CREATE TABLE public.user_roles (
     user_id bigint NOT NULL,
     role_id bigint NOT NULL
@@ -438,6 +478,8 @@ ALTER TABLE ONLY public.roles ALTER COLUMN id SET DEFAULT nextval('public.roles_
 ALTER TABLE ONLY public.sync_diagnostics ALTER COLUMN id SET DEFAULT nextval('public.sync_diagnostics_id_seq'::regclass);
 
 ALTER TABLE ONLY public.sync_jobs ALTER COLUMN id SET DEFAULT nextval('public.sync_jobs_id_seq'::regclass);
+
+ALTER TABLE ONLY public.sync_worker_cycles ALTER COLUMN id SET DEFAULT nextval('public.sync_worker_cycles_id_seq'::regclass);
 
 ALTER TABLE ONLY public.users ALTER COLUMN id SET DEFAULT nextval('public.users_id_seq'::regclass);
 
@@ -534,6 +576,12 @@ ALTER TABLE ONLY public.sync_jobs
 ALTER TABLE ONLY public.sync_state
     ADD CONSTRAINT sync_state_pkey PRIMARY KEY (mailbox_id, folder_id);
 
+ALTER TABLE ONLY public.sync_worker_cycles
+    ADD CONSTRAINT sync_worker_cycles_pkey PRIMARY KEY (id);
+
+ALTER TABLE ONLY public.sync_worker_heartbeat
+    ADD CONSTRAINT sync_worker_heartbeat_pkey PRIMARY KEY (id);
+
 ALTER TABLE ONLY public.user_roles
     ADD CONSTRAINT user_roles_pkey PRIMARY KEY (user_id, role_id);
 
@@ -570,6 +618,10 @@ CREATE INDEX idx_sync_diag_trace ON public.sync_diagnostics USING btree (trace_i
 CREATE INDEX idx_sync_jobs_mailbox ON public.sync_jobs USING btree (mailbox_id, id DESC);
 
 CREATE UNIQUE INDEX idx_sync_jobs_one_active ON public.sync_jobs USING btree (mailbox_id) WHERE (status = ANY (ARRAY['queued'::text, 'running'::text, 'paused'::text]));
+
+CREATE INDEX idx_worker_cycles_recent ON public.sync_worker_cycles USING btree (id DESC);
+
+CREATE INDEX idx_worker_cycles_source ON public.sync_worker_cycles USING btree (source, id DESC);
 
 ALTER TABLE ONLY public.archive_imports
     ADD CONSTRAINT archive_imports_mailbox_id_fkey FOREIGN KEY (mailbox_id) REFERENCES public.mailboxes(id);
