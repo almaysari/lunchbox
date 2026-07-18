@@ -666,6 +666,17 @@ test('crash recovery: running jobs become paused (resumable) on startup; no orph
   const orphanCanon = await db.one(`SELECT COUNT(*)::int n FROM canonical_messages c
     WHERE NOT EXISTS (SELECT 1 FROM message_occurrences o WHERE o.canonical_message_id = c.id)`);
   assert.strictEqual(orphanCanon.n, 0);
+
+  // a mailbox left status='syncing' by the unclean shutdown is reconciled to
+  // 'ready' — otherwise it stays visually stuck "syncing" forever (real bug)
+  const admin = byAddress['m.almaysari@exoticcolors.org'];
+  await db.q("UPDATE mailboxes SET status='syncing' WHERE id=$1", [admin.id]);
+  await db.q("INSERT INTO sync_jobs (mailbox_id, status, started_at) VALUES ($1,'running',now())", [admin.id]);
+  await sync.recoverStaleJobs();
+  const mb = await db.one('SELECT status, status_detail FROM mailboxes WHERE id=$1', [admin.id]);
+  assert.strictEqual(mb.status, 'ready');
+  assert.match(mb.status_detail, /استأنف|resume/);
+  await db.q("UPDATE sync_jobs SET status='cancelled', finished_at=now() WHERE mailbox_id=$1 AND status='paused'", [admin.id]);
 });
 
 test('health readiness: ready with healthy deps, not ready when a check fails', async () => {

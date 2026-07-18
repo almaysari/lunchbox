@@ -170,10 +170,19 @@ async function createJob(mailboxId, userId) {
 // (cursor is persisted → safely resumable). Called at server startup.
 // Decision documented in docs/DECISIONS.md: paused, not failed/queued, so an
 // operator explicitly resumes and nothing restarts unattended.
+// ALSO reconciles the mailbox row: a mailbox left status='syncing' by the same
+// unclean shutdown would otherwise stay visually stuck forever (observed in
+// production) — reset it to 'ready' with a resumable note.
 async function recoverStaleJobs() {
-  const rows = await (require('../../core/db').all)(
+  const { all } = require('../../core/db');
+  const rows = await all(
     `UPDATE sync_jobs SET status='paused', error_detail='recovered after unclean shutdown'
      WHERE status='running' RETURNING id, mailbox_id`);
+  const reconciled = await all(
+    `UPDATE mailboxes SET status='ready',
+        status_detail='المزامنة توقفت بإعادة تشغيل غير نظيفة — المؤشر محفوظ، استأنف في أي وقت'
+     WHERE status='syncing' RETURNING id`);
+  if (reconciled.length) console.log && console.log(`[madar] reconciled ${reconciled.length} mailbox(es) stuck in 'syncing' → ready`);
   return rows;
 }
 

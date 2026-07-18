@@ -176,3 +176,36 @@ sync_jobs). الرفع يقبل أجزاء تصدير متعددة دفعة وا
 
 ملاحظة صدق مسجّلة: messages/view الحقيقي لا يحمل حقل RFC Message-ID، لذا
 المزامنة الحية تعتمد بصمة v2؛ الموصل يقبل عدة أسماء للحقل إن توفّر مستقبلًا.
+
+### تشخيص Live Sync وإصلاح الحالة العالقة "syncing" (2026-07-17)
+
+بلاغ «فشل داخلي في Live Sync». التشخيص المبني على أدلة الأدمن (تفاصيل
+صندوق m.almaysari@) أبطل فرضية بناء الموصل: الفحص سليم وworkingId موجود
+(accountId=8696684000000008002، مجلدات 11، رسائل/محتوى/مرفقات كلها 200).
+العَرَض الحقيقي كان الحالة عالقة على "syncing".
+
+**السبب الجذري (Root Cause)**: `recoverStaleJobs` (في modules/mail/sync.js،
+أُضيف بـ Live Sync في Commit cf1b72d) كان يعيد المهام العالقة `running`
+إلى `paused` عند الإقلاع، لكنه **لا يصحّح صف الصندوق**؛ فأي صندوق تُرك
+status='syncing' بإعادة تشغيل غير نظيفة (أو أثناء مزامنة طويلة قُطعت)
+يبقى عالقًا بصريًا على "syncing" إلى الأبد.
+
+**التصحيح**: `recoverStaleJobs` يعيد الآن كل صندوق status='syncing' إلى
+'ready' مع ملاحظة استئناف، بجانب إيقاف المهمة مؤقتًا. مثبت باختبار.
+
+**طبقة الرصد (لمنع تكرار الغموض)**: جدول sync_diagnostics (Migration 007)
+يسجّل لكل دورة: المرحلة (connect/list_folders/fetch_messages/db_tx/
+routing/body/attachments/done)، آخر Endpoint، HTTP status، عيّنة استجابة
+معقّمة، عدّادات (مقروء/مُدرج/متجاهل/موجّه)، وعند الفشل: نوع الاستثناء،
+الرسالة، الـStack الكامل، SQLSTATE/Constraint، وسياق التوجيه. أخطاء Zoho
+تُرفع كـ ZohoApiError تحمل endpoint+status+عيّنة. معالج 500 لم يعد يعيد
+"internal error": يُصدر errorId متتبَّعًا + السبب الحقيقي المعقّم +
+traceId. صفحة «تشخيص المزامنة» تعرض ذلك مع الـStack الكامل لكل trace.
+
+**إثبات حي** (خادم فعلي، وضع demo): مزامنة نجحت (250 رسالة، traceId)،
+والرسالة ظهرت في واجهة البريد بعد منح القراءة (subject/from/body)،
+وصف sync_diagnostics سجّل outcome=ok stage=done. ثم أُفسد workingId عمدًا
+فظهر الفشل الحقيقي حرفيًا: stage=list_folders، HTTP 404،
+endpoint=/api/accounts/9999999999/folders، عيّنة «Account id … is invalid»،
+وStack كامل عبر zoho-mail-api.js → sync.js → routes.js — بلا أي
+"internal error".
