@@ -51,7 +51,8 @@ function demoMessages(prefix, n) {
   for (let i = 1; i <= n; i++) {
     out.push({
       messageId: `${prefix}${1000 + i}`,
-      messageIdHeader: `<${prefix}${1000 + i}@mock.zoho>`,
+      // NOTE: real Zoho messages/view returns NO RFC Message-ID header — the
+      // canonical identity is the v3 fingerprint, not a Message-ID.
       threadId: `t${prefix}${i % 3}`,
       fromAddress: `sender${i}@example.com`,
       senderName: `Sender ${i}`,
@@ -61,6 +62,7 @@ function demoMessages(prefix, n) {
       subject: `Demo message ${i} (${prefix})`,
       summary: `This is the summary of demo message number ${i}.`,
       receivedTime: String(1784200000000 - i * 3600000),
+      sentDateInGMT: String(1783000000000 - i * 3600000), // sent time (fingerprint anchor)
       hasAttachment: i % 3 === 0 ? '1' : '0',
     });
   }

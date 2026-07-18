@@ -126,6 +126,9 @@ function parseEml(buf, sourceName = '') {
     snippet: (parsed.text || parsed.html || '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 300),
     bodyHtml: parsed.html || (parsed.text ? '<pre>' + parsed.text.replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c])) + '</pre>' : null),
     receivedAt: h['date'] ? Date.parse(h['date']) || Date.now() : Date.now(),
+    // The EML Date: header IS the sent time — the canonical-fingerprint anchor
+    // that converges this archived copy with its live-synced counterpart.
+    sentAt: h['date'] ? Date.parse(h['date']) || Date.now() : Date.now(),
     hasAttachments: parsed.attachments.length > 0,
     direction: 'in',
     attachments: parsed.attachments,

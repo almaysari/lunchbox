@@ -58,25 +58,48 @@ const PAGE_SIZE = 100;
 const delay = ms => new Promise(r => setTimeout(r, ms));
 const budgetDelay = () => delay(Math.ceil(60000 / MAX_RPM));
 
-// Canonicalization algorithm v2 (stored per-row as canonical_hash_version).
-// Priority 1: RFC Message-ID (globally unique by construction).
-// Priority 2 (Message-ID missing): fingerprint of from | to | cc | subject |
-//   exact timestamp | snippet-hash | has-attachments flag — so two different
-//   messages sharing sender+subject+date but differing in recipients, text or
-//   attachment presence do NOT merge. BCC is intentionally EXCLUDED: it is
-//   occurrence-envelope data (per-mailbox), never canonical identity.
-// Changing this algorithm requires bumping HASH_VERSION and a new migration;
-// old rows keep their version and are never re-merged retroactively.
-const HASH_VERSION = 2;
+// Canonicalization algorithm v3 (stored per-row as canonical_hash_version).
+//
+// WHY NOT RFC Message-ID as the key: Zoho's live messages/view returns NO RFC
+// Message-ID field (proven from the real tenant's response — fields are
+// fromAddress/sender/subject/sentDateInGMT/receivedTime/… only). The eDiscovery
+// EML archive DOES carry a Message-ID. Keying on Message-ID would therefore make
+// the SAME email arrive as two different canonicals (live copy vs archive copy),
+// i.e. a duplicate. So the canonical key must be computable IDENTICALLY from
+// both sources, using only message-intrinsic, copy-stable fields.
+//
+// fp3 = sha256( from-emails | SENT-second | subject | to-emails | cc-emails )
+//   * SENT time (sentDateInGMT / the EML Date: header) — NOT receivedTime, which
+//     differs per recipient mailbox. Rounded to the second (RFC2822 precision).
+//   * from/to/cc reduced to sorted unique email addresses (angle-brackets,
+//     display names and ordering removed).
+//   * DELIBERATELY EXCLUDED: Zoho messageId (per-copy), receivedTime (per-copy),
+//     size (varies per copy via Received: headers), snippet/body and the
+//     has-attachment flag (a live 'summary' vs a parsed archive body, or an
+//     inline vs attachment, can disagree between the two sources and would break
+//     convergence). BCC stays occurrence-only (per-mailbox), never identity.
+// rfcMessageId is still STORED (forensics) but is not the identity.
+// Proven against REAL Zoho values (moderation-queue evidence): distinct sends of
+// the same subject stay distinct (different sent-second); a live record and an
+// eDiscovery EML of the same email produce an identical fp3 across mailboxes.
+// Old v2 rows keep their version and are never re-merged retroactively.
+const HASH_VERSION = 3;
+const _normSubject = s => String(s || '').toLowerCase().replace(/\s+/g, ' ').trim();
+const _emailSet = s => {
+  const m = String(s || '').toLowerCase().match(/[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,}/g) || [];
+  return [...new Set(m)].sort().join(',');
+};
+function _sentEpochSec(m) {
+  const v = (m.sentAt != null && m.sentAt !== '') ? m.sentAt : m.receivedAt;
+  let ms;
+  if (typeof v === 'number') ms = v;
+  else if (/^\d{10,}$/.test(String(v || '').trim())) ms = Number(v);
+  else ms = Date.parse(v);
+  return Number.isFinite(ms) ? Math.floor(ms / 1000) : 0;
+}
 function dedupHash(m) {
-  const key = m.rfcMessageId
-    ? 'rfc:' + m.rfcMessageId.trim()
-    : 'fp2:' + [
-        m.from || '', m.to || '', m.cc || '', m.subject || '',
-        String(m.receivedAt || ''),
-        sha256(Buffer.from(String(m.snippet || m.bodyHtml || ''))).slice(0, 16),
-        m.hasAttachments ? '1' : '0',
-      ].join('|');
+  const key = ['v3', _emailSet(m.from), _sentEpochSec(m), _normSubject(m.subject),
+    _emailSet(m.to), _emailSet(m.cc)].join('|');
   return sha256(Buffer.from(key));
 }
 

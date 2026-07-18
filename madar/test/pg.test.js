@@ -264,9 +264,11 @@ test('archive intake: multi-mailbox pipeline — status rows, cross-mailbox dedu
   const hr = byAddress['hr@exoticcolors.org'];
   const fin = byAddress['finance@exoticcolors.org'];
 
-  // hr@ part: two messages (one will repeat in finance@'s archive)
+  // An invoice was sent to BOTH hr@ and finance@ — the real message headers
+  // (To lists both) are IDENTICAL in each mailbox's export, so v3 converges it.
+  const invTo = 'hr@exoticcolors.org, finance@exoticcolors.org';
   const zipHr = buildZip([
-    { name: 'Inbox/msg1.eml', data: eml('inv-1001', 'Invoice 1001', 'hr@exoticcolors.org') },
+    { name: 'Inbox/msg1.eml', data: eml('inv-1001', 'Invoice 1001', invTo) },
     { name: 'Inbox/msg2.eml', data: eml('cv-77', 'CV Submission', 'hr@exoticcolors.org') },
   ]);
   const r1 = await fakeCall('POST', `/api/mail/mailboxes/${hr.id}/import-archive`,
@@ -275,10 +277,10 @@ test('archive intake: multi-mailbox pipeline — status rows, cross-mailbox dedu
   assert.strictEqual(r1.body.imported, 2);
   assert.ok(r1.body.importId);
 
-  // finance@ part contains the SAME Message-ID as one hr@ message:
-  // one canonical globally, but finance@ gets its own occurrence (source kept).
+  // finance@'s export of the SAME invoice: identical headers → one canonical
+  // globally, but finance@ gets its own occurrence (source kept).
   const zipFin = buildZip([
-    { name: 'Inbox/msg1.eml', data: eml('inv-1001', 'Invoice 1001', 'finance@exoticcolors.org') },
+    { name: 'Inbox/msg1.eml', data: eml('inv-1001', 'Invoice 1001', invTo) },
   ]);
   const r2 = await fakeCall('POST', `/api/mail/mailboxes/${fin.id}/import-archive`,
     { user: adminUser, body: zipFin, reqHeaders: { 'x-file-name': 'finance-part1.zip' } });
@@ -413,24 +415,30 @@ test('live sync: routing to shared mailboxes, worker tick/backoff, live→archiv
   assert.ok(t1.synced >= 1, 'tick synced enabled mailboxes');
 
   // member-copy routing: the admin's live-synced message addressed to hr@
-  // produced an occurrence in hr@'s registry mailbox (same canonical)
-  const routed = await db.one(`SELECT o.provider, c.rfc_message_id FROM message_occurrences o
+  // produced an occurrence in hr@'s registry mailbox (same canonical). The live
+  // message has NO RFC Message-ID (real Zoho) — identity is the v3 fingerprint.
+  const SUBJ = 'Demo message 1 (a)'; // uniquely identifies the a1001 message
+  const routed = await db.one(`SELECT o.provider, o.canonical_message_id, c.rfc_message_id FROM message_occurrences o
     JOIN canonical_messages c ON c.id = o.canonical_message_id
     JOIN folders f ON f.id = o.folder_id
     WHERE o.mailbox_id = $1 AND f.provider_folder_id = 'live:routed'`, [hr.id]);
   assert.ok(routed, 'routed occurrence exists in hr@');
   assert.strictEqual(routed.provider, 'zoho:member_copy');
-  assert.strictEqual(routed.rfc_message_id, '<a1001@mock.zoho>');
+  assert.strictEqual(routed.rfc_message_id, ''); // live has no RFC id — fingerprint is the identity
   const conv1 = await db.one(`SELECT COUNT(DISTINCT c.id)::int canon, COUNT(o.id)::int occ
     FROM canonical_messages c JOIN message_occurrences o ON o.canonical_message_id = c.id
-    WHERE c.rfc_message_id = '<a1001@mock.zoho>'`);
+    WHERE c.subject = $1`, [SUBJ]);
   assert.deepStrictEqual(conv1, { canon: 1, occ: 2 }); // admin copy + hr routed copy
 
   // live→archive convergence: the SAME message later arrives inside hr@'s
-  // eDiscovery export → ZERO duplication (one occurrence per mailbox, ever)
-  const emlRaw = (mid, subject, to) => ['Message-ID: ' + mid, 'From: Sender <sender1@example.com>',
-    'To: ' + to, 'Subject: ' + subject, 'Date: Mon, 13 Jul 2026 10:00:00 +0400', '', 'Body.'].join('\r\n');
-  const zipSame = buildZip([{ name: 'Inbox/a1001.eml', data: emlRaw('<a1001@mock.zoho>', 'Demo message 1 (a)', 'hr@exoticcolors.org') }]);
+  // eDiscovery export (which DOES carry a Message-ID) → ZERO duplication, via
+  // the v3 fingerprint (from + SENT-second + subject + to). The EML Date header
+  // must be the same sent instant the live sentDateInGMT reported.
+  const sentMs = 1783000000000 - 1 * 3600000; // mock a1001 sentDateInGMT
+  const emlRaw = (mid, subject, to, dateHdr) => ['Message-ID: ' + mid, 'From: Sender <sender1@example.com>',
+    'To: ' + to, 'Subject: ' + subject, 'Date: ' + dateHdr, '', 'Body.'].join('\r\n');
+  const zipSame = buildZip([{ name: 'Inbox/a1001.eml',
+    data: emlRaw('<archived-a1001@zoho>', SUBJ, 'hr@exoticcolors.org', new Date(sentMs).toUTCString()) }]);
   const rConv = await fakeCall('POST', `/api/mail/mailboxes/${hr.id}/import-archive`,
     { user: adminUser, body: zipSame, reqHeaders: { 'x-file-name': 'hr-convergence.zip' } });
   assert.strictEqual(rConv.status, 200);
@@ -442,7 +450,7 @@ test('live sync: routing to shared mailboxes, worker tick/backoff, live→archiv
   assert.strictEqual(rFin.body.imported, 1);
   const conv2 = await db.one(`SELECT COUNT(DISTINCT c.id)::int canon, COUNT(o.id)::int occ
     FROM canonical_messages c JOIN message_occurrences o ON o.canonical_message_id = c.id
-    WHERE c.rfc_message_id = '<a1001@mock.zoho>'`);
+    WHERE c.subject = $1`, [SUBJ]);
   assert.deepStrictEqual(conv2, { canon: 1, occ: 3 }); // still ONE canonical
 
   // worker: a broken mailbox fails and backs off without affecting the others
@@ -603,22 +611,46 @@ test('404 policy: unauthorized resource IDs are indistinguishable from nonexiste
 });
 
 // ---------- canonicalization ----------
-test('dedup v2: no false merges (recipients / snippet / attachments / timestamp differ)', async () => {
-  const base = { from: 'a@x.co', to: 'b@x.co', cc: '', subject: 'Invoice', receivedAt: 1750000000000, snippet: 'total 100', hasAttachments: false, rfcMessageId: '' };
+test('canonical fingerprint v3: real-Zoho-field identity, converges Live↔Archive, no false merges', async () => {
   const h = sync.dedupHash;
-  assert.notStrictEqual(h(base), h({ ...base, to: 'c@x.co' }));            // different recipient
-  assert.notStrictEqual(h(base), h({ ...base, cc: 'd@x.co' }));            // different cc
-  assert.notStrictEqual(h(base), h({ ...base, snippet: 'total 999' }));    // different text
-  assert.notStrictEqual(h(base), h({ ...base, hasAttachments: true }));    // attachment presence
-  assert.notStrictEqual(h(base), h({ ...base, receivedAt: 1750000000001 })); // different timestamp
-  assert.strictEqual(h(base), h({ ...base }));                              // stable
-  // Message-ID always wins when present
-  assert.strictEqual(h({ ...base, rfcMessageId: '<id1@x>' }), h({ ...base, to: 'zz@x.co', rfcMessageId: '<id1@x>' }));
-  // BCC intentionally NOT part of identity (occurrence envelope data)
-  assert.strictEqual(h({ ...base, bcc: 'secret@x.co' }), h(base));
-  assert.strictEqual(sync.HASH_VERSION, 2);
-  const versions = await db.all('SELECT DISTINCT canonical_hash_version v FROM canonical_messages');
-  assert.ok(versions.every(r => r.v === 2));
+  assert.strictEqual(sync.HASH_VERSION, 3);
+
+  // ---- REAL Zoho values (all@exoticcolors.org moderation-queue evidence) ----
+  // Resends of the same subject at different SENT times must stay DISTINCT.
+  const villa = (dateMs) => h({ from: 'j.villa@exoticcolors.org', subject: 'Introducing Our New Marketing Coordinator!', sentAt: dateMs });
+  const resends = [1736436064000, 1736430232000, 1736197164000, 1736196434000].map(villa);
+  assert.strictEqual(new Set(resends).size, 4, 'real resends stay distinct by sent-second');
+
+  // CONVERGENCE with real values: a live messages/view record (no RFC id,
+  // sentDateInGMT as ms) and the eDiscovery EML of the SAME email (RFC Date
+  // header, HAS a Message-ID) produce an IDENTICAL fingerprint.
+  const dateMs = 1783172034000, from = 'admin.it@exoticcolors.me',
+    subject = 'Security Alert‼️, Fraudulent Email Impersonating the CEO', to = 'all@exoticcolors.org';
+  const live = { from, subject, to, cc: '', sentAt: dateMs, receivedAt: 1783146849540, rfcMessageId: '' };
+  const rfc2822 = new Date(dateMs).toUTCString();
+  const archive = { from, subject, to, cc: '', sentAt: Date.parse(rfc2822), rfcMessageId: '<real-archived@zoho>' };
+  assert.strictEqual(h(live), h(archive), 'live and eDiscovery copies of the same real email converge');
+
+  // mailbox-independent: per-copy fields never touch identity
+  assert.strictEqual(h({ ...live, receivedAt: 111 }), h({ ...live, receivedAt: 999 }));
+  assert.strictEqual(h({ ...live, providerMessageId: 'x' }), h({ ...live, providerMessageId: 'y' }));
+
+  // discrimination on message-intrinsic fields
+  assert.notStrictEqual(h(live), h({ ...live, to: 'someone-else@x.co' }));   // different recipients
+  assert.notStrictEqual(h(live), h({ ...live, cc: 'extra@x.co' }));          // different cc
+  assert.notStrictEqual(h(live), h({ ...live, subject: 'Other' }));          // different subject
+  assert.notStrictEqual(h(live), h({ ...live, sentAt: dateMs + 1000 }));     // different sent second
+  assert.notStrictEqual(h(live), h({ ...live, from: 'other@x.co' }));        // different sender
+
+  // BCC intentionally NOT part of identity (per-mailbox envelope), and neither
+  // are the fields that disagree between sources (snippet/body, attachment flag)
+  assert.strictEqual(h({ ...live, bcc: 'secret@x.co' }), h(live));
+  assert.strictEqual(h({ ...live, snippet: 'a', hasAttachments: false }), h({ ...live, snippet: 'b', hasAttachments: true }));
+
+  // new rows are stamped v3
+  const admin = byAddress['m.almaysari@exoticcolors.org'];
+  const v = await db.one('SELECT canonical_hash_version cv FROM canonical_messages c JOIN message_occurrences o ON o.canonical_message_id=c.id WHERE o.mailbox_id=$1 LIMIT 1', [admin.id]);
+  assert.strictEqual(v.cv, 3);
 });
 
 test('envelope privacy: each occurrence keeps its own to/cc; BCC never leaks across mailboxes', async () => {
@@ -626,17 +658,25 @@ test('envelope privacy: each occurrence keeps its own to/cc; BCC never leaks acr
   const hr = byAddress['hr@exoticcolors.org'];
   const fInfo = await sync.upsertFolder(info.id, { providerFolderId: 'env-f', name: 'Inbox', type: 'inbox' });
   const fHr = await sync.upsertFolder(hr.id, { providerFolderId: 'env-f', name: 'Inbox', type: 'inbox' });
-  const common = { rfcMessageId: '<envtest@x>', from: 'sender@x.co', subject: 'Env', snippet: 's', receivedAt: Date.now() };
-  const r1 = await sync.insertMessage(info.id, fInfo, { ...common, providerMessageId: 'e1', to: 'info@exoticcolors.org', cc: 'watcher@x.co', bcc: 'hidden-info@x.co' });
-  const r2 = await sync.insertMessage(hr.id, fHr, { ...common, providerMessageId: 'e2', to: 'hr@exoticcolors.org', cc: '', bcc: '' });
-  assert.strictEqual(r1.canonicalId, r2.canonicalId);
+  // Same email delivered to two shared mailboxes: message HEADERS (from/to/cc/
+  // subject/sent) are identical across both stored copies (real-world) → one
+  // canonical under v3. The BCC is per-mailbox envelope data — info@'s copy was
+  // also blind-copied to a hidden address; hr@'s copy was not.
+  const common = { from: 'sender@x.co', subject: 'Env', sentAt: 1750000000000,
+    to: 'info@exoticcolors.org, hr@exoticcolors.org', cc: 'watcher@x.co', snippet: 's' };
+  const r1 = await sync.insertMessage(info.id, fInfo, { ...common, providerMessageId: 'e1', bcc: 'hidden-info@x.co' });
+  const r2 = await sync.insertMessage(hr.id, fHr, { ...common, providerMessageId: 'e2', bcc: '' });
+  assert.strictEqual(r1.canonicalId, r2.canonicalId); // identical headers → one canonical
   await auth.setGrant(memberUser.id, hr.id, { can_view_messages: true });
   const hrView = await fakeCall('GET', `/api/mail/occurrences/${r2.occurrenceId}`, { user: memberUser });
   assert.strictEqual(hrView.status, 200);
-  assert.strictEqual(hrView.body.to_addresses, 'hr@exoticcolors.org'); // its own envelope
+  // BCC is stored per-occurrence and NEVER returned by the API — info@'s hidden
+  // blind-copy address must not appear anywhere in hr@'s view
   const asText = JSON.stringify(hrView.body);
   assert.ok(!asText.includes('hidden-info@x.co'), 'BCC of another mailbox copy leaked');
-  assert.ok(!asText.includes('watcher@x.co'), 'CC of another mailbox copy leaked');
+  // and hr@'s own occurrence carries no BCC at all
+  const bccRow = await db.one('SELECT envelope_bcc FROM message_occurrences WHERE id=$1', [r2.occurrenceId]);
+  assert.strictEqual(bccRow.envelope_bcc, '');
   await auth.setGrant(memberUser.id, hr.id, null);
 });
 

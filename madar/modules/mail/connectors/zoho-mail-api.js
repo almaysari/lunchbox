@@ -65,6 +65,10 @@ class ZohoMailApiConnector {
       subject: m.subject || '',
       snippet: m.summary || '',
       receivedAt: Number(m.receivedTime) || Date.now(),
+      // SENT time drives the canonical fingerprint (copy-stable across mailboxes
+      // and identical to the eDiscovery EML Date: header). receivedTime is
+      // per-mailbox and used only for display/ordering.
+      sentAt: Number(m.sentDateInGMT) || Number(m.receivedTime) || Date.now(),
       hasAttachments: m.hasAttachment === '1' || m.hasAttachment === 1 || m.hasAttachment === true,
       direction: folder.type === 'sent' ? 'out' : 'in',
     }));
