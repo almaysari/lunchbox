@@ -24,7 +24,7 @@ const { ZohoClient, READ_SCOPES } = require('../modules/mail/zoho-client');
 const detection = require('../modules/mail/detection');
 const sync = require('../modules/mail/sync');
 const routes = require('../modules/mail/routes');
-const { startMockZoho } = require('./mock-zoho');
+const { startMockZoho, ADMIN_ACCOUNT_ID, _messages } = require('./mock-zoho');
 
 const MIGRATE = path.join(__dirname, '..', 'scripts', 'migrate.js');
 const runMigrate = () => execFileSync('node', [MIGRATE], { env: { ...process.env, DATABASE_URL: DB_URL }, encoding: 'utf8' });
@@ -477,6 +477,76 @@ test('live sync: routing to shared mailboxes, worker tick/backoff, live→archiv
   const mt = await fakeCall('POST', '/api/mail/live-sync/tick', { user: adminUser, body: {} });
   assert.strictEqual(mt.status, 200);
   await db.q(`UPDATE mailboxes SET sync_enabled = FALSE, is_pilot = FALSE WHERE address = 'broken@exoticcolors.org'`);
+});
+
+// ---------- new-mail capture: the two stall bugs behind "new email never shows" ----------
+test('new mail is captured even when it is NOT the newest item, and a dead cycle never stalls a box forever', async () => {
+  const admin = byAddress['m.almaysari@exoticcolors.org'];
+  await db.q('UPDATE mailboxes SET is_pilot=TRUE, sync_enabled=TRUE WHERE id=$1', [admin.id]);
+  await sync.syncMailbox(admin.id, { maxPages: 1 }); // ensure the existing page is fully stored
+
+  // BUG A (ordering): the incremental "newest page" scan must NOT stop at the
+  // first already-seen message. Zoho pins no guaranteed sort order, so a genuinely
+  // NEW email can arrive positioned AFTER messages we already have. Inject exactly
+  // that: a new message at index 2 (indices 0,1 are already stored), addressed to
+  // an external party so it creates no routed copies elsewhere.
+  const NEW_SUBJ = 'ORDERING-FIX new inbound ' + crypto.randomUUID().slice(0, 8);
+  const injected = { messageId: 'a-new-9001', threadId: 'tnew', fromAddress: 'newsender@example.com',
+    senderName: 'New Sender', toAddress: 'someone-external@example.net', subject: NEW_SUBJ,
+    summary: 'A brand new inbound message that is not the newest item in the list.',
+    receivedTime: String(1784200000000 - 2.5 * 3600000), sentDateInGMT: String(1783000000000 - 2.5 * 3600000),
+    hasAttachment: '0' };
+  _messages[ADMIN_ACCOUNT_ID].splice(2, 0, injected);
+  try {
+    const before = (await db.one('SELECT COUNT(*)::int n FROM canonical_messages WHERE subject=$1', [NEW_SUBJ])).n;
+    assert.strictEqual(before, 0, 'sanity: the new subject does not exist yet');
+    await sync.syncMailbox(admin.id, { maxPages: 1 }); // incremental cycle only touches the newest page
+    const occ = await db.one(`SELECT COUNT(*)::int n FROM message_occurrences o
+      JOIN canonical_messages c ON c.id=o.canonical_message_id
+      WHERE c.subject=$1 AND o.mailbox_id=$2`, [NEW_SUBJ, admin.id]);
+    assert.strictEqual(occ.n, 1, 'a NEW message positioned after already-seen ones is still captured (full-page scan)');
+  } finally {
+    const i = _messages[ADMIN_ACCOUNT_ID].indexOf(injected);
+    if (i > -1) _messages[ADMIN_ACCOUNT_ID].splice(i, 1); // restore shared fixture
+  }
+
+  // BUG B (permanent stall): a cycle that died mid-flight leaves a sync_jobs row
+  // status='running' and the mailbox status='syncing'. Without per-tick recovery,
+  // createJob would throw "already running" every tick and this box would never
+  // sync again until a full restart. reconcileStale (called at the top of each
+  // worker tick) must un-stick it — but only when the running job is provably
+  // stale (age-gated), never a legitimately long in-flight sync.
+  const mk = async (addr, jobAgeMin) => {
+    const mb = await db.one(`INSERT INTO mailboxes (address, display_name, provider, detected_type, strategy, is_pilot, sync_enabled, status)
+      VALUES ($1,$1,'zoho','user','mail_api',TRUE,TRUE,'syncing') RETURNING id`, [addr]);
+    await db.q(`INSERT INTO sync_jobs (mailbox_id, status, started_at)
+      VALUES ($1,'running', now() - ($2 || ' minutes')::interval)`, [mb.id, String(jobAgeMin)]);
+    return Number(mb.id);
+  };
+  const staleId = await mk('stalebox@exoticcolors.org', 20);   // dead cycle: 20 min, no progress
+  const freshId = await mk('livebox@exoticcolors.org', 1);     // legitimately running: 1 min
+
+  const rec = await sync.reconcileStale();
+  assert.ok(rec.pausedJobs >= 1 && rec.unstuckMailboxes >= 1, 'stale running job paused, its mailbox un-stuck');
+
+  const staleJob = await db.one("SELECT id, status FROM sync_jobs WHERE mailbox_id=$1 ORDER BY id DESC LIMIT 1", [staleId]);
+  const staleBox = await db.one('SELECT status FROM mailboxes WHERE id=$1', [staleId]);
+  assert.strictEqual(staleJob.status, 'paused', 'dead cycle → paused (resumable, cursor kept)');
+  assert.strictEqual(staleBox.status, 'ready', 'mailbox no longer stuck on syncing');
+
+  const freshJob = await db.one("SELECT status FROM sync_jobs WHERE mailbox_id=$1 ORDER BY id DESC LIMIT 1", [freshId]);
+  const freshBox = await db.one('SELECT status FROM mailboxes WHERE id=$1', [freshId]);
+  assert.strictEqual(freshJob.status, 'running', 'a fresh in-flight sync is NOT aborted by age-gating');
+  assert.strictEqual(freshBox.status, 'syncing', 'its mailbox stays syncing');
+
+  // after recovery, createJob RESUMES the paused job instead of throwing — proving
+  // the box is reachable again rather than permanently stalled.
+  const resumedJobId = await sync.createJob(staleId, null);
+  assert.strictEqual(resumedJobId, Number(staleJob.id), 'createJob reuses the recovered (paused) job — no permanent stall');
+
+  // cleanup: retire the throwaway mailboxes so later ticks/recovery tests are unaffected
+  await db.q("UPDATE sync_jobs SET status='cancelled', finished_at=now() WHERE mailbox_id = ANY($1::bigint[])", [[staleId, freshId]]);
+  await db.q('UPDATE mailboxes SET is_pilot=FALSE, sync_enabled=FALSE WHERE id = ANY($1::bigint[])', [[staleId, freshId]]);
 });
 
 // ---------- diagnostics ----------

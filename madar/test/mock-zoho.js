@@ -178,4 +178,4 @@ function startMockZoho(port = 0) {
   return new Promise(resolve => server.listen(port, '127.0.0.1', () => resolve(server.address().port)));
 }
 
-module.exports = { startMockZoho, ZOID, ADMIN_ACCOUNT_ID, INFO_ORG_ACCOUNT_ID };
+module.exports = { startMockZoho, ZOID, ADMIN_ACCOUNT_ID, INFO_ORG_ACCOUNT_ID, _messages: MESSAGES };

@@ -269,6 +269,32 @@ async function recoverStaleJobs() {
   return rows;
 }
 
+// Per-tick staleness reconciliation for the live worker. recoverStaleJobs runs
+// only at boot; but a cycle can die mid-flight AFTER boot (killed worker, OOM,
+// an unhandled path) leaving a sync_jobs row status='running'. On the next tick
+// createJob would then throw "already running", the worker marks the mailbox
+// skippedBusy, and it is NEVER synced again until a full restart. That is a
+// silent per-mailbox stall — the worker keeps ticking, this box just stops
+// receiving new mail. Here we age-gate: a 'running' job with no progress for
+// staleMin minutes is provably dead (a real 2-page sync finishes in seconds),
+// so we pause it (cursor is persisted → createJob resumes it) and un-stick the
+// mailbox. Age-gating means a legitimately long manual sync is never aborted.
+async function reconcileStale(staleMin = 15) {
+  const { all } = require('../../core/db');
+  const paused = await all(
+    `UPDATE sync_jobs SET status='paused', error_detail='auto-recovered: running with no progress > ${staleMin}m (worker un-stall)'
+     WHERE status='running' AND COALESCE(started_at, created_at) < now() - interval '${staleMin} minutes'
+     RETURNING id, mailbox_id`);
+  const unstuck = await all(
+    `UPDATE mailboxes m SET status='ready',
+        status_detail='دورة سابقة توقّفت — المؤشر محفوظ، ستُستأنف تلقائيًا في الدورة القادمة'
+     WHERE status='syncing'
+       AND NOT EXISTS (SELECT 1 FROM sync_jobs j WHERE j.mailbox_id=m.id AND j.status='running'
+                       AND COALESCE(j.started_at, j.created_at) >= now() - interval '${staleMin} minutes')
+     RETURNING id`);
+  return { pausedJobs: paused.length, unstuckMailboxes: unstuck.length };
+}
+
 async function setJobControl(jobId, status) { // 'paused' | 'cancelled' (admin action)
   const job = await one('SELECT * FROM sync_jobs WHERE id = $1', [jobId]);
   if (!job) throw new Error('job not found');
@@ -370,7 +396,15 @@ async function syncMailbox(mailboxId, { maxPages = 5, userId = null } = {}) {
       await q('INSERT INTO sync_state (mailbox_id, folder_id) VALUES ($1,$2) ON CONFLICT DO NOTHING', [mailboxId, folderId]);
       const state = await one('SELECT * FROM sync_state WHERE mailbox_id=$1 AND folder_id=$2', [mailboxId, folderId]);
 
-      // incremental newest page
+      // incremental newest page — scan the ENTIRE page, never stop at the first
+      // already-seen message. The Zoho Mail messages/view endpoint pins no
+      // guaranteed sort order (its default is undocumented and can interleave),
+      // so a break-on-first-duplicate would silently drop a NEW email that
+      // happens to sit after an already-stored one. Re-scanning one page of
+      // PAGE_SIZE every tick is cheap (dedup is a single ON CONFLICT DO NOTHING)
+      // and GUARANTEES any new message within the newest window is ingested,
+      // independent of ordering. This is the fix for "worker runs but new mail
+      // never appears": correctness no longer depends on the provider's sort.
       diag.stage = 'fetch_messages';
       diag.endpoint = connector.lastEndpoint;
       const newest = await connector.listMessages(f, { start: 1, limit: PAGE_SIZE }); await budgetDelay();
@@ -379,8 +413,7 @@ async function syncMailbox(mailboxId, { maxPages = 5, userId = null } = {}) {
       await q('UPDATE sync_jobs SET discovered = discovered + $1 WHERE id = $2', [newest.length, jobId]);
       for (const msg of newest) {
         await checkpoint(jobId);
-        const fresh = await ingestOne(connector, f, mailboxId, folderId, msg, summary, jobId, routing, diag);
-        if (!fresh) break;
+        await ingestOne(connector, f, mailboxId, folderId, msg, summary, jobId, routing, diag);
       }
 
       // backfill from persisted cursor
@@ -517,4 +550,4 @@ async function importArchiveRecorded(mailboxId, zipBuffer, userId, filename = ''
   }
 }
 
-module.exports = { syncMailbox, importArchiveZip, importArchiveRecorded, insertMessage, upsertFolder, dedupHash, normalizeForFingerprint, HASH_VERSION, storeAttachment, createJob, setJobControl, recoverStaleJobs, persistDiag, newDiag };
+module.exports = { syncMailbox, importArchiveZip, importArchiveRecorded, insertMessage, upsertFolder, dedupHash, normalizeForFingerprint, HASH_VERSION, storeAttachment, createJob, setJobControl, recoverStaleJobs, reconcileStale, persistDiag, newDiag };

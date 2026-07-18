@@ -11,7 +11,7 @@
 // live capture happens via routing inside syncMailbox — any synced message
 // addressed to a registered shared mailbox also lands there (same canonical).
 const { all, one } = require('../../core/db');
-const { syncMailbox } = require('./sync');
+const { syncMailbox, reconcileStale } = require('./sync');
 const { audit } = require('../../core/audit');
 
 const INTERVAL_MS = Math.max(30, Number(process.env.MADAR_LIVE_SYNC_INTERVAL_SEC) || 120) * 1000;
@@ -37,8 +37,17 @@ async function tickOnce() {
   if (state.ticking) return { skipped: 'tick already running' };
   state.ticking = true;
   state.lastTickAt = Date.now();
-  const result = { synced: 0, skippedBackoff: 0, skippedBusy: 0, failed: 0 };
+  const result = { synced: 0, skippedBackoff: 0, skippedBusy: 0, failed: 0, recovered: 0 };
   try {
+    // Un-stall before syncing: a dead-process 'running' job would otherwise make
+    // createJob throw "already running" and this mailbox would be skipped every
+    // tick, forever, with no new mail — until a full restart. Age-gated so a
+    // legitimately long manual sync is never touched.
+    try {
+      const rec = await reconcileStale();
+      result.recovered = rec.pausedJobs + rec.unstuckMailboxes;
+      if (result.recovered) state.lastRecovery = { at: Date.now(), ...rec };
+    } catch { /* reconciliation must never kill the tick */ }
     for (const mb of await eligibleMailboxes()) {
       const id = Number(mb.id);
       const s = state.perMailbox.get(id) || { backoffMs: 0, backoffUntil: 0, lastError: null, lastOkAt: null, lastSummary: null };
