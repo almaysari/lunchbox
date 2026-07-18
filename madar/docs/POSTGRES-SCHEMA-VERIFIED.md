@@ -146,6 +146,28 @@ CREATE SEQUENCE public.detection_reports_id_seq
 
 ALTER SEQUENCE public.detection_reports_id_seq OWNED BY public.detection_reports.id;
 
+CREATE TABLE public.fingerprint_metrics (
+    id bigint NOT NULL,
+    event_type text NOT NULL,
+    fp3 text,
+    rfc_incoming text,
+    rfc_existing text,
+    canonical_a bigint,
+    canonical_b bigint,
+    mailbox_id bigint,
+    detail text,
+    created_at timestamp with time zone DEFAULT now() NOT NULL
+);
+
+CREATE SEQUENCE public.fingerprint_metrics_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+ALTER SEQUENCE public.fingerprint_metrics_id_seq OWNED BY public.fingerprint_metrics.id;
+
 CREATE TABLE public.folders (
     id bigint NOT NULL,
     mailbox_id bigint NOT NULL,
@@ -401,6 +423,8 @@ ALTER TABLE ONLY public.connections ALTER COLUMN id SET DEFAULT nextval('public.
 
 ALTER TABLE ONLY public.detection_reports ALTER COLUMN id SET DEFAULT nextval('public.detection_reports_id_seq'::regclass);
 
+ALTER TABLE ONLY public.fingerprint_metrics ALTER COLUMN id SET DEFAULT nextval('public.fingerprint_metrics_id_seq'::regclass);
+
 ALTER TABLE ONLY public.folders ALTER COLUMN id SET DEFAULT nextval('public.folders_id_seq'::regclass);
 
 ALTER TABLE ONLY public.labels ALTER COLUMN id SET DEFAULT nextval('public.labels_id_seq'::regclass);
@@ -443,6 +467,9 @@ ALTER TABLE ONLY public.connections
 
 ALTER TABLE ONLY public.detection_reports
     ADD CONSTRAINT detection_reports_pkey PRIMARY KEY (id);
+
+ALTER TABLE ONLY public.fingerprint_metrics
+    ADD CONSTRAINT fingerprint_metrics_pkey PRIMARY KEY (id);
 
 ALTER TABLE ONLY public.folders
     ADD CONSTRAINT folders_mailbox_id_provider_folder_id_key UNIQUE (mailbox_id, provider_folder_id);
@@ -525,6 +552,8 @@ CREATE INDEX idx_canonical_fts ON public.canonical_messages USING gin (fts);
 CREATE INDEX idx_canonical_rfc ON public.canonical_messages USING btree (rfc_message_id) WHERE (rfc_message_id <> ''::text);
 
 CREATE INDEX idx_detection_mailbox ON public.detection_reports USING btree (mailbox_id, id DESC);
+
+CREATE INDEX idx_fp_metrics_type ON public.fingerprint_metrics USING btree (event_type, id DESC);
 
 CREATE INDEX idx_oauth_states_expiry ON public.oauth_states USING btree (expires_at);
 

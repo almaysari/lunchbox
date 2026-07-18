@@ -250,3 +250,45 @@ Live (بلا Message-ID) وEML أرشيفي (بـMessage-ID) لنفس الرسا
 
 الإصدار v3 يُطبَّق على الاستيعاب الجديد فقط؛ صفوف v2 القديمة تحتفظ
 بإصدارها ولا يُعاد دمجها (لا تغيير مخطط — العمودان موجودان).
+
+### إغلاق Canonical Identity v3 — الآلية والقياس (مفتوح حتى أرشيف حقيقي) (2026-07-17)
+
+الحالة المعتمدة: **Implemented, CI Passed, Test-Proven, Pending Production
+Archive Validation**. القرار لا يُغلق قبل نجاح المقارنة على أرشيف eDiscovery
+حقيقي. بُنيت الآلية التي ستنفّذ الحكم:
+
+**1) التطبيع الموحّد (`normalizeForFingerprint`، مصدر وحيد للهوية وللمُتحقِّق)**:
+subject: lowercase + طيّ المسافات + trim. العناوين: استخراج addr-spec فقط
+(إزالة Display Names)، أي فاصل (، ؛ مسافة سطر) يُعالَج بالاستخراج لا التقسيم،
+إزالة التكرار، ثم ترتيب. الوقت: انظر (2).
+
+**2) معالجة الوقت بدقة**: رقم/سلسلة أرقام = epoch ms كما هو (GMT أصلًا)؛ خلاف
+ذلك `Date.parse` (RFC2822/ISO تحمل offset صريحًا ⇒ UTC مطلق، وDST مضمَّن في
+الـoffset)؛ التقريب للثانية (ترويسة Date بلا أجزاء ثانية)؛ missing/invalid ⇒ 0
+مع تسجيل الرسالة `time_unlinkable`.
+
+**3) Collision Metrics داخل النظام (Migration 008 `fingerprint_metrics`)**:
+تُسجَّل لحظة الاستيعاب باستخدام RFC Message-ID كمرجع جنائي مستقل:
+`false_merge_prevented` (نفس fp3 لكن RFC مختلف ⇒ يُمنع الدمج بتمليح المفتاح
+بالـRFC، بلا فقدان)، `false_split_detected` (نفس RFC تحت fp3 مختلفين)،
+`duplicate_prevented`، `time_unlinkable`. Endpoint
+`/api/mail/fingerprint-metrics` يعرض الأرقام الستة + Correlation Confidence،
+وصفحة إدارة مخصصة. RFC Message-ID يُخزَّن دائمًا كدليل جنائي وإن لم يكن المفتاح.
+
+**4) تقرير الإثبات الإنتاجي (`scripts/validate-fp3.js <folder>`)**: يقارن Live
+(المزامَن في القاعدة) مع أرشيف ZIP الحقيقي على تقاطعهما، ويُخرج: matched_by_fp3،
+unmatched، false_merges، false_splits، duplicates_prevented، unlinkable +
+Correlation Confidence، ويشترط ≥100 رسالة في المصدرين. يستخدم RFC Message-ID
+مرجعًا مستقلًا (fp3 لا يحكم على نفسه). **حُقِن ونجح على 120 حية + أرشيفها +5
+جديدة**: matched 120 / unmatched 5 / false 0 / confidence 1 / PASS — إثبات أن
+الأداة تعمل؛ الأرقام الحقيقية تأتي من أول تصدير eDiscovery فعلي عندك.
+
+**5) خطة fp2→fp3 (`scripts/reconcile-hash-versions.js`، dry-run/--apply)**: لكل
+canonical من v2 يُعاد حساب fp3 من حقوله؛ إن وُجد توأم v3 تُنقل النسخ/المرفقات
+إليه (بأمان عبر قيود التفرد) ويُحذف الصف القديم، وإلا يُرقّى في مكانه إلى v3.
+النتيجة: canonical واحد لكل رسالة مهما كان الإصدار الذي استوعبها أولًا — لا
+ازدواج fp2↔fp3 دائم. **مُختبَر**: توأم v2 اندمج في v3، صفر v2 متبقٍّ، بلا فقدان.
+
+المخاطرة التجريبية الوحيدة الباقية (تطابق `sentDateInGMT` الحي مع ترويسة `Date:`
+الأرشيفية بدقة الثانية) ستُقاس مباشرة بتقرير (4) على بياناتكم: أي انزياح سيظهر
+كـ unmatched تعود أسبابه إلى فرق الثانية، وحينها نعالجه بنافذة تسامح موثّقة.

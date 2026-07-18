@@ -223,6 +223,33 @@ async function handle(req, res, url, user, body, helpers) {
     return send(200, { latestByMailbox: latest.map(diagRow), recentErrors: recentErrors.map(diagRow) });
   }
 
+  // ---------- canonical-identity collision metrics + fp3 validation ----------
+  if (p === '/api/mail/fingerprint-metrics' && req.method === 'GET') {
+    if (!requireMailAdmin()) return true;
+    const counts = await all(`SELECT event_type, COUNT(*)::int n FROM fingerprint_metrics GROUP BY event_type`);
+    const byType = Object.fromEntries(counts.map(r => [r.event_type, r.n]));
+    const recent = await all(`SELECT event_type, fp3, rfc_incoming, rfc_existing, canonical_a, canonical_b,
+      mailbox_id, detail, created_at FROM fingerprint_metrics ORDER BY id DESC LIMIT 50`);
+    const tot = await one(`SELECT COUNT(*)::int canon FROM canonical_messages`);
+    const occ = await one(`SELECT COUNT(*)::int occ FROM message_occurrences`);
+    const dupPrevented = byType.duplicate_prevented || 0;
+    const falseMerge = byType.false_merge_prevented || 0;
+    const falseSplit = byType.false_split_detected || 0;
+    // correlation confidence: of all cross-source links fp3 established, the
+    // fraction with no forensic contradiction (no false merge/split).
+    const linked = (tot.canon || 0) + falseMerge; // canonicals + prevented over-merges
+    const confidence = linked ? Number((1 - (falseMerge + falseSplit) / linked).toFixed(6)) : 1;
+    return send(200, {
+      status: 'pending_production_archive_validation',
+      canonicals: tot.canon, occurrences: occ.occ,
+      metrics: { fp3_collisions: falseMerge, false_merges_prevented: falseMerge,
+        false_splits_detected: falseSplit, duplicates_prevented: dupPrevented,
+        time_unlinkable: byType.time_unlinkable || 0 },
+      correlationConfidence: confidence,
+      recent: recent.map(r => ({ ...r, created_at: new Date(r.created_at).getTime() })),
+    });
+  }
+
   // ---------- sync jobs: start / pause / resume / cancel / progress ----------
   if ((m = p.match(/^\/api\/mail\/mailboxes\/(\d+)\/sync$/)) && req.method === 'POST') {
     if (!requireMailAdmin()) return true;

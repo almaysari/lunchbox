@@ -84,23 +84,48 @@ const budgetDelay = () => delay(Math.ceil(60000 / MAX_RPM));
 // eDiscovery EML of the same email produce an identical fp3 across mailboxes.
 // Old v2 rows keep their version and are never re-merged retroactively.
 const HASH_VERSION = 3;
+
+// ---- unified normalization (single source of truth for identity + validator) ----
+// subject: lowercase + collapse all whitespace + trim.
 const _normSubject = s => String(s || '').toLowerCase().replace(/\s+/g, ' ').trim();
+// address list -> sorted, de-duplicated, lowercased set of bare email addresses:
+//   * display names removed (only the addr-spec is matched)
+//   * any separator (comma / semicolon / space / newline) handled — we extract,
+//     not split — so ";" vs ", " never changes the result
+//   * duplicates removed, order canonicalized by sort
 const _emailSet = s => {
   const m = String(s || '').toLowerCase().match(/[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,}/g) || [];
   return [...new Set(m)].sort().join(',');
 };
+// SENT time -> epoch SECONDS, timezone-normalized:
+//   * numeric or all-digit string => treated as epoch ms as-is (already GMT).
+//   * otherwise Date.parse: RFC2822 / ISO carry an explicit offset, so the
+//     result is absolute UTC — DST is inherent (the offset already reflects it).
+//   * missing / invalid => 0 (the caller flags the message as time-unlinkable).
+//   * floor to the second (RFC2822 Date: headers have no sub-second precision).
 function _sentEpochSec(m) {
   const v = (m.sentAt != null && m.sentAt !== '') ? m.sentAt : m.receivedAt;
   let ms;
   if (typeof v === 'number') ms = v;
   else if (/^\d{10,}$/.test(String(v || '').trim())) ms = Number(v);
-  else ms = Date.parse(v);
+  else ms = Date.parse(v); // absolute UTC from the embedded offset
   return Number.isFinite(ms) ? Math.floor(ms / 1000) : 0;
 }
+// The normalized identity tuple — exposed so the production validator computes
+// fp3 EXACTLY as ingestion does (no drift between proof and prod).
+function normalizeForFingerprint(m) {
+  return { from: _emailSet(m.from), sentSec: _sentEpochSec(m), subject: _normSubject(m.subject),
+    to: _emailSet(m.to), cc: _emailSet(m.cc), timeUnlinkable: _sentEpochSec(m) === 0 };
+}
 function dedupHash(m) {
-  const key = ['v3', _emailSet(m.from), _sentEpochSec(m), _normSubject(m.subject),
-    _emailSet(m.to), _emailSet(m.cc)].join('|');
-  return sha256(Buffer.from(key));
+  const n = normalizeForFingerprint(m);
+  return sha256(Buffer.from(['v3', n.from, n.sentSec, n.subject, n.to, n.cc].join('|')));
+}
+async function recordMetric(client, ev) {
+  await client.query(`INSERT INTO fingerprint_metrics (event_type, fp3, rfc_incoming, rfc_existing,
+    canonical_a, canonical_b, mailbox_id, detail) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)`,
+    [ev.event_type, ev.fp3 || null, ev.rfc_incoming || null, ev.rfc_existing || null,
+      ev.canonical_a || null, ev.canonical_b || null, ev.mailbox_id || null, ev.detail || null]);
 }
 
 async function upsertFolder(mailboxId, f) {
@@ -115,15 +140,48 @@ async function upsertFolder(mailboxId, f) {
 // no canonical can ever exist without at least one occurrence.
 // Envelope fields (to/cc/bcc as THIS mailbox saw them) live on the occurrence.
 async function insertMessage(mailboxId, folderId, m, provider = 'zoho') {
-  const hash = dedupHash(m);
+  let hash = dedupHash(m);
+  const rfc = (m.rfcMessageId || '').trim();
+  const norm = normalizeForFingerprint(m);
   const { tx } = require('../../core/db');
   return tx(async (client) => {
+    // Forensic oracle (RFC Message-ID, when the archive provides one):
+    //   * A canonical already at THIS fp3 but carrying a DIFFERENT non-empty RFC
+    //     Message-ID => two genuinely distinct emails collided on fp3. Prevent
+    //     the false merge (data loss) by salting the key with the RFC id, and
+    //     record the event. (Live copies carry no RFC id, so this never fires on
+    //     the live path — convergence is preserved.)
+    //   * A DIFFERENT canonical already carries the SAME RFC id => fp3 split one
+    //     email into two (false split). Record it (reconciliation handles merge).
+    if (rfc) {
+      const clash = (await client.query(
+        `SELECT id, rfc_message_id FROM canonical_messages WHERE dedup_hash = $1`, [hash])).rows[0];
+      if (clash && clash.rfc_message_id && clash.rfc_message_id !== rfc) {
+        await recordMetric(client, { event_type: 'false_merge_prevented', fp3: hash,
+          rfc_incoming: rfc, rfc_existing: clash.rfc_message_id, canonical_a: Number(clash.id),
+          mailbox_id: mailboxId, detail: 'distinct RFC Message-IDs collided on fp3 — salted to keep separate' });
+        hash = sha256(Buffer.from(hash + '|rfc:' + rfc)); // deterministic disambiguation
+      }
+      const split = (await client.query(
+        `SELECT id, dedup_hash FROM canonical_messages WHERE rfc_message_id = $1 AND dedup_hash <> $2 LIMIT 1`,
+        [rfc, hash])).rows[0];
+      if (split) {
+        await recordMetric(client, { event_type: 'false_split_detected', fp3: hash,
+          rfc_incoming: rfc, rfc_existing: rfc, canonical_a: Number(split.id),
+          mailbox_id: mailboxId, detail: 'same RFC Message-ID under two fingerprints — candidate for reconciliation' });
+      }
+    }
+    if (norm.timeUnlinkable) {
+      await recordMetric(client, { event_type: 'time_unlinkable', fp3: hash, rfc_incoming: rfc || null,
+        mailbox_id: mailboxId, detail: 'no valid sent/received time — weak temporal key' });
+    }
+
     let canonical = (await client.query(`INSERT INTO canonical_messages (dedup_hash, canonical_hash_version,
         rfc_message_id, thread_id, from_address, from_name, to_addresses, cc_addresses, subject, snippet,
         body_html, sent_at, has_attachments)
       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13)
       ON CONFLICT (dedup_hash) DO NOTHING RETURNING id`,
-      [hash, HASH_VERSION, m.rfcMessageId || '', m.threadId || '', m.from || '', m.fromName || '',
+      [hash, HASH_VERSION, rfc, m.threadId || '', m.from || '', m.fromName || '',
         m.to || '', m.cc || '', m.subject || '', m.snippet || '', m.bodyHtml || null,
         new Date(Number(m.receivedAt) || Date.now()), Boolean(m.hasAttachments)])).rows[0];
     const isNewCanonical = Boolean(canonical);
@@ -136,6 +194,8 @@ async function insertMessage(mailboxId, folderId, m, provider = 'zoho') {
         new Date(Number(m.receivedAt) || Date.now()), m.to || '', m.cc || '', m.bcc || ''])).rows[0];
 
     if (!occ && isNewCanonical) throw Object.assign(new Error('rollback-orphan'), { _rollbackOrphan: true, canonicalId: Number(canonical.id) });
+    if (!occ) await recordMetric(client, { event_type: 'duplicate_prevented', fp3: hash, rfc_incoming: rfc || null,
+      canonical_a: Number(canonical.id), mailbox_id: mailboxId, detail: 'occurrence already present in this mailbox' });
     return { canonicalId: Number(canonical.id), occurrenceId: occ ? Number(occ.id) : null, isNewCanonical };
   }).catch(err => {
     if (err._rollbackOrphan) return { canonicalId: err.canonicalId, occurrenceId: null, isNewCanonical: false };
@@ -457,4 +517,4 @@ async function importArchiveRecorded(mailboxId, zipBuffer, userId, filename = ''
   }
 }
 
-module.exports = { syncMailbox, importArchiveZip, importArchiveRecorded, insertMessage, upsertFolder, dedupHash, HASH_VERSION, storeAttachment, createJob, setJobControl, recoverStaleJobs, persistDiag, newDiag };
+module.exports = { syncMailbox, importArchiveZip, importArchiveRecorded, insertMessage, upsertFolder, dedupHash, normalizeForFingerprint, HASH_VERSION, storeAttachment, createJob, setJobControl, recoverStaleJobs, persistDiag, newDiag };

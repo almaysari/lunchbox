@@ -653,6 +653,41 @@ test('canonical fingerprint v3: real-Zoho-field identity, converges Live↔Archi
   assert.strictEqual(v.cv, 3);
 });
 
+test('collision metrics: RFC oracle prevents false merge, detects false split; confidence + reconciliation invariant', async () => {
+  const info = byAddress['info@exoticcolors.org'];
+  const f = await sync.upsertFolder(info.id, { providerFolderId: 'fp-metrics', name: 'M', type: 'inbox' });
+  const base = { from: 'alerts@bank.com', to: 'ops@exoticcolors.org', cc: '', subject: 'Daily alert', sentAt: 1760000000000 };
+
+  // two GENUINELY distinct emails that collide on the fp3 5-tuple but carry
+  // different RFC Message-IDs (the oracle) → false merge PREVENTED and recorded;
+  // both survive as separate canonicals (no data loss).
+  const a = await sync.insertMessage(info.id, f, { ...base, providerMessageId: 'm-a', rfcMessageId: '<alert-A@bank>' });
+  const b = await sync.insertMessage(info.id, f, { ...base, providerMessageId: 'm-b', rfcMessageId: '<alert-B@bank>' });
+  assert.notStrictEqual(a.canonicalId, b.canonicalId, 'distinct RFC ids kept separate despite fp3 collision');
+  assert.ok((await db.one(`SELECT COUNT(*)::int n FROM fingerprint_metrics WHERE event_type='false_merge_prevented'`)).n >= 1);
+
+  // a live copy (NO rfc) of email A converges onto A's (un-salted) canonical
+  const hr = byAddress['hr@exoticcolors.org'];
+  const fLive = await sync.upsertFolder(hr.id, { providerFolderId: 'fp-live', name: 'L', type: 'inbox' });
+  const live = await sync.insertMessage(hr.id, fLive, { ...base, providerMessageId: 'm-live', rfcMessageId: '' });
+  assert.strictEqual(live.canonicalId, a.canonicalId, 'live copy converges onto the first canonical');
+
+  // metrics endpoint: the six numbers + correlation confidence, admin-only
+  const r = await fakeCall('GET', '/api/mail/fingerprint-metrics', { user: adminUser });
+  assert.strictEqual(r.status, 200);
+  assert.strictEqual(r.body.status, 'pending_production_archive_validation');
+  assert.ok(r.body.metrics.false_merges_prevented >= 1);
+  assert.ok(typeof r.body.correlationConfidence === 'number' && r.body.correlationConfidence <= 1);
+  assert.strictEqual((await fakeCall('GET', '/api/mail/fingerprint-metrics', { user: memberUser })).status, 403);
+
+  // reconciliation invariant: a legacy v2 email recomputes to the SAME fp3 as
+  // its v3 twin — the property the reconcile script relies on to collapse them.
+  const v3 = await sync.insertMessage(info.id, f, { from: 'legacy@x.co', to: 'a@x.co', cc: '', subject: 'Legacy', sentAt: 1761000000000, providerMessageId: 'v3-1' });
+  const legacyFp = sync.dedupHash({ from: 'legacy@x.co', to: 'a@x.co', cc: '', subject: 'Legacy', sentAt: 1761000000000 });
+  const v3row = await db.one(`SELECT dedup_hash FROM canonical_messages WHERE id=$1`, [v3.canonicalId]);
+  assert.strictEqual(legacyFp, v3row.dedup_hash, 'legacy v2 email recomputes to the v3 twin fingerprint');
+});
+
 test('envelope privacy: each occurrence keeps its own to/cc; BCC never leaks across mailboxes', async () => {
   const info = byAddress['info@exoticcolors.org'];
   const hr = byAddress['hr@exoticcolors.org'];

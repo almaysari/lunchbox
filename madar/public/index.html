@@ -151,6 +151,15 @@
 
     <div class="card">
       <div class="row" style="justify-content:space-between">
+        <h3 style="margin:0">هوية الرسالة (Canonical Identity v3) <span class="sub" id="fpStatus"></span></h3>
+        <button class="btn" onclick="loadFpMetrics()">↻ تحديث</button>
+      </div>
+      <div class="sub" style="margin:6px 0">القرار مفتوح حتى الإثبات على أرشيف eDiscovery حقيقي. المقاييس تُسجَّل داخل النظام لحظة الاستيعاب، وRFC Message-ID مرجع جنائي مستقل. التقرير النهائي: <code>node scripts/validate-fp3.js &lt;folder&gt;</code>.</div>
+      <table id="fpTable"></table>
+    </div>
+
+    <div class="card">
+      <div class="row" style="justify-content:space-between">
         <h3 style="margin:0">تشخيص المزامنة (Diagnostics) <span class="sub" id="diagSummary"></span></h3>
         <button class="btn" onclick="loadDiagnostics()">↻ تحديث</button>
       </div>
@@ -336,8 +345,23 @@ async function openMessage(occId) {
 
 /* ================= ADMIN ================= */
 async function loadAdmin() {
-  await Promise.all([loadConnections(), loadDiscovery(), loadMailboxesAdmin(), loadIntake(), loadLiveSync(), loadDiagnostics(), loadUsers(), loadAudit()]);
+  await Promise.all([loadConnections(), loadDiscovery(), loadMailboxesAdmin(), loadIntake(), loadLiveSync(), loadFpMetrics(), loadDiagnostics(), loadUsers(), loadAudit()]);
   if (!window._liveTimer) window._liveTimer = setInterval(() => { if (location.hash !== '#mail') { loadLiveSync().catch(() => {}); loadIntake().catch(() => {}); loadDiagnostics().catch(() => {}); } }, 30000);
+}
+
+/* ---------- canonical identity v3 collision metrics ---------- */
+async function loadFpMetrics() {
+  const d = await api('/api/mail/fingerprint-metrics');
+  const m = d.metrics;
+  $('fpStatus').textContent = `(${d.status} — ثقة الربط ${d.correlationConfidence})`;
+  $('fpTable').innerHTML = `<tr><th>المقياس</th><th>القيمة</th></tr>
+    <tr><td>رسائل canonical</td><td>${d.canonicals}</td></tr>
+    <tr><td>نسخ (occurrences)</td><td>${d.occurrences}</td></tr>
+    <tr><td>تصادمات fp3 (دمج كاذب مُنِع)</td><td>${m.false_merges_prevented} ${m.false_merges_prevented ? '<span class="tag bad">راجع</span>' : '<span class="tag ok">0</span>'}</td></tr>
+    <tr><td>انقسام كاذب مُكتشَف</td><td>${m.false_splits_detected} ${m.false_splits_detected ? '<span class="tag bad">راجع</span>' : '<span class="tag ok">0</span>'}</td></tr>
+    <tr><td>تكرارات مُنِعت</td><td>${m.duplicates_prevented}</td></tr>
+    <tr><td>غير قابلة للربط زمنيًا</td><td>${m.time_unlinkable}</td></tr>
+    <tr><td>ثقة الارتباط (Correlation Confidence)</td><td><b>${d.correlationConfidence}</b></td></tr>`;
 }
 
 /* ---------- diagnostics ---------- */
