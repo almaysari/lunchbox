@@ -320,13 +320,25 @@ async function loadMessages() {
     ? 'النطاق: ' + (MAILBOXES.find(m => m.id === currentMailbox)?.address || '')
     : 'النطاق: كل الصناديق المصرّح لك بها';
   const msgs = await api('/api/mail/messages?' + params);
-  $('messageList').innerHTML = msgs.length ? msgs.map(m => `
-    <div class="list-item" onclick="openMessage(${m.occurrence_id})">
-      <div class="msg-from">${esc(m.from_name || m.from_address)}</div>
-      <div class="msg-sub">${esc(m.subject)}</div>
-      <div class="msg-snip">${esc((m.snippet || '').slice(0, 90))}</div>
-      <div class="msg-time">${fmtT(m.received_at)} ${m.has_attachments ? '📎' : ''} ${m.direction === 'out' ? '↗ صادر' : ''}</div>
-    </div>`).join('') : '<div class="sub" style="padding:20px">لا توجد رسائل بعد — شغّل المزامنة أو استورد الأرشيف من لوحة الإدارة</div>';
+  if (msgs.length) {
+    $('messageList').innerHTML = msgs.map(m => `
+      <div class="list-item" onclick="openMessage(${m.occurrence_id})">
+        <div class="msg-from">${esc(m.from_name || m.from_address)}</div>
+        <div class="msg-sub">${esc(m.subject)}</div>
+        <div class="msg-snip">${esc((m.snippet || '').slice(0, 90))}</div>
+        <div class="msg-time">${fmtT(m.received_at)} ${m.has_attachments ? '📎' : ''} ${m.direction === 'out' ? '↗ صادر' : ''}</div>
+      </div>`).join('');
+    return;
+  }
+  // empty: for an admin this is usually the content-privacy policy (no read
+  // grant), NOT missing data — say so instead of a misleading "no messages".
+  let hint = 'لا توجد رسائل بعد — شغّل المزامنة أو استورد الأرشيف من لوحة الإدارة';
+  if (isAdminUser(ME) && currentMailbox) {
+    const t = await api(`/api/mail/mailboxes/${currentMailbox}/visibility-trace`).catch(() => null);
+    if (t) hint = `<b>${esc(t.verdict)}</b>` + (t.checks['5_stored_but_hidden'].hiddenByGrant
+      ? ` <button class="btn primary" onclick="selfGrantRead(${currentMailbox})">امنحني القراءة</button>` : '');
+  }
+  $('messageList').innerHTML = `<div class="sub" style="padding:20px">${hint}</div>`;
 }
 $('q').addEventListener('keydown', e => { if (e.key === 'Enter') loadMessages(); });
 async function openMessage(occId) {
@@ -430,9 +442,37 @@ async function loadLiveSync() {
         <td class="sub" style="direction:ltr">${esc(r.lastUid || '—')}</td>
         <td>${r.newLast24h}</td>
         <td>${state}</td>
-        <td>${r.liveEligible ? `<button class="btn" onclick="retryLive(${r.mailboxId})">Retry</button>` : ''}</td>
+        <td>${r.liveEligible ? `<button class="btn" onclick="retryLive(${r.mailboxId})">Retry</button> ` : ''}<button class="btn" onclick="visibilityTrace(${r.mailboxId})">لِمَ لا أرى البريد؟</button></td>
       </tr>`;
     }).join('');
+}
+async function visibilityTrace(id) {
+  const t = await api(`/api/mail/mailboxes/${id}/visibility-trace`);
+  const c = t.checks;
+  const yn = b => b ? '<span class="tag ok">نعم</span>' : '<span class="tag bad">لا</span>';
+  const g5 = c['5_stored_but_hidden'];
+  $('dlgTitle').textContent = 'تشخيص الرؤية — ' + t.mailbox;
+  $('dlgBody').innerHTML = `
+    <div class="banner ${/محفوظة|فشلت|عالق|غير مفعّلة|متوقف/.test(t.verdict) ? 'bad' : 'ok'}"><b>الحكم:</b> ${esc(t.verdict)}</div>
+    <table>
+      <tr><th>1) العامل يعمل؟</th><td>${yn(c['1_worker_running'].ok)} — كل ${c['1_worker_running'].intervalSec}ث، آخر دورة: ${c['1_worker_running'].lastTickAt ? fmtT(c['1_worker_running'].lastTickAt) : '—'}</td></tr>
+      <tr><th>2) دورة حديثة؟</th><td>${yn(c['2_recent_cycle'].ok)} — ${c['2_recent_cycle'].lastCycleAt ? fmtT(c['2_recent_cycle'].lastCycleAt) : 'لا شيء'} (مهمة: ${esc(c['2_recent_cycle'].lastJobStatus || '—')})</td></tr>
+      <tr><th>3) جُلبت من Zoho؟</th><td>${yn(c['3_fetched_from_zoho'].ok)} — read=${c['3_fetched_from_zoho'].read}${c['3_fetched_from_zoho'].httpStatus ? `, HTTP ${c['3_fetched_from_zoho'].httpStatus}` : ''}</td></tr>
+      <tr><th>4) inserted / المؤشر / dedup</th><td>inserted=${c['4_inserted_or_cursor_dedup'].inserted}, skipped=${c['4_inserted_or_cursor_dedup'].skipped}, تكرارات=${c['4_inserted_or_cursor_dedup'].duplicatesPrevented}<br><span class="sub">${c['4_inserted_or_cursor_dedup'].cursors.map(x => `${esc(x.folder||'?')}: backfillDone=${x.backfillDone}, nextStart=${x.nextStart}${x.lastError?` خطأ:${esc(x.lastError)}`:''}`).join('<br>') || 'لا مؤشرات'}</span></td></tr>
+      <tr><th>5) محفوظة لكن محجوبة؟</th><td>مخزّنة=${g5.storedInDb} (24س: ${g5.storedLast24h}) — لديك صلاحية قراءة: ${yn(g5.youHaveReadGrant)} — في مجموعتك المقروءة: ${yn(g5.mailboxInYourReadableSet)} — قرّاء ممنوحون: ${g5.anyReadersGranted}${g5.hiddenByGrant ? ' <span class="tag bad">محجوبة بالصلاحية</span>' : ''}</td></tr>
+      <tr><th>6) status = syncing؟</th><td>${esc(c['6_status_syncing'].status)}${c['6_status_syncing'].stuck ? ' <span class="tag bad">عالق</span>' : ''}<br><span class="sub">${esc(c['6_status_syncing'].statusDetail||'')}</span></td></tr>
+      <tr><th>7) آخر diagnostics</th><td>${c['7_last_diagnostics'] ? `trace ${esc(c['7_last_diagnostics'].traceId)} — ${esc(c['7_last_diagnostics'].outcome)} @ ${esc(c['7_last_diagnostics'].stage)} — read=${c['7_last_diagnostics'].read} inserted=${c['7_last_diagnostics'].inserted} skipped=${c['7_last_diagnostics'].skipped} routed=${c['7_last_diagnostics'].routed}` : 'لا شيء'}</td></tr>
+    </table>
+    ${g5.hiddenByGrant ? `<div class="row" style="margin-top:8px;justify-content:flex-end"><button class="btn primary" onclick="selfGrantRead(${id})">امنحني القراءة الآن (مدوَّن)</button></div>` : ''}
+    ${c['7_last_diagnostics'] && c['7_last_diagnostics'].error ? `<h4>Stack آخر خطأ</h4><pre class="evidence">${esc(c['7_last_diagnostics'].error.stack||'')}</pre>` : ''}`;
+  $('dlg').showModal();
+}
+async function selfGrantRead(id) {
+  const me = await api('/api/auth/me');
+  await api('/api/admin/grants', { method: 'POST', body: { user_id: me.id, mailbox_id: id,
+    flags: { can_view_messages: true, can_view_attachments: true } } });
+  banners('<div class="banner ok">مُنِحت صلاحية القراءة (مدوَّنة في التدقيق) — افتح تبويب البريد الآن.</div>');
+  $('dlg').close(); loadMailboxesForMail();
 }
 async function liveTickNow() {
   banners('<div class="banner warn">دورة مزامنة يدوية جارية لكل الصناديق المفعّلة...</div>');

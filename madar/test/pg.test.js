@@ -688,6 +688,29 @@ test('collision metrics: RFC oracle prevents false merge, detects false split; c
   assert.strictEqual(legacyFp, v3row.dedup_hash, 'legacy v2 email recomputes to the v3 twin fingerprint');
 });
 
+test('visibility trace: names WHY mail is not shown — "stored but hidden by grant" and its resolution', async () => {
+  const info = byAddress['info@exoticcolors.org']; // has 250+ synced occurrences, strategy mail_api
+  await db.q('UPDATE mailboxes SET is_pilot=TRUE, sync_enabled=TRUE WHERE id=$1', [info.id]);
+  await auth.setGrant(adminUser.id, info.id, null); // admin has NO read grant
+
+  const t = await fakeCall('GET', `/api/mail/mailboxes/${info.id}/visibility-trace`, { user: adminUser });
+  assert.strictEqual(t.status, 200);
+  for (const k of ['1_worker_running', '2_recent_cycle', '3_fetched_from_zoho', '4_inserted_or_cursor_dedup',
+    '5_stored_but_hidden', '6_status_syncing', '7_last_diagnostics']) assert.ok(k in t.body.checks, k);
+  assert.ok(t.body.checks['5_stored_but_hidden'].storedInDb > 0);
+  assert.strictEqual(t.body.checks['5_stored_but_hidden'].youHaveReadGrant, false);
+  assert.strictEqual(t.body.checks['5_stored_but_hidden'].hiddenByGrant, true);
+  assert.match(t.body.verdict, /محجوبة|can_view_messages/);
+  assert.deepStrictEqual((await fakeCall('GET', '/api/mail/messages', { user: adminUser, search: `?mailbox_id=${info.id}` })).body, []);
+
+  await auth.setGrant(adminUser.id, info.id, { can_view_messages: true });
+  const t2 = await fakeCall('GET', `/api/mail/mailboxes/${info.id}/visibility-trace`, { user: adminUser });
+  assert.strictEqual(t2.body.checks['5_stored_but_hidden'].hiddenByGrant, false);
+  assert.ok((await fakeCall('GET', '/api/mail/messages', { user: adminUser, search: `?mailbox_id=${info.id}` })).body.length > 0);
+  await auth.setGrant(adminUser.id, info.id, null);
+  assert.strictEqual((await fakeCall('GET', `/api/mail/mailboxes/${info.id}/visibility-trace`, { user: memberUser })).status, 403);
+});
+
 test('envelope privacy: each occurrence keeps its own to/cc; BCC never leaks across mailboxes', async () => {
   const info = byAddress['info@exoticcolors.org'];
   const hr = byAddress['hr@exoticcolors.org'];

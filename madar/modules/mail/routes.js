@@ -223,6 +223,67 @@ async function handle(req, res, url, user, body, helpers) {
     return send(200, { latestByMailbox: latest.map(diagRow), recentErrors: recentErrors.map(diagRow) });
   }
 
+  // ---------- "why don't I see mail for this mailbox?" — 7-point trace ----------
+  if ((m = p.match(/^\/api\/mail\/mailboxes\/(\d+)\/visibility-trace$/)) && req.method === 'GET') {
+    if (!requireMailAdmin()) return true;
+    const id = Number(m[1]);
+    const mb = await one('SELECT * FROM mailboxes WHERE id=$1', [id]);
+    if (!mb) return send(404, { error: 'not found' });
+    const live = require('./live-sync')._state;
+    const lastDiag = await one(`SELECT * FROM sync_diagnostics WHERE mailbox_id=$1 ORDER BY id DESC LIMIT 1`, [id]);
+    const lastJob = await one(`SELECT id, status, error_detail, started_at, finished_at, discovered, imported, skipped FROM sync_jobs WHERE mailbox_id=$1 ORDER BY id DESC LIMIT 1`, [id]);
+    const cursors = await all(`SELECT ss.folder_id, f.name, ss.backfill_done, ss.next_start, ss.last_sync_at, ss.last_error
+      FROM sync_state ss LEFT JOIN folders f ON f.id=ss.folder_id WHERE ss.mailbox_id=$1`, [id]);
+    const occTotal = await one('SELECT COUNT(*)::int n FROM message_occurrences WHERE mailbox_id=$1', [id]);
+    const occ24 = await one(`SELECT COUNT(*)::int n FROM message_occurrences WHERE mailbox_id=$1 AND created_at > now() - interval '24 hours'`, [id]);
+    const dup = await one(`SELECT COUNT(*)::int n FROM fingerprint_metrics WHERE mailbox_id=$1 AND event_type='duplicate_prevented'`, [id]);
+    const myGrant = await one(`SELECT can_view_messages FROM mailbox_grants WHERE user_id=$1 AND mailbox_id=$2`, [user.id, id]);
+    const anyReaders = await one(`SELECT COUNT(*)::int n FROM mailbox_grants WHERE mailbox_id=$1 AND can_view_messages`, [id]);
+    const inMyReadable = (await auth.readableMailboxIds(user)).includes(id);
+
+    const checks = {
+      '1_worker_running': { ok: Boolean(live.enabled), enabled: live.enabled, intervalSec: live.intervalMs / 1000,
+        lastTickAt: live.lastTickAt, nextTickAt: live.nextTickAt },
+      '2_recent_cycle': { ok: Boolean(lastDiag), lastCycleAt: lastDiag ? new Date(lastDiag.created_at).getTime() : null,
+        lastJobStatus: lastJob ? lastJob.status : null },
+      '3_fetched_from_zoho': { ok: Boolean(lastDiag && lastDiag.read_count > 0), read: lastDiag ? lastDiag.read_count : 0,
+        lastEndpoint: lastDiag ? lastDiag.endpoint : null, httpStatus: lastDiag ? lastDiag.http_status : null },
+      '4_inserted_or_cursor_dedup': { inserted: lastDiag ? lastDiag.inserted_count : 0, skipped: lastDiag ? lastDiag.skipped_count : 0,
+        duplicatesPrevented: dup.n, cursors: cursors.map(c => ({ folder: c.name, backfillDone: c.backfill_done,
+          nextStart: c.next_start, lastSyncAt: c.last_sync_at ? new Date(c.last_sync_at).getTime() : null, lastError: c.last_error })) },
+      '5_stored_but_hidden': { storedInDb: occTotal.n, storedLast24h: occ24.n,
+        youHaveReadGrant: Boolean(myGrant && myGrant.can_view_messages), mailboxInYourReadableSet: inMyReadable,
+        anyReadersGranted: anyReaders.n,
+        hiddenByGrant: occTotal.n > 0 && !inMyReadable },
+      '6_status_syncing': { status: mb.status, statusDetail: mb.status_detail, stuck: mb.status === 'syncing' },
+      '7_last_diagnostics': lastDiag ? {
+        traceId: lastDiag.trace_id, stage: lastDiag.stage, outcome: lastDiag.outcome,
+        read: lastDiag.read_count, inserted: lastDiag.inserted_count, skipped: lastDiag.skipped_count, routed: lastDiag.routed_count,
+        error: lastDiag.outcome === 'error' ? { class: lastDiag.error_class, message: lastDiag.error_message,
+          stack: lastDiag.error_stack, sqlState: lastDiag.sql_state, constraint: lastDiag.constraint_name } : null,
+      } : null,
+    };
+
+    // decisive verdict — the FIRST failing gate, in causal order
+    let verdict;
+    if (mb.strategy !== 'mail_api') verdict = 'هذا الصندوق ليس مسار قراءة حية (strategy≠mail_api) — بريده يأتي عبر التوجيه أو الأرشيف فقط.';
+    else if (!mb.is_pilot || !mb.sync_enabled) verdict = 'المزامنة غير مفعّلة: فعّل Pilot ثم اضغط «بدء Pilot Sync» — الـworker لا يلمس صندوقًا لم يُفعّل صراحةً.';
+    // A grant block on ALREADY-stored mail is decisive and masks every worker/cycle
+    // gate below it: no amount of worker-running reveals mail you can't read. So if
+    // messages exist in the DB but aren't in your readable set, that IS the reason.
+    else if (occTotal.n > 0 && !inMyReadable) verdict = `الرسائل محفوظة (${occTotal.n} في القاعدة) لكنها محجوبة عنك: لا تملك صلاحية can_view_messages على هذا الصندوق. امنح نفسك (أو القارئ المقصود) القراءة من «المستخدمون والصلاحيات» — سياسة الخصوصية تمنع الأدمن من قراءة المحتوى دون منح صريح.`;
+    else if (!live.enabled) verdict = 'عامل المزامنة الحية متوقف (MADAR_LIVE_SYNC=off) — شغّله.';
+    else if (lastDiag && lastDiag.outcome === 'error') verdict = `آخر دورة فشلت في مرحلة «${lastDiag.stage}» — افتح التشخيص (trace ${lastDiag.trace_id}).`;
+    else if (mb.status === 'syncing') verdict = 'الصندوق عالق على syncing — أعد التشغيل ليُصحَّح تلقائيًا، أو استأنف Pilot.';
+    else if (!lastDiag) verdict = 'لا توجد أي دورة مزامنة بعد — اضغط «مزامنة الآن» أو انتظر الدورة التالية.';
+    else if (occTotal.n === 0 && lastDiag.read_count > 0) verdict = 'Zoho أعاد رسائل لكن لم تُدرَج — راجع عدّادات inserted/skipped وdedup أدناه.';
+    else if (lastDiag.read_count === 0) verdict = 'المزامنة تعمل لكن Zoho لم يُعِد رسائل جديدة في آخر دورة (لا وارد جديد، أو المؤشر عند القمة).';
+    else verdict = 'كل الفحوص سليمة والرسائل مرئية لك — إن كنت لا تراها في الواجهة فحدّث الصفحة أو اختر الصندوق من القائمة.';
+
+    return send(200, { mailbox: mb.address, strategy: mb.strategy, isPilot: mb.is_pilot, syncEnabled: mb.sync_enabled,
+      verdict, checks });
+  }
+
   // ---------- canonical-identity collision metrics + fp3 validation ----------
   if (p === '/api/mail/fingerprint-metrics' && req.method === 'GET') {
     if (!requireMailAdmin()) return true;
