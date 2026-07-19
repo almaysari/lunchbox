@@ -54,8 +54,8 @@ const CLASSIFICATIONS = {
   },
   no_member_copy_on_zoho: {
     engineDefect: false,
-    meaning: 'The canary is not visible on Zoho in ANY synced member hot folder — Zoho never delivered a member copy (group delivery settings), or the message was not sent.',
-    nextAction: 'Verify the email was actually sent; check the Zoho group’s delivery setting (members must receive copies), or send from/to a synced member account.',
+    meaning: 'The canary is not visible on Zoho in ANY synced member hot folder — Zoho never delivered a member copy: the message was not sent, the group holds external mail in its moderation queue (Moderated access), or member delivery is off.',
+    nextAction: 'Deterministic re-test: send the canary FROM a synced member account TO the shared address (the Sent copy routes regardless of group delivery). For external senders, check the group’s access level / moderation queue in Zoho Admin.',
   },
 };
 
@@ -85,12 +85,20 @@ function classifyCapture(ev) {
 // I/O: gather every link's evidence for one shared address + canary subject.
 async function collectEvidence(sharedAddress, subject) {
   const shared = await one(
-    `SELECT id, address, detected_type, strategy, members FROM mailboxes WHERE lower(address)=lower($1)`,
+    `SELECT id, address, detected_type, strategy, members, moderators, access_level
+       FROM mailboxes WHERE lower(address)=lower($1)`,
     [sharedAddress]);
   const sharedRegistered = Boolean(shared && shared.detected_type === 'shared_mailbox');
   const ev = {
     sharedAddress: sharedAddress.toLowerCase(), subject, sharedRegistered,
     sharedMailboxId: shared ? Number(shared.id) : null,
+    // delivery-shape context: a Moderated group holds EXTERNAL senders' mail in
+    // its moderation queue — members never get a copy until a moderator
+    // approves, which fully explains a no_member_copy_on_zoho verdict
+    accessLevel: shared ? shared.access_level || null : null,
+    moderators: shared
+      ? (Array.isArray(shared.moderators) ? shared.moderators : JSON.parse(shared.moderators || '[]'))
+      : [],
     routedAddresses: [], members: [], syncedMembers: [],
     storedInShared: 0, storedInMembers: [], zohoHits: [], probeErrors: [],
   };

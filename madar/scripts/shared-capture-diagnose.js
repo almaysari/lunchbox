@@ -54,6 +54,8 @@ async function main() {
     nextAction: v.nextAction,
     evidence: {
       sharedRegistered: ev.sharedRegistered,
+      groupAccessLevel: ev.accessLevel,
+      groupModerators: ev.moderators,
       routedAddresses: ev.routedAddresses,
       groupMembers: ev.members,
       syncedMembers: ev.syncedMembers,
