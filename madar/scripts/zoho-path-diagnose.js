@@ -22,6 +22,10 @@
 //
 // Usage:
 //   docker compose exec app node scripts/zoho-path-diagnose.js <mailbox-address> [--repeat N] [--skip-b]
+// Keyring bootstrap FIRST — without it this CLI decrypted with an EMPTY keyring
+// and every tenant saw the artifact "No encryption key for version k1" (the
+// server was healthy all along). Same init path as server.js.
+require('../core/bootstrap').initCryptoFromEnv();
 const { one, closeDb } = require('../core/db');
 const { ZohoClient } = require('../modules/mail/zoho-client');
 const { ZohoMailApiConnector } = require('../modules/mail/connectors/zoho-mail-api');

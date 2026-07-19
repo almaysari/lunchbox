@@ -882,6 +882,82 @@ test('HTTP + timeout classifications: scope_denied/401/429/account_mismatch/zoho
   hang.close();
 });
 
+// ---------- real-tenant defects: CLI keyring, resume freshness, stale-job self-heal ----------
+test('CLI keyring: a separate process without bootstrap reproduces "No encryption key for version k1"; with bootstrap it decrypts — and every decrypting CLI uses it', async () => {
+  const { execFileSync } = require('node:child_process');
+  const fs = require('node:fs');
+  const cipher = cryptoCore.encrypt('probe-value'); // ciphertext of a non-secret probe
+  // historical-key mechanism under test too: KEY_V1 as version 1 + KEY_V2 via
+  // the documented MADAR_ENCRYPTION_KEY_V2 rotation variable
+  const env = { ...process.env, MADAR_ENCRYPTION_KEY: KEY_V1, MADAR_ENCRYPTION_KEY_V2: KEY_V2,
+    MADAR_SESSION_SECRET: SESS_KEY, MADAR_CSRF_SECRET: CSRF_KEY };
+
+  // (1) REPRODUCE the real-tenant artifact: fresh process, decrypt WITHOUT init.
+  // (The tenant saw "version k1" because its write version is 1; the suite's
+  // write version may have rotated — the error class is the same.)
+  const repro = execFileSync('node', ['-e', `
+    try { require('${path.join(__dirname, '..', 'core', 'crypto')}').decrypt(process.argv[1]); console.log('DECRYPTED'); }
+    catch (e) { console.log('ERR:' + e.message); }`, cipher], { env, encoding: 'utf8' });
+  assert.match(repro, /ERR:No encryption key for version k\d+ — add it to the keyring/,
+    'a CLI process without bootstrap must reproduce the exact real-tenant error');
+
+  // (2) the FIX: same fresh process, keyring initialized via the shared bootstrap
+  const fixed = execFileSync('node', ['-e', `
+    require('${path.join(__dirname, '..', 'core', 'bootstrap')}').initCryptoFromEnv();
+    console.log(require('${path.join(__dirname, '..', 'core', 'crypto')}').decrypt(process.argv[1]));`, cipher],
+    { env, encoding: 'utf8' });
+  assert.strictEqual(fixed.trim(), 'probe-value', 'bootstrapped CLI decrypts with the same env the server uses');
+
+  // (3) every CLI entrypoint that reaches decrypt() must call the bootstrap
+  for (const script of ['zoho-path-diagnose.js', 'livesync-doctor.js', 'livesync-acceptance.js']) {
+    const src = fs.readFileSync(path.join(__dirname, '..', 'scripts', script), 'utf8');
+    assert.ok(src.includes("initCryptoFromEnv"), `${script} must initialize the keyring via core/bootstrap`);
+  }
+});
+
+test('job lifecycle: resume refreshes started_at (a live resumed job is never falsely stale); a provably stale running job self-heals on start instead of blocking', async () => {
+  const admin = byAddress['m.almaysari@exoticcolors.org'];
+  await db.q('UPDATE mailboxes SET is_pilot=TRUE, sync_enabled=TRUE WHERE id=$1', [admin.id]);
+  await db.q("UPDATE sync_jobs SET status='cancelled', finished_at=now() WHERE mailbox_id=$1 AND status IN ('queued','running','paused')", [admin.id]);
+
+  // (1) resume freshness: a paused job with an ANCIENT started_at is resumed —
+  // the new attempt must be measured from NOW, else reconcileStale would pause
+  // a healthy in-flight resume forever (the oscillation that pins one job id).
+  const old = await db.one(`INSERT INTO sync_jobs (mailbox_id, status, started_at, created_at)
+    VALUES ($1, 'paused', now() - interval '3 days', now() - interval '3 days') RETURNING id`, [admin.id]);
+  const s1 = await sync.syncMailbox(admin.id, { maxPages: 1 }); // createJob resumes the paused job
+  assert.strictEqual(s1.jobId, Number(old.id), 'the paused job was resumed, not duplicated');
+  const afterResume = await db.one('SELECT status, started_at FROM sync_jobs WHERE id=$1', [old.id]);
+  assert.strictEqual(afterResume.status, 'completed');
+  assert.ok(Date.now() - new Date(afterResume.started_at).getTime() < 60000,
+    'started_at reflects THIS attempt (fresh), not the original 3-day-old start');
+
+  // (2) stale-running self-heal: the real-tenant blocker — a job stuck 'running'
+  // (dead process) while the latest diagnostics row says done/ok. Starting a
+  // sync must NOT throw "already running": the same 15-minute predicate
+  // reconcileStale uses proves it dead, pauses it, and resumes it in place.
+  const stuck = await db.one(`INSERT INTO sync_jobs (mailbox_id, status, started_at, created_at)
+    VALUES ($1, 'running', now() - interval '25 minutes', now() - interval '25 minutes') RETURNING id`, [admin.id]);
+  const s2 = await sync.syncMailbox(admin.id, { maxPages: 1 });
+  assert.strictEqual(s2.jobId, Number(stuck.id), 'the stale running job was reclaimed and resumed');
+  const healed = await db.one('SELECT status FROM sync_jobs WHERE id=$1', [stuck.id]);
+  assert.strictEqual(healed.status, 'completed', 'reclaimed job ran to completion — mailbox unblocked');
+
+  // (3) a stale 'queued' job (crash between INSERT and running) heals the same way
+  const stuckQ = await db.one(`INSERT INTO sync_jobs (mailbox_id, status, created_at)
+    VALUES ($1, 'queued', now() - interval '25 minutes') RETURNING id`, [admin.id]);
+  const s3 = await sync.syncMailbox(admin.id, { maxPages: 1 });
+  assert.strictEqual(s3.jobId, Number(stuckQ.id), 'stale queued job reclaimed too');
+
+  // (4) concurrent-sync protection MUST remain intact: a FRESH running job
+  // (live attempt) still rejects a second start.
+  const fresh = await db.one(`INSERT INTO sync_jobs (mailbox_id, status, started_at)
+    VALUES ($1, 'running', now() - interval '20 seconds') RETURNING id`, [admin.id]);
+  await assert.rejects(() => sync.syncMailbox(admin.id, { maxPages: 1 }), /already running/,
+    'a genuinely live job still blocks concurrent starts');
+  await db.q("UPDATE sync_jobs SET status='cancelled', finished_at=now() WHERE id=$1", [fresh.id]);
+});
+
 // ---------- diagnostics ----------
 test('diagnostics: failed sync records full typed context (stage, endpoint, stack); success records ok row; UI/500 surface a trace id', async () => {
   // success path first: the admin mailbox sync recorded an 'ok' diagnostics row

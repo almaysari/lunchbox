@@ -240,10 +240,37 @@ async function storeAttachment(canonicalId, providerAttachmentId, name, provider
 
 // ---- sync jobs ----
 async function createJob(mailboxId, userId) {
-  const active = await one(`SELECT id, status FROM sync_jobs WHERE mailbox_id = $1 AND status IN ('queued','running','paused')`, [mailboxId]);
+  const active = await one(`SELECT id, status, started_at, created_at FROM sync_jobs
+    WHERE mailbox_id = $1 AND status IN ('queued','running','paused')`, [mailboxId]);
   if (active) {
     if (active.status === 'paused') return Number(active.id); // resume reuses the paused job
-    throw new Error(`A sync job is already ${active.status} for this mailbox (job ${active.id}).`);
+    // Self-heal on entry (real-tenant defect): a job stuck 'running' (dead
+    // process) — or 'queued' (crash between INSERT and the running update) —
+    // blocked every future start with "already running/queued" until a worker
+    // tick or reboot happened to reconcile it. Apply the SAME staleness
+    // predicate reconcileStale uses — no fresh attempt for 15 minutes is
+    // provably dead (started_at marks the CURRENT attempt) — pause and resume
+    // in place. The UPDATE is status-guarded and RETURNING: if the job finished
+    // in the race window we re-read reality instead of resurrecting a completed
+    // job as a zombie. A genuinely live job still blocks (tested).
+    const staleMs = 15 * 60 * 1000;
+    const attemptAt = new Date(active.started_at || active.created_at).getTime();
+    if ((active.status === 'running' || active.status === 'queued') && attemptAt < Date.now() - staleMs) {
+      const reclaimed = await one(
+        `UPDATE sync_jobs SET status='paused',
+           error_detail='auto-recovered on start: dead attempt (no progress > 15m) reclaimed'
+         WHERE id=$1 AND status=$2 RETURNING id`, [active.id, active.status]);
+      if (reclaimed) return Number(reclaimed.id);      // resume the reclaimed job
+      // lost the race: the job changed state meanwhile — act on reality
+      const now = await one('SELECT status FROM sync_jobs WHERE id=$1', [active.id]);
+      if (now && ['queued', 'running'].includes(now.status)) {
+        throw new Error(`A sync job is already ${now.status} for this mailbox (job ${active.id}).`);
+      }
+      if (now && now.status === 'paused') return Number(active.id);
+      // finished (completed/failed/cancelled) → fall through to a fresh job below
+    } else {
+      throw new Error(`A sync job is already ${active.status} for this mailbox (job ${active.id}).`);
+    }
   }
   try {
     // idx_sync_jobs_one_active (partial unique index) is the real guard:
@@ -432,7 +459,10 @@ async function syncMailbox(mailboxId, { maxPages = 5, userId = null } = {}) {
     throw err;
   }
   const jobId = await createJob(mailboxId, userId);
-  await q("UPDATE sync_jobs SET status='running', started_at = COALESCE(started_at, now()) WHERE id = $1", [jobId]);
+  // started_at = start of THIS attempt (created_at keeps the original). A resume
+  // that kept the ancient started_at looked "stale" to reconcileStale while
+  // healthily mid-flight — the oscillation that pinned one job id forever.
+  await q("UPDATE sync_jobs SET status='running', started_at = now() WHERE id = $1", [jobId]);
   await q("UPDATE mailboxes SET status='syncing' WHERE id=$1", [mailboxId]);
   const routing = await sharedAddressMap();
   const diag = newDiag(mailbox);

@@ -19,6 +19,7 @@
 // Prints a JSON evidence block + a one-line decisive verdict. Contains NO message
 // bodies/subjects and NO tokens.
 
+require('../core/bootstrap').initCryptoFromEnv(); // same keyring init as the server — CLI must never diverge
 const { all, one, q, closeDb } = require('../core/db');
 const auth = require('../core/auth');
 const live = require('../modules/mail/live-sync');

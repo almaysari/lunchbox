@@ -15,6 +15,7 @@
 // `report` works any time (mid-soak too) — it reads only persisted rows.
 // Output contains counts/timings/classifications only: no message content,
 // no tokens.
+require('../core/bootstrap').initCryptoFromEnv(); // same keyring init as the server — CLI must never diverge
 const fs = require('fs');
 const path = require('path');
 const { closeDb, one } = require('../core/db');
