@@ -909,7 +909,7 @@ test('CLI keyring: a separate process without bootstrap reproduces "No encryptio
   assert.strictEqual(fixed.trim(), 'probe-value', 'bootstrapped CLI decrypts with the same env the server uses');
 
   // (3) every CLI entrypoint that reaches decrypt() must call the bootstrap
-  for (const script of ['zoho-path-diagnose.js', 'livesync-doctor.js', 'livesync-acceptance.js', 'job-inspect.js', 'keyring-inspect.js']) {
+  for (const script of ['zoho-path-diagnose.js', 'livesync-doctor.js', 'livesync-acceptance.js', 'job-inspect.js', 'keyring-inspect.js', 'e2e-proof.js']) {
     const src = fs.readFileSync(path.join(__dirname, '..', 'scripts', script), 'utf8');
     assert.ok(src.includes("initCryptoFromEnv"), `${script} must initialize the keyring via core/bootstrap`);
   }
