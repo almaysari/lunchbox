@@ -144,23 +144,36 @@ HTTP 0 المعتم، البريد الجديد الساقط) لم تكن أعط
 هذا هو الدليل الذي اشترطتَه، وأنا لا أستطيع توليده بالنيابة عنك لأنه يتطلب
 نظامك الحي. الأداة تجمعه تلقائيًا:
 
+**القبول دائم (migration 011)**: تعريف الفحص وكل عينة وكل حادثة صفوف في
+PostgreSQL، والعيّان يعمل داخل عملية الخادم المُشرف عليها من Docker — إعادة
+تشغيل الحاوية **تستأنف نفس الفحص تلقائيًا** وتسجَّل كدليل (`restart_detected`
+بتغيّر PID)، لا تقتله. مُثبت بتجربة حقيقية: `kill -9` للخادم أثناء فحص جارٍ ثم
+إعادة تشغيله — نفس الـrun واصل العيّنات وسجّل `{"fromPid":10291,"toPid":11397}`.
+
 ```bash
+# 0) إن كان HTTP 0 قد ظهر: صنّف طبقة العطل الشبكي أولًا (dns/tcp/tls/proxy):
+docker compose exec app node scripts/net-diagnose.js
+
 # 1) شغّل النظام (رسميًا عبر Docker)
 docker compose up -d --build
 
-# 2) (اختياري لكن حاسم) أرسل بريدًا حقيقيًا لصندوق مُزامَن بعنوان فريد مثل:
-#    "ACCEPT-<أي رمز> فحص القبول"
+# 2) ابدأ فحص القبول (الحالة في القاعدة؛ الخادم يعيّن — لا عملية منفصلة تموت):
+docker compose exec app node scripts/livesync-acceptance.js start \
+  --hours 72 --canary "ACCEPT-<رمز فريد>"
 
-# 3) شغّل فحص القبول عدة أيام — يكتب الأدلة ويحكم بنفسه:
-docker compose exec -d app node scripts/livesync-acceptance.js \
-  --hours 72 --canary "ACCEPT-<الرمز>" 
+# 3) أرسل بريدًا حقيقيًا لصندوق مُزامَن بعنوانه ذلك الرمز.
 
-# 4) بعد انتهائه:
-docker compose exec app cat data/acceptance-report.json
+# 4) تابع في أي وقت (يصلح منتصف الفحص، ومن أي عملية):
+docker compose exec app node scripts/livesync-acceptance.js status
+docker compose exec app node scripts/livesync-acceptance.js report
+
+# 5) أعد تشغيل الحاوية متى شئت أثناء الفحص — هذا جزء من الاختبار لا خرق له:
+docker compose restart app
 ```
 
-يفحص كل دقيقة ويحكم PASS/FAIL على: حياة الـworker بلا انقطاع، صفر jobs عالقة،
-صفر mailboxes عالقة، صفر تكرارات (occurrences وcanonicals)، استقرار ذاكرة
-عملية الـworker (<25% نموًّا)، اقتصاد الـtoken (~1/ساعة)، صحة النقل، والتقاط
-الـcanary الحقيقي بلا تكرار مع زمن الوصول. **PASS هنا = Production Ready
-بالتعريف الذي طلبته.** أي FAIL يأتي مع الدليل المصنَّف الذي يحدد الطبقة.
+يفحص كل دقيقة ويحكم PASS/FAIL على: حياة الـworker بلا انقطاع، **البقاء عبر
+إعادة التشغيل** (restarts ملحوظة + استمرار العينات)، صفر jobs عالقة، صفر
+mailboxes عالقة، صفر تكرارات (occurrences وcanonicals)، استقرار ذاكرة عملية
+الـworker (<25% نموًّا)، اقتصاد الـtoken (~1/ساعة)، صحة النقل مصنَّفة، والتقاط
+الـcanary الحقيقي بلا تكرار مع زمن الوصول. أي FAIL يأتي مع الدليل المصنَّف
+الذي يحدد الطبقة. (لا يُعلَن أي "Production Ready" قبل PASS حقيقي هنا.)

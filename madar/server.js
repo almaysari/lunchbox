@@ -279,6 +279,10 @@ async function start() {
   if (require('./modules/mail/live-sync').startLiveSync()) {
     console.log(`[madar] live sync worker started (every ${Math.round((Number(process.env.MADAR_LIVE_SYNC_INTERVAL_SEC) || 120))}s; per-mailbox backoff on errors)`);
   }
+  // Durable acceptance sampler: if an acceptance run is active (or is started
+  // later via the CLI), this supervised loop samples it — so a container
+  // restart RESUMES the soak instead of killing it (state lives in PostgreSQL).
+  require('./modules/mail/acceptance').startAcceptanceSampler();
 }
 
 // ---- crash-only process design: no failure mode requires a MANUAL restart ----
@@ -309,6 +313,7 @@ async function shutdown(signal) {
   if (shuttingDown) return; shuttingDown = true;
   console.log(`[madar] ${signal} — graceful shutdown (worker off, drain, close db)`);
   try { require('./modules/mail/live-sync').stopLiveSync(); } catch { /* heartbeat best-effort */ }
+  try { require('./modules/mail/acceptance').stopAcceptanceSampler(); } catch { /* run state is durable */ }
   server.close(async () => {
     try { await db.closeDb(); } catch { /* pool already gone */ }
     process.exit(0);

@@ -734,6 +734,68 @@ test('mini-soak: 25 consecutive worker ticks leave no stuck jobs, no stuck mailb
   assert.ok(cycles.slice(0, 25).every(c => c.error === null), 'no tick-loop errors across the soak');
 });
 
+// ---------- durable acceptance: the soak must survive restarts ----------
+test('durable acceptance: state in DB, samples accumulate on one run, restart is detected as evidence, evaluation from rows', async () => {
+  const acc = require('../modules/mail/acceptance');
+  // single-active-run invariant (partial unique index — races safe)
+  const CANARY = 'CANARY-' + crypto.randomUUID().slice(0, 8);
+  const run = await acc.startRun({ hours: 1, sampleSec: 5, canary: CANARY });
+  await assert.rejects(() => acc.startRun({ hours: 1 }), /already active/);
+
+  // the canary arrives DURING the run (as in production: a real email sent
+  // mid-soak) — stored through the same ingestion path Live Sync uses
+  const hrBox = byAddress['hr@exoticcolors.org'];
+  const cf = await sync.upsertFolder(hrBox.id, { providerFolderId: 'canary-f', name: 'Canary', type: 'inbox' });
+  await sync.insertMessage(hrBox.id, cf, { providerMessageId: 'canary-1', from: 'ext@example.com',
+    to: 'hr@exoticcolors.org', subject: `${CANARY} acceptance check`, receivedAt: Date.now() - 5000, sentAt: Date.now() - 9000 });
+
+  // healthy heartbeat → samples record worker alive, from PID A
+  await db.q('DELETE FROM sync_worker_heartbeat');
+  await db.q(`INSERT INTO sync_worker_heartbeat (id, enabled, interval_sec, pid, started_at, last_tick_at, updated_at)
+    VALUES (TRUE, TRUE, 120, 1111, now(), now(), now())`);
+  await acc.takeSample(run);
+  await acc.takeSample(run);
+
+  // "container restart": the worker comes back under a NEW pid — the sampler
+  // must CONTINUE the same run and record restart_detected, not lose the soak
+  await db.q('UPDATE sync_worker_heartbeat SET pid = 2222, updated_at = now()');
+  await acc.takeSample(run);
+  const samples = await db.all('SELECT * FROM acceptance_samples WHERE run_id=$1 ORDER BY id', [run.id]);
+  assert.strictEqual(samples.length, 3, 'all samples on the SAME run across the restart');
+  const restart = await db.one(`SELECT detail FROM acceptance_incidents WHERE run_id=$1 AND kind='restart_detected'`, [run.id]);
+  assert.ok(restart, 'restart recorded as evidence');
+  const rd = typeof restart.detail === 'string' ? JSON.parse(restart.detail) : restart.detail;
+  assert.deepStrictEqual({ fromPid: rd.fromPid, toPid: rd.toPid }, { fromPid: 1111, toPid: 2222 });
+
+  // canary from the durable run window + evaluation purely from persisted rows
+  const canary = await db.one(`SELECT detail FROM acceptance_incidents WHERE run_id=$1 AND kind='canary_captured'`, [run.id]);
+  assert.ok(canary, 'canary (real stored message) captured');
+  const ev = await acc.evaluateRun(run.id);
+  assert.strictEqual(ev.samples, 3);
+  assert.strictEqual(ev.checks.no_duplicates.pass, true);
+  assert.strictEqual(ev.checks.canary_captured.pass, true);
+  assert.strictEqual(ev.checks.survives_restart.restartsObserved, 1);
+  assert.strictEqual(ev.verdict, 'PASS');
+
+  // stuck state must flip the verdict — the harness cannot be a rubber stamp
+  await db.q(`UPDATE acceptance_samples SET stuck_jobs = 3 WHERE id = $1`, [samples[1].id]);
+  const evBad = await acc.evaluateRun(run.id);
+  assert.strictEqual(evBad.checks.no_stuck_jobs.pass, false);
+  assert.strictEqual(evBad.verdict, 'FAIL');
+  await db.q(`UPDATE acceptance_samples SET stuck_jobs = 0 WHERE id = $1`, [samples[1].id]);
+
+  // finishing: past ends_at the sampler loop completes the run with a stored verdict
+  await db.q(`UPDATE acceptance_runs SET ends_at = now() - interval '1 second' WHERE id=$1`, [run.id]);
+  const evFinal = await acc.evaluateRun(run.id);
+  await db.q(`UPDATE acceptance_runs SET status='completed', finished_at=now(), evaluation=$1 WHERE id=$2`,
+    [JSON.stringify(evFinal), run.id]);
+  const done = await db.one('SELECT status, evaluation FROM acceptance_runs WHERE id=$1', [run.id]);
+  assert.strictEqual(done.status, 'completed');
+  // a new run can start after completion
+  const run2 = await acc.startRun({ hours: 0.01, sampleSec: 5 });
+  await db.q(`UPDATE acceptance_runs SET status='aborted', finished_at=now() WHERE id=$1`, [run2.id]);
+});
+
 // ---------- diagnostics ----------
 test('diagnostics: failed sync records full typed context (stage, endpoint, stack); success records ok row; UI/500 surface a trace id', async () => {
   // success path first: the admin mailbox sync recorded an 'ok' diagnostics row

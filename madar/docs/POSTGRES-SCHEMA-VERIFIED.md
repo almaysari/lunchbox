@@ -8,6 +8,72 @@
 ```sql
 COMMENT ON SCHEMA public IS '';
 
+CREATE TABLE public.acceptance_incidents (
+    id bigint NOT NULL,
+    run_id bigint NOT NULL,
+    at timestamp with time zone DEFAULT now() NOT NULL,
+    kind text NOT NULL,
+    detail jsonb
+);
+
+CREATE SEQUENCE public.acceptance_incidents_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+ALTER SEQUENCE public.acceptance_incidents_id_seq OWNED BY public.acceptance_incidents.id;
+
+CREATE TABLE public.acceptance_runs (
+    id bigint NOT NULL,
+    status text DEFAULT 'active'::text NOT NULL,
+    planned_hours numeric NOT NULL,
+    sample_sec integer DEFAULT 60 NOT NULL,
+    canary text,
+    started_at timestamp with time zone DEFAULT now() NOT NULL,
+    ends_at timestamp with time zone NOT NULL,
+    finished_at timestamp with time zone,
+    evaluation jsonb,
+    created_by bigint,
+    CONSTRAINT acceptance_runs_status_check CHECK ((status = ANY (ARRAY['active'::text, 'completed'::text, 'aborted'::text])))
+);
+
+CREATE SEQUENCE public.acceptance_runs_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+ALTER SEQUENCE public.acceptance_runs_id_seq OWNED BY public.acceptance_runs.id;
+
+CREATE TABLE public.acceptance_samples (
+    id bigint NOT NULL,
+    run_id bigint NOT NULL,
+    at timestamp with time zone DEFAULT now() NOT NULL,
+    worker_alive boolean NOT NULL,
+    heartbeat_age_sec integer,
+    worker_pid integer,
+    stuck_jobs integer DEFAULT 0 NOT NULL,
+    stuck_mailboxes integer DEFAULT 0 NOT NULL,
+    occurrences_total bigint DEFAULT 0 NOT NULL,
+    duplicate_occurrences integer DEFAULT 0 NOT NULL,
+    duplicate_canonicals integer DEFAULT 0 NOT NULL,
+    transport_errors jsonb,
+    rss_bytes bigint,
+    detail jsonb
+);
+
+CREATE SEQUENCE public.acceptance_samples_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+ALTER SEQUENCE public.acceptance_samples_id_seq OWNED BY public.acceptance_samples.id;
+
 CREATE TABLE public.archive_imports (
     id bigint NOT NULL,
     mailbox_id bigint NOT NULL,
@@ -453,6 +519,12 @@ CREATE SEQUENCE public.users_id_seq
 
 ALTER SEQUENCE public.users_id_seq OWNED BY public.users.id;
 
+ALTER TABLE ONLY public.acceptance_incidents ALTER COLUMN id SET DEFAULT nextval('public.acceptance_incidents_id_seq'::regclass);
+
+ALTER TABLE ONLY public.acceptance_runs ALTER COLUMN id SET DEFAULT nextval('public.acceptance_runs_id_seq'::regclass);
+
+ALTER TABLE ONLY public.acceptance_samples ALTER COLUMN id SET DEFAULT nextval('public.acceptance_samples_id_seq'::regclass);
+
 ALTER TABLE ONLY public.archive_imports ALTER COLUMN id SET DEFAULT nextval('public.archive_imports_id_seq'::regclass);
 
 ALTER TABLE ONLY public.attachments ALTER COLUMN id SET DEFAULT nextval('public.attachments_id_seq'::regclass);
@@ -484,6 +556,15 @@ ALTER TABLE ONLY public.sync_jobs ALTER COLUMN id SET DEFAULT nextval('public.sy
 ALTER TABLE ONLY public.sync_worker_cycles ALTER COLUMN id SET DEFAULT nextval('public.sync_worker_cycles_id_seq'::regclass);
 
 ALTER TABLE ONLY public.users ALTER COLUMN id SET DEFAULT nextval('public.users_id_seq'::regclass);
+
+ALTER TABLE ONLY public.acceptance_incidents
+    ADD CONSTRAINT acceptance_incidents_pkey PRIMARY KEY (id);
+
+ALTER TABLE ONLY public.acceptance_runs
+    ADD CONSTRAINT acceptance_runs_pkey PRIMARY KEY (id);
+
+ALTER TABLE ONLY public.acceptance_samples
+    ADD CONSTRAINT acceptance_samples_pkey PRIMARY KEY (id);
 
 ALTER TABLE ONLY public.archive_imports
     ADD CONSTRAINT archive_imports_pkey PRIMARY KEY (id);
@@ -593,6 +674,12 @@ ALTER TABLE ONLY public.users
 ALTER TABLE ONLY public.users
     ADD CONSTRAINT users_pkey PRIMARY KEY (id);
 
+CREATE INDEX idx_acceptance_incidents_run ON public.acceptance_incidents USING btree (run_id, id);
+
+CREATE UNIQUE INDEX idx_acceptance_one_active ON public.acceptance_runs USING btree ((true)) WHERE (status = 'active'::text);
+
+CREATE INDEX idx_acceptance_samples_run ON public.acceptance_samples USING btree (run_id, id);
+
 CREATE INDEX idx_archive_imports_mailbox ON public.archive_imports USING btree (mailbox_id, id DESC);
 
 CREATE INDEX idx_audit_at ON public.audit_log USING btree (at DESC);
@@ -624,6 +711,15 @@ CREATE UNIQUE INDEX idx_sync_jobs_one_active ON public.sync_jobs USING btree (ma
 CREATE INDEX idx_worker_cycles_recent ON public.sync_worker_cycles USING btree (id DESC);
 
 CREATE INDEX idx_worker_cycles_source ON public.sync_worker_cycles USING btree (source, id DESC);
+
+ALTER TABLE ONLY public.acceptance_incidents
+    ADD CONSTRAINT acceptance_incidents_run_id_fkey FOREIGN KEY (run_id) REFERENCES public.acceptance_runs(id) ON DELETE CASCADE;
+
+ALTER TABLE ONLY public.acceptance_runs
+    ADD CONSTRAINT acceptance_runs_created_by_fkey FOREIGN KEY (created_by) REFERENCES public.users(id) ON DELETE SET NULL;
+
+ALTER TABLE ONLY public.acceptance_samples
+    ADD CONSTRAINT acceptance_samples_run_id_fkey FOREIGN KEY (run_id) REFERENCES public.acceptance_runs(id) ON DELETE CASCADE;
 
 ALTER TABLE ONLY public.archive_imports
     ADD CONSTRAINT archive_imports_mailbox_id_fkey FOREIGN KEY (mailbox_id) REFERENCES public.mailboxes(id);
