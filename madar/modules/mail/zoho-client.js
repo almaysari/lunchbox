@@ -80,6 +80,23 @@ class ZohoClient {
     return new ZohoClient(conn);
   }
 
+  // Connection-scoped SHARED client. A fresh client per sync cycle loses the
+  // in-memory access token, forcing a Zoho token refresh per mailbox per cycle —
+  // Zoho rate-limits refresh-token usage, so that design produced intermittent
+  // auth failures. One cached instance per connection reuses the token across
+  // cycles AND serializes request pacing across all mailboxes of the connection
+  // (Zoho's rate limit is per-org, not per-mailbox). The connection row is
+  // re-read on every call so config changes (bases, secret) apply immediately.
+  static async cachedForConnection(connectionId) {
+    const id = Number(connectionId);
+    const conn = await one('SELECT * FROM connections WHERE id = $1', [id]);
+    if (!conn) { ZohoClient._cache.delete(id); throw new Error('Connection not found: ' + connectionId); }
+    let client = ZohoClient._cache.get(id);
+    if (!client) { client = new ZohoClient(conn); ZohoClient._cache.set(id, client); }
+    else client.conn = conn; // refresh config; token cache (memory+DB) stays valid
+    return client;
+  }
+
   authorizeUrl(redirectUri) {
     const u = new URL('/oauth/v2/auth', this.conn.accounts_base);
     u.searchParams.set('response_type', 'code');
@@ -105,10 +122,11 @@ class ZohoClient {
     if (!res.ok || json.error || !json.refresh_token) {
       throw new Error('Zoho token exchange failed: ' + (json.error || res.status));
     }
-    await q("UPDATE connections SET refresh_token_enc = $1, status = 'connected', status_detail = '' WHERE id = $2",
-      [encrypt(json.refresh_token), this.conn.id]);
     this.accessToken = json.access_token;
     this.expiry = Date.now() + (json.expires_in - 60) * 1000;
+    await q(`UPDATE connections SET refresh_token_enc = $1, access_token_enc = $2,
+             access_token_expires_at = $3, status = 'connected', status_detail = '' WHERE id = $4`,
+      [encrypt(json.refresh_token), encrypt(this.accessToken), new Date(this.expiry), this.conn.id]);
   }
 
   async token() {
@@ -121,20 +139,37 @@ class ZohoClient {
     return tx(async (client) => {
       await client.query('SELECT pg_advisory_xact_lock($1, $2)', [0x4d41, Number(this.conn.id)]);
       if (this.accessToken && Date.now() < this.expiry) return this.accessToken; // refreshed while waiting
-      const fresh = await client.query('SELECT refresh_token_enc FROM connections WHERE id = $1', [this.conn.id]);
+      const fresh = (await client.query(
+        `SELECT refresh_token_enc, access_token_enc, access_token_expires_at
+         FROM connections WHERE id = $1`, [this.conn.id])).rows[0];
+      // Persisted token cache (encrypted at rest): another process — or this one
+      // before a restart — may already hold a valid access token. Reusing it is
+      // what keeps refreshes at ~1/hour/connection instead of one per mailbox per
+      // cycle (Zoho rate-limits refresh-token usage; churn = intermittent 4xx).
+      const expMs = fresh.access_token_expires_at ? new Date(fresh.access_token_expires_at).getTime() : 0;
+      if (fresh.access_token_enc && expMs > Date.now()) {
+        try {
+          this.accessToken = decrypt(fresh.access_token_enc);
+          this.expiry = expMs;
+          return this.accessToken;
+        } catch { /* undecryptable (key rotation) → fall through to refresh */ }
+      }
       const res = await fetch(new URL('/oauth/v2/token', this.conn.accounts_base), {
         method: 'POST',
         body: new URLSearchParams({
           grant_type: 'refresh_token',
-          refresh_token: decrypt(fresh.rows[0].refresh_token_enc),
+          refresh_token: decrypt(fresh.refresh_token_enc),
           client_id: this.conn.client_id,
           client_secret: decrypt(this.conn.client_secret_enc),
         }),
       });
       const json = await res.json();
       if (!res.ok || json.error) throw new Error('Zoho token refresh failed: ' + (json.error || res.status));
-      this.accessToken = json.access_token; // memory only — never persisted or logged
+      this.accessToken = json.access_token; // plaintext in memory only — encrypted before persisting, never logged
       this.expiry = Date.now() + (json.expires_in - 60) * 1000;
+      ZohoClient._refreshes++;
+      await client.query('UPDATE connections SET access_token_enc = $1, access_token_expires_at = $2 WHERE id = $3',
+        [encrypt(this.accessToken), new Date(this.expiry), this.conn.id]);
       return this.accessToken;
     });
   }
@@ -181,5 +216,8 @@ class ZohoClient {
     return this.get(`/api/accounts/${accountId}/folders/${folderId}/messages/${messageId}/attachments/${attachmentId}`, { raw: true });
   }
 }
+
+ZohoClient._cache = new Map();  // connection id -> shared client instance
+ZohoClient._refreshes = 0;      // process-lifetime refresh count (observability)
 
 module.exports = { ZohoClient, READ_SCOPES };

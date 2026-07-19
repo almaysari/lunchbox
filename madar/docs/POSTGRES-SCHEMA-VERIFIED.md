@@ -118,6 +118,8 @@ CREATE TABLE public.connections (
     created_by bigint,
     created_at timestamp with time zone DEFAULT now() NOT NULL,
     encryption_key_version integer DEFAULT 1 NOT NULL,
+    access_token_enc text,
+    access_token_expires_at timestamp with time zone,
     CONSTRAINT connections_status_check CHECK ((status = ANY (ARRAY['pending'::text, 'connected'::text, 'error'::text])))
 );
 

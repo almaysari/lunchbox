@@ -9,6 +9,7 @@ const crypto = require('node:crypto');
 const DB_URL = process.env.TEST_DATABASE_URL || 'postgresql://madar:madar_dev@localhost:5432/madar_test';
 process.env.DATABASE_URL = DB_URL;
 process.env.MADAR_MAX_RPM = '100000';
+process.env.MADAR_CHECKPOINT_MS = '0'; // tests need every pause/cancel checkpoint live (prod throttles to 1s)
 const KEY_V1 = crypto.randomBytes(32).toString('hex');
 const KEY_V2 = crypto.randomBytes(32).toString('hex');
 const SESS_KEY = crypto.randomBytes(32).toString('hex');
@@ -24,7 +25,7 @@ const { ZohoClient, READ_SCOPES } = require('../modules/mail/zoho-client');
 const detection = require('../modules/mail/detection');
 const sync = require('../modules/mail/sync');
 const routes = require('../modules/mail/routes');
-const { startMockZoho, ADMIN_ACCOUNT_ID, _messages } = require('./mock-zoho');
+const { startMockZoho, ADMIN_ACCOUNT_ID, _messages, _tokenStats } = require('./mock-zoho');
 
 const MIGRATE = path.join(__dirname, '..', 'scripts', 'migrate.js');
 const runMigrate = () => execFileSync('node', [MIGRATE], { env: { ...process.env, DATABASE_URL: DB_URL }, encoding: 'utf8' });
@@ -621,6 +622,116 @@ test('worker status is read from the DB heartbeat (not a process singleton), and
   const http404 = new ZohoApiError('fetch_messages', '/x', 404, { status: { code: 404, description: 'Invalid' } });
   assert.strictEqual(http404.transport, null);
   assert.match(http404.message, /HTTP 404/);
+});
+
+// ---------- production-readiness: token economy, scheduler, retention, concurrency, health ----------
+test('OAuth token economy: one shared client per connection, persisted token reused across processes, refresh only on expiry', async () => {
+  const admin = byAddress['m.almaysari@exoticcolors.org'];
+  await db.q('UPDATE mailboxes SET is_pilot=TRUE, sync_enabled=TRUE WHERE id=$1', [admin.id]);
+
+  // Two full cycles must NOT refresh per cycle (the old design refreshed every
+  // mailbox × every cycle and tripped Zoho's refresh-token rate limits).
+  const before = _tokenStats.requests;
+  await sync.syncMailbox(admin.id, { maxPages: 1 });
+  await sync.syncMailbox(admin.id, { maxPages: 1 });
+  const afterTwoCycles = _tokenStats.requests - before;
+  assert.ok(afterTwoCycles <= 1, `two cycles caused ${afterTwoCycles} token refreshes — must be ≤1 (shared client cache)`);
+
+  // Cross-process reuse: wipe the in-memory client cache (≈ a fresh process/CLI).
+  // The persisted encrypted token must be reused — zero new refreshes.
+  ZohoClient._cache.clear();
+  const beforeFresh = _tokenStats.requests;
+  await sync.syncMailbox(admin.id, { maxPages: 1 });
+  assert.strictEqual(_tokenStats.requests - beforeFresh, 0,
+    'a fresh process must reuse the persisted access token, not hit the token endpoint');
+
+  // Expiry → renewal: expire the persisted token and drop memory; the next cycle
+  // must refresh EXACTLY once and persist the new token + expiry.
+  const connRow = await db.one('SELECT connection_id FROM mailboxes WHERE id=$1', [admin.id]);
+  await db.q("UPDATE connections SET access_token_expires_at = now() - interval '1 minute' WHERE id=$1", [connRow.connection_id]);
+  ZohoClient._cache.clear();
+  const beforeExpiry = _tokenStats.requests;
+  await sync.syncMailbox(admin.id, { maxPages: 1 });
+  assert.strictEqual(_tokenStats.requests - beforeExpiry, 1, 'expired token → exactly one refresh');
+  const conn = await db.one('SELECT access_token_enc, access_token_expires_at FROM connections WHERE id=$1', [connRow.connection_id]);
+  assert.ok(conn.access_token_enc && new Date(conn.access_token_expires_at) > new Date(), 'renewed token persisted encrypted with future expiry');
+  assert.ok(!String(conn.access_token_enc).includes('mock-access-token'), 'persisted token is encrypted, never plaintext');
+});
+
+test('folder scheduler: inbox/sent are hot every cycle; cold folders rotate; backfill never abandoned', () => {
+  const now = Date.now();
+  const done = (ageMs) => ({ backfill_done: true, last_sync_at: new Date(now - ageMs) });
+  // hot folders: always due, regardless of freshness
+  assert.ok(sync.folderDue({ type: 'inbox' }, done(0), now));
+  assert.ok(sync.folderDue({ type: 'sent' }, done(0), now));
+  // cold folder mid-backfill: due (backfill progress must never stall)
+  assert.ok(sync.folderDue({ type: 'archive' }, { backfill_done: false, last_sync_at: new Date(now) }, now));
+  assert.ok(sync.folderDue({ type: 'archive' }, null, now), 'never-synced folder is due');
+  // cold folder, freshly synced: NOT due (this is the API-volume saving)
+  assert.ok(!sync.folderDue({ type: 'archive' }, done(60 * 1000), now));
+  // cold folder past the rotation interval (default 900s): due again
+  assert.ok(sync.folderDue({ type: 'archive' }, done(901 * 1000), now));
+});
+
+test('retention: worker cycles and diagnostics older than the window are pruned; recent rows and audit are kept', async () => {
+  await db.q(`INSERT INTO sync_worker_cycles (source, ok, created_at) VALUES ('worker', TRUE, now() - interval '30 days')`);
+  await db.q(`INSERT INTO sync_worker_cycles (source, ok, created_at) VALUES ('worker', TRUE, now())`);
+  await db.q(`INSERT INTO sync_diagnostics (trace_id, mailbox_address, stage, outcome, created_at)
+              VALUES ('old-trace', 'x@y', 'done', 'ok', now() - interval '30 days')`);
+  const auditBefore = (await db.one('SELECT COUNT(*)::int n FROM audit_log')).n;
+  const r = await sync.pruneObservability(14);
+  assert.ok(r.cyclesPruned >= 1 && r.diagnosticsPruned >= 1, 'old operational rows pruned');
+  assert.strictEqual((await db.one("SELECT COUNT(*)::int n FROM sync_diagnostics WHERE trace_id='old-trace'")).n, 0);
+  assert.ok((await db.one('SELECT COUNT(*)::int n FROM sync_worker_cycles')).n >= 1, 'recent cycles kept');
+  assert.strictEqual((await db.one('SELECT COUNT(*)::int n FROM audit_log')).n, auditBefore, 'audit is NEVER pruned by observability retention');
+});
+
+test('concurrency: 20 parallel inserts of one message across mailboxes — no deadlock, one canonical, no lost copies', async () => {
+  const boxes = ['hr@exoticcolors.org', 'finance@exoticcolors.org', 'info@exoticcolors.org', 'm.almaysari@exoticcolors.org']
+    .map(a => byAddress[a]);
+  const folders = [];
+  for (const b of boxes) folders.push(await sync.upsertFolder(b.id, { providerFolderId: 'hammer-f', name: 'Hammer', type: 'inbox' }));
+  const msg = { providerMessageId: 'hammer-1', from: 'load@example.com', to: 'all@exoticcolors.org',
+    subject: 'Concurrency hammer', receivedAt: 1784300000000, sentAt: 1784300000000 };
+  // 4 mailboxes × 5 identical attempts each, all in flight at once
+  const attempts = [];
+  for (let i = 0; i < 5; i++) for (let b = 0; b < boxes.length; b++) {
+    attempts.push(sync.insertMessage(boxes[b].id, folders[b], msg));
+  }
+  const results = await Promise.all(attempts); // any deadlock (40P01) or constraint error would reject
+  const canon = await db.one(`SELECT COUNT(DISTINCT c.id)::int canon FROM canonical_messages c WHERE c.subject='Concurrency hammer'`);
+  assert.strictEqual(canon.canon, 1, 'exactly one canonical under full concurrency');
+  const occ = await db.one(`SELECT COUNT(*)::int n FROM message_occurrences o
+    JOIN canonical_messages c ON c.id=o.canonical_message_id WHERE c.subject='Concurrency hammer'`);
+  assert.strictEqual(occ.n, boxes.length, 'exactly one occurrence per mailbox — duplicates all rejected, none lost');
+  assert.strictEqual(results.filter(r => r.occurrenceId).length, boxes.length, 'exactly 4 of 20 attempts won');
+});
+
+test('worker health: /healthz block reports running/stale + stuck jobs and mailboxes as numbers', async () => {
+  const liveSync = require('../modules/mail/live-sync');
+  await db.q('DELETE FROM sync_worker_heartbeat');
+  await db.q(`INSERT INTO sync_worker_heartbeat (id, enabled, interval_sec, pid, started_at, last_tick_at, updated_at)
+    VALUES (TRUE, TRUE, 120, 777, now(), now(), now())`);
+  const h = await liveSync.workerHealth();
+  assert.strictEqual(h.running, true);
+  assert.strictEqual(typeof h.stuckJobs, 'number');
+  assert.strictEqual(typeof h.stuckMailboxes, 'number');
+  assert.strictEqual(h.stuckJobs, 0, 'no stuck jobs after the whole suite ran');
+  assert.strictEqual(h.stuckMailboxes, 0, 'no stuck mailboxes after the whole suite ran');
+});
+
+test('mini-soak: 25 consecutive worker ticks leave no stuck jobs, no stuck mailboxes, bounded in-memory state', async () => {
+  const liveSync = require('../modules/mail/live-sync');
+  for (let i = 0; i < 25; i++) await liveSync.tickOnce({ source: 'worker' });
+  const running = await db.one("SELECT COUNT(*)::int n FROM sync_jobs WHERE status='running'");
+  assert.strictEqual(running.n, 0, 'no job left running after ticks complete');
+  const syncing = await db.one("SELECT COUNT(*)::int n FROM mailboxes WHERE status='syncing'");
+  assert.strictEqual(syncing.n, 0, 'no mailbox left on syncing');
+  const eligible = await db.one("SELECT COUNT(*)::int n FROM mailboxes WHERE strategy='mail_api' AND is_pilot AND sync_enabled");
+  assert.ok(liveSync._state.perMailbox.size <= eligible.n, 'per-mailbox state map bounded by eligible mailboxes');
+  const cycles = await liveSync.recentCycles(30, 'worker');
+  assert.ok(cycles.length >= 25, 'every tick logged a cycle row');
+  assert.ok(cycles.slice(0, 25).every(c => c.error === null), 'no tick-loop errors across the soak');
 });
 
 // ---------- diagnostics ----------

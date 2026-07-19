@@ -280,6 +280,7 @@ async function recoverStaleJobs() {
 // so we pause it (cursor is persisted → createJob resumes it) and un-stick the
 // mailbox. Age-gating means a legitimately long manual sync is never aborted.
 async function reconcileStale(staleMin = 15) {
+  staleMin = Math.max(1, Math.floor(Number(staleMin) || 15)); // hardened: interpolated into interval literals below
   const { all } = require('../../core/db');
   const paused = await all(
     `UPDATE sync_jobs SET status='paused', error_detail='auto-recovered: running with no progress > ${staleMin}m (worker un-stall)'
@@ -293,6 +294,20 @@ async function reconcileStale(staleMin = 15) {
                        AND COALESCE(j.started_at, j.created_at) >= now() - interval '${staleMin} minutes')
      RETURNING id`);
   return { pausedJobs: paused.length, unstuckMailboxes: unstuck.length };
+}
+
+// Observability retention. sync_worker_cycles (one row/tick ≈ 720/day) and
+// sync_diagnostics (one row per mailbox per cycle) grow without bound; over a
+// multi-day unattended run that is disk bloat and slow queries. Operational
+// telemetry is pruned after MADAR_RETENTION_DAYS (default 14). DELIBERATELY NOT
+// pruned here: audit_log (security evidence), fingerprint_metrics (identity
+// evidence, tiny), messages/occurrences (the actual mail).
+async function pruneObservability(days = Number(process.env.MADAR_RETENTION_DAYS) || 14) {
+  days = Math.max(1, Math.floor(Number(days) || 14));
+  const { all } = require('../../core/db');
+  const cy = await all(`DELETE FROM sync_worker_cycles WHERE created_at < now() - interval '${days} days' RETURNING id`);
+  const dg = await all(`DELETE FROM sync_diagnostics  WHERE created_at < now() - interval '${days} days' RETURNING id`);
+  return { cyclesPruned: cy.length, diagnosticsPruned: dg.length, retentionDays: days };
 }
 
 async function setJobControl(jobId, status) { // 'paused' | 'cancelled' (admin action)
@@ -311,17 +326,49 @@ class JobStopped extends Error {
   constructor(kind) { super('sync ' + kind); this.kind = kind; }
 }
 
+// Pause/cancel checkpoint — THROTTLED. The naive version ran one SELECT per
+// message, i.e. hundreds of control-state queries per cycle that added DB load
+// without adding control precision. One check per MADAR_CHECKPOINT_MS (default
+// 1s) keeps pause/cancel responsive at human timescales and bounds the cost.
+// (Tests set MADAR_CHECKPOINT_MS=0 to keep every checkpoint live.)
+const _checkpointAt = new Map(); // jobId -> last control-state check (ms)
 async function checkpoint(jobId) {
+  const throttleMs = Math.max(0, Number(process.env.MADAR_CHECKPOINT_MS ?? 1000));
+  const last = _checkpointAt.get(jobId) || 0;
+  if (throttleMs > 0 && Date.now() - last < throttleMs) return;
+  _checkpointAt.set(jobId, Date.now());
   const s = await jobControlState(jobId);
   if (s === 'paused') throw new JobStopped('paused');
   if (s === 'cancelled') throw new JobStopped('cancelled');
+}
+
+// ---- folder scheduler: hot folders every cycle, cold folders on rotation ----
+// Fetching EVERY folder every cycle costs folders × (1 + backfill) requests per
+// mailbox per tick under org-wide pacing (~2.4s/request at the default 25 RPM) —
+// with ~11 real folders that alone stretches a cycle beyond the 120s interval
+// and multiplies across mailboxes. New mail lands in Inbox (and outbound in
+// Sent), so those are HOT: fetched every cycle. Everything else is COLD:
+// fetched when its last sync is older than MADAR_COLD_FOLDER_INTERVAL_SEC
+// (default 900s) or while its backfill is still running. This bounds cycle time
+// (≈ hot folders only in steady state) without ever abandoning a folder.
+const COLD_FOLDER_INTERVAL_MS = () =>
+  Math.max(60, Number(process.env.MADAR_COLD_FOLDER_INTERVAL_SEC) || 900) * 1000;
+function folderDue(folder, state, nowMs) {
+  const t = String(folder.type || '').toLowerCase();
+  if (t === 'inbox' || t === 'sent') return true;                       // hot
+  if (!state || !state.backfill_done) return true;                      // finish backfill
+  const last = state.last_sync_at ? new Date(state.last_sync_at).getTime() : 0;
+  return nowMs - last >= COLD_FOLDER_INTERVAL_MS();                     // cold rotation
 }
 
 async function connectorFor(mailbox) {
   if (mailbox.strategy !== 'mail_api') {
     throw new Error(`Mailbox ${mailbox.address} has no live-sync strategy (strategy=${mailbox.strategy}).`);
   }
-  const zoho = await ZohoClient.forConnection(mailbox.connection_id);
+  // SHARED client per connection (token reuse + org-wide request pacing).
+  // A fresh client here caused a token refresh per mailbox per cycle — churn
+  // that trips Zoho's refresh-token rate limits. See ZohoClient.cachedForConnection.
+  const zoho = await ZohoClient.cachedForConnection(mailbox.connection_id);
   return new ZohoMailApiConnector(zoho, mailbox);
 }
 
@@ -396,6 +443,11 @@ async function syncMailbox(mailboxId, { maxPages = 5, userId = null } = {}) {
       await q('INSERT INTO sync_state (mailbox_id, folder_id) VALUES ($1,$2) ON CONFLICT DO NOTHING', [mailboxId, folderId]);
       const state = await one('SELECT * FROM sync_state WHERE mailbox_id=$1 AND folder_id=$2', [mailboxId, folderId]);
 
+      // Folder scheduler: hot folders (inbox/sent) every cycle; cold folders only
+      // on rotation or while backfilling. A skipped folder's sync_state is left
+      // untouched so its rotation clock keeps running.
+      if (!folderDue(f, state, Date.now())) { summary.foldersSkippedCold = (summary.foldersSkippedCold || 0) + 1; continue; }
+
       // incremental newest page — scan the ENTIRE page, never stop at the first
       // already-seen message. The Zoho Mail messages/view endpoint pins no
       // guaranteed sort order (its default is undocumented and can interleave),
@@ -463,6 +515,8 @@ async function syncMailbox(mailboxId, { maxPages = 5, userId = null } = {}) {
       err.traceId = traceId; err.stage = diag.stage;
     }
     throw err;
+  } finally {
+    _checkpointAt.delete(jobId); // bounded map: entries live only while a job runs
   }
   await audit(userId, 'mail.sync', mailbox.address, summary);
   return summary;
@@ -550,4 +604,4 @@ async function importArchiveRecorded(mailboxId, zipBuffer, userId, filename = ''
   }
 }
 
-module.exports = { syncMailbox, importArchiveZip, importArchiveRecorded, insertMessage, upsertFolder, dedupHash, normalizeForFingerprint, HASH_VERSION, storeAttachment, createJob, setJobControl, recoverStaleJobs, reconcileStale, persistDiag, newDiag };
+module.exports = { syncMailbox, importArchiveZip, importArchiveRecorded, insertMessage, upsertFolder, dedupHash, normalizeForFingerprint, HASH_VERSION, storeAttachment, createJob, setJobControl, recoverStaleJobs, reconcileStale, pruneObservability, folderDue, persistDiag, newDiag };

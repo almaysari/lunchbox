@@ -421,8 +421,9 @@ async function showDiag(traceId) {
 async function loadLiveSync() {
   const d = await api('/api/mail/live-sync/status');
   const w = d.worker;
-  $('liveWorker').textContent = w.enabled
+  $('liveWorker').textContent = w.running
     ? `(نشطة — كل ${w.intervalSec}ث — آخر دورة: ${w.lastTickAt ? fmtT(w.lastTickAt) : '—'})`
+    : w.stale ? `(غير مستجيبة — آخر نبضة قبل ${w.ageSec}ث — أعد تشغيل الخدمة)`
     : '(متوقفة — MADAR_LIVE_SYNC=off)';
   $('liveTable').innerHTML = `<tr><th>الصندوق</th><th>مسار الالتقاط</th><th>آخر مزامنة</th><th>آخر رسالة</th><th>آخر UID</th><th>جديد 24س</th><th>الحالة/الأخطاء</th><th></th></tr>` +
     d.mailboxes.map(r => {

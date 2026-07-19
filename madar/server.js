@@ -85,7 +85,15 @@ const server = http.createServer(async (req, res) => {
         db, storageDir: db.ATTACH_DIR, cryptoReady: true,
         migrationsDir: path.join(__dirname, 'migrations'),
       });
-      return send(r.ready ? 200 : 503, { status: r.ready ? 'ready' : 'not_ready', checks: r.checks });
+      // Worker + stuck-state visibility (report-only: readiness gates HTTP
+      // traffic; the background worker must be MONITORED, not used to pull the
+      // whole app out of the load balancer). Numbers only — no addresses/PII.
+      let worker = null;
+      if (r.checks.database) {
+        try { worker = await require('./modules/mail/live-sync').workerHealth(); }
+        catch { worker = { running: false, error: 'worker status unavailable' }; }
+      }
+      return send(r.ready ? 200 : 503, { status: r.ready ? 'ready' : 'not_ready', checks: r.checks, worker });
     }
     if (p === '/' || p === '/index.html') {
       return send(200, fs.readFileSync(path.join(__dirname, 'public', 'index.html')), 'text/html; charset=utf-8');
@@ -272,5 +280,42 @@ async function start() {
     console.log(`[madar] live sync worker started (every ${Math.round((Number(process.env.MADAR_LIVE_SYNC_INTERVAL_SEC) || 120))}s; per-mailbox backoff on errors)`);
   }
 }
+
+// ---- crash-only process design: no failure mode requires a MANUAL restart ----
+// Node ≥15 CRASHES the process on an unhandled promise rejection — one missed
+// await anywhere would take the server AND the sync worker down. Rejections are
+// logged in full (stack + errorId) and survived: every sync path already has its
+// own typed error handling, so a stray rejection is a logging bug, not a reason
+// to drop service. A truly uncaught EXCEPTION leaves the process in an undefined
+// state — there we log everything, mark the worker heartbeat off, and exit(1):
+// docker-compose's `restart: unless-stopped` relaunches us, and boot recovery
+// (recoverStaleJobs + per-tick reconcileStale) resumes every in-flight job from
+// its persisted cursor. Crash → automatic clean recovery, never a wedged state.
+process.on('unhandledRejection', (reason) => {
+  const errId = 'rej-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 8);
+  console.error(`[madar] UNHANDLED REJECTION ${errId} (survived):`,
+    (reason && reason.stack) || String(reason));
+});
+process.on('uncaughtException', (err) => {
+  console.error('[madar] UNCAUGHT EXCEPTION — exiting for clean restart:', err && err.stack || err);
+  const finish = () => process.exit(1);
+  try {
+    require('./modules/mail/live-sync').stopLiveSync(); // publishes heartbeat off
+    setTimeout(finish, 1500).unref();                   // give the heartbeat write a moment
+  } catch { finish(); }
+});
+let shuttingDown = false;
+async function shutdown(signal) {
+  if (shuttingDown) return; shuttingDown = true;
+  console.log(`[madar] ${signal} — graceful shutdown (worker off, drain, close db)`);
+  try { require('./modules/mail/live-sync').stopLiveSync(); } catch { /* heartbeat best-effort */ }
+  server.close(async () => {
+    try { await db.closeDb(); } catch { /* pool already gone */ }
+    process.exit(0);
+  });
+  setTimeout(() => process.exit(0), 8000).unref(); // never hang a stop/restart
+}
+process.on('SIGTERM', () => shutdown('SIGTERM'));
+process.on('SIGINT', () => shutdown('SIGINT'));
 
 start();

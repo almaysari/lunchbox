@@ -83,7 +83,8 @@ function startMockZoho(port = 0) {
     const invalidAccount = (id) => send(404, { status: { code: 404, description: 'Invalid Input' }, data: { moreInfo: `Account id ${id} is invalid` } });
 
     if (p === '/oauth/v2/token') {
-      return send(200, { access_token: 'mock-access-token', refresh_token: 'mock-refresh-token', expires_in: 3600 });
+      TOKEN_STATS.requests++; // observability for token-churn tests
+      return send(200, { access_token: 'mock-access-token-' + TOKEN_STATS.requests, refresh_token: 'mock-refresh-token', expires_in: 3600 });
     }
     if (p === '/api/accounts') {
       return ok([{
@@ -178,4 +179,6 @@ function startMockZoho(port = 0) {
   return new Promise(resolve => server.listen(port, '127.0.0.1', () => resolve(server.address().port)));
 }
 
-module.exports = { startMockZoho, ZOID, ADMIN_ACCOUNT_ID, INFO_ORG_ACCOUNT_ID, _messages: MESSAGES };
+const TOKEN_STATS = { requests: 0 };
+
+module.exports = { startMockZoho, ZOID, ADMIN_ACCOUNT_ID, INFO_ORG_ACCOUNT_ID, _messages: MESSAGES, _tokenStats: TOKEN_STATS };

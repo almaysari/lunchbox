@@ -12,7 +12,7 @@
 // addressed to a registered shared mailbox also lands there (same canonical).
 const os = require('os');
 const { all, one, q } = require('../../core/db');
-const { syncMailbox, reconcileStale } = require('./sync');
+const { syncMailbox, reconcileStale, pruneObservability } = require('./sync');
 const { audit } = require('../../core/audit');
 
 const INTERVAL_MS = Math.max(30, Number(process.env.MADAR_LIVE_SYNC_INTERVAL_SEC) || 120) * 1000;
@@ -82,7 +82,19 @@ async function tickOnce({ source = 'worker' } = {}) {
       result.recovered = rec.pausedJobs + rec.unstuckMailboxes;
       if (result.recovered) state.lastRecovery = { at: Date.now(), ...rec };
     } catch { /* reconciliation must never kill the tick */ }
-    for (const mb of await eligibleMailboxes()) {
+    // Retention pruning ~every 6h (worker cycles + diagnostics older than
+    // MADAR_RETENTION_DAYS) — required for multi-day unattended runs.
+    if (source === 'worker' && Date.now() - (state.lastPruneAt || 0) > 6 * 3600 * 1000) {
+      state.lastPruneAt = Date.now();
+      try { state.lastPrune = { at: state.lastPruneAt, ...(await pruneObservability()) }; }
+      catch { /* pruning must never kill the tick */ }
+    }
+    const eligible = await eligibleMailboxes();
+    // Drop per-mailbox worker state for boxes no longer eligible (disabled or
+    // deleted) — otherwise the map and its stale backoff entries grow forever.
+    const eligibleIds = new Set(eligible.map(m => Number(m.id)));
+    for (const id of state.perMailbox.keys()) if (!eligibleIds.has(id)) state.perMailbox.delete(id);
+    for (const mb of eligible) {
       const id = Number(mb.id);
       const s = state.perMailbox.get(id) || { backoffMs: 0, backoffUntil: 0, lastError: null, lastOkAt: null, lastSummary: null };
       if (s.backoffUntil > Date.now()) { result.skippedBackoff++; result.perMailbox.push({ id, address: mb.address, outcome: 'backoff' }); state.perMailbox.set(id, s); continue; }
@@ -184,6 +196,22 @@ async function workerStatus() {
   };
 }
 
+// Compact worker health for /healthz: worker liveness (from the heartbeat) plus
+// stuck-state detection — numbers only, no addresses/PII. "Stuck" here matches
+// reconcileStale's age gate, so a nonzero value means recovery is overdue.
+async function workerHealth() {
+  const ws = await workerStatus();
+  const stuckJobs = await one(
+    `SELECT COUNT(*)::int n FROM sync_jobs WHERE status='running'
+     AND COALESCE(started_at, created_at) < now() - interval '15 minutes'`);
+  const stuckBoxes = await one(
+    `SELECT COUNT(*)::int n FROM mailboxes m WHERE m.status='syncing'
+     AND NOT EXISTS (SELECT 1 FROM sync_jobs j WHERE j.mailbox_id=m.id AND j.status='running'
+                     AND COALESCE(j.started_at, j.created_at) >= now() - interval '15 minutes')`);
+  return { running: ws.running, enabled: ws.enabled, stale: Boolean(ws.stale),
+    lastTickAt: ws.lastTickAt || null, stuckJobs: stuckJobs.n, stuckMailboxes: stuckBoxes.n };
+}
+
 async function recentCycles(limit = 10, source = null) {
   const rows = source
     ? await all(`SELECT * FROM sync_worker_cycles WHERE source=$1 ORDER BY id DESC LIMIT $2`, [source, limit])
@@ -244,4 +272,4 @@ async function liveStatus() {
 }
 
 module.exports = { startLiveSync, stopLiveSync, tickOnce, liveStatus,
-  workerStatus, recentCycles, readHeartbeat, _state: state };
+  workerStatus, workerHealth, recentCycles, readHeartbeat, _state: state };
