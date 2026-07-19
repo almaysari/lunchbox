@@ -57,7 +57,11 @@ async function main() {
       rows = await snapshot(mb.id, subject);
       if (!rows.length && (Date.now() - t0) % 60000 < 10000) {
         const hb = await one('SELECT enabled, updated_at FROM sync_worker_heartbeat WHERE id=TRUE');
-        console.log(`[watch] not yet — worker ${hb && hb.enabled ? 'alive' : 'OFF'}, heartbeat ${hb ? Math.round((Date.now() - new Date(hb.updated_at)) / 1000) + 's ago' : 'missing'}`);
+        const age = hb ? Math.round((Date.now() - new Date(hb.updated_at)) / 1000) : null;
+        // honesty: enabled with an old heartbeat is NOT "alive" — say STALE loudly
+        const label = !hb ? 'missing' : !hb.enabled ? 'OFF' : age < 300 ? 'alive' : `STALE (heartbeat frozen)`;
+        console.log(`[watch] not yet — worker ${label}, heartbeat ${age != null ? age + 's ago' : 'n/a'}` +
+          (label.startsWith('STALE') ? ' — the server may be running OLD code or stuck; pull latest + rebuild, then job-inspect' : ''));
       }
     }
   }

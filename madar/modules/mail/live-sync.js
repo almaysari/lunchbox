@@ -45,6 +45,16 @@ async function writeHeartbeat(patch) {
            ON CONFLICT (id) DO UPDATE SET ${updSet}`, params);
 }
 async function readHeartbeat() { return one('SELECT * FROM sync_worker_heartbeat WHERE id = TRUE'); }
+// Mid-tick heartbeat: with 30+ paced mailboxes a tick legitimately runs many
+// minutes — a heartbeat written only at tick EDGES looks frozen the whole time
+// (production evidence: age 2755s→3298s while the loop was healthy). Touch it
+// between units of work, throttled to one write per ~15s.
+async function touchHeartbeat() {
+  const now = Date.now();
+  if (now - (state.lastHbTouch || 0) < 15000) return;
+  state.lastHbTouch = now;
+  await writeHeartbeat({ ticking: true }).catch(() => {});
+}
 async function logCycle(row) {
   try {
     await q(`INSERT INTO sync_worker_cycles (source, pid, ok, synced, failed, skipped_busy, skipped_backoff,
@@ -74,6 +84,7 @@ async function maybeAutoDiscover() {
       const zoho = await ZohoClient.cachedForConnection(c.id);
       const discovery = await detection.discoverOrganization(zoho);
       for (const mb of discovery.mailboxes) {
+        await touchHeartbeat(); // probing 30+ mailboxes at paced RPM takes minutes
         const caps = await detection.probeCapabilities(zoho, mb);
         const choice = detection.chooseStrategy(mb, caps);
         await detection.upsertMailbox(c.id, mb, caps, choice);
@@ -148,6 +159,7 @@ async function tickOnce({ source = 'worker' } = {}) {
       const s = state.perMailbox.get(id) || { backoffMs: 0, backoffUntil: 0, lastError: null, lastOkAt: null, lastSummary: null };
       if (s.backoffUntil > Date.now()) { result.skippedBackoff++; result.perMailbox.push({ id, address: mb.address, outcome: 'backoff' }); state.perMailbox.set(id, s); continue; }
       try {
+        if (source === 'worker') await touchHeartbeat(); // the loop is alive — say so
         const rtStart = Date.now();
         s.lastSummary = await syncMailbox(id, { mode: 'realtime' });
         s.lastRealtimeAt = Date.now(); s.lastRealtimeMs = Date.now() - rtStart;

@@ -1287,7 +1287,9 @@ test('starvation E2E: new mail (incl. shared-mailbox routing) appears while a la
 
     // and the backfill RESUMES from its persisted cursor on later slices
     delete process.env.MADAR_BACKFILL_SLICE_SEC;
-    for (let i = 0; i < 4; i++) await liveSync.tickOnce({ source: 'worker' });
+    for (let i = 0; i < 4; i++) {
+      await liveSync.tickOnce({ source: 'worker' });
+    }
     const after = await db.one(`SELECT COUNT(*)::int n FROM sync_state WHERE mailbox_id=$1 AND backfill_done=FALSE`, [info.id]);
     assert.strictEqual(after.n, 0, 'backfill completed across subsequent bounded slices');
   } finally {

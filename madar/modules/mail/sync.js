@@ -642,9 +642,23 @@ async function syncMailbox(mailboxId, { maxPages = 5, userId = null, mode = 'ful
   const summary = { jobId, mailbox: mailbox.address, traceId: diag.traceId, mode, folders: 0, newMessages: 0, newOccurrences: 0, attachments: 0, skipped: 0, routed: 0 };
 
   try {
-    diag.stage = 'list_folders';
-    diag.endpoint = `/api/accounts/${connector.id}/folders`;
-    const folders = await connector.listFolders(); await budgetDelay();
+    // Realtime pass folder source: the DB cache, not a per-mailbox API call.
+    // With 30+ mailboxes at paced RPM, one listFolders per mailbox per tick
+    // added minutes to every realtime pass for information that almost never
+    // changes. Backfill/full cycles still call the API (and refresh the cache);
+    // a mailbox with no cached folders falls back to the API.
+    let folders = null;
+    if (mode === 'realtime') {
+      const cached = await require('../../core/db').all(
+        `SELECT provider_folder_id, name, folder_type FROM folders
+         WHERE mailbox_id = $1 AND lower(folder_type) IN ('inbox','sent')`, [mailboxId]);
+      if (cached.length) folders = cached.map(r => ({ providerFolderId: r.provider_folder_id, name: r.name, type: r.folder_type }));
+    }
+    if (!folders) {
+      diag.stage = 'list_folders';
+      diag.endpoint = `/api/accounts/${connector.id}/folders`;
+      folders = await connector.listFolders(); await budgetDelay();
+    }
     for (const f of folders) {
       await checkpoint(jobId);
       const folderId = await upsertFolder(mailboxId, f);
@@ -764,6 +778,19 @@ async function syncMailbox(mailboxId, { maxPages = 5, userId = null, mode = 'ful
       }
       if (summary.yielded) break; // slice budget spent — cursors persisted, next slice resumes here
       await q("UPDATE sync_state SET last_sync_at=now(), last_error='' WHERE mailbox_id=$1 AND folder_id=$2", [mailboxId, folderId]);
+    }
+    // Orphan sync_state heal (backfill mode, full pass only): a folder Zoho no
+    // longer lists (deleted/renamed) has nothing fetchable — its pending row
+    // would otherwise pin the backfill round-robin forever. Marking it done is
+    // safe: if the folder reappears, upsert + cold rotation resume it normally.
+    if (mode === 'backfill' && !summary.yielded) {
+      const listed = folders.map(f => String(f.providerFolderId));
+      const healed = await require('../../core/db').all(
+        `UPDATE sync_state ss SET backfill_done = TRUE
+         FROM folders f WHERE f.id = ss.folder_id AND ss.mailbox_id = $1
+           AND ss.backfill_done = FALSE AND NOT (f.provider_folder_id = ANY($2::text[]))
+         RETURNING ss.folder_id`, [mailboxId, listed]);
+      if (healed.length) summary.orphanFoldersNeutralized = healed.length;
     }
     diag.stage = 'done';
     await persistDiag(diag, null);
