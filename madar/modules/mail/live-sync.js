@@ -107,7 +107,18 @@ async function tickOnce({ source = 'worker' } = {}) {
           newOccurrences: s.lastSummary && s.lastSummary.newOccurrences, traceId: s.lastSummary && s.lastSummary.traceId });
       } catch (e) {
         const msg = String(e.message || e);
-        if (/already (active|running|queued|paused)/.test(msg)) { result.skippedBusy++; result.perMailbox.push({ id, address: mb.address, outcome: 'busy' }); }
+        if (/already (active|running|queued|paused)/.test(msg)) {
+          result.skippedBusy++;
+          // busy is only healthy when the blocking job's LEASE is alive — record
+          // the evidence so "skipped_busy forever" can never hide a dead job
+          const blocker = await one(`SELECT id, status, lease_at FROM sync_jobs
+            WHERE mailbox_id=$1 AND status IN ('queued','running') ORDER BY id DESC LIMIT 1`, [id]).catch(() => null);
+          const leaseAgeSec = blocker && blocker.lease_at ? Math.round((Date.now() - new Date(blocker.lease_at).getTime()) / 1000) : null;
+          result.perMailbox.push({ id, address: mb.address, outcome: 'busy',
+            blockingJobId: blocker ? Number(blocker.id) : null, blockingStatus: blocker ? blocker.status : null,
+            blockingLeaseAgeSec: leaseAgeSec,
+            healthy: leaseAgeSec != null && leaseAgeSec < JOB_STALE_SEC });
+        }
         else {
           s.lastError = msg;
           s.backoffMs = Math.min(s.backoffMs ? s.backoffMs * 2 : state.intervalMs, MAX_BACKOFF_MS);

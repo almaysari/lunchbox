@@ -334,7 +334,7 @@ async function handle(req, res, url, user, body, helpers) {
   }
   if ((m = p.match(/^\/api\/mail\/sync-jobs\/(\d+)\/(pause|cancel)$/)) && req.method === 'POST') {
     if (!requireMailAdmin()) return true;
-    await setJobControl(Number(m[1]), m[2] === 'pause' ? 'paused' : 'cancelled');
+    await setJobControl(Number(m[1]), m[2] === 'pause' ? 'paused' : 'cancelled', user.id);
     await audit(user.id, 'mail.sync_job.' + m[2], 'job:' + m[1]);
     return send(200, { ok: true });
   }

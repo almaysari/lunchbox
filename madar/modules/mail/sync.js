@@ -69,6 +69,62 @@ const PAGE_SIZE = 100;
 // gone) and is reclaimed within one worker tick — not after a quarter hour of
 // skipped_busy cycles (real-tenant job 34). Configurable for slow tenants.
 const JOB_STALE_SEC = Math.max(60, Number(process.env.MADAR_JOB_STALE_SEC) || 180);
+
+// ---- job state machine (the single writer for every status transition) ----
+// Design rule that eliminates the whole lifecycle-bug class: NOTHING updates
+// sync_jobs.status except transitionJob(). It (a) validates against an explicit
+// legal-transition map, (b) executes as compare-and-swap (WHERE status =
+// ANY(expected) ... RETURNING), so two processes can never both win the same
+// transition (e.g. a double resume), and (c) appends a job_events row with the
+// actor and reason — every state is explainable by reading the log.
+const JOB_LEGAL = {
+  queued:  ['running', 'paused', 'cancelled'],
+  running: ['paused', 'completed', 'failed', 'cancelled'],
+  paused:  ['running', 'cancelled'],
+};
+const ACTOR = () => `${process.env.MADAR_PROC_LABEL || 'proc'}:${process.pid}`;
+async function transitionJob(jobId, from, to, reason, { actor = ACTOR(), detail = null } = {}) {
+  const fromList = (Array.isArray(from) ? from : [from]).filter(f => (JOB_LEGAL[f] || []).includes(to));
+  if (!fromList.length) throw new Error(`illegal job transition ${JSON.stringify(from)} → ${to}`);
+  // CAS with the ACTUAL prior status captured for the event log
+  const row = await one(
+    `UPDATE sync_jobs j SET status = $1,
+        started_at  = CASE WHEN $1 = 'running' THEN now() ELSE j.started_at END,
+        lease_at    = CASE WHEN $1 = 'running' THEN now() ELSE j.lease_at END,
+        finished_at = CASE WHEN $1 IN ('completed','failed','cancelled') THEN now() ELSE j.finished_at END,
+        error_detail = COALESCE($4, j.error_detail)
+     FROM (SELECT id, status AS prev FROM sync_jobs WHERE id = $2 FOR UPDATE) p
+     WHERE j.id = p.id AND j.status = ANY($3)
+     RETURNING j.id, j.status, p.prev`,
+    [to, jobId, fromList, detail]);
+  if (!row) return null; // lost the CAS — caller acts on reality, never assumes
+  await q(`INSERT INTO job_events (job_id, from_status, to_status, reason, actor)
+           VALUES ($1,$2,$3,$4,$5)`, [jobId, row.prev, to, reason, actor]);
+  return { id: Number(row.id), status: row.status, prev: row.prev };
+}
+async function jobEvents(jobId, limit = 20) {
+  const { all } = require('../../core/db');
+  return all(`SELECT from_status, to_status, reason, actor, at FROM job_events
+              WHERE job_id = $1 ORDER BY id DESC LIMIT $2`, [jobId, limit]);
+}
+
+// Cooperative shutdown: SIGTERM sets this flag; the NEXT checkpoint (≤1s away in
+// any live attempt) transitions running→paused ('graceful shutdown') and stops
+// cleanly — the cursor is already persisted, so the next boot's worker resumes
+// exactly where it left off. RESTART → AUTO RESUME → COMPLETED, deterministic.
+let _shutdownRequested = false;
+function requestShutdownPause(v = true) { _shutdownRequested = Boolean(v); }
+
+// Cursor invariant: next_start NEVER moves backwards (a racing stale attempt can
+// only be a no-op, never rewind progress). backfill_done latches forward too.
+async function advanceCursor(mailboxId, folderId, nextStart, { backfillDone = false } = {}) {
+  await q(`UPDATE sync_state SET
+             next_start = GREATEST(COALESCE(next_start, 1), $3),
+             backfill_done = (backfill_done OR $4),
+             last_sync_at = now()
+           WHERE mailbox_id = $1 AND folder_id = $2`,
+    [mailboxId, folderId, Math.max(1, Number(nextStart) || 1), Boolean(backfillDone)]);
+}
 const delay = ms => new Promise(r => setTimeout(r, ms));
 const budgetDelay = () => delay(Math.ceil(60000 / MAX_RPM));
 
@@ -265,12 +321,11 @@ async function createJob(mailboxId, userId) {
     // attempt age — a live long backfill must not be reclaimed (real-tenant job 31)
     const attemptAt = new Date(active.lease_at || active.started_at || active.created_at).getTime();
     if ((active.status === 'running' || active.status === 'queued') && attemptAt < Date.now() - staleMs) {
-      const reclaimed = await one(
-        `UPDATE sync_jobs SET status='paused',
-           error_detail='auto-recovered on start: dead attempt (lease silent > ${JOB_STALE_SEC}s) reclaimed'
-         WHERE id=$1 AND status=$2 RETURNING id`, [active.id, active.status]);
+      const reclaimed = await transitionJob(active.id, ['running', 'queued'], 'paused',
+        `lease silent > ${JOB_STALE_SEC}s — dead attempt reclaimed on start`,
+        { detail: `auto-recovered on start: dead attempt (lease silent > ${JOB_STALE_SEC}s) reclaimed` });
       if (reclaimed) return Number(reclaimed.id);      // resume the reclaimed job
-      // lost the race: the job changed state meanwhile — act on reality
+      // lost the CAS: the job changed state meanwhile — act on reality
       const now = await one('SELECT status FROM sync_jobs WHERE id=$1', [active.id]);
       if (now && ['queued', 'running'].includes(now.status)) {
         throw new Error(`A sync job is already ${now.status} for this mailbox (job ${active.id}).`);
@@ -285,6 +340,8 @@ async function createJob(mailboxId, userId) {
     // idx_sync_jobs_one_active (partial unique index) is the real guard:
     // two concurrent starts race here and exactly one INSERT wins.
     const r = await one('INSERT INTO sync_jobs (mailbox_id, requested_by) VALUES ($1,$2) RETURNING id', [mailboxId, userId || null]);
+    await q(`INSERT INTO job_events (job_id, from_status, to_status, reason, actor)
+             VALUES ($1, NULL, 'queued', 'created', $2)`, [Number(r.id), ACTOR()]);
     return Number(r.id);
   } catch (err) {
     if (String(err.code) === '23505') throw new Error('A sync job is already active for this mailbox (concurrent start rejected).');
@@ -299,15 +356,33 @@ async function createJob(mailboxId, userId) {
 // ALSO reconciles the mailbox row: a mailbox left status='syncing' by the same
 // unclean shutdown would otherwise stay visually stuck forever (observed in
 // production) — reset it to 'ready' with a resumable note.
-async function recoverStaleJobs() {
+// Boot recovery — LEASE-AWARE and deterministic. A restart of THIS process
+// freezes the lease of every attempt it owned: those jobs are provably dead and
+// are paused for immediate resume. An attempt owned by a still-alive OTHER
+// process (a CLI in `docker compose exec` survives a server restart) keeps
+// refreshing its lease and is left untouched — pausing a live attempt at boot
+// would be the same false-stale class of bug we removed from the tick path.
+// graceSec is the frozen-lease window: a dead process cannot touch its lease,
+// so anything older than a few seconds at boot is dead by definition.
+async function recoverStaleJobs(graceSec = 10) {
+  graceSec = Math.max(2, Math.floor(Number(graceSec) || 10));
   const { all } = require('../../core/db');
-  const rows = await all(
-    `UPDATE sync_jobs SET status='paused', error_detail='recovered after unclean shutdown'
-     WHERE status='running' RETURNING id, mailbox_id`);
+  const dead = await all(
+    `SELECT id, mailbox_id FROM sync_jobs WHERE status IN ('running','queued')
+     AND COALESCE(lease_at, started_at, created_at) < now() - make_interval(secs => ${graceSec})`);
+  const rows = [];
+  for (const j of dead) {
+    const t = await transitionJob(j.id, ['running', 'queued'], 'paused',
+      'boot recovery: lease frozen by unclean shutdown', {
+        actor: `boot:${process.pid}`, detail: 'recovered after unclean shutdown' });
+    if (t) rows.push({ id: Number(j.id), mailbox_id: Number(j.mailbox_id) });
+  }
   const reconciled = await all(
-    `UPDATE mailboxes SET status='ready',
+    `UPDATE mailboxes m SET status='ready',
         status_detail='المزامنة توقفت بإعادة تشغيل غير نظيفة — المؤشر محفوظ، استأنف في أي وقت'
-     WHERE status='syncing' RETURNING id`);
+     WHERE status='syncing'
+       AND NOT EXISTS (SELECT 1 FROM sync_jobs j WHERE j.mailbox_id=m.id AND j.status='running')
+     RETURNING id`);
   if (reconciled.length) console.log && console.log(`[madar] reconciled ${reconciled.length} mailbox(es) stuck in 'syncing' → ready`);
   return rows;
 }
@@ -331,10 +406,18 @@ async function reconcileStale(staleSec = JOB_STALE_SEC) {
   // age-based predicate with the false message "no progress > 15m" — while the
   // cursor was demonstrably advancing. A live hour-long attempt is now never
   // touched; a dead one (no lease heartbeat) is reclaimed exactly as before.
-  const paused = await all(
-    `UPDATE sync_jobs SET status='paused', error_detail='auto-recovered: no lease heartbeat > ${staleMin}m (dead attempt)'
-     WHERE status='running' AND COALESCE(lease_at, started_at, created_at) < now() - interval '${staleMin} minutes'
-     RETURNING id, mailbox_id`);
+  // per-row CAS transitions (idempotent: a second reconcile pass finds nothing
+  // in 'running' and is a no-op — no duplicate events, no double recovery)
+  const deadRows = await all(
+    `SELECT id FROM sync_jobs WHERE status='running'
+     AND COALESCE(lease_at, started_at, created_at) < now() - interval '${staleMin} minutes'`);
+  const paused = [];
+  for (const j of deadRows) {
+    const t = await transitionJob(j.id, ['running'], 'paused',
+      `no lease heartbeat > ${staleMin}m (dead attempt)`,
+      { actor: `reconcile:${process.pid}`, detail: `auto-recovered: no lease heartbeat > ${staleMin}m (dead attempt)` });
+    if (t) paused.push(t);
+  }
   const unstuck = await all(
     `UPDATE mailboxes m SET status='ready',
         status_detail='دورة سابقة توقّفت — المؤشر محفوظ، ستُستأنف تلقائيًا في الدورة القادمة'
@@ -359,11 +442,17 @@ async function pruneObservability(days = Number(process.env.MADAR_RETENTION_DAYS
   return { cyclesPruned: cy.length, diagnosticsPruned: dg.length, retentionDays: days };
 }
 
-async function setJobControl(jobId, status) { // 'paused' | 'cancelled' (admin action)
+async function setJobControl(jobId, status, userId = null) { // 'paused' | 'cancelled' (admin action)
   const job = await one('SELECT * FROM sync_jobs WHERE id = $1', [jobId]);
   if (!job) throw new Error('job not found');
   if (!['queued', 'running', 'paused'].includes(job.status)) throw new Error(`job is already ${job.status}`);
-  await q('UPDATE sync_jobs SET status = $1 WHERE id = $2', [status, jobId]);
+  const from = status === 'paused' ? ['queued', 'running'] : ['queued', 'running', 'paused'];
+  const t = await transitionJob(jobId, from, status, `admin ${status}`,
+    { actor: `admin:${userId != null ? userId : 'unknown'}` });
+  if (!t) { // raced with completion/another control — report reality
+    const now = await one('SELECT status FROM sync_jobs WHERE id = $1', [jobId]);
+    throw new Error(`job is already ${now ? now.status : 'gone'}`);
+  }
 }
 
 async function jobControlState(jobId) {
@@ -386,10 +475,19 @@ async function checkpoint(jobId) {
   const last = _checkpointAt.get(jobId) || 0;
   if (throttleMs > 0 && Date.now() - last < throttleMs) return;
   _checkpointAt.set(jobId, Date.now());
-  // One round trip does both jobs: touch the liveness LEASE (this is what
-  // proves the attempt is alive — staleness measures lease death, never attempt
-  // age) and read the control state for pause/cancel.
-  const row = await one('UPDATE sync_jobs SET lease_at = now() WHERE id = $1 RETURNING status', [jobId]);
+  // Cooperative shutdown: hand the mailbox over cleanly within one checkpoint —
+  // the cursor is already persisted, the next boot resumes exactly here.
+  if (_shutdownRequested) {
+    await transitionJob(jobId, ['running'], 'paused', 'graceful shutdown: cursor persisted',
+      { detail: 'paused by graceful shutdown — resumes automatically after restart' }).catch(() => {});
+    throw new JobStopped('paused');
+  }
+  // One round trip does both jobs: touch the liveness LEASE (monotonic — it can
+  // never move backwards, even under a racing stale writer) and read the
+  // control state for pause/cancel.
+  const row = await one(
+    `UPDATE sync_jobs SET lease_at = GREATEST(COALESCE(lease_at, to_timestamp(0)), now())
+     WHERE id = $1 RETURNING status`, [jobId]);
   const s = row && row.status;
   if (s === 'paused') throw new JobStopped('paused');
   if (s === 'cancelled') throw new JobStopped('cancelled');
@@ -478,10 +576,15 @@ async function syncMailbox(mailboxId, { maxPages = 5, userId = null } = {}) {
     throw err;
   }
   const jobId = await createJob(mailboxId, userId);
-  // started_at = start of THIS attempt (created_at keeps the original). A resume
-  // that kept the ancient started_at looked "stale" to reconcileStale while
-  // healthily mid-flight — the oscillation that pinned one job id forever.
-  await q("UPDATE sync_jobs SET status='running', started_at = now(), lease_at = now() WHERE id = $1", [jobId]);
+  // CAS start: exactly ONE process can move this job into 'running' (two callers
+  // that both got a paused job id from createJob race here — the loser is told
+  // the truth instead of silently double-running the same attempt). started_at
+  // and lease_at are stamped by the transition itself (start of THIS attempt).
+  const started = await transitionJob(jobId, ['queued', 'paused'], 'running', 'attempt started');
+  if (!started) {
+    const nowRow = await one('SELECT status FROM sync_jobs WHERE id=$1', [jobId]);
+    throw new Error(`A sync job is already ${nowRow ? nowRow.status : 'gone'} for this mailbox (job ${jobId}).`);
+  }
   await q("UPDATE mailboxes SET status='syncing' WHERE id=$1", [mailboxId]);
   const routing = await sharedAddressMap();
   const diag = newDiag(mailbox);
@@ -567,23 +670,27 @@ async function syncMailbox(mailboxId, { maxPages = 5, userId = null } = {}) {
             await ingestOne(connector, f, mailboxId, folderId, msg, summary, jobId, routing, diag);
           }
           if (batch.length < PAGE_SIZE) {
-            await q('UPDATE sync_state SET backfill_done=TRUE, next_start=$1, last_sync_at=now() WHERE mailbox_id=$2 AND folder_id=$3',
-              [start + batch.length, mailboxId, folderId]);
+            // terminal page: cursor + latch advance monotonically (invariant)
+            await advanceCursor(mailboxId, folderId, start + batch.length, { backfillDone: true });
             break;
           }
           start += PAGE_SIZE;
-          await q('UPDATE sync_state SET next_start=$1, last_sync_at=now() WHERE mailbox_id=$2 AND folder_id=$3', [start, mailboxId, folderId]);
+          await advanceCursor(mailboxId, folderId, start);
         }
       }
       await q("UPDATE sync_state SET last_sync_at=now(), last_error='' WHERE mailbox_id=$1 AND folder_id=$2", [mailboxId, folderId]);
     }
     diag.stage = 'done';
     await persistDiag(diag, null);
-    await q("UPDATE sync_jobs SET status='completed', finished_at=now() WHERE id=$1", [jobId]);
-    await q("UPDATE mailboxes SET status='ready', status_detail='' WHERE id=$1", [mailboxId]);
+    // CAS completion: if an admin/shutdown paused or cancelled us at the finish
+    // line, that controlled state WINS — we never resurrect a job the way raw
+    // UPDATEs could. The cursor is persisted either way.
+    const done = await transitionJob(jobId, ['running'], 'completed', 'cycle finished');
+    if (done) await q("UPDATE mailboxes SET status='ready', status_detail='' WHERE id=$1", [mailboxId]);
   } catch (err) {
     if (err instanceof JobStopped) {
-      // status was already set by the control action; cursor is persisted → resumable
+      // status was already set by the control/shutdown transition (with its own
+      // event); cursor is persisted → resumable
       if (err.kind === 'cancelled') await q('UPDATE sync_jobs SET finished_at=now() WHERE id=$1', [jobId]);
       await q("UPDATE mailboxes SET status='ready', status_detail=$1 WHERE id=$2",
         [`Last sync ${err.kind} — cursor persisted, resume any time.`, mailboxId]);
@@ -592,8 +699,9 @@ async function syncMailbox(mailboxId, { maxPages = 5, userId = null } = {}) {
       // complete stack) and put a traceable id on the job + mailbox status.
       const traceId = await persistDiag(diag, err).catch(() => diag.traceId);
       const shortMsg = `[${diag.stage}] ${String(err.message || err)}`.slice(0, 380) + ` (trace ${traceId})`;
-      await q("UPDATE sync_jobs SET status='failed', error_detail=$1, errors = errors + 1, finished_at=now() WHERE id=$2",
-        [shortMsg, jobId]);
+      const failed = await transitionJob(jobId, ['running'], 'failed',
+        `cycle failed at stage ${diag.stage} (trace ${traceId})`, { detail: shortMsg }).catch(() => null);
+      if (failed) await q('UPDATE sync_jobs SET errors = errors + 1 WHERE id=$1', [jobId]);
       await q("UPDATE mailboxes SET status='error', status_detail=$1 WHERE id=$2", [shortMsg, mailboxId]);
       err.traceId = traceId; err.stage = diag.stage;
     }
@@ -687,4 +795,4 @@ async function importArchiveRecorded(mailboxId, zipBuffer, userId, filename = ''
   }
 }
 
-module.exports = { syncMailbox, importArchiveZip, importArchiveRecorded, insertMessage, upsertFolder, dedupHash, normalizeForFingerprint, HASH_VERSION, storeAttachment, createJob, setJobControl, recoverStaleJobs, reconcileStale, pruneObservability, folderDue, persistDiag, newDiag, JOB_STALE_SEC };
+module.exports = { syncMailbox, importArchiveZip, importArchiveRecorded, insertMessage, upsertFolder, dedupHash, normalizeForFingerprint, HASH_VERSION, storeAttachment, createJob, setJobControl, recoverStaleJobs, reconcileStale, pruneObservability, folderDue, persistDiag, newDiag, JOB_STALE_SEC, transitionJob, jobEvents, requestShutdownPause, advanceCursor };

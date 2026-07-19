@@ -95,6 +95,9 @@ async function waitForMailboxFree(mailboxId, waitSec, out) {
       leaseAgeSec: j.lease_at ? Math.round((Date.now() - new Date(j.lease_at).getTime()) / 1000) : null };
     if (!first) first = snap;
     last = snap;
+    if (polls === 1 || polls % 6 === 0) { // progress line every ~30s — never block silently
+      console.log(`  [wait] job ${snap.jobId} ${snap.status}: lease ${snap.leaseAgeSec}s, cursor ${snap.cursor}, imported ${snap.imported}`);
+    }
     await new Promise(r => setTimeout(r, 5000));
   }
   return { free: false, polls, first, observed: last,

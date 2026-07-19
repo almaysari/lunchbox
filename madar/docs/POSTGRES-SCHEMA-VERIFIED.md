@@ -253,6 +253,25 @@ CREATE SEQUENCE public.folders_id_seq
 
 ALTER SEQUENCE public.folders_id_seq OWNED BY public.folders.id;
 
+CREATE TABLE public.job_events (
+    id bigint NOT NULL,
+    job_id bigint NOT NULL,
+    from_status text,
+    to_status text NOT NULL,
+    reason text NOT NULL,
+    actor text NOT NULL,
+    at timestamp with time zone DEFAULT now() NOT NULL
+);
+
+CREATE SEQUENCE public.job_events_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+ALTER SEQUENCE public.job_events_id_seq OWNED BY public.job_events.id;
+
 CREATE TABLE public.labels (
     id bigint NOT NULL,
     name text NOT NULL,
@@ -543,6 +562,8 @@ ALTER TABLE ONLY public.fingerprint_metrics ALTER COLUMN id SET DEFAULT nextval(
 
 ALTER TABLE ONLY public.folders ALTER COLUMN id SET DEFAULT nextval('public.folders_id_seq'::regclass);
 
+ALTER TABLE ONLY public.job_events ALTER COLUMN id SET DEFAULT nextval('public.job_events_id_seq'::regclass);
+
 ALTER TABLE ONLY public.labels ALTER COLUMN id SET DEFAULT nextval('public.labels_id_seq'::regclass);
 
 ALTER TABLE ONLY public.mailboxes ALTER COLUMN id SET DEFAULT nextval('public.mailboxes_id_seq'::regclass);
@@ -603,6 +624,9 @@ ALTER TABLE ONLY public.folders
 
 ALTER TABLE ONLY public.folders
     ADD CONSTRAINT folders_pkey PRIMARY KEY (id);
+
+ALTER TABLE ONLY public.job_events
+    ADD CONSTRAINT job_events_pkey PRIMARY KEY (id);
 
 ALTER TABLE ONLY public.labels
     ADD CONSTRAINT labels_name_key UNIQUE (name);
@@ -694,6 +718,8 @@ CREATE INDEX idx_detection_mailbox ON public.detection_reports USING btree (mail
 
 CREATE INDEX idx_fp_metrics_type ON public.fingerprint_metrics USING btree (event_type, id DESC);
 
+CREATE INDEX idx_job_events_job ON public.job_events USING btree (job_id, id);
+
 CREATE INDEX idx_oauth_states_expiry ON public.oauth_states USING btree (expires_at);
 
 CREATE INDEX idx_occ_canonical ON public.message_occurrences USING btree (canonical_message_id);
@@ -742,6 +768,9 @@ ALTER TABLE ONLY public.connections
 
 ALTER TABLE ONLY public.folders
     ADD CONSTRAINT folders_mailbox_id_fkey FOREIGN KEY (mailbox_id) REFERENCES public.mailboxes(id) ON DELETE CASCADE;
+
+ALTER TABLE ONLY public.job_events
+    ADD CONSTRAINT job_events_job_id_fkey FOREIGN KEY (job_id) REFERENCES public.sync_jobs(id) ON DELETE CASCADE;
 
 ALTER TABLE ONLY public.mailbox_aliases
     ADD CONSTRAINT mailbox_aliases_mailbox_id_fkey FOREIGN KEY (mailbox_id) REFERENCES public.mailboxes(id) ON DELETE CASCADE;

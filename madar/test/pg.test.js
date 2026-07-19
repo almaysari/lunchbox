@@ -1093,6 +1093,81 @@ test('orphaned running job (CLI/container killed mid-attempt): lease dead 4 minu
   await db.q("UPDATE sync_jobs SET status='cancelled', finished_at=now() WHERE id=$1", [liveJob.id]);
 });
 
+// ---------- state machine: every lifecycle chain proven, every state explained ----------
+test('lifecycle matrix: happy chain, crash→recover→resume, shutdown→auto-resume, double-resume race, idempotent recovery, monotonic cursor — all explained by job_events', async () => {
+  const admin = byAddress['m.almaysari@exoticcolors.org'];
+  await db.q('UPDATE mailboxes SET is_pilot=TRUE, sync_enabled=TRUE WHERE id=$1', [admin.id]);
+  await db.q("UPDATE sync_jobs SET status='cancelled', finished_at=now() WHERE mailbox_id=$1 AND status IN ('queued','running','paused')", [admin.id]);
+
+  // CHAIN 1 — READY → RUNNING → CHECKPOINT → COMPLETED, fully event-logged
+  const s1 = await sync.syncMailbox(admin.id, { maxPages: 1 });
+  const ev1 = (await sync.jobEvents(s1.jobId)).reverse();
+  assert.deepStrictEqual(ev1.map(e => e.to_status), ['queued', 'running', 'completed'],
+    'every transition of the happy chain is recorded');
+  assert.ok(ev1.every(e => e.reason && e.actor), 'each event names its reason and actor — no hidden state');
+
+  // CHAIN 2 — RUNNING → PROCESS CRASH → RECOVERED (boot) → RUNNING → COMPLETED
+  const crashed = await db.one(`INSERT INTO sync_jobs (mailbox_id, status, started_at, lease_at)
+    VALUES ($1,'running', now() - interval '2 minutes', now() - interval '2 minutes') RETURNING id`, [admin.id]);
+  await db.q(`INSERT INTO job_events (job_id, from_status, to_status, reason, actor) VALUES ($1,NULL,'queued','created','test'),($1,'queued','running','attempt started','test')`, [crashed.id]);
+  await sync.recoverStaleJobs();                                        // boot after crash
+  assert.strictEqual((await db.one('SELECT status FROM sync_jobs WHERE id=$1', [crashed.id])).status, 'paused');
+  const s2 = await sync.syncMailbox(admin.id, { maxPages: 1 });          // auto-resume
+  assert.strictEqual(s2.jobId, Number(crashed.id));
+  const ev2 = (await sync.jobEvents(crashed.id)).reverse().map(e => `${e.to_status}:${e.reason}`);
+  assert.ok(ev2.some(e => e.startsWith('paused:boot recovery')), 'recovery explained');
+  assert.ok(ev2[ev2.length - 1].startsWith('completed:'), 'resumed to completion');
+
+  // CHAIN 3 — RUNNING → GRACEFUL SHUTDOWN → PAUSED (cursor kept) → RESTART → AUTO RESUME → COMPLETED
+  // force a fresh backfill so the attempt has work to be interrupted in
+  await db.q(`UPDATE sync_state SET backfill_done=FALSE, next_start=1 WHERE mailbox_id=$1`, [admin.id]);
+  sync.requestShutdownPause(true);
+  await assert.rejects(() => sync.syncMailbox(admin.id, { maxPages: 2 }), /sync paused/,
+    'shutdown pauses the in-flight attempt at the next checkpoint');
+  sync.requestShutdownPause(false);                                      // "restart"
+  const pausedJob = await db.one(`SELECT id FROM sync_jobs WHERE mailbox_id=$1 AND status='paused' ORDER BY id DESC LIMIT 1`, [admin.id]);
+  const evS = await sync.jobEvents(pausedJob.id);
+  assert.ok(evS.some(e => /graceful shutdown/.test(e.reason)), 'shutdown pause is explained in the log');
+  const s3 = await sync.syncMailbox(admin.id, { maxPages: 50 });          // auto-resume to completion
+  assert.strictEqual(s3.jobId, Number(pausedJob.id));
+  assert.strictEqual((await db.one('SELECT status FROM sync_jobs WHERE id=$1', [pausedJob.id])).status, 'completed');
+
+  // CHAIN 4 — double-resume race: two processes both told "resume job N" — the
+  // CAS start guarantees exactly ONE wins; the loser is told the truth.
+  const both = await db.one(`INSERT INTO sync_jobs (mailbox_id, status) VALUES ($1,'paused') RETURNING id`, [admin.id]);
+  const results = await Promise.allSettled([
+    sync.syncMailbox(admin.id, { maxPages: 1 }),
+    sync.syncMailbox(admin.id, { maxPages: 1 }),
+  ]);
+  const wins = results.filter(r => r.status === 'fulfilled');
+  const losses = results.filter(r => r.status === 'rejected');
+  assert.strictEqual(wins.length + losses.length, 2);
+  assert.ok(wins.length >= 1, 'at least one attempt won');
+  for (const l of losses) assert.match(String(l.reason && l.reason.message), /already/i, 'loser told the truth, never double-runs');
+  const runEvents = (await sync.jobEvents(both.id)).filter(e => e.to_status === 'running');
+  assert.ok(runEvents.length <= wins.length, 'no phantom running transitions');
+
+  // CHAIN 5 — recovery idempotence: reconcile twice → one pause event total
+  const dead2 = await db.one(`INSERT INTO sync_jobs (mailbox_id, status, started_at, lease_at)
+    VALUES ($1,'running', now() - interval '10 minutes', now() - interval '10 minutes') RETURNING id`, [admin.id]);
+  await sync.reconcileStale();
+  await sync.reconcileStale();
+  const pauses = (await sync.jobEvents(dead2.id)).filter(e => e.to_status === 'paused');
+  assert.strictEqual(pauses.length, 1, 'second recovery pass is a no-op — no duplicate recovery');
+  await db.q("UPDATE sync_jobs SET status='cancelled', finished_at=now() WHERE id=$1", [dead2.id]);
+
+  // INVARIANT — cursor never moves backwards; backfill_done latches
+  const f = await db.one(`SELECT folder_id FROM sync_state WHERE mailbox_id=$1 LIMIT 1`, [admin.id]);
+  await sync.advanceCursor(admin.id, f.folder_id, 500, { backfillDone: true });
+  await sync.advanceCursor(admin.id, f.folder_id, 300);                  // stale racer tries to rewind
+  const st = await db.one('SELECT next_start, backfill_done FROM sync_state WHERE mailbox_id=$1 AND folder_id=$2', [admin.id, f.folder_id]);
+  assert.strictEqual(Number(st.next_start), 500, 'cursor is monotonic');
+  assert.strictEqual(st.backfill_done, true, 'backfill_done latches forward');
+
+  // ILLEGAL TRANSITIONS are impossible by construction
+  await assert.rejects(() => sync.transitionJob(s1.jobId, ['completed'], 'running', 'x'), /illegal job transition/);
+});
+
 // ---------- diagnostics ----------
 test('diagnostics: failed sync records full typed context (stage, endpoint, stack); success records ok row; UI/500 surface a trace id', async () => {
   // success path first: the admin mailbox sync recorded an 'ok' diagnostics row
@@ -1369,10 +1444,19 @@ test('concurrent sync start: exactly one job wins, the other gets a clear confli
 
 test('crash recovery: running jobs become paused (resumable) on startup; no orphan canonicals', async () => {
   const admin2 = byAddress['m.almaysari@exoticcolors.org'];
-  const r = await db.one("INSERT INTO sync_jobs (mailbox_id, status, started_at) VALUES ($1,'running',now()) RETURNING id", [admin2.id]);
+  // a crashed process leaves a FROZEN lease (it cannot touch it anymore) — that
+  // is what boot recovery detects. A fresh lease at boot means a still-alive
+  // CLI attempt in another container and must be left running (lease-aware rule).
+  const r = await db.one(`INSERT INTO sync_jobs (mailbox_id, status, started_at, lease_at)
+    VALUES ($1,'running', now() - interval '1 minute', now() - interval '1 minute') RETURNING id`, [admin2.id]);
+  const live = await db.one(`INSERT INTO sync_jobs (mailbox_id, status, started_at, lease_at)
+    VALUES ((SELECT id FROM mailboxes WHERE address='hr@exoticcolors.org'),'running', now(), now()) RETURNING id`);
   const recovered = await sync.recoverStaleJobs();
-  assert.ok(recovered.some(x => Number(x.id) === Number(r.id)));
+  assert.ok(recovered.some(x => Number(x.id) === Number(r.id)), 'frozen-lease job recovered at boot');
   assert.strictEqual((await db.one('SELECT status FROM sync_jobs WHERE id=$1', [r.id])).status, 'paused');
+  assert.strictEqual((await db.one('SELECT status FROM sync_jobs WHERE id=$1', [live.id])).status, 'running',
+    'live-lease attempt (another process) is NOT paused by boot recovery');
+  await db.q("UPDATE sync_jobs SET status='cancelled', finished_at=now() WHERE id=$1", [live.id]);
   await db.q("UPDATE sync_jobs SET status='cancelled', finished_at=now() WHERE id=$1", [r.id]);
   // invariant: no canonical without occurrence, no occurrence without canonical
   const orphanCanon = await db.one(`SELECT COUNT(*)::int n FROM canonical_messages c
@@ -1383,7 +1467,8 @@ test('crash recovery: running jobs become paused (resumable) on startup; no orph
   // 'ready' — otherwise it stays visually stuck "syncing" forever (real bug)
   const admin = byAddress['m.almaysari@exoticcolors.org'];
   await db.q("UPDATE mailboxes SET status='syncing' WHERE id=$1", [admin.id]);
-  await db.q("INSERT INTO sync_jobs (mailbox_id, status, started_at) VALUES ($1,'running',now())", [admin.id]);
+  await db.q(`INSERT INTO sync_jobs (mailbox_id, status, started_at, lease_at)
+    VALUES ($1,'running', now() - interval '1 minute', now() - interval '1 minute')`, [admin.id]);
   await sync.recoverStaleJobs();
   const mb = await db.one('SELECT status, status_detail FROM mailboxes WHERE id=$1', [admin.id]);
   assert.strictEqual(mb.status, 'ready');

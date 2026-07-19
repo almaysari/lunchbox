@@ -311,9 +311,12 @@ process.on('uncaughtException', (err) => {
 let shuttingDown = false;
 async function shutdown(signal) {
   if (shuttingDown) return; shuttingDown = true;
-  console.log(`[madar] ${signal} — graceful shutdown (worker off, drain, close db)`);
+  console.log(`[madar] ${signal} — graceful shutdown (worker off, pause in-flight sync, drain, close db)`);
   try { require('./modules/mail/live-sync').stopLiveSync(); } catch { /* heartbeat best-effort */ }
   try { require('./modules/mail/acceptance').stopAcceptanceSampler(); } catch { /* run state is durable */ }
+  // Cooperative handoff: any in-flight sync attempt pauses itself at its next
+  // checkpoint (≤1s) with cursor persisted — the next boot resumes exactly there.
+  try { require('./modules/mail/sync').requestShutdownPause(); } catch { /* boot recovery covers it */ }
   server.close(async () => {
     try { await db.closeDb(); } catch { /* pool already gone */ }
     process.exit(0);

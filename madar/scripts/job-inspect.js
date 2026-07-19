@@ -71,6 +71,9 @@ async function main() {
     otherRecentJobs: others,
     advisoryLocks: advisory,
     idleInTransaction: idleTx,
+    // the state-machine event log: every transition with actor + reason — this
+    // IS the answer to "why is this job in its current state"
+    lifecycle: await require('../modules/mail/sync').jobEvents(Number(job.id), 20),
     stalenessPredicate: { basis: 'lease heartbeat (death), not attempt age', staleAfterSec: STALE_SEC,
       leaseAgeSec, attemptAgeSec, wouldReclaimNow: wouldReclaim },
     verdict,
