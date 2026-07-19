@@ -469,7 +469,12 @@ async function pruneObservability(days = Number(process.env.MADAR_RETENTION_DAYS
   const { all } = require('../../core/db');
   const cy = await all(`DELETE FROM sync_worker_cycles WHERE created_at < now() - interval '${days} days' RETURNING id`);
   const dg = await all(`DELETE FROM sync_diagnostics  WHERE created_at < now() - interval '${days} days' RETURNING id`);
-  return { cyclesPruned: cy.length, diagnosticsPruned: dg.length, retentionDays: days };
+  // finished jobs (realtime pass = one small job per mailbox per tick) would
+  // accumulate ~20k rows/day at scale — prune with their events (FK CASCADE).
+  // Active jobs (queued/running/paused) are NEVER touched: resumption state.
+  const jb = await all(`DELETE FROM sync_jobs WHERE status IN ('completed','cancelled','failed')
+    AND COALESCE(finished_at, created_at) < now() - interval '${days} days' RETURNING id`);
+  return { cyclesPruned: cy.length, diagnosticsPruned: dg.length, jobsPruned: jb.length, retentionDays: days };
 }
 
 async function setJobControl(jobId, status, userId = null) { // 'paused' | 'cancelled' (admin action)
@@ -590,7 +595,23 @@ async function routeToSharedMailboxes(msg, sourceMailboxId, routing, summary, di
   }
 }
 
-async function syncMailbox(mailboxId, { maxPages = 5, userId = null } = {}) {
+// Modes (scheduler starvation fix — realtime must NEVER wait behind backfill):
+//   'realtime'  hot folders' (inbox/sent) newest pages ONLY — the fast pass the
+//               worker runs for EVERY mailbox EVERY tick. No backfill, no cold
+//               folders. Routing to shared mailboxes happens here (ingestOne).
+//   'backfill'  cold-folder rotation + historical backfill for ONE mailbox,
+//               bounded by a TIME slice (MADAR_BACKFILL_SLICE_SEC, default 60s,
+//               checked between pages AND between messages — a 100-body page at
+//               paced RPM can take minutes). On budget exhaustion it YIELDS:
+//               completes the job normally with summary.yielded=true; cursors
+//               are persisted, the next slice resumes exactly there. A yielded
+//               mid-page redo is cheap (dedup skips stored messages).
+//   'full'      the original combined behavior (CLI/manual/tests).
+async function syncMailbox(mailboxId, { maxPages = 5, userId = null, mode = 'full', sliceSec = null } = {}) {
+  const sliceMs = mode === 'backfill'
+    ? Math.max(0, Number(sliceSec != null ? sliceSec : (process.env.MADAR_BACKFILL_SLICE_SEC || 60))) * 1000
+    : Infinity;
+  const sliceDeadline = mode === 'backfill' ? Date.now() + sliceMs : Infinity;
   const mailbox = await one('SELECT * FROM mailboxes WHERE id = $1', [mailboxId]);
   if (!mailbox) throw new Error('mailbox not found');
   if (!mailbox.is_pilot) throw new Error('sync refused: mailbox is not pilot-selected');
@@ -618,7 +639,7 @@ async function syncMailbox(mailboxId, { maxPages = 5, userId = null } = {}) {
   await q("UPDATE mailboxes SET status='syncing' WHERE id=$1", [mailboxId]);
   const routing = await sharedAddressMap();
   const diag = newDiag(mailbox);
-  const summary = { jobId, mailbox: mailbox.address, traceId: diag.traceId, folders: 0, newMessages: 0, newOccurrences: 0, attachments: 0, skipped: 0, routed: 0 };
+  const summary = { jobId, mailbox: mailbox.address, traceId: diag.traceId, mode, folders: 0, newMessages: 0, newOccurrences: 0, attachments: 0, skipped: 0, routed: 0 };
 
   try {
     diag.stage = 'list_folders';
@@ -632,11 +653,24 @@ async function syncMailbox(mailboxId, { maxPages = 5, userId = null } = {}) {
       await q('INSERT INTO sync_state (mailbox_id, folder_id) VALUES ($1,$2) ON CONFLICT DO NOTHING', [mailboxId, folderId]);
       const state = await one('SELECT * FROM sync_state WHERE mailbox_id=$1 AND folder_id=$2', [mailboxId, folderId]);
 
-      // Folder scheduler: hot folders (inbox/sent) every cycle; cold folders only
-      // on rotation or while backfilling. A skipped folder's sync_state is left
-      // untouched so its rotation clock keeps running.
-      if (!folderDue(f, state, Date.now())) { summary.foldersSkippedCold = (summary.foldersSkippedCold || 0) + 1; continue; }
+      // Folder scheduler by mode. hot = where new mail lands (realtime duty);
+      // everything else is rotation/backfill territory (the backfill slice).
+      const hot = f.type === 'inbox' || f.type === 'sent';
+      let doNewest, doBackfill;
+      if (mode === 'realtime') {
+        if (!hot) { summary.foldersSkippedCold = (summary.foldersSkippedCold || 0) + 1; continue; }
+        doNewest = true; doBackfill = false;                 // never wait behind history
+      } else if (mode === 'backfill') {
+        if (Date.now() > sliceDeadline) { summary.yielded = true; break; }
+        doNewest = !hot && folderDue(f, state, Date.now()); // cold rotation lives here
+        doBackfill = !state.backfill_done;                   // any folder's history
+        if (!doNewest && !doBackfill) { summary.foldersSkippedCold = (summary.foldersSkippedCold || 0) + 1; continue; }
+      } else { // 'full' — original combined behavior
+        if (!folderDue(f, state, Date.now())) { summary.foldersSkippedCold = (summary.foldersSkippedCold || 0) + 1; continue; }
+        doNewest = true; doBackfill = !state.backfill_done;
+      }
 
+      if (doNewest) {
       // incremental newest page — scan the ENTIRE page, never stop at the first
       // already-seen message. The Zoho Mail messages/view endpoint pins no
       // guaranteed sort order (its default is undocumented and can interleave),
@@ -664,6 +698,10 @@ async function syncMailbox(mailboxId, { maxPages = 5, userId = null } = {}) {
             ? JSON.parse(mailbox.capabilities || '{}') : (mailbox.capabilities || {});
           capNow.archivedView = 'unsupported:' + (err.classification || ('http_' + err.httpStatus));
           await q('UPDATE mailboxes SET capabilities = $1 WHERE id = $2', [JSON.stringify(capNow), mailboxId]);
+          // neutralize the virtual folder's sync_state row: nothing to backfill
+          // on an unsupported view — a FALSE flag here would sit in the pending
+          // set forever and pin the backfill round-robin (proven by test)
+          await advanceCursor(mailboxId, folderId, 1, { backfillDone: true });
           summary.archivedViewUnsupported = capNow.archivedView;
           continue;
         }
@@ -685,12 +723,13 @@ async function syncMailbox(mailboxId, { maxPages = 5, userId = null } = {}) {
         await checkpoint(jobId);
         await ingestOne(connector, f, mailboxId, folderId, msg, summary, jobId, routing, diag);
       }
+      } // doNewest
 
       // backfill from persisted cursor
-      if (!state.backfill_done) {
+      if (doBackfill) {
         let start = Math.max(Number(state.next_start) || 1, 1 + PAGE_SIZE);
         let pages = 0;
-        while (pages < maxPages) {
+        while (pages < maxPages && Date.now() <= sliceDeadline) {
           await checkpoint(jobId);
           diag.stage = 'fetch_messages'; diag.endpoint = connector.lastEndpoint;
           const batch = await connector.listMessages(f, { start, limit: PAGE_SIZE }); await budgetDelay();
@@ -700,9 +739,14 @@ async function syncMailbox(mailboxId, { maxPages = 5, userId = null } = {}) {
           await writeCheckpoint(jobId, { folderId: f.providerFolderId, folderName: f.name,
             folderType: f.type, phase: 'backfill', offset: start, traceId: diag.traceId });
           for (const msg of batch) {
+            // intra-page slice check: one page of new bodies can take minutes at
+            // paced RPM — the realtime cadence must not pay for it. Cursor stays
+            // at the page start; the redo next slice is dedup-cheap.
+            if (Date.now() > sliceDeadline) { summary.yielded = true; break; }
             await checkpoint(jobId);
             await ingestOne(connector, f, mailboxId, folderId, msg, summary, jobId, routing, diag);
           }
+          if (summary.yielded) break;
           if (batch.length < PAGE_SIZE) {
             // terminal page: cursor + latch advance monotonically (invariant),
             // and the folder-phase completion is an EXPLICIT lifecycle event —
@@ -716,15 +760,19 @@ async function syncMailbox(mailboxId, { maxPages = 5, userId = null } = {}) {
           start += PAGE_SIZE;
           await advanceCursor(mailboxId, folderId, start);
         }
+        if (!summary.yielded && pages >= maxPages && Date.now() > sliceDeadline) summary.yielded = true;
       }
+      if (summary.yielded) break; // slice budget spent — cursors persisted, next slice resumes here
       await q("UPDATE sync_state SET last_sync_at=now(), last_error='' WHERE mailbox_id=$1 AND folder_id=$2", [mailboxId, folderId]);
     }
     diag.stage = 'done';
     await persistDiag(diag, null);
     // CAS completion: if an admin/shutdown paused or cancelled us at the finish
     // line, that controlled state WINS — we never resurrect a job the way raw
-    // UPDATEs could. The cursor is persisted either way.
-    const done = await transitionJob(jobId, ['running'], 'completed', 'cycle finished');
+    // UPDATEs could. The cursor is persisted either way. A YIELD is a normal
+    // completion (bounded slice) — resumption state lives in sync_state.
+    const done = await transitionJob(jobId, ['running'], 'completed',
+      `cycle finished (${mode}${summary.yielded ? ', yielded at slice budget' : ''})`);
     if (done) await q("UPDATE mailboxes SET status='ready', status_detail='' WHERE id=$1", [mailboxId]);
   } catch (err) {
     if (err instanceof JobStopped) {

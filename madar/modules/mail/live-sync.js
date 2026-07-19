@@ -138,16 +138,23 @@ async function tickOnce({ source = 'worker' } = {}) {
     // deleted) — otherwise the map and its stale backoff entries grow forever.
     const eligibleIds = new Set(eligible.map(m => Number(m.id)));
     for (const id of state.perMailbox.keys()) if (!eligibleIds.has(id)) state.perMailbox.delete(id);
+    // ---- PASS 1: REALTIME — every mailbox, hot folders' newest pages only. ----
+    // New mail (and its routing to shared mailboxes) NEVER waits behind any
+    // backfill: this pass is a handful of requests per mailbox and runs first,
+    // for everyone, every tick.
+    const realtimeStart = Date.now();
     for (const mb of eligible) {
       const id = Number(mb.id);
       const s = state.perMailbox.get(id) || { backoffMs: 0, backoffUntil: 0, lastError: null, lastOkAt: null, lastSummary: null };
       if (s.backoffUntil > Date.now()) { result.skippedBackoff++; result.perMailbox.push({ id, address: mb.address, outcome: 'backoff' }); state.perMailbox.set(id, s); continue; }
       try {
-        // incremental: newest page per folder + bounded backfill continuation
-        s.lastSummary = await syncMailbox(id, { maxPages: 2 });
+        const rtStart = Date.now();
+        s.lastSummary = await syncMailbox(id, { mode: 'realtime' });
+        s.lastRealtimeAt = Date.now(); s.lastRealtimeMs = Date.now() - rtStart;
         s.lastOkAt = Date.now(); s.lastError = null; s.backoffMs = 0; s.backoffUntil = 0;
         result.synced++;
-        result.perMailbox.push({ id, address: mb.address, outcome: 'synced',
+        result.perMailbox.push({ id, address: mb.address, outcome: 'synced', mode: 'realtime',
+          realtimeMs: s.lastRealtimeMs,
           newOccurrences: s.lastSummary && s.lastSummary.newOccurrences, traceId: s.lastSummary && s.lastSummary.traceId });
       } catch (e) {
         const msg = String(e.message || e);
@@ -179,6 +186,45 @@ async function tickOnce({ source = 'worker' } = {}) {
         }
       }
       state.perMailbox.set(id, s);
+    }
+    result.realtimePassMs = Date.now() - realtimeStart;
+    state.lastRealtimePassMs = result.realtimePassMs;
+
+    // ---- PASS 2: BACKFILL — ONE mailbox per tick, bounded time slice. ----
+    // Round-robin over mailboxes that still have pending backfill; the slice
+    // yields on budget (cursor persisted) so the next tick's realtime pass is
+    // never starved. Historical import thus progresses continuously WITHOUT
+    // ever delaying new-mail capture or shared-mailbox routing.
+    if (source === 'worker' || source === 'cli') {
+      // heal residue: a virtual-archived sync_state row left pending by a tenant
+      // that rejected the view would pin the round-robin forever (idempotent)
+      await q(`UPDATE sync_state ss SET backfill_done = TRUE
+        FROM folders f, mailboxes m
+        WHERE ss.folder_id = f.id AND m.id = ss.mailbox_id AND ss.backfill_done = FALSE
+          AND f.provider_folder_id = 'zoho:archived'
+          AND COALESCE(m.capabilities::jsonb ->> 'archivedView', '') LIKE 'unsupported%'`).catch(() => {});
+      const pending = await all(`SELECT DISTINCT m.id, m.address FROM mailboxes m
+        JOIN sync_state ss ON ss.mailbox_id = m.id AND ss.backfill_done = FALSE
+        WHERE m.strategy='mail_api' AND m.is_pilot AND m.sync_enabled ORDER BY m.id`);
+      const pool = pending.length ? pending : eligible; // no pending backfill → cold rotation duty
+      if (pool.length) {
+        state.backfillRR = ((state.backfillRR || 0) + 1) % pool.length;
+        const pick = pool[state.backfillRR];
+        const bfStart = Date.now();
+        try {
+          const bs = await syncMailbox(Number(pick.id), { mode: 'backfill', maxPages: 50 });
+          result.backfill = { mailboxId: Number(pick.id), address: pick.address,
+            yielded: Boolean(bs.yielded), newOccurrences: bs.newOccurrences,
+            durationMs: Date.now() - bfStart, pendingMailboxes: pending.length };
+          state.lastBackfill = { at: Date.now(), ...result.backfill };
+        } catch (e) {
+          const msg = String(e.message || e);
+          if (!/already (active|running|queued|paused)/.test(msg)) {
+            result.backfill = { mailboxId: Number(pick.id), address: pick.address,
+              error: msg.slice(0, 200), durationMs: Date.now() - bfStart };
+          }
+        }
+      }
     }
   } catch (e) {
     loopError = String(e && e.message || e);
@@ -293,7 +339,15 @@ async function liveStatus() {
     const lastJob = await one(`SELECT status, error_detail, finished_at FROM sync_jobs
                                WHERE mailbox_id = $1 ORDER BY id DESC LIMIT 1`, [id]);
     const mem = state.perMailbox.get(id) || {};
+    // scheduler metrics: realtime latency vs backfill progress, per mailbox
+    const rt = await one(`SELECT MAX(ss.last_sync_at) AS last_rt FROM sync_state ss
+      JOIN folders f ON f.id = ss.folder_id
+      WHERE ss.mailbox_id = $1 AND lower(f.folder_type) IN ('inbox','sent')`, [id]);
+    const bfPending = await one(`SELECT COUNT(*)::int n FROM sync_state WHERE mailbox_id=$1 AND backfill_done = FALSE`, [id]);
     rows.push({
+      lastRealtimeScanAt: rt && rt.last_rt ? new Date(rt.last_rt).getTime() : (mem.lastRealtimeAt || null),
+      realtimeLatencyMs: mem.lastRealtimeMs || null,
+      backfillPendingFolders: bfPending.n,
       mailboxId: id, address: b.address, displayName: b.display_name,
       detectedType: b.detected_type, strategy: b.strategy,
       liveEligible: b.strategy === 'mail_api',
@@ -320,6 +374,8 @@ async function liveStatus() {
       startedAt: ws.startedAt, lastTickAt: ws.lastTickAt, nextTickAt: ws.nextTickAt,
       ticking: ws.ticking, updatedAt: ws.updatedAt, ageSec: ws.ageSec, reason: ws.reason || null,
       thisProcess: { enabled: state.enabled, pid: PID, isWorkerHost: state.enabled },
+      lastBackfill: state.lastBackfill || null,      // last backfill checkpoint slice
+      lastRealtimePassMs: state.lastRealtimePassMs || null,
     },
     recentCycles: await recentCycles(8),
     mailboxes: rows,

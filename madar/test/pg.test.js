@@ -1247,6 +1247,58 @@ test('auto-discovery: worker tick discovers and registers shared mailboxes autom
   assert.ok(!t2.autoDiscovery, 'recent report → discovery skipped this tick');
 });
 
+// ---------- scheduler: realtime NEVER waits behind backfill (worker starvation fix) ----------
+test('starvation E2E: new mail (incl. shared-mailbox routing) appears while a large backfill is still incomplete; backfill yields on its slice budget and resumes', async () => {
+  const liveSync = require('../modules/mail/live-sync');
+  const admin = byAddress['m.almaysari@exoticcolors.org'];
+  const info = byAddress['info@exoticcolors.org'];
+  const hr = byAddress['hr@exoticcolors.org'];
+  await db.q('UPDATE mailboxes SET is_pilot=TRUE, sync_enabled=TRUE WHERE id IN ($1,$2)', [admin.id, info.id]);
+  await db.q("UPDATE sync_jobs SET status='cancelled', finished_at=now() WHERE status IN ('queued','running','paused')");
+
+  // a LARGE pending backfill on info@ (250 messages, reset to the beginning)
+  const saved = await db.all('SELECT folder_id, next_start, backfill_done FROM sync_state WHERE mailbox_id=$1', [info.id]);
+  await db.q('UPDATE sync_state SET backfill_done=FALSE, next_start=1 WHERE mailbox_id=$1', [info.id]);
+
+  // a brand-new email lands in the admin's Inbox, addressed to the SHARED hr@ box
+  const SUBJ = 'STARVATION-' + crypto.randomUUID().slice(0, 8);
+  const injected = { messageId: 'starv-1', threadId: 'tstarv', fromAddress: 'urgent@example.com',
+    senderName: 'Urgent', toAddress: 'hr@exoticcolors.org', subject: SUBJ,
+    summary: 'must not wait behind backfill', receivedTime: String(Date.now()), sentDateInGMT: String(Date.now() - 4000),
+    hasAttachment: '0' };
+  _messages[ADMIN_ACCOUNT_ID].splice(1, 0, injected);
+  process.env.MADAR_BACKFILL_SLICE_SEC = '0'; // slice budget exhausts immediately → backfill must yield
+  try {
+    const t = await liveSync.tickOnce({ source: 'worker' });
+    // REQUIREMENT: the new message is captured by the realtime pass...
+    const occ = await db.one(`SELECT COUNT(*)::int n FROM message_occurrences o
+      JOIN canonical_messages c ON c.id=o.canonical_message_id WHERE c.subject=$1 AND o.mailbox_id=$2`, [SUBJ, admin.id]);
+    assert.strictEqual(occ.n, 1, 'new mail captured in the SAME tick');
+    // ...routed to the shared mailbox in the SAME tick...
+    const routed = await db.one(`SELECT COUNT(*)::int n FROM message_occurrences o
+      JOIN canonical_messages c ON c.id=o.canonical_message_id WHERE c.subject=$1 AND o.mailbox_id=$2`, [SUBJ, hr.id]);
+    assert.strictEqual(routed.n, 1, 'shared-mailbox routing continued during historical import');
+    // ...while the big backfill is STILL INCOMPLETE (it yielded on its budget)
+    const pending = await db.one(`SELECT COUNT(*)::int n FROM sync_state WHERE mailbox_id=$1 AND backfill_done=FALSE`, [info.id]);
+    assert.ok(pending.n >= 1, 'backfill incomplete — proving new mail did not wait for it');
+    assert.ok(t.backfill && (t.backfill.yielded || t.backfill.error === undefined),
+      `backfill slice ran bounded (${JSON.stringify(t.backfill || null)})`);
+    assert.ok(t.realtimePassMs != null, 'realtime latency metric recorded');
+
+    // and the backfill RESUMES from its persisted cursor on later slices
+    delete process.env.MADAR_BACKFILL_SLICE_SEC;
+    for (let i = 0; i < 4; i++) await liveSync.tickOnce({ source: 'worker' });
+    const after = await db.one(`SELECT COUNT(*)::int n FROM sync_state WHERE mailbox_id=$1 AND backfill_done=FALSE`, [info.id]);
+    assert.strictEqual(after.n, 0, 'backfill completed across subsequent bounded slices');
+  } finally {
+    delete process.env.MADAR_BACKFILL_SLICE_SEC;
+    const i = _messages[ADMIN_ACCOUNT_ID].indexOf(injected);
+    if (i > -1) _messages[ADMIN_ACCOUNT_ID].splice(i, 1);
+    for (const s of saved) await db.q('UPDATE sync_state SET next_start=GREATEST(next_start,$2), backfill_done=$3 WHERE mailbox_id=$1 AND folder_id=$4',
+      [info.id, s.next_start, s.backfill_done, s.folder_id]);
+  }
+});
+
 // ---------- diagnostics ----------
 test('diagnostics: failed sync records full typed context (stage, endpoint, stack); success records ok row; UI/500 surface a trace id', async () => {
   // success path first: the admin mailbox sync recorded an 'ok' diagnostics row
@@ -1254,7 +1306,13 @@ test('diagnostics: failed sync records full typed context (stage, endpoint, stac
     [byAddress['m.almaysari@exoticcolors.org'].id]);
   assert.ok(okRow, 'ok diagnostics row exists');
   assert.strictEqual(okRow.stage, 'done');
-  assert.ok(okRow.read_count >= 1 && okRow.trace_id.startsWith('sync-'));
+  assert.ok(okRow.trace_id.startsWith('sync-'));
+  // with the split scheduler a no-op backfill slice can legitimately read 0 —
+  // evidence-bearing ok rows still exist from realtime/full cycles
+  const okRead = await db.one(`SELECT read_count FROM sync_diagnostics
+    WHERE mailbox_id = $1 AND outcome = 'ok' AND read_count >= 1 ORDER BY id DESC LIMIT 1`,
+    [byAddress['m.almaysari@exoticcolors.org'].id]);
+  assert.ok(okRead, 'an evidence-bearing ok cycle exists');
 
   // failure path: a mail_api mailbox with a valid connection but NO probe-proven
   // working id → connector construction fails inside the Zoho connector
