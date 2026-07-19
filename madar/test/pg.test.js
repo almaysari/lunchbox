@@ -990,6 +990,46 @@ test('a live long-running job (fresh lease, old started_at) is NEVER reclaimed; 
     'checkpoint touched lease_at during the run');
 });
 
+// ---------- autonomous archive ingestion: a listed Archive folder needs NO manual steps ----------
+test('archived mail in a listed folder is ingested autonomously: discovery, pagination, terminal page, cursor, dedup, cold rotation', async () => {
+  const admin = byAddress['m.almaysari@exoticcolors.org'];
+  await db.q('UPDATE mailboxes SET is_pilot=TRUE, sync_enabled=TRUE WHERE id=$1', [admin.id]);
+  await db.q("UPDATE sync_jobs SET status='cancelled', finished_at=now() WHERE mailbox_id=$1 AND status IN ('queued','running','paused')", [admin.id]);
+
+  // one normal sync — no flags, no manual exposure, no Discovery intervention
+  const s1 = await sync.syncMailbox(admin.id, { maxPages: 2 });
+  assert.ok(s1.folders >= 3, 'the Archive folder is DISCOVERED like any other folder');
+  const archFolder = await db.one(`SELECT id, name, folder_type FROM folders
+    WHERE mailbox_id=$1 AND provider_folder_id LIKE '%-f3'`, [admin.id]);
+  assert.ok(archFolder, 'Archive folder persisted');
+  assert.strictEqual(archFolder.folder_type, 'archive');
+
+  // every archived message ingested exactly once, attributed to the Archive folder
+  const occ = await db.one(`SELECT COUNT(*)::int n FROM message_occurrences o
+    JOIN canonical_messages c ON c.id=o.canonical_message_id
+    WHERE o.mailbox_id=$1 AND o.folder_id=$2 AND c.subject LIKE 'Archived demo message %'`, [admin.id, archFolder.id]);
+  assert.strictEqual(occ.n, 5, 'all archived messages ingested');
+
+  // terminal-page detection + persisted continuation cursor (restart-safe)
+  const st = await db.one('SELECT backfill_done, next_start, last_sync_at FROM sync_state WHERE mailbox_id=$1 AND folder_id=$2',
+    [admin.id, archFolder.id]);
+  assert.strictEqual(st.backfill_done, true, 'terminal page detected (batch < PAGE_SIZE) → backfill_done');
+  assert.ok(st.next_start >= 1 && st.last_sync_at, 'continuation cursor persisted (resume after restart = same rows)');
+
+  // dedup/idempotency: a second sync re-reads the newest page but inserts nothing
+  const s2 = await sync.syncMailbox(admin.id, { maxPages: 2 });
+  const occ2 = await db.one(`SELECT COUNT(*)::int n FROM message_occurrences o
+    JOIN canonical_messages c ON c.id=o.canonical_message_id
+    WHERE o.mailbox_id=$1 AND c.subject LIKE 'Archived demo message %'`, [admin.id]);
+  assert.strictEqual(occ2.n, 5, 'no duplicates on re-sync');
+
+  // cold-rotation semantics: with backfill done and a fresh last_sync_at, the
+  // archive folder is skipped this cycle (API economy) but is due again after
+  // the rotation interval — never abandoned
+  assert.ok(!sync.folderDue({ type: 'archive' }, { backfill_done: true, last_sync_at: new Date() }, Date.now()));
+  assert.ok(sync.folderDue({ type: 'archive' }, { backfill_done: true, last_sync_at: new Date(Date.now() - 16 * 60 * 1000) }, Date.now()));
+});
+
 // ---------- diagnostics ----------
 test('diagnostics: failed sync records full typed context (stage, endpoint, stack); success records ok row; UI/500 surface a trace id', async () => {
   // success path first: the admin mailbox sync recorded an 'ok' diagnostics row

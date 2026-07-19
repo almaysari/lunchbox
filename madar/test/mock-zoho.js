@@ -70,6 +70,20 @@ function demoMessages(prefix, n) {
 }
 // info@ has 250 messages so partial-backfill / resume / cancellation paths are exercised
 const MESSAGES = { [ADMIN_ACCOUNT_ID]: demoMessages('a', 12), [INFO_ORG_ACCOUNT_ID]: demoMessages('g', 250) };
+// distinct archived corpus (external recipients: exercises archive ingestion
+// without adding routed copies that would shift other tests' counts)
+const ARCHIVE_MESSAGES = {
+  [ADMIN_ACCOUNT_ID]: Array.from({ length: 5 }, (_, i) => ({
+    messageId: `arch-${1001 + i}`, threadId: `t-arch-${i}`,
+    fromAddress: `oldsender${i}@example.com`, senderName: `Old Sender ${i}`,
+    toAddress: 'someone-external@example.net',
+    subject: `Archived demo message ${i + 1}`,
+    summary: `Archived correspondence number ${i + 1}.`,
+    receivedTime: String(1700000000000 + i * 3600000),
+    sentDateInGMT: String(1699990000000 + i * 3600000),
+    hasAttachment: '0',
+  })),
+};
 const PDF = Buffer.from('%PDF-1.4\n1 0 obj<</Type/Catalog>>endobj\ntrailer<</Root 1 0 R>>\n%%EOF', 'latin1');
 
 function startMockZoho(port = 0) {
@@ -144,10 +158,14 @@ function startMockZoho(port = 0) {
     if ((m = p.match(/^\/api\/accounts\/([^/]+)\/folders$/))) {
       const id = m[1];
       if (id === ADMIN_ACCOUNT_ID || id === INFO_ORG_ACCOUNT_ID) {
-        return ok([
+        const folders = [
           { folderId: id + '-f1', folderName: 'Inbox', folderType: 'Inbox' },
           { folderId: id + '-f2', folderName: 'Sent', folderType: 'Sent' },
-        ]);
+        ];
+        // archived mail lives in a normal listed folder — the pipeline must
+        // ingest it autonomously like any other cold folder
+        if (id === ADMIN_ACCOUNT_ID) folders.push({ folderId: id + '-f3', folderName: 'Archive', folderType: 'Archive' });
+        return ok(folders);
       }
       return invalidAccount(id); // non-account id → literal observed rejection
     }
@@ -157,7 +175,9 @@ function startMockZoho(port = 0) {
       const start = Number(url.searchParams.get('start') || 1);
       const limit = Number(url.searchParams.get('limit') || 100);
       const folderId = url.searchParams.get('folderId') || '';
-      const all = folderId.endsWith('-f2') ? [] : MESSAGES[id];
+      const all = folderId.endsWith('-f2') ? []
+        : folderId.endsWith('-f3') ? (ARCHIVE_MESSAGES[id] || [])
+        : MESSAGES[id];
       return ok(all.slice(start - 1, start - 1 + limit));
     }
     if ((m = p.match(/^\/api\/accounts\/([^/]+)\/folders\/[^/]+\/messages\/([^/]+)\/content$/))) {
