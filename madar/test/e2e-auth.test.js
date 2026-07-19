@@ -93,4 +93,74 @@ test('create-admin (users table) → first login → forced change → relogin',
   assert.strictEqual(old.status, 401);
 });
 
+// Grants lifecycle over the REAL endpoint (production shape from Gate 2):
+// a zoho:member_copy occurrence in a shared mailbox is invisible to the admin
+// until an explicit grant; POST /api/admin/grants exposes it IMMEDIATELY (no
+// restart, no cache), writes an audit row per change, and the grant is visible
+// in the admin users listing; revoke hides it again. This is the API path the
+// UI checkbox calls — fakeCall-based tests can't reach server.js, so the
+// audit-per-change guarantee is proven HERE (pg.test.js's vacuous n>=0 check
+// was a hole).
+test('grants: explicit + audited + immediate over /api/admin/grants (shared member-copy message)', async () => {
+  const { Pool } = require('pg');
+  const pool = new Pool({ connectionString: E2E_URL });
+  const q = (t, p) => pool.query(t, p).then(r => r.rows);
+
+  // seed: shared mailbox + routed folder + one member-copy message (the exact
+  // production shape captured in Gate 2)
+  const [mb] = await q(`INSERT INTO mailboxes (address, display_name, detected_type, strategy, status)
+    VALUES ('finance-e2e@exoticcolors.org','Finance E2E','shared_mailbox','none','ready') RETURNING id`);
+  const [f] = await q(`INSERT INTO folders (mailbox_id, provider_folder_id, name, folder_type)
+    VALUES ($1,'live:routed','Live (وارد موجّه)','inbox') RETURNING id`, [mb.id]);
+  const [c] = await q(`INSERT INTO canonical_messages (dedup_hash, from_address, to_addresses, subject, snippet, sent_at)
+    VALUES ('e2e-grant-proof','client@example.com','finance-e2e@exoticcolors.org','E2E-GRANT-PROOF','s', now()) RETURNING id`);
+  await q(`INSERT INTO message_occurrences (canonical_message_id, mailbox_id, folder_id, provider, provider_message_id, received_at)
+    VALUES ($1,$2,$3,'zoho:member_copy','e2e-grant-1', now())`, [c.id, mb.id, f.id]);
+
+  const login = await http('POST', '/api/auth/login', { email: 'owner@e2e.test', password: 'permanent-pass-654321' });
+  assert.strictEqual(login.status, 200);
+  const csrf = login.json.csrf;
+  const meRow = await q(`SELECT id FROM users WHERE email='owner@e2e.test'`);
+  const adminId = Number(meRow[0].id);
+
+  // BEFORE any grant: admin role gives metadata, NEVER content — the shared
+  // mailbox is outside the readable set (404 anti-enumeration), list is empty
+  const before1 = await http('GET', `/api/mail/messages?mailbox_id=${mb.id}`);
+  assert.strictEqual(before1.status, 404);
+  const beforeAll = await http('GET', '/api/mail/messages?q=E2E-GRANT-PROOF');
+  assert.deepStrictEqual(beforeAll.json, []);
+  const audit0 = (await q(`SELECT COUNT(*)::int n FROM audit_log WHERE action='admin.grant.set'`))[0].n;
+
+  // EXPLICIT grant via the real endpoint (what the UI checkbox calls)
+  const grant = await http('POST', '/api/admin/grants',
+    { user_id: adminId, mailbox_id: Number(mb.id), flags: { can_view_messages: true } }, { 'X-CSRF-Token': csrf });
+  assert.strictEqual(grant.status, 200);
+
+  // AUDITED: exactly one new admin.grant.set row, naming actor + target
+  const audit1 = await q(`SELECT user_id, target FROM audit_log WHERE action='admin.grant.set' ORDER BY id DESC LIMIT 1`);
+  assert.strictEqual((await q(`SELECT COUNT(*)::int n FROM audit_log WHERE action='admin.grant.set'`))[0].n, audit0 + 1);
+  assert.strictEqual(Number(audit1[0].user_id), adminId);
+  assert.ok(String(audit1[0].target).includes(`mailbox:${mb.id}`));
+
+  // IMMEDIATE: the stored member-copy message is served right away
+  const after1 = await http('GET', `/api/mail/messages?mailbox_id=${mb.id}`);
+  assert.strictEqual(after1.status, 200);
+  assert.ok(after1.json.some(r => r.subject === 'E2E-GRANT-PROOF'), 'granted read exposes the stored message immediately');
+
+  // VISIBLE: the users listing shows the grant
+  const users = await http('GET', '/api/admin/users');
+  const meListed = users.json.find(u => u.id === adminId);
+  assert.ok(meListed.grants.some(g => Number(g.mailbox_id) === Number(mb.id) && g.can_view_messages),
+    'grant is visible in the admin users listing');
+
+  // REVOKE: audited too, and the content disappears again
+  const revoke = await http('POST', '/api/admin/grants',
+    { user_id: adminId, mailbox_id: Number(mb.id) }, { 'X-CSRF-Token': csrf });
+  assert.strictEqual(revoke.status, 200);
+  assert.strictEqual((await q(`SELECT COUNT(*)::int n FROM audit_log WHERE action='admin.grant.set'`))[0].n, audit0 + 2);
+  assert.strictEqual((await http('GET', `/api/mail/messages?mailbox_id=${mb.id}`)).status, 404);
+
+  await pool.end();
+});
+
 after(() => { serverProc?.kill('SIGKILL'); });

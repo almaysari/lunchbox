@@ -1502,8 +1502,9 @@ test('policy: platform_admin manages but cannot read content without an explicit
   await auth.setGrant(adminUser.id, info.id, { can_view_messages: true, can_view_attachments: true, can_download_attachments: true });
   const granted = await fakeCall('GET', '/api/mail/messages', { user: adminUser, search: '?q=Demo' });
   assert.ok(granted.body.length > 0);
-  const auditRow = await db.one(`SELECT COUNT(*)::int n FROM audit_log WHERE action='admin.grant.set'`);
-  assert.ok(auditRow.n >= 0); // grant changes audited via API path (covered in route)
+  // NOTE: audit-per-grant-change is proven over the REAL /api/admin/grants
+  // endpoint in e2e-auth.test.js (fakeCall cannot reach server.js routes —
+  // the previous n>=0 assertion here was vacuous and proved nothing)
 });
 
 test('404 policy: unauthorized resource IDs are indistinguishable from nonexistent', async () => {
@@ -1616,7 +1617,10 @@ test('visibility trace: names WHY mail is not shown — "stored but hidden by gr
   assert.strictEqual(t.body.checks['5_stored_but_hidden'].youHaveReadGrant, false);
   assert.strictEqual(t.body.checks['5_stored_but_hidden'].hiddenByGrant, true);
   assert.match(t.body.verdict, /محجوبة|can_view_messages/);
-  assert.deepStrictEqual((await fakeCall('GET', '/api/mail/messages', { user: adminUser, search: `?mailbox_id=${info.id}` })).body, []);
+  // an unauthorized mailbox_id is a consistent 404 for every caller — zero-grant
+  // users included (proven over real HTTP in e2e-auth.test.js); the trace above
+  // is the tool that explains WHY, so the 404 stays non-enumerating
+  assert.strictEqual((await fakeCall('GET', '/api/mail/messages', { user: adminUser, search: `?mailbox_id=${info.id}` })).status, 404);
 
   await auth.setGrant(adminUser.id, info.id, { can_view_messages: true });
   const t2 = await fakeCall('GET', `/api/mail/mailboxes/${info.id}/visibility-trace`, { user: adminUser });

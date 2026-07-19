@@ -406,9 +406,12 @@ async function handle(req, res, url, user, body, helpers) {
   // ---------- messages: occurrences joined to canonical; permissions INSIDE the SQL ----------
   if (p === '/api/mail/messages' && req.method === 'GET') {
     const allowed = await auth.readableMailboxIds(user);
-    if (!allowed.length) return send(200, []);
     const mailboxId = url.searchParams.get('mailbox_id') ? Number(url.searchParams.get('mailbox_id')) : null;
+    // an unauthorized mailbox_id is 404 for EVERY caller — a zero-grant user
+    // must get the same answer as a partially-granted one (anti-enumeration
+    // consistency; the old empty-grants shortcut answered 200 [] here)
     if (mailboxId && !allowed.includes(mailboxId)) return send(404, { error: 'not found' });
+    if (!allowed.length) return send(200, []);
     const folderId = url.searchParams.get('folder_id') ? Number(url.searchParams.get('folder_id')) : null;
     const qtext = (url.searchParams.get('q') || '').trim();
     const scope = mailboxId ? [mailboxId] : allowed;
