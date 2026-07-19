@@ -38,10 +38,16 @@ async function persistDiag(diag, err) {
   }
   // Typed extraction: Zoho HTTP context, or pg SQL context, or routing context.
   const isPg = err.code && /^\d/.test(String(err.code)) && err.severity;
+  // The precise failure class (oauth_* / request_timeout / http_4xx / …) — an
+  // exception is NEVER reduced to an unexplained "HTTP 0" (migration 012).
+  const classification = err.classification
+    || (isPg ? 'application_exception' : null)
+    || (err.httpStatus === 0 ? 'unknown_transport_error' : null)
+    || 'application_exception';
   await q(`INSERT INTO sync_diagnostics (trace_id, mailbox_id, mailbox_address, stage, endpoint,
     http_status, response_sample, read_count, inserted_count, skipped_count, routed_count,
-    outcome, error_class, error_message, error_stack, sql_state, constraint_name, routing_context)
-    VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,'error',$12,$13,$14,$15,$16,$17)`,
+    outcome, error_class, error_message, error_stack, sql_state, constraint_name, routing_context, classification)
+    VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,'error',$12,$13,$14,$15,$16,$17,$18)`,
     [...base.slice(0, 4),
       err.endpoint || diag.endpoint, err.httpStatus || diag.httpStatus,
       err.responseSample ? JSON.stringify(err.responseSample) : (diag.responseSample ? JSON.stringify(diag.responseSample) : null),
@@ -49,7 +55,8 @@ async function persistDiag(diag, err) {
       err.name || 'Error', String(err.message || err).slice(0, 1000),
       String(err.stack || '').slice(0, 6000),
       isPg ? String(err.code) : null, isPg ? (err.constraint || null) : null,
-      diag.routingContext ? JSON.stringify(diag.routingContext) : null]);
+      diag.routingContext ? JSON.stringify(diag.routingContext) : null,
+      classification]);
   return diag.traceId;
 }
 

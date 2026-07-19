@@ -347,3 +347,37 @@ CLI مفروضة.
 `ZohoApiError` (رسالة تسمّي السبب: «transport failure (dns ENOTFOUND)» بدل «HTTP 0»)
 إلى `sync_diagnostics.response_sample`، فيعرضها الـdoctor في الفحص 3 و7 وفي الحُكم:
 «مشكلة شبكة/DNS/TLS في الوصول إلى Zoho، ليست خطأ تطبيق». **مُختبَر**: 36/36 أخضر.
+
+## جذر «HTTP 0» على مستوى التطبيق: فصل المراحل والتصنيف الكامل (بعد براءة الشبكة)
+
+net-diagnose من داخل حاوية الإنتاج برّأ النقل نهائيًا (DNS/TCP/TLS/HTTPS كلها
+سليمة، بلا proxy). التحقيق الممنهج في مسار list_folders كشف الجذر في الكود:
+`get()` كان يلف مرحلة OAuth (`token()`) ومرحلة الطلب (`fetch`) بقوس catch واحد —
+فأي فشل في **الحصول على token** (رفض التجديد invalid_grant، تعذّر فك تشفير
+refresh token بعد تغيّر MADAR_ENCRYPTION_KEY، غياب refresh token) كان يُختم
+زورًا «HTTP 0 transport» رغم أن **أي طلب لم يغادر العملية أصلًا**.
+
+**الإصلاح (لا سلوك جديد — تشخيص صادق):** فصل المراحل oauth/fetch/read في `get()`؛
+أخطاء OAuth الآن `ZohoAuthError` مصنّفة (`oauth_token_missing` /
+`oauth_token_decrypt_failed` / `oauth_refresh_failed`)؛ استجابات HTTP تُصنَّف
+(`oauth_scope_denied`, `http_401/403/429`, `zoho_account_mismatch`,
+`zoho_api_error`, `malformed_response`)؛ فشل الشبكة يبقى مصنّفًا بطبقته؛
+المهلة `request_timeout` مع دليل الإجهاض (أُنشئ AbortSignal؟ انطلق؟ لماذا؟
+كم مضى مقابل المهلة؟). **الاستثناء الأصلي يُحفَظ كاملًا** (name/code/errno/
+syscall/hostname/سلسلة cause/stack — بعد تعقيم أي أسرار) في
+`response_sample.originalError`، والتصنيف في عمود `classification`
+(migration 012). دورة حياة الـtoken موثّقة بالأدلة: المصدر (memory/postgres_cache/
+refresh)، بصمة sha256 مقتطعة (لا القيمة أبدًا)، expiry، قرار التجديد وسببه
+وتوقيته ونتيجته.
+
+**أداة الحسم (`scripts/zoho-path-diagnose.js`)**: Test A (مزوّد token الإنتاجي
+نفسه + نفس connector مباشرة) وTest B (مسار Live Sync الحقيقي syncMailbox) مع
+مقارنة بصمة/مصدر/انتهاء الـtoken وaccountId ومضيف مركز البيانات والتصنيفين،
+و`--repeat N` لمطاردة التقطّع، وتفسير آلي بقواعد الحسم. **برهان تشغيلي**: شغّلناها
+ضد خادم حقيقي بعملية منفصلة ذات مفتاح تشفير مغاير عمدًا — صنّفت
+`oauth_token_decrypt_failed` باتساق 3/3 على المسارين بالتفسير الصحيح؛ الكود
+القديم كان سيسمّي هذه الحالة نفسها «HTTP 0». وهي المرشح الأول لجذر الحالة
+الحقيقية (حاوية أعيد إنشاؤها بمفتاح جديد على بيانات قديمة).
+
+الاختبارات تثبت كل صنف + التعافي عبر نفس المسار + عدم تسرب أي token إلى أي
+دليل (فحص نصي صريح على الرسائل/العينات/الـstack).

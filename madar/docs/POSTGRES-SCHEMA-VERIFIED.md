@@ -407,7 +407,8 @@ CREATE TABLE public.sync_diagnostics (
     sql_state text,
     constraint_name text,
     routing_context jsonb,
-    created_at timestamp with time zone DEFAULT now() NOT NULL
+    created_at timestamp with time zone DEFAULT now() NOT NULL,
+    classification text
 );
 
 CREATE SEQUENCE public.sync_diagnostics_id_seq
@@ -699,6 +700,8 @@ CREATE INDEX idx_occ_canonical ON public.message_occurrences USING btree (canoni
 CREATE INDEX idx_occ_mailbox_time ON public.message_occurrences USING btree (mailbox_id, received_at DESC);
 
 CREATE INDEX idx_sessions_expiry ON public.sessions USING btree (expires_at);
+
+CREATE INDEX idx_sync_diag_classification ON public.sync_diagnostics USING btree (classification) WHERE (classification IS NOT NULL);
 
 CREATE INDEX idx_sync_diag_mailbox ON public.sync_diagnostics USING btree (mailbox_id, id DESC);
 

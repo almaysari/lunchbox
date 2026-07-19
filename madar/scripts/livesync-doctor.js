@@ -94,13 +94,34 @@ async function main() {
   out.checks['2_recent_cycle'] = { ok: Boolean(lastDiag),
     lastCycleAt: lastDiag ? new Date(lastDiag.created_at).getTime() : null,
     lastJobStatus: lastJob ? lastJob.status : null };
-  // response_sample carries the transport diagnosis on an HTTP-0 (transport) failure
+  // response_sample carries the full phase-separated diagnosis (classification,
+  // preserved original error, oauth evidence, transport detail, request meta)
   const diagSample = lastDiag && lastDiag.response_sample
     ? (typeof lastDiag.response_sample === 'string' ? JSON.parse(lastDiag.response_sample) : lastDiag.response_sample) : null;
   out.checks['3_fetched_from_zoho'] = { ok: Boolean(lastDiag && lastDiag.read_count > 0),
     read: lastDiag ? lastDiag.read_count : 0, endpoint: lastDiag ? lastDiag.endpoint : null,
     httpStatus: lastDiag ? lastDiag.http_status : null,
-    transport: diagSample && diagSample.transport ? diagSample.transport : null };
+    classification: (lastDiag && lastDiag.classification) || (diagSample && diagSample.classification) || null,
+    transport: diagSample && diagSample.transport ? diagSample.transport : null,
+    oauth: diagSample && diagSample.oauth ? diagSample.oauth : null };
+
+  // token cache metadata via the persisted state Live Sync itself uses (no
+  // secrets: presence booleans + expiry only; fingerprints come from
+  // zoho-path-diagnose which exercises the live provider)
+  const connMeta = await one(`SELECT c.id, c.status, c.api_base,
+      (c.refresh_token_enc IS NOT NULL) AS has_refresh_token,
+      (c.access_token_enc IS NOT NULL) AS has_cached_access_token,
+      c.access_token_expires_at
+    FROM connections c WHERE c.id = $1`, [mb.connection_id]);
+  out.tokenMetadata = connMeta ? {
+    connectionId: Number(connMeta.id), connectionStatus: connMeta.status,
+    dataCenterHost: (() => { try { return new URL(connMeta.api_base).host; } catch { return connMeta.api_base; } })(),
+    source: 'postgres_cache', hasRefreshToken: connMeta.has_refresh_token,
+    hasCachedAccessToken: connMeta.has_cached_access_token,
+    accessTokenExpiresAt: connMeta.access_token_expires_at ? new Date(connMeta.access_token_expires_at).getTime() : null,
+    accessTokenRemainingSec: connMeta.access_token_expires_at
+      ? Math.round((new Date(connMeta.access_token_expires_at).getTime() - Date.now()) / 1000) : null,
+  } : null;
   out.checks['4_inserted_or_cursor_dedup'] = { inserted: lastDiag ? lastDiag.inserted_count : 0,
     skipped: lastDiag ? lastDiag.skipped_count : 0, duplicatesPrevented: dup.n,
     cursors: cursors.map(c => ({ folder: c.name, backfillDone: c.backfill_done, nextStart: c.next_start,
@@ -110,11 +131,16 @@ async function main() {
     anyReadersGranted: anyReaders.n, hiddenByGrant: occTotal.n > 0 && !inReadable };
   out.checks['6_status_syncing'] = { status: mb.status, statusDetail: mb.status_detail, stuck: mb.status === 'syncing' };
   out.checks['7_last_diagnostics'] = lastDiag ? { traceId: lastDiag.trace_id, stage: lastDiag.stage,
-    outcome: lastDiag.outcome, read: lastDiag.read_count, inserted: lastDiag.inserted_count,
+    outcome: lastDiag.outcome, classification: lastDiag.classification || null,
+    read: lastDiag.read_count, inserted: lastDiag.inserted_count,
     skipped: lastDiag.skipped_count, routed: lastDiag.routed_count,
     error: lastDiag.outcome === 'error' ? { class: lastDiag.error_class, message: lastDiag.error_message,
+      classification: lastDiag.classification || (diagSample && diagSample.classification) || null,
       sqlState: lastDiag.sql_state, constraint: lastDiag.constraint_name,
+      originalError: diagSample && diagSample.originalError ? diagSample.originalError : null,
       transport: diagSample && diagSample.transport ? diagSample.transport : null,
+      oauth: diagSample && diagSample.oauth ? diagSample.oauth : null,
+      requestMeta: diagSample && diagSample.requestMeta ? diagSample.requestMeta : null,
       stack: lastDiag.error_stack ? String(lastDiag.error_stack).split('\n').slice(0, 6).join('\n') : null } : null } : null;
 
   // ---- Optional: prove the fix — grant read, then re-check ----
@@ -155,10 +181,17 @@ async function main() {
       ? `Live worker NOT RESPONDING: last heartbeat ${ws.ageSec}s ago (> 2 intervals) — the main server process may be down; restart it.`
       : 'Live worker is OFF (MADAR_LIVE_SYNC=off or never started) — turn it on.';
   else if (lastDiag && lastDiag.outcome === 'error') {
-    const t = c['7_last_diagnostics'] && c['7_last_diagnostics'].error && c['7_last_diagnostics'].error.transport;
-    verdict = t
-      ? `Last cycle FAILED at stage "${lastDiag.stage}" — TRANSPORT ${t.kind}${t.code ? ' (' + t.code + ')' : ''} to ${t.hostname || t.host || '?'}${t.syscall ? ' syscall=' + t.syscall : ''}. This is a network/DNS/TLS problem reaching Zoho, not an app bug — trace ${lastDiag.trace_id}. See check 7 for the full cause chain.`
-      : `Last cycle FAILED at stage "${lastDiag.stage}" — HTTP ${lastDiag.http_status}, trace ${lastDiag.trace_id}. See check 7.`;
+    const e7 = c['7_last_diagnostics'] && c['7_last_diagnostics'].error;
+    const cls = (e7 && e7.classification) || lastDiag.classification;
+    const t = e7 && e7.transport;
+    if (cls && cls.startsWith('oauth_'))
+      verdict = `Last cycle FAILED at stage "${lastDiag.stage}" — ${cls.toUpperCase()}: ${lastDiag.error_message}. This is an OAUTH failure (no request reached Zoho) — NOT network. Trace ${lastDiag.trace_id}; run zoho-path-diagnose for Test A/B evidence.`;
+    else if (cls === 'request_timeout')
+      verdict = `Last cycle FAILED at stage "${lastDiag.stage}" — REQUEST TIMEOUT (AbortSignal fired). Trace ${lastDiag.trace_id}; see check 7 requestMeta for elapsed vs configured timeout.`;
+    else if (t)
+      verdict = `Last cycle FAILED at stage "${lastDiag.stage}" — TRANSPORT ${t.kind}${t.code ? ' (' + t.code + ')' : ''} to ${t.hostname || t.host || '?'}${t.syscall ? ' syscall=' + t.syscall : ''}. Network problem reaching Zoho — trace ${lastDiag.trace_id}. See check 7 for the full cause chain.`;
+    else
+      verdict = `Last cycle FAILED at stage "${lastDiag.stage}" — ${cls || 'HTTP ' + lastDiag.http_status}, trace ${lastDiag.trace_id}. See check 7.`;
   }
   else if (mb.status === 'syncing')
     verdict = 'Mailbox stuck on "syncing" — a dead cycle left it; the worker now auto-recovers age-gated. Re-run with --force.';

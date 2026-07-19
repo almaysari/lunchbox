@@ -84,6 +84,10 @@ function startMockZoho(port = 0) {
 
     if (p === '/oauth/v2/token') {
       TOKEN_STATS.requests++; // observability for token-churn tests
+      if (TOKEN_STATS.failNext) { // classification tests: inject a refresh rejection
+        const f = TOKEN_STATS.failNext; TOKEN_STATS.failNext = null;
+        return send(f.status || 400, { error: f.error || 'invalid_grant' });
+      }
       return send(200, { access_token: 'mock-access-token-' + TOKEN_STATS.requests, refresh_token: 'mock-refresh-token', expires_in: 3600 });
     }
     if (p === '/api/accounts') {

@@ -10,6 +10,7 @@ const DB_URL = process.env.TEST_DATABASE_URL || 'postgresql://madar:madar_dev@lo
 process.env.DATABASE_URL = DB_URL;
 process.env.MADAR_MAX_RPM = '100000';
 process.env.MADAR_CHECKPOINT_MS = '0'; // tests need every pause/cancel checkpoint live (prod throttles to 1s)
+process.env.MADAR_REQUEST_TIMEOUT_MS = '1500'; // request_timeout classification test needs a short abort
 const KEY_V1 = crypto.randomBytes(32).toString('hex');
 const KEY_V2 = crypto.randomBytes(32).toString('hex');
 const SESS_KEY = crypto.randomBytes(32).toString('hex');
@@ -794,6 +795,91 @@ test('durable acceptance: state in DB, samples accumulate on one run, restart is
   // a new run can start after completion
   const run2 = await acc.startRun({ hours: 0.01, sampleSec: 5 });
   await db.q(`UPDATE acceptance_runs SET status='aborted', finished_at=now() WHERE id=$1`, [run2.id]);
+});
+
+// ---------- HTTP-0 root cause: phase separation + full classification ----------
+test('an OAuth failure is classified oauth_*, never collapsed into "HTTP 0 transport" — original exception preserved, no secrets leak', async () => {
+  const { ZohoAuthError } = require('../modules/mail/zoho-client');
+  const admin = byAddress['m.almaysari@exoticcolors.org'];
+  const connRow = await db.one('SELECT connection_id FROM mailboxes WHERE id=$1', [admin.id]);
+  const cid = connRow.connection_id;
+  const saved = await db.one('SELECT refresh_token_enc, access_token_enc, access_token_expires_at FROM connections WHERE id=$1', [cid]);
+
+  // (1) oauth_refresh_failed: expired cache + Zoho rejects the refresh (invalid_grant)
+  await db.q("UPDATE connections SET access_token_expires_at = now() - interval '1 minute' WHERE id=$1", [cid]);
+  ZohoClient._cache.clear();
+  _tokenStats.failNext = { status: 400, error: 'invalid_grant' };
+  let caught = null;
+  try { await sync.syncMailbox(admin.id, { maxPages: 1 }); } catch (e) { caught = e; }
+  assert.ok(caught, 'sync must fail when the refresh is rejected');
+  assert.strictEqual(caught.classification, 'oauth_refresh_failed', `classification must be oauth_refresh_failed, got ${caught.classification}`);
+  assert.strictEqual(caught.httpStatus, 0, 'no request reached Zoho — status 0 with a MEANINGFUL class, not a bare HTTP 0');
+  assert.match(caught.message, /OAuth failure \(oauth_refresh_failed\)/);
+  assert.match(caught.message, /invalid_grant/);
+  // original exception preserved — name, classification, message; and persisted
+  const diag1 = await db.one('SELECT classification, response_sample, error_message FROM sync_diagnostics WHERE mailbox_id=$1 ORDER BY id DESC LIMIT 1', [admin.id]);
+  assert.strictEqual(diag1.classification, 'oauth_refresh_failed', 'classification persisted in its own column');
+  const sample1 = typeof diag1.response_sample === 'string' ? JSON.parse(diag1.response_sample) : diag1.response_sample;
+  assert.strictEqual(sample1.originalError.name, 'ZohoAuthError');
+  assert.strictEqual(sample1.originalError.classification, 'oauth_refresh_failed');
+  // secrets NEVER leak into evidence (message, sample, stack)
+  const flat = JSON.stringify({ m: caught.message, s: caught.responseSample, d: sample1, em: diag1.error_message });
+  assert.ok(!flat.includes('mock-access-token'), 'no access token anywhere in evidence');
+  assert.ok(!flat.includes('mock-refresh-token'), 'no refresh token anywhere in evidence');
+
+  // (2) oauth_token_decrypt_failed: stored refresh token undecryptable (key rotation)
+  await db.q("UPDATE connections SET refresh_token_enc = 'v1:00000000000000000000000000000000:dead', access_token_enc = NULL, access_token_expires_at = NULL WHERE id=$1", [cid]);
+  ZohoClient._cache.clear();
+  caught = null;
+  try { await sync.syncMailbox(admin.id, { maxPages: 1 }); } catch (e) { caught = e; }
+  assert.strictEqual(caught && caught.classification, 'oauth_token_decrypt_failed');
+  assert.match(caught.message, /MADAR_ENCRYPTION_KEY|cannot be decrypted/);
+  const diag2 = await db.one('SELECT classification FROM sync_diagnostics WHERE mailbox_id=$1 ORDER BY id DESC LIMIT 1', [admin.id]);
+  assert.strictEqual(diag2.classification, 'oauth_token_decrypt_failed');
+
+  // (3) oauth_token_missing: no refresh token at all (unit level, same provider)
+  const bare = new ZohoClient({ id: cid, accounts_base: 'http://127.0.0.1:1', api_base: 'http://127.0.0.1:1', refresh_token_enc: null });
+  await assert.rejects(() => bare.token(), (e) => e instanceof ZohoAuthError && e.classification === 'oauth_token_missing');
+
+  // restore the connection and PROVE recovery through the same path
+  await db.q('UPDATE connections SET refresh_token_enc=$1, access_token_enc=$2, access_token_expires_at=$3 WHERE id=$4',
+    [saved.refresh_token_enc, saved.access_token_enc, saved.access_token_expires_at, cid]);
+  ZohoClient._cache.clear();
+  const ok = await sync.syncMailbox(admin.id, { maxPages: 1 });
+  assert.ok(ok.folders >= 1, 'same production path succeeds after the OAuth state is restored');
+});
+
+test('HTTP + timeout classifications: scope_denied/401/429/account_mismatch/zoho_api_error; a hung socket → request_timeout with abort evidence', async () => {
+  const { classifyHttp } = require('../modules/mail/zoho-client');
+  // HTTP-layer classes from REAL observed Zoho shapes (endpoint matrix evidence)
+  assert.strictEqual(classifyHttp(401, { status: { code: 401, description: 'Invalid OAuthscope' }, data: { errorCode: 'INVALID_OAUTHSCOPE' } }), 'oauth_scope_denied');
+  assert.strictEqual(classifyHttp(401, { status: { code: 401, description: 'Unauthorized' } }), 'http_401');
+  assert.strictEqual(classifyHttp(403, {}), 'http_403');
+  assert.strictEqual(classifyHttp(429, {}), 'http_429');
+  assert.strictEqual(classifyHttp(404, { data: { moreInfo: 'Account id 999 is invalid' } }), 'zoho_account_mismatch');
+  assert.strictEqual(classifyHttp(500, {}), 'zoho_api_error');
+  assert.strictEqual(classifyHttp(200, { data: [] }), null);
+
+  // request_timeout: a server that accepts and never responds; same client code
+  const net = require('net');
+  const hang = net.createServer(() => { /* accept, never respond */ });
+  await new Promise(r => hang.listen(0, '127.0.0.1', r));
+  hang.unref();
+  const client = new ZohoClient({ id: 999999, accounts_base: 'http://127.0.0.1:1',
+    api_base: `http://127.0.0.1:${hang.address().port}`, refresh_token_enc: null });
+  client.accessToken = 'unit-test-token'; client.expiry = Date.now() + 3600000; // memory token → oauth phase passes
+  const t0 = Date.now();
+  const r = await client.get('/api/accounts/1/folders');
+  const elapsed = Date.now() - t0;
+  assert.strictEqual(r.status, 0);
+  assert.strictEqual(r.classification, 'request_timeout');
+  assert.strictEqual(r.meta.abortFired, true, 'abort evidence captured');
+  assert.match(String(r.meta.abortReason), /AbortSignal\.timeout/);
+  assert.ok(elapsed >= 1400 && elapsed < 5000, `aborted near the configured 1500ms timeout (took ${elapsed}ms)`);
+  assert.strictEqual(r.meta.timeoutMs, 1500);
+  assert.ok(r.body.originalError && r.body.originalError.name, 'original exception preserved');
+  assert.ok(!JSON.stringify(r).includes('unit-test-token'), 'token never appears in the evidence');
+  hang.close();
 });
 
 // ---------- diagnostics ----------

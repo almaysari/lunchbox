@@ -7,31 +7,55 @@ const lc = s => String(s || '').toLowerCase();
 // sample (status/field-names only — never bodies/PII) so diagnostics can show
 // the real cause instead of a flattened string.
 class ZohoApiError extends Error {
-  constructor(stage, endpoint, status, body) {
-    // status 0 is a TRANSPORT failure (DNS/TLS/socket/timeout) — never reached
-    // HTTP. Name the real cause in the message instead of a bare "HTTP 0".
+  // r = the full get() result: { url, status, body, classification, phase, meta, oauth, responseHeaders }
+  constructor(stage, endpoint, status, body, r = null) {
     const t = body && body.transport;
-    const headline = status === 0
-      ? `Zoho ${stage} transport failure (${t ? t.kind : 'unknown'}${t && t.code ? ' ' + t.code : ''}) at ${endpoint}`
-      : `Zoho ${stage} failed: HTTP ${status} at ${endpoint}`;
+    const cls = (r && r.classification) || (body && body.classification) || null;
+    const phase = (r && r.phase) || null;
+    // The headline names the REAL failure class — never a bare "HTTP 0":
+    //   oauth phase  → "Zoho list_folders OAuth failure (oauth_refresh_failed): …"
+    //   fetch phase  → "Zoho list_folders transport failure (dns ENOTFOUND) at …"
+    //   HTTP status  → "Zoho list_folders failed: HTTP 401 (oauth_scope_denied) at …"
+    let headline;
+    if (status === 0 && phase === 'oauth') {
+      headline = `Zoho ${stage} OAuth failure (${cls}): ${(body && body.error) || 'token acquisition failed'}`;
+    } else if (status === 0) {
+      headline = `Zoho ${stage} ${cls === 'request_timeout' ? 'timeout' : 'transport failure'} (${t ? t.kind : cls || 'unknown'}${t && t.code ? ' ' + t.code : ''}) at ${endpoint}`;
+    } else {
+      headline = `Zoho ${stage} failed: HTTP ${status}${cls ? ' (' + cls + ')' : ''} at ${endpoint}`;
+    }
     super(headline);
     this.name = 'ZohoApiError';
     this.stage = stage;
     this.endpoint = endpoint;
     this.httpStatus = status;
-    this.transport = t || null; // full transport diagnosis on status 0
-    // Keep the transport root's stack as the error stack when there is one — it
-    // points at the actual socket/DNS/TLS failure, not this constructor.
+    this.classification = cls || (status === 0 ? 'unknown_transport_error' : 'zoho_api_error');
+    this.phase = phase;
+    this.transport = t || null;             // full transport diagnosis (fetch phase)
+    this.oauth = (r && r.oauth) || null;    // sanitized token evidence (fingerprint/source/expiry only)
+    this.requestMeta = (r && r.meta) || null; // redacted headers, timing, timeout, abort
+    this.originalError = (body && body.originalError) || null; // preserved, sanitized
+    // Keep the deepest real stack when one exists — it points at the actual
+    // failure, not this constructor.
     if (t && t.stack) this.stack = `${this.name}: ${headline}\n${t.stack}`;
+    else if (this.originalError && this.originalError.stack) this.stack = `${this.name}: ${headline}\n${this.originalError.stack}`;
     const data = body && body.data;
     this.responseSample = {
       status,
+      classification: this.classification,
+      phase,
       transport: t ? {
         kind: t.kind, code: t.code, errno: t.errno, syscall: t.syscall,
         hostname: t.hostname, address: t.address, port: t.port, host: t.host,
         causeChain: t.causeChain,
       } : undefined,
-      description: (body && body.status && body.status.description) || (status === 0 && body && body.transportError) || undefined,
+      oauth: this.oauth || undefined,
+      originalError: this.originalError || undefined,
+      requestMeta: this.requestMeta ? { timeoutMs: this.requestMeta.timeoutMs, elapsedMs: this.requestMeta.elapsedMs,
+        abortFired: this.requestMeta.abortFired, abortReason: this.requestMeta.abortReason,
+        host: this.requestMeta.host, startedAt: this.requestMeta.startedAt } : undefined,
+      responseHeaders: (r && r.responseHeaders) || undefined,
+      description: (body && body.status && body.status.description) || (status === 0 && body && (body.error || body.transportError)) || undefined,
       moreInfo: (data && data.moreInfo) || undefined,
       errorCode: (body && body.status && body.status.code) || (body && body.errorCode) || undefined,
       fields: Array.isArray(data) && data[0] ? Object.keys(data[0]).sort() : undefined,
@@ -55,7 +79,7 @@ class ZohoMailApiConnector {
   async listFolders() {
     this.lastEndpoint = `/api/accounts/${this.id}/folders`;
     const r = await this.zoho.getFolders(this.id);
-    if (r.status !== 200) throw new ZohoApiError('list_folders', r.url || this.lastEndpoint, r.status, r.body);
+    if (r.status !== 200) throw new ZohoApiError('list_folders', r.url || this.lastEndpoint, r.status, r.body, r);
     return ((r.body && r.body.data) || []).map(f => ({
       providerFolderId: String(f.folderId),
       name: f.folderName,
@@ -66,7 +90,7 @@ class ZohoMailApiConnector {
   async listMessages(folder, { start = 1, limit = 100 } = {}) {
     this.lastEndpoint = `/api/accounts/${this.id}/messages/view?folderId=${folder.providerFolderId}`;
     const r = await this.zoho.listMessages(this.id, folder.providerFolderId, { start, limit });
-    if (r.status !== 200) throw new ZohoApiError('fetch_messages', r.url || this.lastEndpoint, r.status, r.body);
+    if (r.status !== 200) throw new ZohoApiError('fetch_messages', r.url || this.lastEndpoint, r.status, r.body, r);
     return ((r.body && r.body.data) || []).map(m => ({
       providerMessageId: String(m.messageId),
       // Real tenants' messages/view carries NO RFC header field — dedup uses the

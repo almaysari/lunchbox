@@ -2,8 +2,62 @@
 // Every call returns { url, status, body } WITHOUT throwing on HTTP errors —
 // the detection engine needs literal API responses as evidence.
 // Docs: https://www.zoho.com/mail/help/api/
+const crypto = require('crypto');
 const { one, q } = require('../../core/db');
 const { decrypt, encrypt } = require('../../core/crypto');
+
+// Typed OAuth-phase error: token acquisition failures must NEVER be reported as
+// transport ("HTTP 0") — they happen BEFORE any request leaves the process.
+// (Proven root-cause candidate: the old get() had one catch around token()+fetch,
+// so a refresh rejection or an undecryptable secret masqueraded as HTTP 0 even
+// with a perfectly healthy network.)
+class ZohoAuthError extends Error {
+  constructor(classification, message, extra = {}) {
+    super(message);
+    this.name = 'ZohoAuthError';
+    this.classification = classification; // oauth_token_missing | oauth_token_decrypt_failed | oauth_refresh_failed
+    Object.assign(this, extra);           // e.g. { zohoError, httpStatus }
+  }
+}
+
+// Non-reversible token identifier for evidence: hash prefix only, never the value.
+const tokenFingerprint = t => crypto.createHash('sha256').update(String(t)).digest('hex').slice(0, 12);
+
+// Scrub any secret-looking material from error text before it is persisted or
+// printed (defense in depth — messages we build carry no secrets by design).
+const scrubSecrets = s => String(s || '')
+  .replace(/(Zoho-)?oauthtoken\s+\S+/gi, 'oauthtoken [REDACTED]')
+  .replace(/(refresh_token|access_token|client_secret|code)=[^&\s"']+/gi, '$1=[REDACTED]');
+
+// Preserve the ORIGINAL exception, sanitized: name/message/code/errno/syscall/
+// hostname/type + the full cause chain + a trimmed stack. Nothing is collapsed.
+function serializeError(err, depth = 0) {
+  if (!err || depth > 4) return null;
+  return {
+    name: err.name || null,
+    type: err.constructor ? err.constructor.name : null,
+    message: scrubSecrets(err.message).slice(0, 400) || null,
+    code: err.code != null ? String(err.code) : null,
+    errno: err.errno != null ? err.errno : null,
+    syscall: err.syscall || null,
+    hostname: err.hostname || null,
+    classification: err.classification || null,
+    stack: depth === 0 ? scrubSecrets(String(err.stack || '')).split('\n').slice(0, 8).join('\n') : undefined,
+    cause: err.cause ? serializeError(err.cause, depth + 1) : null,
+  };
+}
+
+// HTTP-layer classification once a REAL response exists (status never 0 here).
+function classifyHttp(status, body) {
+  if (status >= 200 && status < 300) return null;
+  const desc = String((body && body.status && body.status.description) || (body && body.errorCode) || '').toUpperCase();
+  const raw = typeof body === 'string' ? body.toUpperCase() : JSON.stringify(body || '').toUpperCase();
+  if (status === 401) return raw.includes('INVALID_OAUTHSCOPE') || desc.includes('SCOPE') ? 'oauth_scope_denied' : 'http_401';
+  if (status === 403) return 'http_403';
+  if (status === 429) return 'http_429';
+  if (status === 404 && /ACCOUNT ID .* (IS )?INVALID/.test(raw)) return 'zoho_account_mismatch';
+  return 'zoho_api_error';
+}
 
 // Full transport diagnostics for a failed fetch. Node's undici throws a generic
 // "TypeError: fetch failed" whose REAL cause hangs off err.cause (possibly
@@ -129,16 +183,32 @@ class ZohoClient {
       [encrypt(json.refresh_token), encrypt(this.accessToken), new Date(this.expiry), this.conn.id]);
   }
 
+  // Token acquisition with FULL lifecycle evidence (this.lastTokenEvidence —
+  // sanitized: fingerprint prefix, source, expiry, refresh decision; never the
+  // token). Failures throw typed ZohoAuthError with a precise classification —
+  // they are OAuth failures, not "HTTP 0".
   async token() {
-    if (this.accessToken && Date.now() < this.expiry) return this.accessToken;
-    if (!this.conn.refresh_token_enc) throw new Error('Connection not authorized yet (no refresh token).');
+    const ev = { source: null, fingerprint: null, issuedAt: null,
+      expiresAt: null, nowAt: Date.now(), remainingSec: null, refresh: null };
+    const finish = (token) => {
+      ev.fingerprint = tokenFingerprint(token);
+      ev.expiresAt = this.expiry;
+      ev.remainingSec = Math.round((this.expiry - Date.now()) / 1000);
+      this.lastTokenEvidence = ev;
+      return token;
+    };
+    if (this.accessToken && Date.now() < this.expiry) { ev.source = 'memory'; return finish(this.accessToken); }
+    if (!this.conn.refresh_token_enc) {
+      this.lastTokenEvidence = { ...ev, source: 'none' };
+      throw new ZohoAuthError('oauth_token_missing', 'Connection not authorized yet (no refresh token).');
+    }
     // Refresh-token concurrency guard: a PostgreSQL advisory lock per
     // connection serializes refreshes across every process/worker, so
     // parallel syncs can never race Zoho's token endpoint.
     const { tx } = require('../../core/db');
     return tx(async (client) => {
       await client.query('SELECT pg_advisory_xact_lock($1, $2)', [0x4d41, Number(this.conn.id)]);
-      if (this.accessToken && Date.now() < this.expiry) return this.accessToken; // refreshed while waiting
+      if (this.accessToken && Date.now() < this.expiry) { ev.source = 'memory'; return finish(this.accessToken); } // refreshed while waiting
       const fresh = (await client.query(
         `SELECT refresh_token_enc, access_token_enc, access_token_expires_at
          FROM connections WHERE id = $1`, [this.conn.id])).rows[0];
@@ -151,47 +221,130 @@ class ZohoClient {
         try {
           this.accessToken = decrypt(fresh.access_token_enc);
           this.expiry = expMs;
-          return this.accessToken;
-        } catch { /* undecryptable (key rotation) → fall through to refresh */ }
+          ev.source = 'postgres_cache';
+          return finish(this.accessToken);
+        } catch (e) {
+          // undecryptable cached ACCESS token → safe to fall through to refresh,
+          // but record the decision so the evidence shows why a refresh happened
+          ev.refresh = { decision: 'refresh', reason: 'cached access token undecryptable (key rotation?)' };
+        }
+      } else {
+        ev.refresh = { decision: 'refresh',
+          reason: fresh.access_token_enc ? `cached token expired ${Math.round((Date.now() - expMs) / 1000)}s ago` : 'no cached access token' };
       }
+      // the REFRESH token itself failing to decrypt is fatal and must say so —
+      // this was previously an anonymous throw that surfaced as "HTTP 0"
+      let refreshToken;
+      try { refreshToken = decrypt(fresh.refresh_token_enc); }
+      catch (e) {
+        this.lastTokenEvidence = ev;
+        throw new ZohoAuthError('oauth_token_decrypt_failed',
+          'Stored refresh token cannot be decrypted — MADAR_ENCRYPTION_KEY differs from the one that stored it (key rotation without re-encryption, or a recreated container with a new .env). Re-authorize the connection or restore the original key.',
+          { cause: e });
+      }
+      let clientSecret;
+      try { clientSecret = decrypt(this.conn.client_secret_enc); }
+      catch (e) {
+        this.lastTokenEvidence = ev;
+        throw new ZohoAuthError('oauth_token_decrypt_failed',
+          'Stored client secret cannot be decrypted — encryption key mismatch (see refresh-token note).', { cause: e });
+      }
+      ev.refresh = { ...(ev.refresh || { decision: 'refresh', reason: 'memory+cache miss' }), startedAt: Date.now() };
       const res = await fetch(new URL('/oauth/v2/token', this.conn.accounts_base), {
         method: 'POST',
         body: new URLSearchParams({
           grant_type: 'refresh_token',
-          refresh_token: decrypt(fresh.refresh_token_enc),
+          refresh_token: refreshToken,
           client_id: this.conn.client_id,
-          client_secret: decrypt(this.conn.client_secret_enc),
+          client_secret: clientSecret,
         }),
       });
-      const json = await res.json();
-      if (!res.ok || json.error) throw new Error('Zoho token refresh failed: ' + (json.error || res.status));
+      const json = await res.json().catch(() => ({}));
+      ev.refresh.finishedAt = Date.now();
+      ev.refresh.httpStatus = res.status;
+      if (!res.ok || json.error || !json.access_token) {
+        ev.refresh.outcome = 'failed';
+        ev.refresh.zohoError = scrubSecrets(json.error || json.error_description || String(res.status)).slice(0, 200);
+        this.lastTokenEvidence = ev;
+        throw new ZohoAuthError('oauth_refresh_failed',
+          `Zoho token refresh failed: ${ev.refresh.zohoError}` +
+          (String(json.error || '').includes('invalid_grant')
+            ? ' — the refresh token was revoked or superseded (Zoho caps live refresh tokens per client); re-authorize the connection from the admin panel.' : ''),
+          { zohoError: json.error || null, httpStatus: res.status });
+      }
+      ev.refresh.outcome = 'ok';
       this.accessToken = json.access_token; // plaintext in memory only — encrypted before persisting, never logged
       this.expiry = Date.now() + (json.expires_in - 60) * 1000;
+      ev.source = 'refresh';
+      ev.issuedAt = Date.now();
       ZohoClient._refreshes++;
       await client.query('UPDATE connections SET access_token_enc = $1, access_token_expires_at = $2 WHERE id = $3',
         [encrypt(this.accessToken), new Date(this.expiry), this.conn.id]);
-      return this.accessToken;
+      return finish(this.accessToken);
     });
   }
 
-  // Raw GET: never throws on HTTP errors; body is parsed JSON or raw text.
+  // Raw GET: never throws; every result carries phase-separated evidence.
+  // PHASES ARE CAUGHT SEPARATELY — an OAuth failure is classified oauth_*, a
+  // socket failure unknown_transport_error/<kind>, a timeout request_timeout, a
+  // body-read failure malformed_response. Nothing is ever collapsed into a bare
+  // "HTTP 0": the original exception is preserved (sanitized) in body.originalError
+  // and the request evidence in meta (redacted headers, timing, timeout, abort).
   async get(pathname, { raw = false } = {}) {
     const url = new URL(pathname, this.conn.api_base).toString();
+    const meta = {
+      url, method: 'GET', host: new URL(url).host,
+      headers: { Authorization: '[REDACTED Zoho-oauthtoken]' },
+      timeoutMs: REQUEST_TIMEOUT_MS, abortControllerCreated: true, abortFired: false, abortReason: null,
+      attempt: 1, retriesConfigured: 0,
+      startedAt: Date.now(), finishedAt: null, elapsedMs: null, phase: 'oauth',
+    };
+    const done = (r) => { meta.finishedAt = Date.now(); meta.elapsedMs = meta.finishedAt - meta.startedAt; return { ...r, meta }; };
+
+    await this._pace();
+    let token;
     try {
-      await this._pace();
-      const token = await this.token();
-      const res = await fetch(url, {
+      token = await this.token();
+    } catch (err) {
+      // OAuth phase — no request was ever sent. Classify precisely.
+      return done({ url, status: 0, phase: 'oauth',
+        classification: err.classification || 'application_exception',
+        oauth: this.lastTokenEvidence || null,
+        body: { error: scrubSecrets(err.message), originalError: serializeError(err) } });
+    }
+    meta.phase = 'fetch';
+    meta.oauth = this.lastTokenEvidence ? {
+      source: this.lastTokenEvidence.source, fingerprint: this.lastTokenEvidence.fingerprint,
+      expiresAt: this.lastTokenEvidence.expiresAt, remainingSec: this.lastTokenEvidence.remainingSec,
+    } : null;
+    let res;
+    try {
+      res = await fetch(url, {
         headers: { Authorization: 'Zoho-oauthtoken ' + token },
         signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
       });
-      if (raw && res.ok) return { url, status: res.status, body: Buffer.from(await res.arrayBuffer()) };
+    } catch (err) {
+      const timedOut = err.name === 'TimeoutError' || (err.name === 'AbortError' && Date.now() - meta.startedAt >= REQUEST_TIMEOUT_MS - 50);
+      meta.abortFired = err.name === 'TimeoutError' || err.name === 'AbortError';
+      meta.abortReason = meta.abortFired ? (timedOut ? `AbortSignal.timeout(${REQUEST_TIMEOUT_MS}ms) fired` : 'aborted before timeout') : null;
+      const transport = transportDetail(err, url);
+      return done({ url, status: 0, phase: 'fetch',
+        classification: timedOut ? 'request_timeout'
+          : err.name === 'AbortError' ? 'request_aborted'
+          : 'unknown_transport_error',
+        body: { transportError: scrubSecrets(err.message), transport, originalError: serializeError(err) } });
+    }
+    meta.phase = 'read';
+    try {
+      if (raw && res.ok) return done({ url, status: res.status, body: Buffer.from(await res.arrayBuffer()) });
       const text = await res.text();
       let body; try { body = JSON.parse(text); } catch { body = text.slice(0, 2000); }
-      return { url, status: res.status, body };
+      return done({ url, status: res.status, body, classification: classifyHttp(res.status, body),
+        responseHeaders: { 'content-type': res.headers.get('content-type') || null,
+          'x-request-id': res.headers.get('x-request-id') || res.headers.get('x-zoho-requestid') || null } });
     } catch (err) {
-      // status 0 = never reached HTTP; body carries the FULL transport diagnosis
-      // (kind + code/errno/syscall/hostname/address/port + cause chain + stack).
-      return { url, status: 0, body: { transportError: String(err.message || err), transport: transportDetail(err, url) } };
+      return done({ url, status: res.status, phase: 'read', classification: 'malformed_response',
+        body: { error: scrubSecrets(err.message), originalError: serializeError(err) } });
     }
   }
 
@@ -220,4 +373,4 @@ class ZohoClient {
 ZohoClient._cache = new Map();  // connection id -> shared client instance
 ZohoClient._refreshes = 0;      // process-lifetime refresh count (observability)
 
-module.exports = { ZohoClient, READ_SCOPES };
+module.exports = { ZohoClient, ZohoAuthError, READ_SCOPES, classifyHttp, serializeError, tokenFingerprint };
