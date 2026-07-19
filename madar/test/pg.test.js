@@ -1224,6 +1224,29 @@ test('checkpoint model: 7101→6301 is a folder transition (never rollback); sam
   assert.ok(completions.length >= 0, 'folder completion markers are recorded as events when terminal pages are hit');
 });
 
+// ---------- auto-discovery: shared mailboxes appear WITHOUT a manual button ----------
+test('auto-discovery: worker tick discovers and registers shared mailboxes automatically, idempotently, interval-gated', async () => {
+  const liveSync = require('../modules/mail/live-sync');
+  const before = (await db.one(`SELECT COUNT(*)::int n FROM mailboxes WHERE detected_type='shared_mailbox'`)).n;
+  assert.ok(before >= 20, 'suite baseline: shared mailboxes already discovered');
+
+  // make discovery "due" (all reports stale) → the WORKER tick must run it
+  await db.q("UPDATE detection_reports SET at = now() - interval '2 days'");
+  const t1 = await liveSync.tickOnce({ source: 'worker' });
+  assert.ok(t1.autoDiscovery, `tick attempted auto-discovery: ${JSON.stringify(t1.autoDiscovery || null)}`);
+  assert.ok(t1.autoDiscovery.ran >= 1, `worker ran discovery automatically (error: ${t1.autoDiscovery.lastError || 'none'})`);
+  const after = (await db.one(`SELECT COUNT(*)::int n FROM mailboxes WHERE detected_type='shared_mailbox'`)).n;
+  assert.strictEqual(after, before, 'idempotent upsert — no duplicates, nothing lost');
+  const report = await db.one(`SELECT report FROM detection_reports ORDER BY id DESC LIMIT 1`);
+  const rep = typeof report.report === 'string' ? JSON.parse(report.report) : report.report;
+  assert.strictEqual(rep.auto, true, 'auto-discovery recorded its own report');
+  assert.ok(rep.shared >= 20, `report counts the shared mailboxes (${rep.shared})`);
+
+  // interval gate: a fresh report means the next tick does NOT re-run discovery
+  const t2 = await liveSync.tickOnce({ source: 'worker' });
+  assert.ok(!t2.autoDiscovery, 'recent report → discovery skipped this tick');
+});
+
 // ---------- diagnostics ----------
 test('diagnostics: failed sync records full typed context (stage, endpoint, stack); success records ok row; UI/500 surface a trace id', async () => {
   // success path first: the admin mailbox sync recorded an 'ok' diagnostics row

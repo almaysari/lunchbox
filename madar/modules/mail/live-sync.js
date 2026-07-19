@@ -55,6 +55,44 @@ async function logCycle(row) {
   } catch { /* logging must never break the worker */ }
 }
 
+// Auto-discovery: shared mailboxes must appear in Discovery WITHOUT anyone
+// pressing a button. The worker runs the production discovery path (accounts +
+// org accounts + paginated groups + capability probes + registry upsert) for
+// every connected Zoho connection when the last discovery report is older than
+// MADAR_DISCOVERY_INTERVAL_HOURS (default 24) — or has never run. Failures are
+// contained per connection and never break the tick.
+const DISCOVERY_INTERVAL_MS = Math.max(1, Number(process.env.MADAR_DISCOVERY_INTERVAL_HOURS) || 24) * 3600 * 1000;
+async function maybeAutoDiscover() {
+  const { ZohoClient } = require('./zoho-client');
+  const detection = require('./detection');
+  const out = { ran: 0, mailboxes: 0, errors: 0 };
+  const conns = await all(`SELECT id FROM connections WHERE status = 'connected' ORDER BY id`);
+  for (const c of conns) {
+    try {
+      const last = await one(`SELECT at FROM detection_reports ORDER BY id DESC LIMIT 1`);
+      if (last && Date.now() - new Date(last.at).getTime() < DISCOVERY_INTERVAL_MS) return out;
+      const zoho = await ZohoClient.cachedForConnection(c.id);
+      const discovery = await detection.discoverOrganization(zoho);
+      for (const mb of discovery.mailboxes) {
+        const caps = await detection.probeCapabilities(zoho, mb);
+        const choice = detection.chooseStrategy(mb, caps);
+        await detection.upsertMailbox(c.id, mb, caps, choice);
+        out.mailboxes++;
+      }
+      await q('INSERT INTO detection_reports (mailbox_id, report) VALUES (0, $1)',
+        [JSON.stringify({ auto: true, at: new Date().toISOString(), connectionId: Number(c.id),
+          discovered: discovery.mailboxes.length,
+          shared: discovery.mailboxes.filter(m => m.detectedType === 'shared_mailbox').length })]);
+      out.ran++;
+    } catch (e) {
+      out.errors++;
+      out.lastError = String(e.message || e).slice(0, 300); // surfaced in the cycle log — never silent
+      await audit(null, 'mail.autodiscovery.error', 'connection:' + c.id, out.lastError).catch(() => {});
+    }
+  }
+  return out;
+}
+
 async function eligibleMailboxes() {
   return all(`SELECT id, address FROM mailboxes
               WHERE strategy = 'mail_api' AND is_pilot = TRUE AND sync_enabled = TRUE
@@ -82,6 +120,12 @@ async function tickOnce({ source = 'worker' } = {}) {
       result.recovered = rec.pausedJobs + rec.unstuckMailboxes;
       if (result.recovered) state.lastRecovery = { at: Date.now(), ...rec };
     } catch { /* reconciliation must never kill the tick */ }
+    // Auto-discovery: shared mailboxes appear in Discovery automatically —
+    // no manual button. Interval-gated inside; contained failures.
+    if (source === 'worker') {
+      try { const d = await maybeAutoDiscover(); if (d.ran || d.errors) { result.autoDiscovery = d; state.lastAutoDiscovery = { at: Date.now(), ...d }; } }
+      catch { /* discovery must never kill the tick */ }
+    }
     // Retention pruning ~every 6h (worker cycles + diagnostics older than
     // MADAR_RETENTION_DAYS) — required for multi-day unattended runs.
     if (source === 'worker' && Date.now() - (state.lastPruneAt || 0) > 6 * 3600 * 1000) {
