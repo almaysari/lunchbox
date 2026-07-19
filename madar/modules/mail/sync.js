@@ -115,6 +115,36 @@ async function jobEvents(jobId, limit = 20) {
 let _shutdownRequested = false;
 function requestShutdownPause(v = true) { _shutdownRequested = Boolean(v); }
 
+// Structured checkpoint writer — the job-level view of "where am I now".
+// checkpoint_seq is incremented SERVER-SIDE on every write: it can only move
+// forward, so a stale writer can never make the sequence regress (DB-level
+// guarantee, no expected-value handshake needed — combined with the CAS start
+// there is exactly one live runner per job anyway). The scalar current_cursor
+// is kept in sync for backward compatibility but the JSONB is the truth shown
+// by diagnostics: offset is meaningful ONLY within its folder+phase.
+async function writeCheckpoint(jobId, { folderId, folderName, folderType, phase, offset, traceId }) {
+  const cp = { folderId: String(folderId), folderName: folderName || '', folderType: folderType || '',
+    phase, offset: Number(offset) || 0, traceId: traceId || null, updatedAt: new Date().toISOString() };
+  const row = await one(
+    `UPDATE sync_jobs SET checkpoint = $2::jsonb, checkpoint_seq = checkpoint_seq + 1, current_cursor = $3
+     WHERE id = $1 RETURNING checkpoint_seq`, [jobId, JSON.stringify(cp), cp.offset]);
+  return row ? Number(row.checkpoint_seq) : null;
+}
+
+// Pure classifier for checkpoint deltas — the diagnostic must NEVER call an
+// unexplained offset decrease healthy. Rules:
+//   * checkpoint_seq must STRICTLY increase → else checkpoint_regression
+//   * same folder + same phase: offset must not decrease → else checkpoint_regression
+//   * folder changed  → folder_transition (legitimate, explicit)
+//   * phase changed   → phase_transition  (legitimate, explicit)
+function classifyCheckpointDelta(prev, next) {
+  if (!prev || !next) return 'advance';
+  if (Number(next.seq) <= Number(prev.seq)) return 'checkpoint_regression';
+  if (String(prev.folderId) !== String(next.folderId)) return 'folder_transition';
+  if (String(prev.phase) !== String(next.phase)) return 'phase_transition';
+  return Number(next.offset) >= Number(prev.offset) ? 'advance' : 'checkpoint_regression';
+}
+
 // Cursor invariant: next_start NEVER moves backwards (a racing stale attempt can
 // only be a no-op, never rewind progress). backfill_done latches forward too.
 async function advanceCursor(mailboxId, folderId, nextStart, { backfillDone = false } = {}) {
@@ -618,6 +648,8 @@ async function syncMailbox(mailboxId, { maxPages = 5, userId = null } = {}) {
       // never appears": correctness no longer depends on the provider's sort.
       diag.stage = 'fetch_messages';
       diag.endpoint = connector.lastEndpoint;
+      await writeCheckpoint(jobId, { folderId: f.providerFolderId, folderName: f.name,
+        folderType: f.type, phase: 'newest', offset: 1, traceId: diag.traceId });
       let newest;
       try {
         newest = await connector.listMessages(f, { start: 1, limit: PAGE_SIZE }); await budgetDelay();
@@ -664,14 +696,21 @@ async function syncMailbox(mailboxId, { maxPages = 5, userId = null } = {}) {
           const batch = await connector.listMessages(f, { start, limit: PAGE_SIZE }); await budgetDelay();
           diag.read += batch.length;
           pages++;
-          await q('UPDATE sync_jobs SET discovered = discovered + $1, current_cursor = $2 WHERE id = $3', [batch.length, start, jobId]);
+          await q('UPDATE sync_jobs SET discovered = discovered + $1 WHERE id = $2', [batch.length, jobId]);
+          await writeCheckpoint(jobId, { folderId: f.providerFolderId, folderName: f.name,
+            folderType: f.type, phase: 'backfill', offset: start, traceId: diag.traceId });
           for (const msg of batch) {
             await checkpoint(jobId);
             await ingestOne(connector, f, mailboxId, folderId, msg, summary, jobId, routing, diag);
           }
           if (batch.length < PAGE_SIZE) {
-            // terminal page: cursor + latch advance monotonically (invariant)
+            // terminal page: cursor + latch advance monotonically (invariant),
+            // and the folder-phase completion is an EXPLICIT lifecycle event —
+            // a later lower offset in another folder is a transition, not rollback
             await advanceCursor(mailboxId, folderId, start + batch.length, { backfillDone: true });
+            await q(`INSERT INTO job_events (job_id, from_status, to_status, reason, actor)
+                     VALUES ($1,'running','running',$2,$3)`,
+              [jobId, `folder backfill completed: ${f.name} at offset ${start + batch.length}`, ACTOR()]);
             break;
           }
           start += PAGE_SIZE;
@@ -795,4 +834,4 @@ async function importArchiveRecorded(mailboxId, zipBuffer, userId, filename = ''
   }
 }
 
-module.exports = { syncMailbox, importArchiveZip, importArchiveRecorded, insertMessage, upsertFolder, dedupHash, normalizeForFingerprint, HASH_VERSION, storeAttachment, createJob, setJobControl, recoverStaleJobs, reconcileStale, pruneObservability, folderDue, persistDiag, newDiag, JOB_STALE_SEC, transitionJob, jobEvents, requestShutdownPause, advanceCursor };
+module.exports = { syncMailbox, importArchiveZip, importArchiveRecorded, insertMessage, upsertFolder, dedupHash, normalizeForFingerprint, HASH_VERSION, storeAttachment, createJob, setJobControl, recoverStaleJobs, reconcileStale, pruneObservability, folderDue, persistDiag, newDiag, JOB_STALE_SEC, transitionJob, jobEvents, requestShutdownPause, advanceCursor, writeCheckpoint, classifyCheckpointDelta };

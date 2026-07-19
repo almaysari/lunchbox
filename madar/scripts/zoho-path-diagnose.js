@@ -82,37 +82,80 @@ async function testA(mailbox) {
 // real path itself. If the attempt outlives the wait budget, it reports
 // attached-evidence: the worker IS the real Live Sync path, and its advancing
 // cursor + fresh lease are authentic proof it is executing right now.
-async function waitForMailboxFree(mailboxId, waitSec, out) {
+// Checkpoint tracking is STRUCTURED (folder + phase + offset + seq): an offset
+// that drops when the job enters another folder is a folder_transition, printed
+// explicitly; an offset that drops within the SAME folder+phase — or a
+// checkpoint_seq that fails to strictly increase — is checkpoint_regression and
+// the diagnostic can NEVER call the run healthy. progressAdvanced alone is not
+// sufficient evidence of correctness.
+const { classifyCheckpointDelta } = require('../modules/mail/sync');
+function cpOf(j) {
+  const c = typeof j.checkpoint === 'string' ? JSON.parse(j.checkpoint || 'null') : j.checkpoint;
+  return c ? { seq: Number(j.checkpoint_seq), folderId: c.folderId, folderName: c.folderName,
+    phase: c.phase, offset: Number(c.offset) } : null;
+}
+function trackCheckpoint(state, jobId, cp, transitions) {
+  if (!cp) return null;
+  const key = String(jobId);
+  const prev = state.get(key) || null;
+  state.set(key, cp);
+  if (!prev || prev.seq === cp.seq) return null;
+  const cls = classifyCheckpointDelta(prev, cp);
+  if (cls === 'folder_transition' || cls === 'phase_transition' || cls === 'checkpoint_regression') {
+    const line = `job ${jobId}: folder ${prev.folderName}/phase ${prev.phase}/offset ${prev.offset} → folder ${cp.folderName}/phase ${cp.phase}/offset ${cp.offset} (seq ${prev.seq}→${cp.seq}) [${cls}]`;
+    transitions.push({ jobId, classification: cls, from: prev, to: cp, line });
+    console.log('  [checkpoint] ' + line);
+  }
+  return cls;
+}
+
+async function waitForMailboxFree(mailboxId, waitSec, cpState, transitions) {
   const deadline = Date.now() + waitSec * 1000;
-  let first = null, last = null, polls = 0;
+  let first = null, last = null, polls = 0, regression = false;
   while (Date.now() < deadline) {
-    const j = await one(`SELECT id, status, started_at, lease_at, current_cursor, imported, discovered
+    const j = await one(`SELECT id, status, started_at, lease_at, current_cursor, imported, discovered,
+        checkpoint, checkpoint_seq
       FROM sync_jobs WHERE mailbox_id=$1 AND status IN ('queued','running') ORDER BY id DESC LIMIT 1`, [mailboxId]);
-    if (!j) return { free: true, polls, observed: last };
+    if (!j) return { free: true, polls, observed: last, regression };
     polls++;
-    const snap = { jobId: Number(j.id), status: j.status, cursor: j.current_cursor,
-      imported: j.imported, discovered: j.discovered,
+    const cp = cpOf(j);
+    const cls = trackCheckpoint(cpState, Number(j.id), cp, transitions);
+    if (cls === 'checkpoint_regression') regression = true;
+    const snap = { jobId: Number(j.id), status: j.status,
+      checkpoint: cp, imported: j.imported, discovered: j.discovered,
       leaseAgeSec: j.lease_at ? Math.round((Date.now() - new Date(j.lease_at).getTime()) / 1000) : null };
     if (!first) first = snap;
     last = snap;
     if (polls === 1 || polls % 6 === 0) { // progress line every ~30s — never block silently
-      console.log(`  [wait] job ${snap.jobId} ${snap.status}: lease ${snap.leaseAgeSec}s, cursor ${snap.cursor}, imported ${snap.imported}`);
+      console.log(`  [wait] job ${snap.jobId} ${snap.status}: lease ${snap.leaseAgeSec}s, ` +
+        (cp ? `folder ${cp.folderName}/${cp.phase}@${cp.offset} seq ${cp.seq}` : 'no checkpoint yet') +
+        `, imported ${snap.imported}`);
     }
     await new Promise(r => setTimeout(r, 5000));
   }
-  return { free: false, polls, first, observed: last,
-    progressAdvanced: Boolean(first && last && (last.cursor !== first.cursor
-      || last.imported !== first.imported || last.discovered !== first.discovered)),
+  return { free: false, polls, first, observed: last, regression,
+    progressAdvanced: Boolean(first && last && (last.imported !== first.imported
+      || last.discovered !== first.discovered
+      || (first.checkpoint && last.checkpoint && last.checkpoint.seq > first.checkpoint.seq))),
     leaseAlive: Boolean(last && last.leaseAgeSec != null && last.leaseAgeSec < 120) };
 }
 
-async function testB(mailbox, waitSec = 300) {
+async function testB(mailbox, waitSec = 300, cpState = new Map(), transitions = []) {
   const out = { name: 'B_live_sync_real_path' };
   const sync = require('../modules/mail/sync');
   const t0 = Date.now();
-  const wait = await waitForMailboxFree(Number(mailbox.id), waitSec, out);
+  const wait = await waitForMailboxFree(Number(mailbox.id), waitSec, cpState, transitions);
   out.waitedForActiveWorker = { waitedSec: Math.round((Date.now() - t0) / 1000), polls: wait.polls };
-  if (!wait.free) {
+  out.checkpointTransitions = transitions.map(t => t.line);
+  if (wait.regression) {
+    // an unexplained same-folder/same-phase offset decrease (or a non-increasing
+    // checkpoint_seq) can NEVER be reported healthy — regardless of lease or
+    // imported counters. progressAdvanced is not proof of checkpoint validity.
+    out.result = { ok: false, mode: 'attached_to_live_worker', job: wait.observed,
+      transitions: transitions.filter(t => t.classification === 'checkpoint_regression') };
+    out.classification = 'checkpoint_regression';
+    out.elapsedMs = Date.now() - t0;
+  } else if (!wait.free) {
     // attached evidence: the WORKER is executing the real path right now
     out.result = { ok: wait.progressAdvanced || wait.leaseAlive, mode: 'attached_to_live_worker',
       job: wait.observed, firstSample: wait.first,
@@ -159,9 +202,10 @@ async function main() {
   if (mailbox.strategy !== 'mail_api') fail(`mailbox strategy is ${mailbox.strategy} — no live path to diagnose`);
 
   const runs = [];
+  const cpState = new Map(), cpTransitions = []; // checkpoint tracking ACROSS all attempts
   for (let i = 1; i <= repeats; i++) {
     const a = await testA(mailbox);
-    const b = skipB ? null : await testB(mailbox, waitSec);
+    const b = skipB ? null : await testB(mailbox, waitSec, cpState, cpTransitions);
     runs.push({ attempt: i, at: new Date().toISOString(), testA: a, testB: b });
     const aTag = `${a.classification}${a.result.ok ? ` (${a.result.folders} folders)` : ''}`;
     console.log(`attempt ${i}/${repeats}: A=${aTag}` + (b ? `  B=${b.classification}` : ''));
@@ -182,22 +226,27 @@ async function main() {
   };
 
   const aOk = last.testA.classification === 'ok';
+  const anyRegression = cpTransitions.some(t => t.classification === 'checkpoint_regression')
+    || runs.some(r => r.testB && r.testB.classification === 'checkpoint_regression');
   const bPass = (b) => !b || b.classification === 'ok' || b.classification === 'live_worker_active';
-  const bOk = bPass(last.testB);
+  const bOk = bPass(last.testB) && !anyRegression;
   const failures = runs.filter(r => r.testA.classification !== 'ok' || !bPass(r.testB));
   const attached = runs.filter(r => r.testB && r.testB.classification === 'live_worker_active').length;
+  const folderTransitions = cpTransitions.filter(t => t.classification !== 'checkpoint_regression');
   let interpretation;
-  if (!aOk) interpretation = `TEST A FAILED (${last.testA.classification}) — the defect is in OAuth acquisition / persisted token state / scopes / account id / data-center selection. Fix per the classification above; Live Sync is NOT the culprit.`;
+  if (anyRegression) interpretation = `CHECKPOINT REGRESSION DETECTED — an offset decreased within the SAME folder and phase (or checkpoint_seq failed to increase). This is a correctness defect, NOT healthy, regardless of lease/progress. Transitions: ${cpTransitions.filter(t => t.classification === 'checkpoint_regression').map(t => t.line).join(' | ')}`;
+  else if (!aOk) interpretation = `TEST A FAILED (${last.testA.classification}) — the defect is in OAuth acquisition / persisted token state / scopes / account id / data-center selection. Fix per the classification above; Live Sync is NOT the culprit.`;
   else if (!bOk) interpretation = `TEST A PASSED but TEST B FAILED (${last.testB.classification}) — the defect is inside the Live Sync wrapper (lifecycle/concurrency/error mapping). See persistedDiagnostics.`;
   else if (failures.length) interpretation = `INTERMITTENT: ${failures.length}/${runs.length} attempts failed — every classified failure is preserved below; do NOT call it fixed on one success.`;
-  else if (attached === runs.length && attached > 0) interpretation = `LIVE WORKER OWNS THE MAILBOX (all ${attached} attempts): the REAL Live Sync path is executing right now — advancing cursor + fresh lease are the proof (see result.job). This is healthy during backfill; rerun after it completes (or raise --wait-sec) for a direct-execution traceId.`;
-  else interpretation = `BOTH PASS (${runs.length}×) — the earlier HTTP 0 came from stale code (pre-instrumentation), stale token state, or a transient failure that no longer reproduces. Re-run livesync-doctor; keep --repeat monitoring before trusting.`;
+  else if (attached === runs.length && attached > 0) interpretation = `LIVE WORKER OWNS THE MAILBOX (all ${attached} attempts): the REAL Live Sync path is executing — checkpoint_seq strictly increasing with ${folderTransitions.length} explicit folder/phase transition(s) and NO unexplained regression. Rerun after backfill completes (or raise --wait-sec) for a direct-execution traceId.`;
+  else interpretation = `BOTH PASS (${runs.length}×) — checkpoint_seq monotonic, ${folderTransitions.length} explicit folder/phase transition(s), no unexplained regression.`;
 
   console.log('\n=== interpretation ===\n' + interpretation);
+  if (cpTransitions.length) console.log('\n=== checkpoint transitions (structured) ===\n' + cpTransitions.map(t => t.line).join('\n'));
   console.log('\n=== comparison (last attempt) ===\n' + JSON.stringify(cmp, null, 2));
   console.log('\n=== full sanitized evidence ===\n' + JSON.stringify({ mailbox: mailbox.address, repeats, runs }, null, 2));
   await closeDb();
-  process.exit(aOk && bOk && !failures.length ? 0 : 1);
+  process.exit(aOk && bOk && !failures.length && !anyRegression ? 0 : 1);
 }
 
 main().catch(async e => { console.error('diagnose failed:', e && e.stack || e); try { await closeDb(); } catch {} process.exit(2); });

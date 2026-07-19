@@ -61,7 +61,15 @@ async function main() {
       createdAt: job.created_at, startedAt: job.started_at, finishedAt: job.finished_at,
       leaseAt: job.lease_at || null, leaseAgeSec,
       attemptAgeSec, discovered: job.discovered, imported: job.imported, skipped: job.skipped,
-      errors: job.errors, errorDetail: job.error_detail, currentCursor: job.current_cursor },
+      errors: job.errors, errorDetail: job.error_detail,
+      // STRUCTURED checkpoint — offset is meaningful only within folder+phase;
+      // the deprecated scalar is kept for reference but must not be read as global
+      checkpoint: typeof job.checkpoint === 'string' ? JSON.parse(job.checkpoint || 'null') : job.checkpoint,
+      checkpointSeq: Number(job.checkpoint_seq || 0),
+      deprecatedScalarCursor: job.current_cursor },
+    persistedFolderCursors: await all(`SELECT f.name, f.folder_type, ss.next_start, ss.backfill_done
+      FROM sync_state ss JOIN folders f ON f.id = ss.folder_id
+      WHERE ss.mailbox_id = $1 ORDER BY f.name`, [job.mailbox_id]),
     mailbox: mb ? { address: mb.address, status: mb.status, statusDetail: mb.status_detail,
       isPilot: mb.is_pilot, syncEnabled: mb.sync_enabled } : null,
     workerHeartbeat: hb ? { enabled: hb.enabled, pid: hb.pid, lastTickAt: hb.last_tick_at,

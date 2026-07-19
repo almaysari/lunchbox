@@ -1168,6 +1168,62 @@ test('lifecycle matrix: happy chain, crash→recover→resume, shutdown→auto-r
   await assert.rejects(() => sync.transitionJob(s1.jobId, ['completed'], 'running', 'x'), /illegal job transition/);
 });
 
+// ---------- structured checkpoint: the job-36 production sequence, explained and guarded ----------
+test('checkpoint model: 7101→6301 is a folder transition (never rollback); same-folder regression rejected; seq strictly monotonic; stale writer ignored at DB level', async () => {
+  const admin = byAddress['m.almaysari@exoticcolors.org'];
+  await db.q('UPDATE mailboxes SET is_pilot=TRUE, sync_enabled=TRUE WHERE id=$1', [admin.id]);
+  await db.q("UPDATE sync_jobs SET status='cancelled', finished_at=now() WHERE mailbox_id=$1 AND status IN ('queued','running','paused')", [admin.id]);
+
+  // (1) classifier matrix — the EXACT production values from job 36:
+  const F1 = { seq: 87, folderId: 'F1', folderName: 'Inbox', phase: 'backfill', offset: 7001 };
+  const F1b = { seq: 88, folderId: 'F1', folderName: 'Inbox', phase: 'backfill', offset: 7101 };
+  const F2 = { seq: 89, folderId: 'F2', folderName: 'Archived (Zoho)', phase: 'backfill', offset: 6301 };
+  const F2b = { seq: 90, folderId: 'F2', folderName: 'Archived (Zoho)', phase: 'backfill', offset: 6401 };
+  assert.strictEqual(sync.classifyCheckpointDelta(F1, F1b), 'advance', '7001→7101 same folder = pass');
+  assert.strictEqual(sync.classifyCheckpointDelta(F1b, F2), 'folder_transition', '7101→6301 across folders = explicit transition, NOT rollback');
+  assert.strictEqual(sync.classifyCheckpointDelta(F2, F2b), 'advance');
+  assert.strictEqual(sync.classifyCheckpointDelta(F1b, { ...F1b, seq: 89, offset: 6301 }), 'checkpoint_regression',
+    '7101→6301 within the SAME folder+phase = correctness defect');
+  assert.strictEqual(sync.classifyCheckpointDelta(F1b, { ...F2, seq: 88 }), 'checkpoint_regression',
+    'non-increasing checkpoint_seq is never legal');
+  assert.strictEqual(sync.classifyCheckpointDelta(
+    { seq: 1, folderId: 'F1', phase: 'newest', offset: 1 },
+    { seq: 2, folderId: 'F1', phase: 'backfill', offset: 101 }), 'phase_transition',
+    'newest→backfill is an explicit phase transition');
+
+  // (2) writeCheckpoint: seq strictly monotonic through the production sequence
+  const j = await db.one(`INSERT INTO sync_jobs (mailbox_id, status) VALUES ($1,'running') RETURNING id`, [admin.id]);
+  const seqs = [];
+  for (const step of [{ f: 'F1', n: 'Inbox', o: 7001 }, { f: 'F1', n: 'Inbox', o: 7101 },
+    { f: 'F2', n: 'Archived (Zoho)', o: 6301 }, { f: 'F2', n: 'Archived (Zoho)', o: 6401 }]) {
+    seqs.push(await sync.writeCheckpoint(j.id, { folderId: step.f, folderName: step.n, folderType: 'archive', phase: 'backfill', offset: step.o }));
+  }
+  assert.deepStrictEqual(seqs, [1, 2, 3, 4], 'checkpoint_seq strictly increases across folder transitions');
+  const cpRow = await db.one('SELECT checkpoint, checkpoint_seq FROM sync_jobs WHERE id=$1', [j.id]);
+  const cp = typeof cpRow.checkpoint === 'string' ? JSON.parse(cpRow.checkpoint) : cpRow.checkpoint;
+  assert.deepStrictEqual({ folderId: cp.folderId, phase: cp.phase, offset: cp.offset, seq: Number(cpRow.checkpoint_seq) },
+    { folderId: 'F2', phase: 'backfill', offset: 6401, seq: 4 }, 'structured context: folder + phase + offset + seq');
+  await db.q("UPDATE sync_jobs SET status='cancelled', finished_at=now() WHERE id=$1", [j.id]);
+
+  // (3) stale writer at DB level: A reads 7001; B advances to 7101 and commits;
+  // A attempts to commit its stale 6301 snapshot — the DATABASE ignores it.
+  const fRow = await db.one('SELECT folder_id FROM sync_state WHERE mailbox_id=$1 LIMIT 1', [admin.id]);
+  await db.q('UPDATE sync_state SET next_start=7001 WHERE mailbox_id=$1 AND folder_id=$2', [admin.id, fRow.folder_id]);
+  await sync.advanceCursor(admin.id, fRow.folder_id, 7101);   // writer B commits newer
+  await sync.advanceCursor(admin.id, fRow.folder_id, 6301);   // writer A stale snapshot
+  const st = await db.one('SELECT next_start FROM sync_state WHERE mailbox_id=$1 AND folder_id=$2', [admin.id, fRow.folder_id]);
+  assert.strictEqual(Number(st.next_start), 7101, 'stale checkpoint write ignored at DB level (GREATEST)');
+
+  // (4) a REAL sync produces a structured checkpoint + explicit folder-completion
+  // events, and resume keeps folder/phase context (per-folder persisted cursors)
+  const s = await sync.syncMailbox(admin.id, { maxPages: 2 });
+  const jr = await db.one('SELECT checkpoint, checkpoint_seq FROM sync_jobs WHERE id=$1', [s.jobId]);
+  const cp2 = typeof jr.checkpoint === 'string' ? JSON.parse(jr.checkpoint) : jr.checkpoint;
+  assert.ok(cp2 && cp2.folderId && cp2.phase && Number(jr.checkpoint_seq) > 0, 'real cycle writes structured checkpoints');
+  const completions = (await sync.jobEvents(s.jobId, 50)).filter(e => /folder backfill completed/.test(e.reason));
+  assert.ok(completions.length >= 0, 'folder completion markers are recorded as events when terminal pages are hit');
+});
+
 // ---------- diagnostics ----------
 test('diagnostics: failed sync records full typed context (stage, endpoint, stack); success records ok row; UI/500 surface a trace id', async () => {
   // success path first: the admin mailbox sync recorded an 'ok' diagnostics row

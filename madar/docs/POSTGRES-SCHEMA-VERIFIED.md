@@ -455,6 +455,8 @@ CREATE TABLE public.sync_jobs (
     finished_at timestamp with time zone,
     created_at timestamp with time zone DEFAULT now() NOT NULL,
     lease_at timestamp with time zone,
+    checkpoint jsonb,
+    checkpoint_seq bigint DEFAULT 0 NOT NULL,
     CONSTRAINT sync_jobs_status_check CHECK ((status = ANY (ARRAY['queued'::text, 'running'::text, 'paused'::text, 'cancelled'::text, 'completed'::text, 'failed'::text])))
 );
 
