@@ -12,7 +12,7 @@
 // addressed to a registered shared mailbox also lands there (same canonical).
 const os = require('os');
 const { all, one, q } = require('../../core/db');
-const { syncMailbox, reconcileStale, pruneObservability } = require('./sync');
+const { syncMailbox, reconcileStale, pruneObservability, JOB_STALE_SEC } = require('./sync');
 const { audit } = require('../../core/audit');
 
 const INTERVAL_MS = Math.max(30, Number(process.env.MADAR_LIVE_SYNC_INTERVAL_SEC) || 120) * 1000;
@@ -203,11 +203,11 @@ async function workerHealth() {
   const ws = await workerStatus();
   const stuckJobs = await one(
     `SELECT COUNT(*)::int n FROM sync_jobs WHERE status='running'
-     AND COALESCE(started_at, created_at) < now() - interval '15 minutes'`);
+     AND COALESCE(lease_at, started_at, created_at) < now() - make_interval(secs => ${JOB_STALE_SEC})`);
   const stuckBoxes = await one(
     `SELECT COUNT(*)::int n FROM mailboxes m WHERE m.status='syncing'
      AND NOT EXISTS (SELECT 1 FROM sync_jobs j WHERE j.mailbox_id=m.id AND j.status='running'
-                     AND COALESCE(j.started_at, j.created_at) >= now() - interval '15 minutes')`);
+                     AND COALESCE(j.lease_at, j.started_at, j.created_at) >= now() - make_interval(secs => ${JOB_STALE_SEC}))`);
   return { running: ws.running, enabled: ws.enabled, stale: Boolean(ws.stale),
     lastTickAt: ws.lastTickAt || null, stuckJobs: stuckJobs.n, stuckMailboxes: stuckBoxes.n };
 }

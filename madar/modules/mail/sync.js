@@ -62,6 +62,13 @@ async function persistDiag(diag, err) {
 
 const MAX_RPM = Number(process.env.MADAR_MAX_RPM || 25);
 const PAGE_SIZE = 100;
+// Death gate for the job lease. checkpoint() touches lease_at at least every
+// ~1s during any live attempt; the longest LEGITIMATE gap between touches is
+// one paced request + its 20s timeout (≈30s worst case). 180s is a 6× margin:
+// a running job whose lease is older is provably dead (its owner process is
+// gone) and is reclaimed within one worker tick — not after a quarter hour of
+// skipped_busy cycles (real-tenant job 34). Configurable for slow tenants.
+const JOB_STALE_SEC = Math.max(60, Number(process.env.MADAR_JOB_STALE_SEC) || 180);
 const delay = ms => new Promise(r => setTimeout(r, ms));
 const budgetDelay = () => delay(Math.ceil(60000 / MAX_RPM));
 
@@ -253,14 +260,14 @@ async function createJob(mailboxId, userId) {
     // in place. The UPDATE is status-guarded and RETURNING: if the job finished
     // in the race window we re-read reality instead of resurrecting a completed
     // job as a zombie. A genuinely live job still blocks (tested).
-    const staleMs = 15 * 60 * 1000;
+    const staleMs = JOB_STALE_SEC * 1000;
     // liveness = the LEASE (checkpoint touches it ≤1s apart while alive), never
     // attempt age — a live long backfill must not be reclaimed (real-tenant job 31)
     const attemptAt = new Date(active.lease_at || active.started_at || active.created_at).getTime();
     if ((active.status === 'running' || active.status === 'queued') && attemptAt < Date.now() - staleMs) {
       const reclaimed = await one(
         `UPDATE sync_jobs SET status='paused',
-           error_detail='auto-recovered on start: dead attempt (no progress > 15m) reclaimed'
+           error_detail='auto-recovered on start: dead attempt (lease silent > ${JOB_STALE_SEC}s) reclaimed'
          WHERE id=$1 AND status=$2 RETURNING id`, [active.id, active.status]);
       if (reclaimed) return Number(reclaimed.id);      // resume the reclaimed job
       // lost the race: the job changed state meanwhile — act on reality
@@ -315,8 +322,8 @@ async function recoverStaleJobs() {
 // staleMin minutes is provably dead (a real 2-page sync finishes in seconds),
 // so we pause it (cursor is persisted → createJob resumes it) and un-stick the
 // mailbox. Age-gating means a legitimately long manual sync is never aborted.
-async function reconcileStale(staleMin = 15) {
-  staleMin = Math.max(1, Math.floor(Number(staleMin) || 15)); // hardened: interpolated into interval literals below
+async function reconcileStale(staleSec = JOB_STALE_SEC) {
+  const staleMin = Math.max(1, Math.ceil((Number(staleSec) || JOB_STALE_SEC) / 60)); // hardened: interpolated into interval literals below
   const { all } = require('../../core/db');
   // DEATH, not AGE: the lease (touched ≤1s apart by checkpoint during any live
   // attempt) is the liveness signal. Real-tenant evidence (job 31): a legitimate
@@ -680,4 +687,4 @@ async function importArchiveRecorded(mailboxId, zipBuffer, userId, filename = ''
   }
 }
 
-module.exports = { syncMailbox, importArchiveZip, importArchiveRecorded, insertMessage, upsertFolder, dedupHash, normalizeForFingerprint, HASH_VERSION, storeAttachment, createJob, setJobControl, recoverStaleJobs, reconcileStale, pruneObservability, folderDue, persistDiag, newDiag };
+module.exports = { syncMailbox, importArchiveZip, importArchiveRecorded, insertMessage, upsertFolder, dedupHash, normalizeForFingerprint, HASH_VERSION, storeAttachment, createJob, setJobControl, recoverStaleJobs, reconcileStale, pruneObservability, folderDue, persistDiag, newDiag, JOB_STALE_SEC };

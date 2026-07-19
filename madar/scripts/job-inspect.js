@@ -48,7 +48,7 @@ async function main() {
   // attempt age is informational only — a live long backfill is legitimate
   const leaseMs = job.lease_at ? new Date(job.lease_at).getTime() : startMs;
   const leaseAgeSec = leaseMs ? Math.round((Date.now() - leaseMs) / 1000) : null;
-  const STALE_SEC = 15 * 60;
+  const STALE_SEC = Math.max(60, Number(process.env.MADAR_JOB_STALE_SEC) || 180);
   const wouldReclaim = job.status === 'running' && leaseAgeSec != null && leaseAgeSec > STALE_SEC;
 
   const verdict =

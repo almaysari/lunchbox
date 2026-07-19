@@ -1067,6 +1067,32 @@ test('virtual archived folder: status=archived mapped as a standard folder — c
   assert.ok(s2.folders >= 2, 'subsequent cycles skip the unsupported archived view cleanly');
 });
 
+// ---------- fast-lane reclaim: a provably dead lease heals in minutes, not 15 ----------
+test('orphaned running job (CLI/container killed mid-attempt): lease dead 4 minutes → reclaimed on next start; 60s-old lease still protected', async () => {
+  const admin = byAddress['m.almaysari@exoticcolors.org'];
+  await db.q('UPDATE mailboxes SET is_pilot=TRUE, sync_enabled=TRUE WHERE id=$1', [admin.id]);
+  await db.q("UPDATE sync_jobs SET status='cancelled', finished_at=now() WHERE mailbox_id=$1 AND status IN ('queued','running','paused')", [admin.id]);
+
+  // real-tenant job-34 scenario: an attempt's owner process died (no status
+  // transition); the lease stopped renewing. checkpoint touches the lease at
+  // least every ~1s and the longest legitimate gap (one paced request + its
+  // 20s timeout) is well under a minute — 4 dead minutes is PROOF of death.
+  // Waiting the old 15-minute gate left the worker reporting skipped_busy
+  // every cycle for a quarter hour. It must reclaim now.
+  const orphan = await db.one(`INSERT INTO sync_jobs (mailbox_id, status, started_at, lease_at)
+    VALUES ($1, 'running', now() - interval '10 minutes', now() - interval '4 minutes') RETURNING id`, [admin.id]);
+  const s = await sync.syncMailbox(admin.id, { maxPages: 1 });
+  assert.strictEqual(s.jobId, Number(orphan.id), 'provably dead attempt reclaimed within minutes, not 15');
+  assert.strictEqual((await db.one('SELECT status FROM sync_jobs WHERE id=$1', [orphan.id])).status, 'completed');
+
+  // a live attempt (lease 60s — inside the legitimate-gap envelope) is protected
+  const liveJob = await db.one(`INSERT INTO sync_jobs (mailbox_id, status, started_at, lease_at)
+    VALUES ($1, 'running', now() - interval '30 minutes', now() - interval '60 seconds') RETURNING id`, [admin.id]);
+  await assert.rejects(() => sync.syncMailbox(admin.id, { maxPages: 1 }), /already running/,
+    'a 60s-old lease is within the legitimate gap — still blocks concurrent starts');
+  await db.q("UPDATE sync_jobs SET status='cancelled', finished_at=now() WHERE id=$1", [liveJob.id]);
+});
+
 // ---------- diagnostics ----------
 test('diagnostics: failed sync records full typed context (stage, endpoint, stack); success records ok row; UI/500 surface a trace id', async () => {
   // success path first: the admin mailbox sync recorded an 'ok' diagnostics row

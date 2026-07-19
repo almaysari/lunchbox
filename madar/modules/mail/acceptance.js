@@ -15,6 +15,7 @@
 // start / status / report / abort — it never holds soak state itself.
 const fs = require('fs');
 const { all, one, q } = require('../../core/db');
+const { JOB_STALE_SEC } = require('./sync'); // stuck = dead lease, same gate system-wide
 
 const state = { timer: null, running: false, lastSampleAt: null, lastRunId: null };
 
@@ -58,10 +59,10 @@ async function takeSample(run) {
   const stale = ageMs > intervalMs * 2 + 60000;
   const alive = Boolean(hb && hb.enabled && !stale);
   const stuckJobs = (await one(`SELECT COUNT(*)::int n FROM sync_jobs WHERE status='running'
-    AND COALESCE(started_at, created_at) < now() - interval '15 minutes'`)).n;
+    AND COALESCE(lease_at, started_at, created_at) < now() - make_interval(secs => ${JOB_STALE_SEC})`)).n;
   const stuckBoxes = (await one(`SELECT COUNT(*)::int n FROM mailboxes m WHERE m.status='syncing'
     AND NOT EXISTS (SELECT 1 FROM sync_jobs j WHERE j.mailbox_id=m.id AND j.status='running'
-                    AND COALESCE(j.started_at, j.created_at) >= now() - interval '15 minutes')`)).n;
+                    AND COALESCE(j.lease_at, j.started_at, j.created_at) >= now() - make_interval(secs => ${JOB_STALE_SEC}))`)).n;
   const occ = (await one('SELECT COUNT(*)::bigint n FROM message_occurrences')).n;
   const dupOcc = (await one(`SELECT COUNT(*)::int n FROM (
     SELECT 1 FROM message_occurrences GROUP BY mailbox_id, provider, provider_message_id HAVING COUNT(*) > 1) d`)).n;
