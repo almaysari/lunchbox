@@ -80,18 +80,39 @@ class ZohoMailApiConnector {
     this.lastEndpoint = `/api/accounts/${this.id}/folders`;
     const r = await this.zoho.getFolders(this.id);
     if (r.status !== 200) throw new ZohoApiError('list_folders', r.url || this.lastEndpoint, r.status, r.body, r);
-    return ((r.body && r.body.data) || []).map(f => ({
+    const folders = ((r.body && r.body.data) || []).map(f => ({
       providerFolderId: String(f.folderId),
       name: f.folderName,
       type: lc(f.folderType || ''),
     }));
+    // Virtual Archived folder — Zoho exposes archived mail through the dedicated
+    // view messages/view?status=archived (proven on the real tenant), NOT only
+    // through listed folders. Mapping it as a folder runs it through the exact
+    // standard pipeline: cold rotation, pagination, terminal-page detection,
+    // persisted cursor, fp3 dedup (so mail also present in a listed Archive
+    // folder is never duplicated). Skipped only when this tenant has proven the
+    // parameter unsupported (capability recorded by the sync engine).
+    if (!String(this.caps.archivedView || '').startsWith('unsupported')) {
+      folders.push({ providerFolderId: ZohoMailApiConnector.VIRTUAL_ARCHIVED_ID,
+        name: 'Archived (Zoho)', type: 'archive', virtual: true });
+    }
+    return folders;
   }
 
   async listMessages(folder, { start = 1, limit = 100 } = {}) {
-    this.lastEndpoint = `/api/accounts/${this.id}/messages/view?folderId=${folder.providerFolderId}`;
-    const r = await this.zoho.listMessages(this.id, folder.providerFolderId, { start, limit });
-    if (r.status !== 200) throw new ZohoApiError('fetch_messages', r.url || this.lastEndpoint, r.status, r.body, r);
+    const isVirtualArchived = folder.providerFolderId === ZohoMailApiConnector.VIRTUAL_ARCHIVED_ID;
+    this.lastEndpoint = isVirtualArchived
+      ? `/api/accounts/${this.id}/messages/view?status=archived`
+      : `/api/accounts/${this.id}/messages/view?folderId=${folder.providerFolderId}`;
+    const r = isVirtualArchived
+      ? await this.zoho.listArchivedMessages(this.id, { start, limit })
+      : await this.zoho.listMessages(this.id, folder.providerFolderId, { start, limit });
+    if (r.status !== 200) throw new ZohoApiError(isVirtualArchived ? 'fetch_archived' : 'fetch_messages',
+      r.url || this.lastEndpoint, r.status, r.body, r);
     return ((r.body && r.body.data) || []).map(m => ({
+      // the message's OWN folder id — archived-view rows live in their original
+      // folder, which is what body/attachment endpoints need
+      sourceFolderId: String(m.folderId || ''),
       providerMessageId: String(m.messageId),
       // Real tenants' messages/view carries NO RFC header field — dedup uses the
       // v2 fingerprint. Kept optional so a future header source can fill it.
@@ -113,15 +134,28 @@ class ZohoMailApiConnector {
     }));
   }
 
-  async getBody(folder, providerMessageId) {
-    const r = await this.zoho.getMessageContent(this.id, folder.providerFolderId, providerMessageId);
+  // For the virtual archived folder, per-message endpoints need the message's
+  // ORIGINAL folder id (carried on the row as sourceFolderId).
+  _effectiveFolderId(folder, msg) {
+    if (folder.providerFolderId === ZohoMailApiConnector.VIRTUAL_ARCHIVED_ID) {
+      return (msg && msg.sourceFolderId) || null;
+    }
+    return folder.providerFolderId;
+  }
+
+  async getBody(folder, providerMessageId, msg = null) {
+    const fid = this._effectiveFolderId(folder, msg);
+    if (!fid) return null;
+    const r = await this.zoho.getMessageContent(this.id, fid, providerMessageId);
     if (r.status !== 200) return null;
     const d = (r.body && r.body.data) || {};
     return d.content || null;
   }
 
-  async listAttachments(folder, providerMessageId) {
-    const r = await this.zoho.getAttachmentInfo(this.id, folder.providerFolderId, providerMessageId);
+  async listAttachments(folder, providerMessageId, msg = null) {
+    const fid = this._effectiveFolderId(folder, msg);
+    if (!fid) return [];
+    const r = await this.zoho.getAttachmentInfo(this.id, fid, providerMessageId);
     if (r.status !== 200) return [];
     return (((r.body && r.body.data) || {}).attachments || []).map(a => ({
       providerAttachmentId: String(a.attachmentId),
@@ -131,11 +165,14 @@ class ZohoMailApiConnector {
     }));
   }
 
-  async downloadAttachment(folder, providerMessageId, providerAttachmentId) {
-    const r = await this.zoho.downloadAttachment(this.id, folder.providerFolderId, providerMessageId, providerAttachmentId);
+  async downloadAttachment(folder, providerMessageId, providerAttachmentId, msg = null) {
+    const fid = this._effectiveFolderId(folder, msg) || folder.providerFolderId;
+    const r = await this.zoho.downloadAttachment(this.id, fid, providerMessageId, providerAttachmentId);
     if (r.status !== 200 || !Buffer.isBuffer(r.body)) throw new Error(`attachment download failed (${r.status})`);
     return r.body;
   }
 }
+
+ZohoMailApiConnector.VIRTUAL_ARCHIVED_ID = 'zoho:archived';
 
 module.exports = { ZohoMailApiConnector, ZohoApiError };

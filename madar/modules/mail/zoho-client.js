@@ -359,6 +359,10 @@ class ZohoClient {
   listMessages(accountId, folderId, { limit = 100, start = 1 } = {}) {
     return this.get(`/api/accounts/${accountId}/messages/view?folderId=${folderId}&limit=${limit}&start=${start}`);
   }
+  // Dedicated archived view (proven on the real tenant: HTTP 200 with messages).
+  listArchivedMessages(accountId, { limit = 100, start = 1 } = {}) {
+    return this.get(`/api/accounts/${accountId}/messages/view?status=archived&limit=${limit}&start=${start}`);
+  }
   getMessageContent(accountId, folderId, messageId) {
     return this.get(`/api/accounts/${accountId}/folders/${folderId}/messages/${messageId}/content`);
   }

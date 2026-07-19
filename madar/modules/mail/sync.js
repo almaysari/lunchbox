@@ -508,7 +508,34 @@ async function syncMailbox(mailboxId, { maxPages = 5, userId = null } = {}) {
       // never appears": correctness no longer depends on the provider's sort.
       diag.stage = 'fetch_messages';
       diag.endpoint = connector.lastEndpoint;
-      const newest = await connector.listMessages(f, { start: 1, limit: PAGE_SIZE }); await budgetDelay();
+      let newest;
+      try {
+        newest = await connector.listMessages(f, { start: 1, limit: PAGE_SIZE }); await budgetDelay();
+      } catch (err) {
+        // The VIRTUAL archived view is evidence-activated: a tenant that rejects
+        // status=archived (4xx) gets the rejection RECORDED as a capability
+        // (with its classification) and the cycle continues — one failing
+        // virtual folder must never fail the whole mailbox. Real folders and
+        // transport/OAuth errors still fail the cycle as before.
+        if (f.virtual && err.httpStatus >= 400 && err.httpStatus < 500) {
+          const capNow = typeof mailbox.capabilities === 'string'
+            ? JSON.parse(mailbox.capabilities || '{}') : (mailbox.capabilities || {});
+          capNow.archivedView = 'unsupported:' + (err.classification || ('http_' + err.httpStatus));
+          await q('UPDATE mailboxes SET capabilities = $1 WHERE id = $2', [JSON.stringify(capNow), mailboxId]);
+          summary.archivedViewUnsupported = capNow.archivedView;
+          continue;
+        }
+        throw err;
+      }
+      if (f.virtual) {
+        // evidence-record support once (avoids a write per cycle)
+        const capNow = typeof mailbox.capabilities === 'string'
+          ? JSON.parse(mailbox.capabilities || '{}') : (mailbox.capabilities || {});
+        if (capNow.archivedView !== 'supported') {
+          capNow.archivedView = 'supported';
+          await q('UPDATE mailboxes SET capabilities = $1 WHERE id = $2', [JSON.stringify(capNow), mailboxId]);
+        }
+      }
       diag.read += newest.length;
       diag.responseSample = { fields: newest[0] ? Object.keys(newest[0]).sort() : [], count: newest.length };
       await q('UPDATE sync_jobs SET discovered = discovered + $1 WHERE id = $2', [newest.length, jobId]);
@@ -588,14 +615,14 @@ async function ingestOne(connector, folder, mailboxId, folderId, msg, summary, j
 
   summary.newMessages++;
   if (diag) diag.stage = 'body';
-  const body = await connector.getBody(folder, msg.providerMessageId); await budgetDelay();
+  const body = await connector.getBody(folder, msg.providerMessageId, msg); await budgetDelay();
   if (body) await q('UPDATE canonical_messages SET body_html=$1 WHERE id=$2', [body, canonicalId]);
   if (msg.hasAttachments) {
     if (diag) diag.stage = 'attachments';
-    const atts = await connector.listAttachments(folder, msg.providerMessageId); await budgetDelay();
+    const atts = await connector.listAttachments(folder, msg.providerMessageId, msg); await budgetDelay();
     for (const a of atts) {
       try {
-        const buf = await connector.downloadAttachment(folder, msg.providerMessageId, a.providerAttachmentId); await budgetDelay();
+        const buf = await connector.downloadAttachment(folder, msg.providerMessageId, a.providerAttachmentId, msg); await budgetDelay();
         if (await storeAttachment(canonicalId, a.providerAttachmentId, a.name, a.mime, buf)) summary.attachments++;
       } catch (e) {
         await q('UPDATE sync_jobs SET errors = errors + 1 WHERE id = $1', [jobId]);

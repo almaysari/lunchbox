@@ -1030,6 +1030,43 @@ test('archived mail in a listed folder is ingested autonomously: discovery, pagi
   assert.ok(sync.folderDue({ type: 'archive' }, { backfill_done: true, last_sync_at: new Date(Date.now() - 16 * 60 * 1000) }, Date.now()));
 });
 
+// ---------- virtual archived folder: Zoho's archived view in the standard pipeline ----------
+test('virtual archived folder: status=archived mapped as a standard folder — cursors, terminal page, dedup vs listed Archive, graceful unsupported tenant', async () => {
+  const admin = byAddress['m.almaysari@exoticcolors.org'];
+  const info = byAddress['info@exoticcolors.org'];
+  await db.q('UPDATE mailboxes SET is_pilot=TRUE, sync_enabled=TRUE WHERE id IN ($1,$2)', [admin.id, info.id]);
+  await db.q("UPDATE sync_jobs SET status='cancelled', finished_at=now() WHERE mailbox_id IN ($1,$2) AND status IN ('queued','running','paused')", [admin.id, info.id]);
+
+  // supported tenant (admin): one normal sync — the virtual folder appears and
+  // is processed by the SAME machinery (cursor, terminal page), and the
+  // archived corpus that already exists under the listed Archive folder is NOT
+  // duplicated (canonical dedup across listed + virtual sources).
+  await sync.syncMailbox(admin.id, { maxPages: 2 });
+  const vf = await db.one(`SELECT id, folder_type FROM folders WHERE mailbox_id=$1 AND provider_folder_id='zoho:archived'`, [admin.id]);
+  assert.ok(vf, 'virtual archived folder persisted like any folder');
+  const vst = await db.one('SELECT backfill_done FROM sync_state WHERE mailbox_id=$1 AND folder_id=$2', [admin.id, vf.id]);
+  assert.strictEqual(vst.backfill_done, true, 'terminal page detected on the archived view');
+  const occ = await db.one(`SELECT COUNT(*)::int n FROM message_occurrences o
+    JOIN canonical_messages c ON c.id=o.canonical_message_id
+    WHERE o.mailbox_id=$1 AND c.subject LIKE 'Archived demo message %'`, [admin.id]);
+  assert.strictEqual(occ.n, 5, 'no duplication between the listed Archive folder and the archived view');
+  const capsA = await db.one('SELECT capabilities FROM mailboxes WHERE id=$1', [admin.id]);
+  const cA = typeof capsA.capabilities === 'string' ? JSON.parse(capsA.capabilities) : capsA.capabilities;
+  assert.strictEqual(cA.archivedView, 'supported', 'capability recorded from evidence');
+
+  // unsupported tenant (info: mock rejects status=archived with 400): the cycle
+  // must COMPLETE (other folders unaffected), and the rejection is recorded as
+  // a classified capability — no manual intervention, no cycle failure.
+  const s = await sync.syncMailbox(info.id, { maxPages: 1 });
+  assert.ok(s.folders >= 2, 'cycle completed for the unsupported tenant');
+  const capsI = await db.one('SELECT capabilities FROM mailboxes WHERE id=$1', [info.id]);
+  const cI = typeof capsI.capabilities === 'string' ? JSON.parse(capsI.capabilities) : capsI.capabilities;
+  assert.match(String(cI.archivedView || ''), /^unsupported/, 'rejection recorded with its classification');
+  // and the next sync SKIPS the virtual folder (no re-probing every cycle)
+  const s2 = await sync.syncMailbox(info.id, { maxPages: 1 });
+  assert.ok(s2.folders >= 2, 'subsequent cycles skip the unsupported archived view cleanly');
+});
+
 // ---------- diagnostics ----------
 test('diagnostics: failed sync records full typed context (stage, endpoint, stack); success records ok row; UI/500 surface a trace id', async () => {
   // success path first: the admin mailbox sync recorded an 'ok' diagnostics row

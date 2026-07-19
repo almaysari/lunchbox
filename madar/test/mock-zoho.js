@@ -175,6 +175,14 @@ function startMockZoho(port = 0) {
       const start = Number(url.searchParams.get('start') || 1);
       const limit = Number(url.searchParams.get('limit') || 100);
       const folderId = url.searchParams.get('folderId') || '';
+      // dedicated archived view (real-tenant evidence: messages/view?status=archived
+      // returns archived mail). INFO account rejects it — exercises the graceful
+      // capability-recording path for tenants without the parameter.
+      if (url.searchParams.get('status') === 'archived') {
+        if (id === INFO_ORG_ACCOUNT_ID) return send(400, { status: { code: 400, description: 'Invalid parameter value for status' } });
+        const arch = (ARCHIVE_MESSAGES[id] || []).map(m => ({ ...m, folderId: id + '-f3' }));
+        return ok(arch.slice(start - 1, start - 1 + limit));
+      }
       const all = folderId.endsWith('-f2') ? []
         : folderId.endsWith('-f3') ? (ARCHIVE_MESSAGES[id] || [])
         : MESSAGES[id];
