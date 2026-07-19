@@ -240,7 +240,7 @@ async function storeAttachment(canonicalId, providerAttachmentId, name, provider
 
 // ---- sync jobs ----
 async function createJob(mailboxId, userId) {
-  const active = await one(`SELECT id, status, started_at, created_at FROM sync_jobs
+  const active = await one(`SELECT id, status, started_at, created_at, lease_at FROM sync_jobs
     WHERE mailbox_id = $1 AND status IN ('queued','running','paused')`, [mailboxId]);
   if (active) {
     if (active.status === 'paused') return Number(active.id); // resume reuses the paused job
@@ -254,7 +254,9 @@ async function createJob(mailboxId, userId) {
     // in the race window we re-read reality instead of resurrecting a completed
     // job as a zombie. A genuinely live job still blocks (tested).
     const staleMs = 15 * 60 * 1000;
-    const attemptAt = new Date(active.started_at || active.created_at).getTime();
+    // liveness = the LEASE (checkpoint touches it ≤1s apart while alive), never
+    // attempt age — a live long backfill must not be reclaimed (real-tenant job 31)
+    const attemptAt = new Date(active.lease_at || active.started_at || active.created_at).getTime();
     if ((active.status === 'running' || active.status === 'queued') && attemptAt < Date.now() - staleMs) {
       const reclaimed = await one(
         `UPDATE sync_jobs SET status='paused',
@@ -316,16 +318,22 @@ async function recoverStaleJobs() {
 async function reconcileStale(staleMin = 15) {
   staleMin = Math.max(1, Math.floor(Number(staleMin) || 15)); // hardened: interpolated into interval literals below
   const { all } = require('../../core/db');
+  // DEATH, not AGE: the lease (touched ≤1s apart by checkpoint during any live
+  // attempt) is the liveness signal. Real-tenant evidence (job 31): a legitimate
+  // 15+ minute backfill cycle was being reclaimed mid-flight by the old
+  // age-based predicate with the false message "no progress > 15m" — while the
+  // cursor was demonstrably advancing. A live hour-long attempt is now never
+  // touched; a dead one (no lease heartbeat) is reclaimed exactly as before.
   const paused = await all(
-    `UPDATE sync_jobs SET status='paused', error_detail='auto-recovered: running with no progress > ${staleMin}m (worker un-stall)'
-     WHERE status='running' AND COALESCE(started_at, created_at) < now() - interval '${staleMin} minutes'
+    `UPDATE sync_jobs SET status='paused', error_detail='auto-recovered: no lease heartbeat > ${staleMin}m (dead attempt)'
+     WHERE status='running' AND COALESCE(lease_at, started_at, created_at) < now() - interval '${staleMin} minutes'
      RETURNING id, mailbox_id`);
   const unstuck = await all(
     `UPDATE mailboxes m SET status='ready',
         status_detail='دورة سابقة توقّفت — المؤشر محفوظ، ستُستأنف تلقائيًا في الدورة القادمة'
      WHERE status='syncing'
        AND NOT EXISTS (SELECT 1 FROM sync_jobs j WHERE j.mailbox_id=m.id AND j.status='running'
-                       AND COALESCE(j.started_at, j.created_at) >= now() - interval '${staleMin} minutes')
+                       AND COALESCE(j.lease_at, j.started_at, j.created_at) >= now() - interval '${staleMin} minutes')
      RETURNING id`);
   return { pausedJobs: paused.length, unstuckMailboxes: unstuck.length };
 }
@@ -371,7 +379,11 @@ async function checkpoint(jobId) {
   const last = _checkpointAt.get(jobId) || 0;
   if (throttleMs > 0 && Date.now() - last < throttleMs) return;
   _checkpointAt.set(jobId, Date.now());
-  const s = await jobControlState(jobId);
+  // One round trip does both jobs: touch the liveness LEASE (this is what
+  // proves the attempt is alive — staleness measures lease death, never attempt
+  // age) and read the control state for pause/cancel.
+  const row = await one('UPDATE sync_jobs SET lease_at = now() WHERE id = $1 RETURNING status', [jobId]);
+  const s = row && row.status;
   if (s === 'paused') throw new JobStopped('paused');
   if (s === 'cancelled') throw new JobStopped('cancelled');
 }
@@ -462,7 +474,7 @@ async function syncMailbox(mailboxId, { maxPages = 5, userId = null } = {}) {
   // started_at = start of THIS attempt (created_at keeps the original). A resume
   // that kept the ancient started_at looked "stale" to reconcileStale while
   // healthily mid-flight — the oscillation that pinned one job id forever.
-  await q("UPDATE sync_jobs SET status='running', started_at = now() WHERE id = $1", [jobId]);
+  await q("UPDATE sync_jobs SET status='running', started_at = now(), lease_at = now() WHERE id = $1", [jobId]);
   await q("UPDATE mailboxes SET status='syncing' WHERE id=$1", [mailboxId]);
   const routing = await sharedAddressMap();
   const diag = newDiag(mailbox);

@@ -958,6 +958,38 @@ test('job lifecycle: resume refreshes started_at (a live resumed job is never fa
   await db.q("UPDATE sync_jobs SET status='cancelled', finished_at=now() WHERE id=$1", [fresh.id]);
 });
 
+// ---------- job lease: staleness measures DEATH, not AGE (real-tenant job 31) ----------
+test('a live long-running job (fresh lease, old started_at) is NEVER reclaimed; a dead job (stale lease) is; checkpoint maintains the lease', async () => {
+  const admin = byAddress['m.almaysari@exoticcolors.org'];
+  await db.q('UPDATE mailboxes SET is_pilot=TRUE, sync_enabled=TRUE WHERE id=$1', [admin.id]);
+  await db.q("UPDATE sync_jobs SET status='cancelled', finished_at=now() WHERE mailbox_id=$1 AND status IN ('queued','running','paused')", [admin.id]);
+
+  // (1) the real-tenant scenario: a LEGITIMATE backfill attempt older than the
+  // age gate but provably ALIVE (fresh lease). It must be protected:
+  //   - reconcileStale must NOT pause it
+  //   - createJob must still reject a concurrent start ("already running")
+  const live = await db.one(`INSERT INTO sync_jobs (mailbox_id, status, started_at, lease_at)
+    VALUES ($1, 'running', now() - interval '25 minutes', now() - interval '2 seconds') RETURNING id`, [admin.id]);
+  const rec = await sync.reconcileStale();
+  const liveAfter = await db.one('SELECT status FROM sync_jobs WHERE id=$1', [live.id]);
+  assert.strictEqual(liveAfter.status, 'running',
+    'a 25-minute-old attempt with a 2-second-old lease is ALIVE — reclaiming it was the real-tenant bug');
+  await assert.rejects(() => sync.syncMailbox(admin.id, { maxPages: 1 }), /already running/,
+    'concurrent-start protection holds for the live long attempt');
+
+  // (2) a DEAD job (stale lease) is reclaimed on entry exactly as before
+  await db.q("UPDATE sync_jobs SET lease_at = now() - interval '20 minutes' WHERE id=$1", [live.id]);
+  const s = await sync.syncMailbox(admin.id, { maxPages: 1 });
+  assert.strictEqual(s.jobId, Number(live.id), 'stale-lease job reclaimed and resumed');
+  assert.strictEqual((await db.one('SELECT status FROM sync_jobs WHERE id=$1', [live.id])).status, 'completed');
+
+  // (3) checkpoint maintains the lease during a real sync: the completed run
+  // above must have written a fresh lease_at
+  const leased = await db.one('SELECT lease_at FROM sync_jobs WHERE id=$1', [live.id]);
+  assert.ok(leased.lease_at && Date.now() - new Date(leased.lease_at).getTime() < 60000,
+    'checkpoint touched lease_at during the run');
+});
+
 // ---------- diagnostics ----------
 test('diagnostics: failed sync records full typed context (stage, endpoint, stack); success records ok row; UI/500 surface a trace id', async () => {
   // success path first: the admin mailbox sync recorded an 'ok' diagnostics row

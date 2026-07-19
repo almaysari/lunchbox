@@ -44,17 +44,22 @@ async function main() {
 
   const startMs = job.started_at ? new Date(job.started_at).getTime() : (job.created_at ? new Date(job.created_at).getTime() : 0);
   const attemptAgeSec = startMs ? Math.round((Date.now() - startMs) / 1000) : null;
+  // liveness = LEASE age (checkpoint touches lease_at ≤1s apart while alive);
+  // attempt age is informational only — a live long backfill is legitimate
+  const leaseMs = job.lease_at ? new Date(job.lease_at).getTime() : startMs;
+  const leaseAgeSec = leaseMs ? Math.round((Date.now() - leaseMs) / 1000) : null;
   const STALE_SEC = 15 * 60;
-  const wouldReclaim = job.status === 'running' && attemptAgeSec != null && attemptAgeSec > STALE_SEC;
+  const wouldReclaim = job.status === 'running' && leaseAgeSec != null && leaseAgeSec > STALE_SEC;
 
   const verdict =
     job.status !== 'running' ? `job is '${job.status}' — not holding the mailbox` :
-    wouldReclaim ? `STALE-DEAD: running with attempt age ${attemptAgeSec}s > ${STALE_SEC}s — createJob/reconcileStale will reclaim it on the next start/tick (self-heal shipped)` :
-    `LIVE ATTEMPT: running, attempt age ${attemptAgeSec}s ≤ ${STALE_SEC}s — the concurrent-start rejection is CORRECT protection right now; retry after it finishes or goes stale`;
+    wouldReclaim ? `STALE-DEAD: running but lease heartbeat is ${leaseAgeSec}s old (> ${STALE_SEC}s) — createJob/reconcileStale will reclaim it on the next start/tick` :
+    `LIVE ATTEMPT: running with a ${leaseAgeSec}s-old lease heartbeat (attempt age ${attemptAgeSec}s — long attempts are legitimate) — the concurrent-start rejection is CORRECT protection right now`;
 
   console.log(JSON.stringify({
     job: { id: Number(job.id), mailboxId: Number(job.mailbox_id), status: job.status,
       createdAt: job.created_at, startedAt: job.started_at, finishedAt: job.finished_at,
+      leaseAt: job.lease_at || null, leaseAgeSec,
       attemptAgeSec, discovered: job.discovered, imported: job.imported, skipped: job.skipped,
       errors: job.errors, errorDetail: job.error_detail, currentCursor: job.current_cursor },
     mailbox: mb ? { address: mb.address, status: mb.status, statusDetail: mb.status_detail,
@@ -66,7 +71,8 @@ async function main() {
     otherRecentJobs: others,
     advisoryLocks: advisory,
     idleInTransaction: idleTx,
-    stalenessPredicate: { staleAfterSec: STALE_SEC, attemptAgeSec, wouldReclaimNow: wouldReclaim },
+    stalenessPredicate: { basis: 'lease heartbeat (death), not attempt age', staleAfterSec: STALE_SEC,
+      leaseAgeSec, attemptAgeSec, wouldReclaimNow: wouldReclaim },
     verdict,
   }, null, 2));
   await closeDb();
