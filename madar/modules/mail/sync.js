@@ -576,10 +576,18 @@ async function sharedAddressMap() {
   return { map, folderCache: new Map() };
 }
 
+// The router's recipient parser, shared with capture-diagnose: the diagnostic
+// must predict EXACTLY what the router will match (same regex, same fields —
+// headers only, so BCC/envelope-only delivery is invisible to routing BY DESIGN
+// and the diagnostic has a named classification for that case).
+function recipientAddresses(msg) {
+  return new Set((String(msg.to || '') + ' ' + String(msg.cc || ''))
+    .toLowerCase().match(/[\w.+-]+@[\w-]+(\.[\w-]+)+/g) || []);
+}
+
 async function routeToSharedMailboxes(msg, sourceMailboxId, routing, summary, diag = null) {
   if (!routing) return;
-  const recipients = new Set((String(msg.to || '') + ' ' + String(msg.cc || ''))
-    .toLowerCase().match(/[\w.+-]+@[\w-]+(\.[\w-]+)+/g) || []);
+  const recipients = recipientAddresses(msg);
   for (const addr of recipients) {
     const targetId = routing.map.get(addr);
     if (!targetId || targetId === sourceMailboxId) continue;
@@ -909,4 +917,4 @@ async function importArchiveRecorded(mailboxId, zipBuffer, userId, filename = ''
   }
 }
 
-module.exports = { syncMailbox, importArchiveZip, importArchiveRecorded, insertMessage, upsertFolder, dedupHash, normalizeForFingerprint, HASH_VERSION, storeAttachment, createJob, setJobControl, recoverStaleJobs, reconcileStale, pruneObservability, folderDue, persistDiag, newDiag, JOB_STALE_SEC, transitionJob, jobEvents, requestShutdownPause, advanceCursor, writeCheckpoint, classifyCheckpointDelta };
+module.exports = { syncMailbox, importArchiveZip, importArchiveRecorded, insertMessage, upsertFolder, dedupHash, normalizeForFingerprint, HASH_VERSION, storeAttachment, createJob, setJobControl, recoverStaleJobs, reconcileStale, pruneObservability, folderDue, persistDiag, newDiag, JOB_STALE_SEC, transitionJob, jobEvents, requestShutdownPause, advanceCursor, writeCheckpoint, classifyCheckpointDelta, recipientAddresses, sharedAddressMap };

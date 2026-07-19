@@ -1301,6 +1301,93 @@ test('starvation E2E: new mail (incl. shared-mailbox routing) appears while a la
   }
 });
 
+// ---------- shared-mailbox capture diagnosis (Gate-2 failure analyzer) ----------
+// A shared mailbox with no direct API is captured via the member-copy chain:
+//   Zoho delivers to a member account → realtime pass ingests it from a synced
+//   member's hot folder → header routing (to/cc) adds the shared occurrence.
+// The diagnostic must name WHICH link is broken, from evidence.
+test('capture-diagnose: classifies every break in the shared member-copy chain from evidence', async () => {
+  const { classifyCapture, collectEvidence } = require('../modules/mail/capture-diagnose');
+  const liveSync = require('../modules/mail/live-sync');
+  const admin = byAddress['m.almaysari@exoticcolors.org'];
+  const hr = byAddress['hr@exoticcolors.org'];
+  await db.q('UPDATE mailboxes SET is_pilot=TRUE, sync_enabled=TRUE WHERE id=$1', [admin.id]);
+  await db.q("UPDATE sync_jobs SET status='cancelled', finished_at=now() WHERE status IN ('queued','running','paused')");
+
+  // -- pure classifier matrix (deterministic, no I/O) --
+  assert.strictEqual(classifyCapture({ sharedRegistered: false }).classification, 'shared_not_registered');
+  assert.strictEqual(classifyCapture({ sharedRegistered: true, storedInShared: 1, storedInMembers: [], zohoHits: [], syncedMembers: [{}] }).classification, 'captured');
+  const notRouted = classifyCapture({ sharedRegistered: true, storedInShared: 0,
+    storedInMembers: [{ headersMatch: true }], zohoHits: [], syncedMembers: [{}] });
+  assert.strictEqual(notRouted.classification, 'stored_in_member_not_routed');
+  assert.strictEqual(notRouted.engineDefect, true, 'stored-but-not-routed is OUR defect');
+  assert.strictEqual(classifyCapture({ sharedRegistered: true, storedInShared: 0,
+    storedInMembers: [{ headersMatch: false }], zohoHits: [], syncedMembers: [{}] }).classification,
+  'member_copy_headers_lack_shared_address');
+  const missed = classifyCapture({ sharedRegistered: true, storedInShared: 0, storedInMembers: [],
+    zohoHits: [{ headersMatch: true, receivedBeforeLastScan: true }], syncedMembers: [{}] });
+  assert.strictEqual(missed.classification, 'on_zoho_not_stored');
+  assert.strictEqual(missed.engineDefect, true, 'scanned-after-arrival yet missing is OUR defect');
+  assert.strictEqual(classifyCapture({ sharedRegistered: true, storedInShared: 0, storedInMembers: [],
+    zohoHits: [{ headersMatch: true, receivedBeforeLastScan: false }], syncedMembers: [{}] }).classification, 'scan_pending');
+  assert.strictEqual(classifyCapture({ sharedRegistered: true, storedInShared: 0, storedInMembers: [],
+    zohoHits: [], syncedMembers: [] }).classification, 'no_capture_surface');
+  assert.strictEqual(classifyCapture({ sharedRegistered: true, storedInShared: 0, storedInMembers: [],
+    zohoHits: [], syncedMembers: [{}] }).classification, 'no_member_copy_on_zoho');
+
+  // -- integration on the mock tenant --
+  // 1) canary exists ONLY on Zoho (arrived after the last hot-folder scan)
+  const SUBJ = 'CAPDIAG-' + crypto.randomUUID().slice(0, 8);
+  const injected = { messageId: 'capdiag-1', threadId: 'tcapd', fromAddress: 'client@example.com',
+    senderName: 'Client', toAddress: 'hr@exoticcolors.org', subject: SUBJ,
+    summary: 'gate2 diagnosis canary', receivedTime: String(Date.now()), sentDateInGMT: String(Date.now() - 2000),
+    hasAttachment: '0' };
+  _messages[ADMIN_ACCOUNT_ID].splice(1, 0, injected);
+  try {
+    const ev1 = await collectEvidence('hr@exoticcolors.org', SUBJ);
+    const v1 = classifyCapture(ev1);
+    assert.strictEqual(v1.classification, 'scan_pending', JSON.stringify(v1));
+    assert.ok(ev1.zohoHits.some(h => h.memberAddress === 'm.almaysari@exoticcolors.org' && h.headersMatch),
+      'live probe found the canary in the synced member hot folder with routable headers');
+    assert.ok(ev1.syncedMembers.some(m => m.address === 'm.almaysari@exoticcolors.org'),
+      'the capture surface (synced members) is computed from the registry');
+
+    // 2) one realtime tick later: captured in the member AND routed to hr@
+    await liveSync.tickOnce({ source: 'worker' });
+    const ev2 = await collectEvidence('hr@exoticcolors.org', SUBJ);
+    const v2 = classifyCapture(ev2);
+    assert.strictEqual(v2.classification, 'captured', JSON.stringify(v2));
+    assert.ok(ev2.storedInShared >= 1, 'occurrence exists in the shared mailbox');
+
+    // 3) headers-lack case: a member copy whose to/cc do NOT carry the shared
+    //    address (BCC/envelope-style delivery) — routing is header-based, so the
+    //    diagnostic must say so instead of blaming the engine
+    const SUBJ2 = 'CAPDIAG-BCC-' + crypto.randomUUID().slice(0, 8);
+    const bcc = { messageId: 'capdiag-2', threadId: 'tcapd2', fromAddress: 'client@example.com',
+      senderName: 'Client', toAddress: 'undisclosed-recipients@example.com', subject: SUBJ2,
+      summary: 'delivered without shared address in headers', receivedTime: String(Date.now()),
+      sentDateInGMT: String(Date.now() - 2000), hasAttachment: '0' };
+    _messages[ADMIN_ACCOUNT_ID].splice(1, 0, bcc);
+    try {
+      await liveSync.tickOnce({ source: 'worker' });
+      const ev3 = await collectEvidence('hr@exoticcolors.org', SUBJ2);
+      const v3 = classifyCapture(ev3);
+      assert.strictEqual(v3.classification, 'member_copy_headers_lack_shared_address', JSON.stringify(v3));
+      assert.strictEqual(v3.engineDefect, false, 'header-invisible delivery is a delivery-shape problem, not an engine defect');
+    } finally {
+      const j = _messages[ADMIN_ACCOUNT_ID].indexOf(bcc);
+      if (j > -1) _messages[ADMIN_ACCOUNT_ID].splice(j, 1);
+    }
+
+    // 4) canary never delivered anywhere → the "check Zoho group delivery" verdict
+    const ev4 = await collectEvidence('hr@exoticcolors.org', 'CAPDIAG-NEVER-SENT-' + crypto.randomUUID().slice(0, 8));
+    assert.strictEqual(classifyCapture(ev4).classification, 'no_member_copy_on_zoho');
+  } finally {
+    const i = _messages[ADMIN_ACCOUNT_ID].indexOf(injected);
+    if (i > -1) _messages[ADMIN_ACCOUNT_ID].splice(i, 1);
+  }
+});
+
 // ---------- diagnostics ----------
 test('diagnostics: failed sync records full typed context (stage, endpoint, stack); success records ok row; UI/500 surface a trace id', async () => {
   // success path first: the admin mailbox sync recorded an 'ok' diagnostics row
