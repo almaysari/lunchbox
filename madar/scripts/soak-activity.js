@@ -55,7 +55,10 @@ async function main() {
   const canary = run.canary || null;
   const realVsCanary = await one(`SELECT
       COUNT(DISTINCT c.id) FILTER (WHERE $2::text IS NOT NULL AND c.subject ILIKE '%' || $2 || '%')::int canary_canonicals,
-      COUNT(DISTINCT c.id) FILTER (WHERE $2::text IS NULL OR c.subject NOT ILIKE '%' || $2 || '%')::int real_canonicals
+      COUNT(DISTINCT c.id) FILTER (WHERE $2::text IS NULL OR c.subject NOT ILIKE '%' || $2 || '%')::int real_canonicals,
+      -- NEW arrivals (received during the window) vs historical backfill flow
+      COUNT(DISTINCT c.id) FILTER (WHERE o.received_at >= $1
+        AND ($2::text IS NULL OR c.subject NOT ILIKE '%' || $2 || '%'))::int new_arrivals
     FROM canonical_messages c JOIN message_occurrences o ON o.canonical_message_id=c.id
     WHERE o.created_at >= $1`, [since, canary]);
   const topSenders = await all(`SELECT lower(split_part(c.from_address,'@',2)) AS sender_domain,
@@ -113,6 +116,8 @@ async function main() {
     q1_capturedSinceStart: totals,
     q2_breakdown: { byMailboxType: byType, byFolderClass },
     q3_realMail: { realCanonicals: realVsCanary.real_canonicals, canaryCanonicals: realVsCanary.canary_canonicals,
+      newArrivalsInWindow: realVsCanary.new_arrivals,
+      historicalBackfillFlow: realVsCanary.real_canonicals - realVsCanary.new_arrivals,
       topSenderDomains: topSenders,
       sanitizedExamples: examples.map(e => ({ from: '<redacted>@' + e.sender_domain, mailbox: e.mailbox,
         folder: e.folder, receivedAt: new Date(e.received_at).toISOString(), hasAttachments: e.has_attachments })),

@@ -500,7 +500,17 @@ async function pruneObservability(days = Number(process.env.MADAR_RETENTION_DAYS
   // Active jobs (queued/running/paused) are NEVER touched: resumption state.
   const jb = await all(`DELETE FROM sync_jobs WHERE status IN ('completed','cancelled','failed')
     AND COALESCE(finished_at, created_at) < now() - interval '${days} days' RETURNING id`);
-  return { cyclesPruned: cy.length, diagnosticsPruned: dg.length, jobsPruned: jb.length, retentionDays: days };
+  // Fingerprint meters: cold re-reads of v2-era messages fire the guard's
+  // provider_identity_reused meter on EVERY pass (production: 10642 in 79
+  // minutes ≈ 194k rows/day) — ROUTINE meters age out on a 30-day floor.
+  // FORENSIC anomaly evidence (false_merge_prevented / false_split_detected)
+  // is never pruned, like audit_log.
+  const metricDays = Math.max(30, days);
+  const fm = await all(`DELETE FROM fingerprint_metrics
+    WHERE event_type IN ('provider_identity_reused','duplicate_prevented','time_unlinkable')
+      AND created_at < now() - interval '${metricDays} days' RETURNING id`);
+  return { cyclesPruned: cy.length, diagnosticsPruned: dg.length, jobsPruned: jb.length,
+    fingerprintMetricsPruned: fm.length, retentionDays: days, metricRetentionDays: metricDays };
 }
 
 async function setJobControl(jobId, status, userId = null) { // 'paused' | 'cancelled' (admin action)

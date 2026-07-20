@@ -685,6 +685,23 @@ test('retention: worker cycles and diagnostics older than the window are pruned;
   assert.strictEqual((await db.one("SELECT COUNT(*)::int n FROM sync_diagnostics WHERE trace_id='old-trace'")).n, 0);
   assert.ok((await db.one('SELECT COUNT(*)::int n FROM sync_worker_cycles')).n >= 1, 'recent cycles kept');
   assert.strictEqual((await db.one('SELECT COUNT(*)::int n FROM audit_log')).n, auditBefore, 'audit is NEVER pruned by observability retention');
+
+  // fingerprint metric retention (production evidence: the guard metered
+  // provider_identity_reused 10642x in 79 minutes on cold re-reads of v2-era
+  // messages ≈ 194k rows/day): ROUTINE meters age out, FORENSIC anomaly
+  // evidence (false merge/split) is never pruned
+  await db.q(`INSERT INTO fingerprint_metrics (event_type, fp3, detail, created_at) VALUES
+    ('provider_identity_reused','fp-old','routine', now() - interval '40 days'),
+    ('duplicate_prevented','fp-old2','routine', now() - interval '40 days'),
+    ('provider_identity_reused','fp-new','routine', now()),
+    ('false_split_detected','fp-forensic','anomaly', now() - interval '400 days')`);
+  const r2 = await sync.pruneObservability(14);
+  assert.ok(r2.fingerprintMetricsPruned >= 2, 'old routine meters pruned');
+  assert.strictEqual((await db.one(`SELECT COUNT(*)::int n FROM fingerprint_metrics WHERE fp3 IN ('fp-old','fp-old2')`)).n, 0);
+  assert.strictEqual((await db.one(`SELECT COUNT(*)::int n FROM fingerprint_metrics WHERE fp3='fp-new'`)).n, 1, 'recent meters kept');
+  assert.strictEqual((await db.one(`SELECT COUNT(*)::int n FROM fingerprint_metrics WHERE fp3='fp-forensic'`)).n, 1,
+    'forensic anomaly evidence is NEVER pruned');
+  await db.q(`DELETE FROM fingerprint_metrics WHERE fp3 IN ('fp-new','fp-forensic')`);
 });
 
 test('concurrency: 20 parallel inserts of one message across mailboxes — no deadlock, one canonical, no lost copies', async () => {
