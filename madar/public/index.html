@@ -62,6 +62,34 @@
   .attach { display:inline-flex; gap:6px; align-items:center; background:var(--brand-soft); color:var(--brand); border-radius:8px; padding:5px 11px; font-size:12.5px; text-decoration:none; margin:3px 3px 0 0; }
   .row { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
   .body-frame { border:1px solid var(--line); border-radius:8px; width:100%; min-height:300px; background:#fff; }
+  /* ---- mail client layout ---- */
+  .mailwrap { display:grid; grid-template-columns:250px 360px minmax(0,1fr); gap:12px; height:calc(100vh - 132px); }
+  .pane { padding:0; overflow:hidden; display:flex; flex-direction:column; margin-bottom:0; }
+  .pane-head { display:flex; gap:8px; padding:10px 12px; border-bottom:1px solid var(--line); align-items:center; }
+  .scrollfill { overflow-y:auto; flex:1; min-height:0; }
+  .rail-group { font-size:11px; color:var(--muted); padding:12px 14px 4px; font-weight:700; letter-spacing:.3px; }
+  .mb-item { padding:8px 12px; cursor:pointer; border-inline-start:3px solid transparent; }
+  .mb-item:hover { background:var(--bg); }
+  .mb-item.active { background:var(--brand-soft); border-inline-start-color:var(--brand); }
+  .mb-item .addr { color:var(--muted); font-size:11px; direction:ltr; text-align:right; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .chips { display:flex; gap:6px; padding:8px 12px; flex-wrap:wrap; border-bottom:1px solid var(--line); }
+  .chip { font-size:12px; border:1px solid var(--line); background:var(--card); border-radius:99px; padding:3px 12px; cursor:pointer; color:var(--muted); }
+  .chip.active { background:var(--brand); color:#fff; border-color:var(--brand); }
+  .msg-item { display:grid; grid-template-columns:36px minmax(0,1fr) auto; gap:2px 10px; padding:10px 12px; cursor:pointer; border-bottom:1px solid var(--line); }
+  .msg-item:hover { background:var(--bg); }
+  .msg-item.active { background:var(--brand-soft); }
+  .avatar { width:34px; height:34px; border-radius:50%; background:var(--brand-soft); color:var(--brand); display:grid; place-items:center; font-weight:700; grid-row:1/4; }
+  .m-from { font-weight:600; font-size:13px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .m-time { color:var(--muted); font-size:11px; white-space:nowrap; }
+  .m-sub { grid-column:2/4; font-size:12.5px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .m-snip { grid-column:2/4; color:var(--muted); font-size:11.5px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .empty { color:var(--muted); text-align:center; padding:52px 16px; font-size:13px; line-height:2; }
+  .view-head { padding:16px 18px 12px; border-bottom:1px solid var(--line); }
+  .view-body { padding:12px 18px; display:flex; flex-direction:column; flex:1; min-height:0; }
+  .view-body .body-frame { flex:1; min-height:380px; }
+  #morePager { border-top:1px solid var(--line); padding:8px 12px; text-align:center; }
+  #morePager:empty { display:none; border:none; padding:0; }
+  @media (max-width:1000px){ .mailwrap { grid-template-columns:1fr; height:auto; } .pane { min-height:240px; max-height:60vh; } }
 </style>
 </head>
 <body>
@@ -90,15 +118,19 @@
 
   <!-- ================= MAIL ================= -->
   <div id="tab-mail" style="display:none">
-    <div class="card row">
-      <input id="q" type="search" placeholder="ابحث في كل صناديق الشركة أو الصندوق المحدد..." style="flex:1;min-width:240px">
-      <button class="btn primary" onclick="loadMessages()">بحث</button>
-      <span class="sub" id="mailScope"></span>
-    </div>
-    <div class="cols">
-      <div class="card scroll" id="mailboxList"></div>
-      <div class="card scroll" id="messageList"><div class="sub" style="padding:20px">اختر صندوقًا</div></div>
-      <div class="card scroll" id="messageView"><div class="sub" style="padding:20px">اختر رسالة</div></div>
+    <div class="mailwrap">
+      <div class="pane card scrollfill" id="mailboxList"></div>
+      <div class="pane card">
+        <div class="pane-head">
+          <input id="q" type="search" placeholder="بحث في الرسائل..." style="flex:1;min-width:0">
+          <button class="btn" onclick="resetAndLoad()" title="تحديث">⟳</button>
+        </div>
+        <div class="chips" id="folderChips" style="display:none"></div>
+        <div class="sub" id="mailScope" style="padding:6px 14px 2px"></div>
+        <div class="scrollfill" id="messageList"><div class="empty">📬<br>اختر صندوقًا من القائمة</div></div>
+        <div id="morePager"></div>
+      </div>
+      <div class="pane card scrollfill" id="messageView"><div class="empty">📭<br>اختر رسالة لعرضها</div></div>
     </div>
   </div>
 
@@ -294,65 +326,127 @@ function showTab(t) {
 function toggle(id) { $(id).style.display = $(id).style.display === 'none' ? '' : 'none'; }
 
 /* ================= MAIL ================= */
+let currentFolder = null, MSG_OFFSET = 0, MSG_TOTAL = null, MSG_SHOWN = 0;
+const MSG_PAGE = 100;
+const initial = s => (String(s || '?').trim()[0] || '?').toUpperCase();
+// relative time, mail-client style: time for today, «أمس», short date otherwise
+const fmtRel = t => {
+  if (!t) return '—';
+  const d = new Date(Number(t)), now = new Date();
+  if (d.toDateString() === now.toDateString()) return d.toLocaleTimeString('ar', { timeStyle: 'short' });
+  if (new Date(now - 864e5).toDateString() === d.toDateString()) return 'أمس';
+  return d.toLocaleDateString('ar', { day: 'numeric', month: 'short',
+    ...(d.getFullYear() !== now.getFullYear() ? { year: 'numeric' } : {}) });
+};
+
 async function loadMailboxesForMail() {
   MAILBOXES = await api('/api/mail/mailboxes');
-  $('mailboxList').innerHTML = `
-    <div class="list-item ${!currentMailbox ? 'active' : ''}" onclick="selectMailbox(null)">🔍 كل الصناديق</div>` +
-    MAILBOXES.map(m => `
-    <div class="list-item ${currentMailbox === m.id ? 'active' : ''}" onclick="selectMailbox(${m.id})">
-      <div style="font-weight:600">${esc(m.displayName || m.address)}</div>
-      <div class="sub" style="direction:ltr;text-align:right">${esc(m.address)}</div>
-      <span class="tag ${m.detectedType}">${TYPE_AR[m.detectedType] || m.detectedType}</span>
-      ${m.isPilot ? '<span class="tag ok">Pilot</span>' : ''}
-    </div>`).join('');
-  loadMessages();
+  const groups = [
+    ['صناديق المستخدمين', MAILBOXES.filter(m => m.detectedType === 'user')],
+    ['الصناديق المشتركة', MAILBOXES.filter(m => m.detectedType === 'shared_mailbox')],
+    ['أخرى', MAILBOXES.filter(m => !['user', 'shared_mailbox'].includes(m.detectedType))],
+  ];
+  $('mailboxList').innerHTML =
+    `<div class="mb-item ${!currentMailbox ? 'active' : ''}" onclick="selectMailbox(null)" style="font-weight:600;padding-top:12px">🔍 كل الصناديق</div>` +
+    groups.filter(([, l]) => l.length).map(([t, l]) =>
+      `<div class="rail-group">${t} (${l.length})</div>` +
+      l.map(m => `
+      <div class="mb-item ${currentMailbox === m.id ? 'active' : ''}" onclick="selectMailbox(${m.id})">
+        <div style="font-weight:600;font-size:13px">${esc(m.displayName || m.address)} ${m.isPilot ? '<span class="tag ok">Pilot</span>' : ''}</div>
+        <div class="addr">${esc(m.address)}</div>
+      </div>`).join('')).join('');
+  await loadFolderChips();
+  resetAndLoad();
 }
 async function selectMailbox(id) {
-  currentMailbox = id;
+  currentMailbox = id; currentFolder = null;
   await loadMailboxesForMail();
 }
-async function loadMessages() {
-  const q = $('q').value.trim();
+async function loadFolderChips() {
+  if (!currentMailbox) { $('folderChips').style.display = 'none'; currentFolder = null; return; }
+  const folders = await api(`/api/mail/mailboxes/${currentMailbox}/folders`).catch(() => []);
+  if (!folders.length) { $('folderChips').style.display = 'none'; currentFolder = null; return; }
+  $('folderChips').style.display = '';
+  $('folderChips').innerHTML =
+    `<span class="chip ${!currentFolder ? 'active' : ''}" onclick="setFolder(null)">الكل</span>` +
+    folders.map(f => `<span class="chip ${currentFolder === f.id ? 'active' : ''}" onclick="setFolder(${f.id})">${esc(f.name)}</span>`).join('');
+}
+async function setFolder(id) { currentFolder = id; await loadFolderChips(); resetAndLoad(); }
+function resetAndLoad() { MSG_OFFSET = 0; MSG_TOTAL = null; MSG_SHOWN = 0; loadMessages(false); }
+function msgParams() {
   const params = new URLSearchParams();
   if (currentMailbox) params.set('mailbox_id', currentMailbox);
+  if (currentFolder) params.set('folder_id', currentFolder);
+  const q = $('q').value.trim();
   if (q) params.set('q', q);
-  $('mailScope').textContent = currentMailbox
-    ? 'النطاق: ' + (MAILBOXES.find(m => m.id === currentMailbox)?.address || '')
-    : 'النطاق: كل الصناديق المصرّح لك بها';
-  const msgs = await api('/api/mail/messages?' + params);
-  if (msgs.length) {
-    $('messageList').innerHTML = msgs.map(m => `
-      <div class="list-item" onclick="openMessage(${m.occurrence_id})">
-        <div class="msg-from">${esc(m.from_name || m.from_address)}</div>
-        <div class="msg-sub">${esc(m.subject)}</div>
-        <div class="msg-snip">${esc((m.snippet || '').slice(0, 90))}</div>
-        <div class="msg-time">${fmtT(m.received_at)} ${m.has_attachments ? '📎' : ''} ${m.direction === 'out' ? '↗ صادر' : ''}</div>
-      </div>`).join('');
-    return;
+  return params;
+}
+async function loadMessages(append = false) {
+  const params = msgParams();
+  if (MSG_TOTAL == null) {
+    const c = await api('/api/mail/messages?' + params + '&count_only=1').catch(() => null);
+    MSG_TOTAL = c ? c.total : null;
   }
+  params.set('limit', MSG_PAGE); params.set('offset', MSG_OFFSET);
+  // an unauthorized mailbox answers 404 by design (anti-enumeration) — for the
+  // UI that IS the "hidden by grant" case, not an error to explode on
+  const msgs = await api('/api/mail/messages?' + params).catch(() => []);
+  const html = msgs.map(m => `
+    <div class="msg-item" id="occ-${m.occurrence_id}" onclick="openMessage(${m.occurrence_id})">
+      <div class="avatar">${esc(initial(m.from_name || m.from_address))}</div>
+      <div class="m-from">${esc(m.from_name || m.from_address)}</div>
+      <div class="m-time">${fmtRel(m.received_at)} ${m.has_attachments ? '📎' : ''}${m.direction === 'out' ? ' ↗' : ''}</div>
+      <div class="m-sub">${esc(m.subject || '(بلا موضوع)')}</div>
+      <div class="m-snip">${esc((m.snippet || '').slice(0, 110))}</div>
+    </div>`).join('');
+  if (append) $('messageList').insertAdjacentHTML('beforeend', html);
+  else $('messageList').innerHTML = html;
+  MSG_SHOWN = (append ? MSG_SHOWN : 0) + msgs.length;
+  $('mailScope').textContent = (currentMailbox
+    ? (MAILBOXES.find(m => m.id === currentMailbox)?.address || '')
+    : 'كل الصناديق المصرّح لك بها')
+    + (MSG_TOTAL != null ? ` — ${MSG_SHOWN} من ${MSG_TOTAL} رسالة` : '');
+  $('morePager').innerHTML = (MSG_TOTAL != null && MSG_SHOWN < MSG_TOTAL && msgs.length === MSG_PAGE)
+    ? `<button class="btn" onclick="loadMore()">تحميل ${Math.min(MSG_PAGE, MSG_TOTAL - MSG_SHOWN)} رسالة أقدم (${MSG_SHOWN}/${MSG_TOTAL})</button>` : '';
+  if (MSG_SHOWN) return;
+
   // empty: for an admin this is usually the content-privacy policy (no read
   // grant), NOT missing data — say so instead of a misleading "no messages".
-  let hint = 'لا توجد رسائل بعد — شغّل المزامنة أو استورد الأرشيف من لوحة الإدارة';
+  let hint = 'لا توجد رسائل هنا بعد — شغّل المزامنة أو استورد الأرشيف من لوحة الإدارة';
   if (isAdminUser(ME) && currentMailbox) {
     const t = await api(`/api/mail/mailboxes/${currentMailbox}/visibility-trace`).catch(() => null);
     if (t) hint = `<b>${esc(t.verdict)}</b>` + (t.checks['5_stored_but_hidden'].hiddenByGrant
-      ? ` <button class="btn primary" onclick="selfGrantRead(${currentMailbox})">امنحني القراءة</button>` : '');
+      ? `<br><br><button class="btn primary" onclick="selfGrantRead(${currentMailbox})">امنحني القراءة (مدوَّن)</button>` : '');
   }
-  $('messageList').innerHTML = `<div class="sub" style="padding:20px">${hint}</div>`;
+  $('messageList').innerHTML = `<div class="empty">📭<br>${hint}</div>`;
 }
-$('q').addEventListener('keydown', e => { if (e.key === 'Enter') loadMessages(); });
+async function loadMore() { MSG_OFFSET += MSG_PAGE; await loadMessages(true); }
+$('q').addEventListener('keydown', e => { if (e.key === 'Enter') resetAndLoad(); });
 async function openMessage(occId) {
+  document.querySelectorAll('.msg-item.active').forEach(x => x.classList.remove('active'));
+  $('occ-' + occId)?.classList.add('active');
   const m = await api('/api/mail/occurrences/' + occId);
   $('messageView').innerHTML = `
-    <h3 style="margin:0 0 4px">${esc(m.subject)}</h3>
-    <div class="sub">من: <b>${esc(m.from_name)}</b> &lt;${esc(m.from_address)}&gt; — ${fmtT(m.received_at)}</div>
-    <div class="sub">إلى: ${esc(m.to_addresses)} ${m.cc_addresses ? ' | نسخة: ' + esc(m.cc_addresses) : ''}</div>
-    ${(m.appearsIn || []).length > 1 ? `<div class="sub">تظهر أيضًا في: ${m.appearsIn.map(o => esc(o.address + (o.folder ? ' / ' + o.folder : ''))).join('، ')}</div>` : ''}
-    <div style="margin:8px 0">${(m.attachments || []).map(a => a.quarantine_status === 'quarantined'
-      ? `<span class="attach" style="background:var(--bad-soft);color:var(--bad)">🚫 ${esc(a.name)} (محجور — النوع الفعلي يخالف المعلن)</span>`
-      : `<a class="attach" href="/api/mail/attachments/${a.id}" target="_blank">📎 ${esc(a.name)} <small>(${Math.round(a.size/1024)}KB)</small></a>
-         <a class="attach" href="/api/mail/attachments/${a.id}?download=1">⬇</a>`).join('')}</div>
-    <iframe class="body-frame" sandbox="" srcdoc="${esc(m.body_html || '<p>' + esc(m.snippet) + '</p>')}"></iframe>`;
+    <div class="view-head">
+      <h3 style="margin:0 0 10px;font-size:16px">${esc(m.subject || '(بلا موضوع)')}</h3>
+      <div style="display:flex;gap:10px;align-items:center">
+        <div class="avatar">${esc(initial(m.from_name || m.from_address))}</div>
+        <div style="min-width:0;flex:1">
+          <div style="font-weight:600">${esc(m.from_name || m.from_address)}
+            <span class="sub" style="direction:ltr;display:inline-block">&lt;${esc(m.from_address)}&gt;</span></div>
+          <div class="sub">إلى: ${esc(m.to_addresses || '—')}${m.cc_addresses ? ' — نسخة: ' + esc(m.cc_addresses) : ''}</div>
+        </div>
+        <div class="sub" style="white-space:nowrap">${fmtT(m.received_at)}</div>
+      </div>
+      ${(m.appearsIn || []).length > 1 ? `<div class="sub" style="margin-top:6px">تظهر أيضًا في: ${m.appearsIn.map(o => esc(o.address + (o.folder ? ' / ' + o.folder : ''))).join('، ')}</div>` : ''}
+      ${(m.attachments || []).length ? `<div style="margin-top:8px">${m.attachments.map(a => a.quarantine_status === 'quarantined'
+    ? `<span class="attach" style="background:var(--bad-soft);color:var(--bad)">🚫 ${esc(a.name)} (محجور — النوع الفعلي يخالف المعلن)</span>`
+    : `<a class="attach" href="/api/mail/attachments/${a.id}" target="_blank">📎 ${esc(a.name)} <small>(${Math.round(a.size / 1024)}KB)</small></a>
+       <a class="attach" href="/api/mail/attachments/${a.id}?download=1" title="تنزيل">⬇</a>`).join('')}</div>` : ''}
+    </div>
+    <div class="view-body">
+      <iframe class="body-frame" sandbox="" srcdoc="${esc(m.body_html || '<p style=&quot;font-family:sans-serif&quot;>' + esc(m.snippet || '') + '</p>')}"></iframe>
+    </div>`;
 }
 
 /* ================= ADMIN ================= */

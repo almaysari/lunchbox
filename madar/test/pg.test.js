@@ -1748,6 +1748,35 @@ test('visibility trace: names WHY mail is not shown — "stored but hidden by gr
   assert.strictEqual((await fakeCall('GET', `/api/mail/mailboxes/${info.id}/visibility-trace`, { user: memberUser })).status, 403);
 });
 
+// ---------- mail list: pagination + total (an 11k-message mailbox is unusable
+// as a single silent newest-100 page — production finding) ----------
+test('messages API: stable pagination (limit/offset), clamped limit, and a total count', async () => {
+  const info = byAddress['info@exoticcolors.org']; // 250+ stored messages
+  await auth.setGrant(adminUser.id, info.id, { can_view_messages: true });
+  try {
+    const total = (await fakeCall('GET', '/api/mail/messages', { user: adminUser,
+      search: `?mailbox_id=${info.id}&count_only=1` })).body;
+    assert.ok(total && Number(total.total) >= 250, `total exposed (got ${JSON.stringify(total)})`);
+
+    const p1 = (await fakeCall('GET', '/api/mail/messages', { user: adminUser,
+      search: `?mailbox_id=${info.id}&limit=50` })).body;
+    const p2 = (await fakeCall('GET', '/api/mail/messages', { user: adminUser,
+      search: `?mailbox_id=${info.id}&limit=50&offset=50` })).body;
+    assert.strictEqual(p1.length, 50);
+    assert.strictEqual(p2.length, 50);
+    const ids1 = new Set(p1.map(m => m.occurrence_id));
+    assert.ok(p2.every(m => !ids1.has(m.occurrence_id)), 'pages do not overlap');
+    // stable order: page 2 strictly older than page 1's tail
+    assert.ok(p2[0].received_at <= p1[p1.length - 1].received_at, 'descending across pages');
+
+    const clamped = (await fakeCall('GET', '/api/mail/messages', { user: adminUser,
+      search: `?mailbox_id=${info.id}&limit=100000` })).body;
+    assert.ok(clamped.length <= 100, 'limit clamped');
+  } finally {
+    await auth.setGrant(adminUser.id, info.id, null);
+  }
+});
+
 test('envelope privacy: each occurrence keeps its own to/cc; BCC never leaks across mailboxes', async () => {
   const info = byAddress['info@exoticcolors.org'];
   const hr = byAddress['hr@exoticcolors.org'];

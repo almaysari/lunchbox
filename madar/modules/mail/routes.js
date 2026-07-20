@@ -419,10 +419,23 @@ async function handle(req, res, url, user, body, helpers) {
     let where = 'o.mailbox_id = ANY($1)';
     if (folderId) { params.push(folderId); where += ` AND o.folder_id = $${params.length}`; }
     if (qtext) { params.push(qtext.split(/\s+/).join(' & ')); where += ` AND c.fts @@ to_tsquery('simple', $${params.length})`; }
+    // total for the SAME scope — the UI needs "showing X of Y" and paging
+    // (an 11k-message mailbox rendered as a silent newest-100 page reads as
+    // "no mail at all"); kept as a separate cheap call so the list response
+    // stays a plain array for existing consumers
+    if (url.searchParams.get('count_only') === '1') {
+      const t = await one(`SELECT COUNT(*)::int AS total FROM message_occurrences o
+        JOIN canonical_messages c ON c.id = o.canonical_message_id WHERE ${where}`, params);
+      return send(200, { total: t.total });
+    }
+    const limit = Math.max(1, Math.min(100, Number(url.searchParams.get('limit')) || 100));
+    const offset = Math.max(0, Number(url.searchParams.get('offset')) || 0);
+    // received_at DESC with occurrence id as the tiebreaker → pages are stable
+    // even when many rows share one timestamp (bulk archive imports do)
     const rows = await all(`SELECT o.id AS occurrence_id, o.mailbox_id, o.folder_id, o.direction, o.received_at,
         c.id AS canonical_id, c.from_address, c.from_name, c.subject, c.snippet, c.has_attachments
       FROM message_occurrences o JOIN canonical_messages c ON c.id = o.canonical_message_id
-      WHERE ${where} ORDER BY o.received_at DESC LIMIT 100`, params);
+      WHERE ${where} ORDER BY o.received_at DESC, o.id DESC LIMIT ${limit} OFFSET ${offset}`, params);
     return send(200, rows.map(r => ({ ...r, received_at: new Date(r.received_at).getTime() })));
   }
   if ((m = p.match(/^\/api\/mail\/occurrences\/(\d+)$/)) && req.method === 'GET') {
