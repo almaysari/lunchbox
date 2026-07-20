@@ -29,6 +29,10 @@ const detection = require('../modules/mail/detection');
 
 async function main() {
   const persist = process.argv.includes('--persist');
+  // --mailbox <address>: PILOT mode — probe exactly one mailbox (small shared
+  // box first, before touching the big ones). Read-only unless --persist.
+  const mbArg = process.argv.indexOf('--mailbox');
+  const onlyAddress = mbArg > -1 ? String(process.argv[mbArg + 1] || '').toLowerCase() : null;
   const connArg = process.argv.indexOf('--connection');
   const conn = connArg > -1 ? await one('SELECT id FROM connections WHERE id=$1', [Number(process.argv[connArg + 1])])
     : await one(`SELECT id FROM connections WHERE status='connected' ORDER BY id LIMIT 1`);
@@ -46,13 +50,35 @@ async function main() {
     userMailboxes: discovery.mailboxes.filter(m => m.detectedType !== 'shared_mailbox').length,
   };
 
+  const targets = onlyAddress
+    ? discovery.mailboxes.filter(m => m.address.toLowerCase() === onlyAddress)
+    : discovery.mailboxes;
+  if (onlyAddress && !targets.length) {
+    console.error(`mailbox ${onlyAddress} not found in live discovery (check the address)`);
+    process.exit(1);
+  }
   const rows = [];
-  for (const mb of discovery.mailboxes) {
+  for (const mb of targets) {
     const caps = await detection.probeCapabilities(zoho, mb);
     const choice = detection.chooseStrategy(mb, caps);
     let registeredId = null;
     if (persist) registeredId = await detection.upsertMailbox(conn.id, mb, caps, choice);
     const registered = registeredId || (await one('SELECT id FROM mailboxes WHERE lower(address)=lower($1)', [mb.address]) || {}).id || null;
+    // what Madar has ACTUALLY stored for this mailbox — answers "does it hold
+    // messages, and did they come via member-copy routing or another path?"
+    let stored = { total: 0, byFolder: [] };
+    if (registered) {
+      const byFolder = await all(`SELECT COALESCE(f.name,'?') AS folder, o.provider, COUNT(*)::int n,
+          MIN(o.received_at) AS oldest, MAX(o.received_at) AS newest
+        FROM message_occurrences o LEFT JOIN folders f ON f.id = o.folder_id
+        WHERE o.mailbox_id = $1 GROUP BY 1, 2 ORDER BY n DESC`, [registered]);
+      stored = {
+        total: byFolder.reduce((s, r) => s + r.n, 0),
+        byFolder: byFolder.map(r => ({ folder: r.folder, via: r.provider, count: r.n,
+          oldest: r.oldest ? new Date(r.oldest).toISOString().slice(0, 10) : null,
+          newest: r.newest ? new Date(r.newest).toISOString().slice(0, 10) : null })),
+      };
+    }
     // exact reason when live message access is unavailable — from the probe's
     // classified evidence, never assumed
     let reason = null;
@@ -78,9 +104,13 @@ async function main() {
         : mb.detectedType === 'shared_mailbox' ? 'routed_member_copy live (Option B) + eDiscovery archive (Option C)'
           : 'none',
       reason,
+      stored,
     });
     console.log(`\n${mb.address}\n  type: ${rows[rows.length - 1].type}\n  discovered: true\n  accountId: ${rows[rows.length - 1].accountId || 'none'}\n  folders: ${rows[rows.length - 1].folders}\n  messages_access: ${rows[rows.length - 1].messages_access}` +
-      (reason ? `\n  reason: ${reason.slice(0, 200)}` : '') + `\n  capture: ${rows[rows.length - 1].capture}`);
+      (reason ? `\n  reason: ${reason.slice(0, 200)}` : '') + `\n  capture: ${rows[rows.length - 1].capture}` +
+      `\n  stored_in_madar: ${stored.total}` +
+      (stored.byFolder.length ? stored.byFolder.map(f =>
+        `\n    - ${f.folder} (via ${f.via}): ${f.count} [${f.oldest} → ${f.newest}]`).join('') : ''));
   }
 
   const shared = rows.filter(r => r.type === 'shared');
@@ -102,7 +132,8 @@ async function main() {
   console.log('\n' + JSON.stringify({ ...out, rows: undefined }, null, 2));
   console.log('\nfull rows:\n' + JSON.stringify(rows, null, 2));
   await closeDb();
-  process.exit(shared.length > 0 ? 0 : 1);
+  // pilot mode: completing the single-mailbox report IS success
+  process.exit(onlyAddress ? 0 : (shared.length > 0 ? 0 : 1));
 }
 
 main().catch(async e => { console.error('discovery-verify failed:', e.message || e); try { await closeDb(); } catch {} process.exit(2); });
