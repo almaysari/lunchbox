@@ -163,4 +163,95 @@ test('grants: explicit + audited + immediate over /api/admin/grants (shared memb
   await pool.end();
 });
 
+// Accounting integration layer over REAL HTTP: machine keys (no session, no
+// CSRF), per-key mailbox scope, cursor-based unread semantics, full message
+// fidelity, admin-managed + audited lifecycle. Madar is the abstraction —
+// consumers never touch Zoho.
+test('integration API: scoped machine keys expose shared mailboxes with unread cursors, full fidelity, and audited lifecycle', async () => {
+  const { Pool } = require('pg');
+  const pool = new Pool({ connectionString: E2E_URL });
+  const q = (t, p) => pool.query(t, p).then(r => r.rows);
+  const [mb] = await q(`SELECT id FROM mailboxes WHERE address='finance-e2e@exoticcolors.org'`);
+  const [other] = await q(`INSERT INTO mailboxes (address, display_name, detected_type, strategy, status)
+    VALUES ('billing-e2e@exoticcolors.org','Billing E2E','shared_mailbox','none','ready') RETURNING id`);
+
+  const login = await http('POST', '/api/auth/login', { email: 'owner@e2e.test', password: 'permanent-pass-654321' });
+  const csrf = login.json.csrf;
+
+  // EXPLICIT scope at key creation = the machine-access grant, audited
+  const created = await http('POST', '/api/admin/integration-keys',
+    { name: 'accounting-system', mailbox_ids: [Number(mb.id)] }, { 'X-CSRF-Token': csrf });
+  assert.strictEqual(created.status, 200);
+  const secret = created.json.secret;
+  assert.ok(/^mik_[0-9a-f]{40}$/.test(secret), 'secret issued once, mik_ prefixed');
+  assert.ok((await q(`SELECT 1 FROM audit_log WHERE action='admin.integration_key.create'`)).length >= 1);
+  // the secret is never stored — only its hash + display prefix
+  assert.strictEqual((await q(`SELECT COUNT(*)::int n FROM integration_keys WHERE key_hash=$1`, [secret]))[0].n, 0);
+
+  const api = (method, p, body, headers = {}) => http(method, p, body, { 'X-Api-Key': secret, ...headers });
+
+  // auth gate: missing/garbage keys are 401
+  assert.strictEqual((await http('GET', '/api/integration/v1/mailboxes')).status, 401);
+  assert.strictEqual((await http('GET', '/api/integration/v1/mailboxes', null, { 'X-Api-Key': 'mik_' + '0'.repeat(40) })).status, 401);
+
+  // stable mailbox ids, scoped listing only
+  const boxes = await api('GET', '/api/integration/v1/mailboxes');
+  assert.strictEqual(boxes.status, 200);
+  assert.deepStrictEqual(boxes.json.map(b => b.address), ['finance-e2e@exoticcolors.org']);
+  assert.strictEqual(Number(boxes.json[0].id), Number(mb.id));
+
+  // out-of-scope mailbox is indistinguishable from nonexistent
+  assert.strictEqual((await api('GET', `/api/integration/v1/mailboxes/${other.id}/messages`)).status, 404);
+
+  // unread (fresh consumer: cursor 0) → the stored member-copy message, full fidelity
+  const first = await api('GET', `/api/integration/v1/mailboxes/${mb.id}/messages`);
+  assert.strictEqual(first.status, 200);
+  assert.strictEqual(first.json.messages.length, 1);
+  const msg = first.json.messages[0];
+  assert.strictEqual(msg.providerMessageId, 'e2e-grant-1');
+  assert.strictEqual(msg.provider, 'zoho:member_copy');
+  assert.strictEqual(msg.subject, 'E2E-GRANT-PROOF');
+  assert.strictEqual(msg.from.address, 'client@example.com');
+  assert.ok(String(msg.to).includes('finance-e2e@exoticcolors.org'));
+  assert.ok(!Number.isNaN(Date.parse(msg.sentAt)) && !Number.isNaN(Date.parse(msg.receivedAt)));
+  assert.ok(Number(msg.occurrenceId) > 0 && Number(msg.canonicalId) > 0);
+  assert.strictEqual(msg.folder, 'Live (وارد موجّه)');
+  assert.ok(first.json.nextCursor >= msg.occurrenceId);
+
+  // acknowledge → unread drains to empty (per-consumer cursor, monotonic)
+  const ack = await api('POST', `/api/integration/v1/mailboxes/${mb.id}/cursor`, { last_occurrence_id: first.json.nextCursor });
+  assert.strictEqual(ack.status, 200);
+  assert.deepStrictEqual((await api('GET', `/api/integration/v1/mailboxes/${mb.id}/messages`)).json.messages, []);
+
+  // a NEW message arrives → only IT is unread; after_id=0 replays full history
+  const [c2] = await q(`INSERT INTO canonical_messages (dedup_hash, from_address, to_addresses, subject, snippet, sent_at)
+    VALUES ('e2e-int-2','vendor@example.com','finance-e2e@exoticcolors.org','INVOICE-42','s', now()) RETURNING id`);
+  const [f2] = await q(`SELECT folder_id FROM message_occurrences o JOIN mailboxes m ON m.id=o.mailbox_id WHERE m.id=$1 LIMIT 1`, [mb.id]);
+  await q(`INSERT INTO message_occurrences (canonical_message_id, mailbox_id, folder_id, provider, provider_message_id, received_at)
+    VALUES ($1,$2,$3,'zoho:member_copy','e2e-int-2', now())`, [c2.id, mb.id, f2.folder_id]);
+  const second = await api('GET', `/api/integration/v1/mailboxes/${mb.id}/messages`);
+  assert.deepStrictEqual(second.json.messages.map(x => x.subject), ['INVOICE-42']);
+  const replay = await api('GET', `/api/integration/v1/mailboxes/${mb.id}/messages?after_id=0`);
+  assert.deepStrictEqual(replay.json.messages.map(x => x.subject), ['E2E-GRANT-PROOF', 'INVOICE-42']);
+  // duplicate prevention at the interface: each canonical exactly once
+  const canonicals = replay.json.messages.map(x => Number(x.canonicalId));
+  assert.strictEqual(new Set(canonicals).size, canonicals.length);
+
+  // cursor never moves backwards (accidental replays cannot lose position)
+  await api('POST', `/api/integration/v1/mailboxes/${mb.id}/cursor`, { last_occurrence_id: 1 });
+  assert.deepStrictEqual((await api('GET', `/api/integration/v1/mailboxes/${mb.id}/messages`)).json.messages.map(x => x.subject),
+    ['INVOICE-42'], 'monotonic cursor: a lower ack does not rewind unread');
+
+  // admin visibility without secrets; revoke is audited and kills the key
+  const listing = await http('GET', '/api/admin/integration-keys');
+  const row = listing.json.find(k => k.name === 'accounting-system');
+  assert.ok(row && row.prefix && !('secret' in row) && !('key_hash' in row));
+  const revoke = await http('POST', '/api/admin/integration-keys/revoke', { key_id: row.id }, { 'X-CSRF-Token': csrf });
+  assert.strictEqual(revoke.status, 200);
+  assert.strictEqual((await api('GET', '/api/integration/v1/mailboxes')).status, 401);
+  assert.ok((await q(`SELECT 1 FROM audit_log WHERE action='admin.integration_key.revoke'`)).length >= 1);
+
+  await pool.end();
+});
+
 after(() => { serverProc?.kill('SIGKILL'); });

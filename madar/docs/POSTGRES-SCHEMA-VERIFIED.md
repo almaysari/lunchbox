@@ -253,6 +253,38 @@ CREATE SEQUENCE public.folders_id_seq
 
 ALTER SEQUENCE public.folders_id_seq OWNED BY public.folders.id;
 
+CREATE TABLE public.integration_cursors (
+    key_id bigint NOT NULL,
+    mailbox_id bigint NOT NULL,
+    last_occurrence_id bigint DEFAULT 0 NOT NULL,
+    updated_at timestamp with time zone DEFAULT now() NOT NULL
+);
+
+CREATE TABLE public.integration_key_mailboxes (
+    key_id bigint NOT NULL,
+    mailbox_id bigint NOT NULL
+);
+
+CREATE TABLE public.integration_keys (
+    id bigint NOT NULL,
+    name text NOT NULL,
+    key_hash text NOT NULL,
+    key_prefix text DEFAULT ''::text NOT NULL,
+    created_by bigint,
+    created_at timestamp with time zone DEFAULT now() NOT NULL,
+    revoked_at timestamp with time zone,
+    last_used_at timestamp with time zone
+);
+
+CREATE SEQUENCE public.integration_keys_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+ALTER SEQUENCE public.integration_keys_id_seq OWNED BY public.integration_keys.id;
+
 CREATE TABLE public.job_events (
     id bigint NOT NULL,
     job_id bigint NOT NULL,
@@ -564,6 +596,8 @@ ALTER TABLE ONLY public.fingerprint_metrics ALTER COLUMN id SET DEFAULT nextval(
 
 ALTER TABLE ONLY public.folders ALTER COLUMN id SET DEFAULT nextval('public.folders_id_seq'::regclass);
 
+ALTER TABLE ONLY public.integration_keys ALTER COLUMN id SET DEFAULT nextval('public.integration_keys_id_seq'::regclass);
+
 ALTER TABLE ONLY public.job_events ALTER COLUMN id SET DEFAULT nextval('public.job_events_id_seq'::regclass);
 
 ALTER TABLE ONLY public.labels ALTER COLUMN id SET DEFAULT nextval('public.labels_id_seq'::regclass);
@@ -626,6 +660,18 @@ ALTER TABLE ONLY public.folders
 
 ALTER TABLE ONLY public.folders
     ADD CONSTRAINT folders_pkey PRIMARY KEY (id);
+
+ALTER TABLE ONLY public.integration_cursors
+    ADD CONSTRAINT integration_cursors_pkey PRIMARY KEY (key_id, mailbox_id);
+
+ALTER TABLE ONLY public.integration_key_mailboxes
+    ADD CONSTRAINT integration_key_mailboxes_pkey PRIMARY KEY (key_id, mailbox_id);
+
+ALTER TABLE ONLY public.integration_keys
+    ADD CONSTRAINT integration_keys_key_hash_key UNIQUE (key_hash);
+
+ALTER TABLE ONLY public.integration_keys
+    ADD CONSTRAINT integration_keys_pkey PRIMARY KEY (id);
 
 ALTER TABLE ONLY public.job_events
     ADD CONSTRAINT job_events_pkey PRIMARY KEY (id);
@@ -772,6 +818,21 @@ ALTER TABLE ONLY public.connections
 
 ALTER TABLE ONLY public.folders
     ADD CONSTRAINT folders_mailbox_id_fkey FOREIGN KEY (mailbox_id) REFERENCES public.mailboxes(id) ON DELETE CASCADE;
+
+ALTER TABLE ONLY public.integration_cursors
+    ADD CONSTRAINT integration_cursors_key_id_fkey FOREIGN KEY (key_id) REFERENCES public.integration_keys(id) ON DELETE CASCADE;
+
+ALTER TABLE ONLY public.integration_cursors
+    ADD CONSTRAINT integration_cursors_mailbox_id_fkey FOREIGN KEY (mailbox_id) REFERENCES public.mailboxes(id) ON DELETE CASCADE;
+
+ALTER TABLE ONLY public.integration_key_mailboxes
+    ADD CONSTRAINT integration_key_mailboxes_key_id_fkey FOREIGN KEY (key_id) REFERENCES public.integration_keys(id) ON DELETE CASCADE;
+
+ALTER TABLE ONLY public.integration_key_mailboxes
+    ADD CONSTRAINT integration_key_mailboxes_mailbox_id_fkey FOREIGN KEY (mailbox_id) REFERENCES public.mailboxes(id) ON DELETE CASCADE;
+
+ALTER TABLE ONLY public.integration_keys
+    ADD CONSTRAINT integration_keys_created_by_fkey FOREIGN KEY (created_by) REFERENCES public.users(id) ON DELETE SET NULL;
 
 ALTER TABLE ONLY public.job_events
     ADD CONSTRAINT job_events_job_id_fkey FOREIGN KEY (job_id) REFERENCES public.sync_jobs(id) ON DELETE CASCADE;

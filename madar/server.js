@@ -99,6 +99,13 @@ const server = http.createServer(async (req, res) => {
       return send(200, fs.readFileSync(path.join(__dirname, 'public', 'index.html')), 'text/html; charset=utf-8');
     }
 
+    // ---------- integration API: machine keys, BEFORE session/CSRF ----------
+    // Accounting systems poll here with X-Api-Key/Bearer; scope + auth live in
+    // the module (hashed keys, per-key mailbox lists, 401/404 semantics).
+    if (p.startsWith('/api/integration/')) {
+      return await require('./modules/mail/integration').handle(req, res, url, send, readBody);
+    }
+
     const cookies = parseCookies(req);
     const sessionToken = cryptoCore.verifySessionCookie(cookies.madar_session);
     const { user, rotatedToken } = await auth.userForToken(sessionToken);
@@ -212,6 +219,32 @@ const server = http.createServer(async (req, res) => {
       if (!requireAdmin()) return;
       await auth.setGrant(Number(body.user_id), Number(body.mailbox_id), body.flags || null);
       await audit(user.id, 'admin.grant.set', `user:${body.user_id} mailbox:${body.mailbox_id}`, body.flags || 'revoked');
+      return send(200, { ok: true });
+    }
+    // machine keys for the integration API — creating one IS the machine-access
+    // grant (explicit mailbox scope, audited); the secret is returned exactly
+    // once and never stored or listed
+    if (p === '/api/admin/integration-keys' && req.method === 'GET') {
+      if (!requireAdmin()) return;
+      return send(200, await require('./modules/mail/integration').listKeys());
+    }
+    if (p === '/api/admin/integration-keys' && req.method === 'POST') {
+      if (!requireAdmin()) return;
+      let created;
+      try {
+        created = await require('./modules/mail/integration').createKey({
+          name: body.name, mailboxIds: body.mailbox_ids, createdBy: user.id });
+      } catch (err) { return send(400, { error: String(err.message) }); }
+      await audit(user.id, 'admin.integration_key.create', `key:${created.id}`,
+        { name: body.name, mailbox_ids: body.mailbox_ids }); // the secret is never logged
+      return send(200, { id: created.id, secret: created.secret,
+        note: 'store this secret now — it is shown exactly once' });
+    }
+    if (p === '/api/admin/integration-keys/revoke' && req.method === 'POST') {
+      if (!requireAdmin()) return;
+      const r = await require('./modules/mail/integration').revokeKey(body.key_id);
+      if (!r) return send(404, { error: 'key not found or already revoked' });
+      await audit(user.id, 'admin.integration_key.revoke', `key:${body.key_id}`);
       return send(200, { ok: true });
     }
     if (p === '/api/admin/reset-password' && req.method === 'POST') {
