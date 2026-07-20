@@ -728,6 +728,8 @@ CREATE INDEX idx_occ_canonical ON public.message_occurrences USING btree (canoni
 
 CREATE INDEX idx_occ_mailbox_time ON public.message_occurrences USING btree (mailbox_id, received_at DESC);
 
+CREATE INDEX idx_occ_provider_identity ON public.message_occurrences USING btree (mailbox_id, provider, provider_message_id);
+
 CREATE INDEX idx_sessions_expiry ON public.sessions USING btree (expires_at);
 
 CREATE INDEX idx_sync_diag_classification ON public.sync_diagnostics USING btree (classification) WHERE (classification IS NOT NULL);
