@@ -847,23 +847,47 @@ test('durable acceptance: state in DB, samples accumulate on one run, restart is
     && Number(s.copies) >= 2 && (s.canonical_ids || []).length >= 2),
   'incident names the offending rows (address, provider id, canonicals, folders) — no blind counts');
 
-  // REPAIR: merges the split (keeps the OLDEST occurrence's canonical, removes
-  // the split-off occurrence + its orphaned canonical), dry-run first, and is
-  // idempotent — this is what heals the 1056 real-tenant rows.
+  // REPAIR under the owner's conditions: dry-run reports counts + strategy +
+  // conflicts WITHOUT touching rows; apply merges with NO permanent deletion —
+  // every row leaving the live tables is snapshotted into split_merge_log
+  // (recoverable, never pruned), the merge is audited, per-group transactional,
+  // idempotent, keeps the OLDEST canonical, and transfers attachments/bodies.
   const repair = require('../modules/mail/split-repair');
+  const occBefore = await db.one(`SELECT COUNT(*)::int n FROM message_occurrences WHERE provider_message_id='split-2'`);
   const dry = await repair.repairSplits({ apply: false });
   assert.ok(dry.groups >= 1 && dry.applied === false, 'dry-run reports without touching rows');
+  assert.ok('canonicalsAffected' in dry && 'conflicts' in dry && typeof dry.strategy === 'string',
+    'dry-run answers: groups, canonical count, strategy, conflicts');
+  assert.strictEqual((await db.one(`SELECT COUNT(*)::int n FROM message_occurrences WHERE provider_message_id='split-2'`)).n,
+    occBefore.n, 'dry-run wrote NOTHING');
+
   const applied = await repair.repairSplits({ apply: true });
-  assert.ok(applied.occurrencesRemoved >= 1 && applied.canonicalsRemoved >= 1, 'repair merged the split');
+  assert.ok(applied.occurrencesMerged >= 1 && applied.canonicalsMerged >= 1, 'repair merged the split');
   const after = await db.one(`SELECT COUNT(*)::int n, COUNT(DISTINCT canonical_message_id)::int c
     FROM message_occurrences WHERE provider_message_id='split-2'`);
-  assert.deepStrictEqual({ n: after.n, c: after.c }, { n: 1, c: 1 }, 'exactly one occurrence+canonical survive');
+  assert.deepStrictEqual({ n: after.n, c: after.c }, { n: 1, c: 1 },
+    'END-STATE INVARIANT: provider+mailbox+provider_message_id → exactly one canonical');
   const keeper = await db.one(`SELECT canonical_message_id FROM message_occurrences WHERE provider_message_id='split-2'`);
   assert.strictEqual(Number(keeper.canonical_message_id), Number(rawA.id), 'the OLDEST canonical is kept');
   assert.strictEqual((await db.one('SELECT COUNT(*)::int n FROM canonical_messages WHERE id=$1', [rawB.id])).n, 0,
-    'the orphaned split-off canonical is gone');
+    'the split-off canonical left the LIVE table');
+  // NO permanent deletion: the removed rows live on in the merge log, complete
+  // enough to reconstruct (occurrence snapshot incl. folder membership +
+  // canonical snapshot incl. dedup_hash/subject), and the merge is audited
+  const log = await db.one(`SELECT * FROM split_merge_log WHERE provider_message_id='split-2'`);
+  assert.ok(log, 'merge log row exists');
+  assert.strictEqual(Number(log.keeper_canonical_id), Number(rawA.id));
+  const occSnap = typeof log.removed_occurrence === 'string' ? JSON.parse(log.removed_occurrence) : log.removed_occurrence;
+  const canSnap = typeof log.removed_canonical === 'string' ? JSON.parse(log.removed_canonical) : log.removed_canonical;
+  assert.strictEqual(Number(occSnap.canonical_message_id), Number(rawB.id), 'occurrence snapshot preserved');
+  assert.ok(occSnap.folder_id, 'folder membership preserved in the snapshot');
+  assert.strictEqual(canSnap.dedup_hash, 'raw-split-b', 'canonical snapshot preserved');
+  assert.ok((await db.one(`SELECT 1 FROM audit_log WHERE action='repair.split_merge' LIMIT 1`)), 'merge audited');
+
   const again = await repair.repairSplits({ apply: true });
   assert.strictEqual(again.groups, 0, 'idempotent: second run finds nothing');
+  assert.strictEqual((await db.one(`SELECT COUNT(*)::int n FROM split_merge_log WHERE provider_message_id='split-2'`)).n, 1,
+    'idempotent: no duplicate log rows');
   // post-repair the detector goes quiet
   await acc.takeSample(run2);
   const calm = await db.one(`SELECT duplicate_occurrences FROM acceptance_samples WHERE run_id=$1 ORDER BY id DESC LIMIT 1`, [run2.id]);

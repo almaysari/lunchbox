@@ -438,6 +438,27 @@ CREATE TABLE public.sessions (
     expires_at timestamp with time zone NOT NULL
 );
 
+CREATE TABLE public.split_merge_log (
+    id bigint NOT NULL,
+    at timestamp with time zone DEFAULT now() NOT NULL,
+    mailbox_id bigint NOT NULL,
+    provider text NOT NULL,
+    provider_message_id text NOT NULL,
+    keeper_canonical_id bigint NOT NULL,
+    removed_occurrence jsonb NOT NULL,
+    removed_canonical jsonb,
+    note text DEFAULT ''::text NOT NULL
+);
+
+CREATE SEQUENCE public.split_merge_log_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+ALTER SEQUENCE public.split_merge_log_id_seq OWNED BY public.split_merge_log.id;
+
 CREATE TABLE public.sync_diagnostics (
     id bigint NOT NULL,
     trace_id text NOT NULL,
@@ -608,6 +629,8 @@ ALTER TABLE ONLY public.message_occurrences ALTER COLUMN id SET DEFAULT nextval(
 
 ALTER TABLE ONLY public.roles ALTER COLUMN id SET DEFAULT nextval('public.roles_id_seq'::regclass);
 
+ALTER TABLE ONLY public.split_merge_log ALTER COLUMN id SET DEFAULT nextval('public.split_merge_log_id_seq'::regclass);
+
 ALTER TABLE ONLY public.sync_diagnostics ALTER COLUMN id SET DEFAULT nextval('public.sync_diagnostics_id_seq'::regclass);
 
 ALTER TABLE ONLY public.sync_jobs ALTER COLUMN id SET DEFAULT nextval('public.sync_jobs_id_seq'::regclass);
@@ -724,6 +747,9 @@ ALTER TABLE ONLY public.schema_migrations
 ALTER TABLE ONLY public.sessions
     ADD CONSTRAINT sessions_pkey PRIMARY KEY (token);
 
+ALTER TABLE ONLY public.split_merge_log
+    ADD CONSTRAINT split_merge_log_pkey PRIMARY KEY (id);
+
 ALTER TABLE ONLY public.sync_diagnostics
     ADD CONSTRAINT sync_diagnostics_pkey PRIMARY KEY (id);
 
@@ -777,6 +803,8 @@ CREATE INDEX idx_occ_mailbox_time ON public.message_occurrences USING btree (mai
 CREATE INDEX idx_occ_provider_identity ON public.message_occurrences USING btree (mailbox_id, provider, provider_message_id);
 
 CREATE INDEX idx_sessions_expiry ON public.sessions USING btree (expires_at);
+
+CREATE INDEX idx_split_merge_provider ON public.split_merge_log USING btree (mailbox_id, provider, provider_message_id);
 
 CREATE INDEX idx_sync_diag_classification ON public.sync_diagnostics USING btree (classification) WHERE (classification IS NOT NULL);
 

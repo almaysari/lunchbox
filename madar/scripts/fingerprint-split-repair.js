@@ -19,11 +19,15 @@ const { repairSplits } = require('../modules/mail/split-repair');
 
 async function main() {
   const apply = process.argv.includes('--apply');
+  // --dry-run accepted explicitly (and is the default without --apply)
+  if (apply && process.argv.includes('--dry-run')) {
+    console.error('choose ONE of --dry-run / --apply'); process.exit(2);
+  }
   console.log(`[split-repair] ${apply ? 'APPLYING merge' : 'dry-run (pass --apply to merge)'}...`);
   const out = await repairSplits({ apply });
   console.log(JSON.stringify(out, null, 2));
   if (!apply && out.groups > 0) console.log(`\n${out.groups} split group(s) found — re-run with --apply to merge them.`);
-  if (apply) console.log(`\nmerged. Re-run without --apply to verify it now reports 0 groups.`);
+  if (apply) console.log(`\nmerged — every removed row is snapshotted in split_merge_log (no permanent deletion). Re-run without --apply to verify it now reports 0 groups.`);
   await closeDb();
   process.exit(0);
 }
