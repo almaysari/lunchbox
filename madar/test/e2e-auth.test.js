@@ -208,13 +208,16 @@ test('integration API: scoped machine keys expose shared mailboxes with unread c
   assert.strictEqual(first.status, 200);
   assert.strictEqual(first.json.messages.length, 1);
   const msg = first.json.messages[0];
-  assert.strictEqual(msg.providerMessageId, 'e2e-grant-1');
-  assert.strictEqual(msg.provider, 'zoho:member_copy');
+  // PRIMARY identity is Madar's canonical message id — provider ids and the
+  // member-copy mechanism are internal and must never leak to consumers
+  assert.ok(Number(msg.messageId) > 0, 'canonical messageId is the primary identity');
+  assert.ok(!('provider' in msg) && !('providerMessageId' in msg) && !('canonicalId' in msg),
+    'no provider/implementation fields in the external payload');
   assert.strictEqual(msg.subject, 'E2E-GRANT-PROOF');
   assert.strictEqual(msg.from.address, 'client@example.com');
   assert.ok(String(msg.to).includes('finance-e2e@exoticcolors.org'));
   assert.ok(!Number.isNaN(Date.parse(msg.sentAt)) && !Number.isNaN(Date.parse(msg.receivedAt)));
-  assert.ok(Number(msg.occurrenceId) > 0 && Number(msg.canonicalId) > 0);
+  assert.ok(Number(msg.occurrenceId) > 0, 'occurrenceId is the delivery-position id');
   assert.strictEqual(msg.folder, 'Live (وارد موجّه)');
   assert.ok(first.json.nextCursor >= msg.occurrenceId);
 
@@ -233,9 +236,9 @@ test('integration API: scoped machine keys expose shared mailboxes with unread c
   assert.deepStrictEqual(second.json.messages.map(x => x.subject), ['INVOICE-42']);
   const replay = await api('GET', `/api/integration/v1/mailboxes/${mb.id}/messages?after_id=0`);
   assert.deepStrictEqual(replay.json.messages.map(x => x.subject), ['E2E-GRANT-PROOF', 'INVOICE-42']);
-  // duplicate prevention at the interface: each canonical exactly once
-  const canonicals = replay.json.messages.map(x => Number(x.canonicalId));
-  assert.strictEqual(new Set(canonicals).size, canonicals.length);
+  // duplicate prevention at the interface: each canonical message exactly once
+  const ids = replay.json.messages.map(x => Number(x.messageId));
+  assert.strictEqual(new Set(ids).size, ids.length);
 
   // cursor never moves backwards (accidental replays cannot lose position)
   await api('POST', `/api/integration/v1/mailboxes/${mb.id}/cursor`, { last_occurrence_id: 1 });
@@ -251,6 +254,66 @@ test('integration API: scoped machine keys expose shared mailboxes with unread c
   assert.strictEqual((await api('GET', '/api/integration/v1/mailboxes')).status, 401);
   assert.ok((await q(`SELECT 1 FROM audit_log WHERE action='admin.integration_key.revoke'`)).length >= 1);
 
+  await pool.end();
+});
+
+// Integration hardening: consumer isolation, read-without-consume, payload
+// hygiene (no provider/storage internals), per-access audit, key rotation.
+test('integration hardening: isolated consumers, non-consuming reads, clean payloads, audited access, rotation', async () => {
+  const { Pool } = require('pg');
+  const pool = new Pool({ connectionString: E2E_URL });
+  const q = (t, p) => pool.query(t, p).then(r => r.rows);
+  const [mb] = await q(`SELECT id FROM mailboxes WHERE address='finance-e2e@exoticcolors.org'`);
+
+  const login = await http('POST', '/api/auth/login', { email: 'owner@e2e.test', password: 'permanent-pass-654321' });
+  const csrf = login.json.csrf;
+  const mk = async (name) => (await http('POST', '/api/admin/integration-keys',
+    { name, mailbox_ids: [Number(mb.id)] }, { 'X-CSRF-Token': csrf })).json;
+  const k1 = await mk('accounting-A');
+  const k2 = await mk('accounting-B');
+  const call = (secret, method, p, body) => http(method, p, body, { 'X-Api-Key': secret });
+
+  // reading does NOT consume: two un-acked reads are identical, for BOTH consumers
+  const a1 = await call(k1.secret, 'GET', `/api/integration/v1/mailboxes/${mb.id}/messages`);
+  const a2 = await call(k1.secret, 'GET', `/api/integration/v1/mailboxes/${mb.id}/messages`);
+  assert.deepStrictEqual(a1.json.messages, a2.json.messages, 'GET is side-effect-free');
+  assert.ok(a1.json.messages.length >= 2, 'history present for both consumers');
+
+  // consumer isolation: A acks everything; B\'s unread stream is untouched
+  await call(k1.secret, 'POST', `/api/integration/v1/mailboxes/${mb.id}/cursor`, { last_occurrence_id: a1.json.nextCursor });
+  assert.deepStrictEqual((await call(k1.secret, 'GET', `/api/integration/v1/mailboxes/${mb.id}/messages`)).json.messages, []);
+  const b1 = await call(k2.secret, 'GET', `/api/integration/v1/mailboxes/${mb.id}/messages`);
+  assert.strictEqual(b1.json.messages.length, a1.json.messages.length,
+    'consumer B still sees everything — cursors are per consumer, never global');
+
+  // payload hygiene: no provider mechanics, no storage internals, anywhere
+  for (const resp of [a1, b1]) {
+    const t = JSON.stringify(resp.json);
+    for (const leak of ['zoho', 'member_copy', 'storage_key', '/var/lib', 'provider_message_id', 'providerMessageId']) {
+      assert.ok(!t.toLowerCase().includes(leak.toLowerCase()), `payload must not leak "${leak}"`);
+    }
+  }
+
+  // audit: every access row carries consumer + mailbox + action (+ range for reads)
+  const readAudit = await q(`SELECT target, details FROM audit_log WHERE action='integration.messages.read'
+    AND target LIKE '%mailbox:${mb.id}%' ORDER BY id DESC LIMIT 1`);
+  assert.ok(readAudit.length === 1 && /key:\d+/.test(readAudit[0].target), 'reads audited with consumer identity');
+  assert.ok((await q(`SELECT 1 FROM audit_log WHERE action='integration.cursor.set' LIMIT 1`)).length === 1, 'acks audited');
+  await http('GET', '/api/integration/v1/mailboxes', null, { 'X-Api-Key': 'mik_' + 'f'.repeat(40) });
+  assert.ok((await q(`SELECT 1 FROM audit_log WHERE action='integration.auth_failed' LIMIT 1`)).length === 1, 'auth failures audited');
+
+  // rotation: same key identity (scope + cursor SURVIVE), old secret dies instantly
+  const rot = await http('POST', '/api/admin/integration-keys/rotate', { key_id: k1.id }, { 'X-CSRF-Token': csrf });
+  assert.strictEqual(rot.status, 200);
+  assert.ok(/^mik_[0-9a-f]{40}$/.test(rot.json.secret) && rot.json.secret !== k1.secret);
+  assert.strictEqual((await call(k1.secret, 'GET', '/api/integration/v1/mailboxes')).status, 401, 'old secret dead');
+  const afterRotate = await call(rot.json.secret, 'GET', `/api/integration/v1/mailboxes/${mb.id}/messages`);
+  assert.deepStrictEqual(afterRotate.json.messages, [], 'cursor position survived rotation — no replay storm');
+  assert.ok((await q(`SELECT 1 FROM audit_log WHERE action='admin.integration_key.rotate' LIMIT 1`)).length === 1);
+
+  // cleanup: revoke both consumers
+  await http('POST', '/api/admin/integration-keys/revoke', { key_id: k1.id }, { 'X-CSRF-Token': csrf });
+  await http('POST', '/api/admin/integration-keys/revoke', { key_id: k2.id }, { 'X-CSRF-Token': csrf });
   await pool.end();
 });
 

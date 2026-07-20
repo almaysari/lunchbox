@@ -43,6 +43,17 @@ async function revokeKey(keyId) {
   return one(`UPDATE integration_keys SET revoked_at=now() WHERE id=$1 AND revoked_at IS NULL RETURNING id`, [Number(keyId)]);
 }
 
+// Rotation: SAME key identity — mailbox scope and per-mailbox cursors survive
+// (no replay storm for the consumer), the old secret dies atomically with the
+// hash swap. Returns the new secret exactly once.
+async function rotateKey(keyId) {
+  const secret = 'mik_' + crypto.randomBytes(20).toString('hex');
+  const r = await one(`UPDATE integration_keys SET key_hash=$2, key_prefix=$3
+    WHERE id=$1 AND revoked_at IS NULL RETURNING id`,
+  [Number(keyId), sha256hex(secret), secret.slice(0, 12) + '…']);
+  return r ? { id: Number(r.id), secret } : null;
+}
+
 async function listKeys() {
   return (await all(`SELECT k.id, k.name, k.key_prefix AS prefix, k.created_at, k.revoked_at, k.last_used_at,
       COALESCE(json_agg(json_build_object('id', m.id, 'address', m.address)) FILTER (WHERE m.id IS NOT NULL), '[]') AS mailboxes
@@ -79,7 +90,7 @@ async function listMessages(keyId, mailboxId, { afterId = null, limit = 100 } = 
     cursor = c ? Number(c.last_occurrence_id) : 0;
   }
   const lim = Math.max(1, Math.min(500, Number(limit) || 100));
-  const rows = await all(`SELECT o.id AS occurrence_id, o.canonical_message_id, o.provider, o.provider_message_id,
+  const rows = await all(`SELECT o.id AS occurrence_id, o.canonical_message_id,
       o.direction, o.received_at, o.envelope_to, o.envelope_cc, f.name AS folder,
       c.rfc_message_id, c.thread_id, c.from_address, c.from_name, c.to_addresses, c.cc_addresses,
       c.subject, c.snippet, c.sent_at, c.has_attachments
@@ -102,11 +113,13 @@ async function listMessages(keyId, mailboxId, { afterId = null, limit = 100 } = 
       mime: a.mime, quarantined: a.quarantine_status === 'quarantined' });
   }
 
+  // External identity contract: messageId (Madar canonical) is the PRIMARY
+  // identity; occurrenceId is the delivery-position id the cursor speaks.
+  // Provider ids and the member-copy mechanism are Madar internals — they
+  // never cross this boundary (Madar is the source of truth, not Zoho).
   const messages = rows.map(r => ({
+    messageId: Number(r.canonical_message_id),
     occurrenceId: Number(r.occurrence_id),
-    canonicalId: Number(r.canonical_message_id),
-    provider: r.provider,
-    providerMessageId: r.provider_message_id,
     rfcMessageId: r.rfc_message_id || null,
     threadId: r.thread_id || null,
     direction: r.direction,
@@ -139,24 +152,39 @@ async function setCursor(keyId, mailboxId, lastOccurrenceId) {
 }
 
 // ---------- HTTP surface (machine path: key auth, no session, no CSRF) ----------
+// Every access is audited with the consumer identity (key id — never the
+// secret), the mailbox, the message range, and the action. Auth failures are
+// audited too (without the attempted credential).
 async function handle(req, res, url, send, readBody) {
+  const { audit } = require('../../core/audit');
   const p = url.pathname;
   const bearer = (String(req.headers.authorization || '').match(/^Bearer\s+(\S+)$/) || [])[1];
   const key = await verifyKey(String(req.headers['x-api-key'] || bearer || ''));
-  if (!key) return send(401, { error: 'invalid or missing API key' });
+  if (!key) {
+    await audit(null, 'integration.auth_failed', p); // the attempted secret is never logged
+    return send(401, { error: 'invalid or missing API key' });
+  }
   let m;
 
   if (p === '/api/integration/v1/mailboxes' && req.method === 'GET') {
-    return send(200, await scopedMailboxes(key.id));
+    const boxes = await scopedMailboxes(key.id);
+    await audit(null, 'integration.mailboxes.list', `key:${key.id}`, { count: boxes.length });
+    return send(200, boxes);
   }
   if ((m = p.match(/^\/api\/integration\/v1\/mailboxes\/(\d+)\/messages$/)) && req.method === 'GET') {
     const mailboxId = Number(m[1]);
     if (!(await inScope(key.id, mailboxId))) return send(404, { error: 'not found' });
     const afterParam = url.searchParams.get('after_id');
-    return send(200, await listMessages(key.id, mailboxId, {
+    const out = await listMessages(key.id, mailboxId, {
       afterId: afterParam != null ? Number(afterParam) : null,
       limit: url.searchParams.get('limit'),
-    }));
+    });
+    await audit(null, 'integration.messages.read', `key:${key.id} mailbox:${mailboxId}`, {
+      count: out.count, cursorUsed: out.cursorUsed,
+      firstOccurrenceId: out.messages[0] ? out.messages[0].occurrenceId : null,
+      lastOccurrenceId: out.messages.length ? out.messages[out.messages.length - 1].occurrenceId : null,
+    });
+    return send(200, out);
   }
   if ((m = p.match(/^\/api\/integration\/v1\/mailboxes\/(\d+)\/cursor$/)) && req.method === 'POST') {
     const mailboxId = Number(m[1]);
@@ -164,7 +192,9 @@ async function handle(req, res, url, send, readBody) {
     const body = await readBody(req);
     const v = Number(body && body.last_occurrence_id);
     if (!Number.isFinite(v) || v < 0) return send(400, { error: 'last_occurrence_id (non-negative number) required' });
-    return send(200, { ok: true, lastOccurrenceId: await setCursor(key.id, mailboxId, v) });
+    const cur = await setCursor(key.id, mailboxId, v);
+    await audit(null, 'integration.cursor.set', `key:${key.id} mailbox:${mailboxId}`, { lastOccurrenceId: cur });
+    return send(200, { ok: true, lastOccurrenceId: cur });
   }
   if ((m = p.match(/^\/api\/integration\/v1\/attachments\/(\d+)$/)) && req.method === 'GET') {
     const att = await one('SELECT * FROM attachments WHERE id=$1', [Number(m[1])]);
@@ -179,6 +209,8 @@ async function handle(req, res, url, send, readBody) {
     }
     const storage = getStorage();
     if (!storage.exists(att.storage_key)) return send(404, { error: 'file missing' });
+    await audit(null, 'integration.attachment.download', `key:${key.id} attachment:${att.id}`,
+      { canonicalMessageId: Number(att.canonical_message_id) });
     res.writeHead(200, {
       'Content-Type': att.detected_mime_type || 'application/octet-stream', // detected, never provider-claimed
       'X-Content-Type-Options': 'nosniff',
@@ -193,4 +225,4 @@ async function handle(req, res, url, send, readBody) {
   return send(404, { error: 'not found' });
 }
 
-module.exports = { createKey, revokeKey, listKeys, verifyKey, inScope, scopedMailboxes, listMessages, setCursor, handle };
+module.exports = { createKey, revokeKey, rotateKey, listKeys, verifyKey, inScope, scopedMailboxes, listMessages, setCursor, handle };

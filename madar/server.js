@@ -240,6 +240,14 @@ const server = http.createServer(async (req, res) => {
       return send(200, { id: created.id, secret: created.secret,
         note: 'store this secret now — it is shown exactly once' });
     }
+    if (p === '/api/admin/integration-keys/rotate' && req.method === 'POST') {
+      if (!requireAdmin()) return;
+      const r = await require('./modules/mail/integration').rotateKey(body.key_id);
+      if (!r) return send(404, { error: 'key not found or revoked' });
+      await audit(user.id, 'admin.integration_key.rotate', `key:${body.key_id}`); // the secret is never logged
+      return send(200, { id: r.id, secret: r.secret,
+        note: 'old secret is dead — store this one now, it is shown exactly once. Scope and cursors are unchanged.' });
+    }
     if (p === '/api/admin/integration-keys/revoke' && req.method === 'POST') {
       if (!requireAdmin()) return;
       const r = await require('./modules/mail/integration').revokeKey(body.key_id);

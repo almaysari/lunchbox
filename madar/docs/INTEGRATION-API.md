@@ -7,6 +7,9 @@
 
 - المشرف ينشئ مفتاحًا من «إدارة» ← Integration Keys (أو
   `POST /api/admin/integration-keys` بجسم `{name, mailbox_ids:[...]}`).
+- **التدوير**: `POST /api/admin/integration-keys/rotate` بجسم `{key_id}` —
+  سرّ جديد لنفس هوية المفتاح: النطاق والمؤشرات تبقى (لا عاصفة إعادة تسليم)،
+  والسرّ القديم يموت فورًا. مدقَّق (`admin.integration_key.rotate`).
 - إنشاء المفتاح **هو** منح الوصول الآلي: نطاق صناديق صريح لكل مفتاح، مدقَّق
   (`admin.integration_key.create` / `.revoke`).
 - السرّ يظهر **مرة واحدة** عند الإنشاء (`mik_…`)، ولا يُخزَّن — hash فقط.
@@ -16,8 +19,16 @@
 
 ## المعرّفات الثابتة
 
-- `mailbox.id` و`occurrenceId` هويات قاعدة بيانات: لا تتغير ولا يعاد
-  استخدامها. `canonicalId` يوحّد نفس الرسالة عبر الصناديق (منع التكرار).
+- `mailbox.id` و`messageId` و`occurrenceId` هويات قاعدة بيانات: لا تتغير ولا
+  يعاد استخدامها. `messageId` (القانوني) يوحّد نفس الرسالة عبر الصناديق —
+  منع التكرار مضمون على مستوى الواجهة والمخطط معًا.
+
+## التدقيق
+
+كل وصول آلي مسجَّل في سجل التدقيق: هوية المستهلك (`key:<id>` — السرّ لا
+يُسجَّل أبدًا)، الصندوق، نطاق الرسائل المقروء (أول/آخر occurrence + العدد)،
+الإجراء، والوقت. محاولات مفاتيح فاشلة تُسجَّل أيضًا (`integration.auth_failed`)
+دون تسجيل السرّ المجرَّب.
 
 ## نقاط النهاية
 
@@ -31,11 +42,13 @@
 **غير المقروء** لهذا المستهلك (كل ما بعد مؤشره الدائم). معاملات اختيارية:
 `after_id` (تجاوز المؤشر؛ `after_id=0` يعيد التاريخ كاملًا)، `limit` (افتراضي
 100، أقصى 500). الترتيب تصاعدي حسب `occurrenceId` — ثابت وقابل للاستئناف.
+الهوية الأساسية خارجيًا هي `messageId` (هوية Madar القانونية) — **لا تُكشف
+معرّفات المزوّد ولا آلية النسخ الداخلية أبدًا**؛ `occurrenceId` هو معرّف موضع
+التسليم الذي يخاطبه المؤشر.
 ```json
 { "mailboxId": 7, "cursorUsed": 0, "nextCursor": 75531, "count": 1,
   "messages": [{
-    "occurrenceId": 75531, "canonicalId": 75530,
-    "provider": "zoho:member_copy", "providerMessageId": "17530834...",
+    "messageId": 75530, "occurrenceId": 75531,
     "rfcMessageId": null, "threadId": "…", "direction": "in",
     "subject": "Invoice 42", "snippet": "…",
     "from": { "address": "vendor@example.com", "name": "Vendor" },
