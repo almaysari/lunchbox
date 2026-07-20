@@ -1,9 +1,20 @@
 # تقرير جاهزية الإنتاج — Live Sync (Madar Mail)
 
-**الحالة**: `Architecture-Reviewed, Redesigned, CI-Proven — Pending Real-Tenant Soak`
+**الحالة**: `Architecture-Reviewed, Redesigned, CI-Proven, E2E-Validated — Pending Real-Tenant Soak`
 **قاعدة الحكم**: لا يُعلَن "Production Ready" نهائيًا إلا بعد نجاح فحص القبول على
 التنانت الحقيقي لعدة أيام (`scripts/livesync-acceptance.js` — القسم 9). كل ما
 عدا ذلك في هذا التقرير مثبت بكود واختبارات على PostgreSQL حقيقي في CI.
+
+**تحديث 2026-07-20 — التحقق الشامل E2E مكتمل ومقبول (PASS).** مسار الالتقاط
+والمزامنة الحي تم إثباته: التقاط مرة واحدة بالضبط، سلامة السجل الكنسي، worker حي،
+صفر مهام عالقة، والرؤية مطبَّقة على الخادم. التفاصيل في
+[E2E-VALIDATION-STATUS.md](E2E-VALIDATION-STATUS.md).
+
+**هذا لا يعني "Production Ready".** قاعدة الحكم أعلاه تبقى سارية: فحص القبول متعدد
+الأيام ما زال قيد التشغيل ولم ينجح بعد. وهو حاليًا يُظهر `FAIL no_duplicates`، وقد
+ثبت أن السبب خطأ في مفتاح المدقق نفسه (يغفل `folder_id`) وليس ازدواجًا في الالتقاط
+الحي — راجع DEBT-1 في [DEFERRED-TECHNICAL-DEBT.md](DEFERRED-TECHNICAL-DEBT.md).
+لذلك يبقى إعلان الجاهزية النهائية **موقوفًا** إلى أن يُصحَّح المدقق ويكتمل الفحص بنجاح.
 
 ---
 
