@@ -64,6 +64,12 @@ async function takeSample(run) {
     AND NOT EXISTS (SELECT 1 FROM sync_jobs j WHERE j.mailbox_id=m.id AND j.status='running'
                     AND COALESCE(j.lease_at, j.started_at, j.created_at) >= now() - make_interval(secs => ${JOB_STALE_SEC}))`)).n;
   const occ = (await one('SELECT COUNT(*)::bigint n FROM message_occurrences')).n;
+  // Deliberately folder-BLIND: UNIQUE (mailbox_id, canonical_message_id) makes
+  // a same-canonical second-folder copy impossible (proven by test), so any
+  // group here with >1 rows is the same provider message under TWO canonicals —
+  // a fingerprint SPLIT (the "duplicate canonical" failure class), not a
+  // legitimate cross-folder copy. Do not "fix" this by adding folder_id: that
+  // hides real splits (regression-tested).
   const dupOcc = (await one(`SELECT COUNT(*)::int n FROM (
     SELECT 1 FROM message_occurrences GROUP BY mailbox_id, provider, provider_message_id HAVING COUNT(*) > 1) d`)).n;
   const dupCanon = (await one(`SELECT COUNT(*)::int n FROM (
@@ -94,7 +100,17 @@ async function takeSample(run) {
   if (!alive) await inc('worker_stale', { ageSec: Math.round(ageMs / 1000) });
   if (stuckJobs) await inc('stuck_job', { count: stuckJobs });
   if (stuckBoxes) await inc('stuck_mailbox', { count: stuckBoxes });
-  if (dupOcc || dupCanon) await inc('duplicate_detected', { dupOcc, dupCanon });
+  if (dupOcc || dupCanon) {
+    // name the offending rows (capped, no subjects/bodies) — a bare count sent
+    // the operator hunting blind on the real tenant
+    const offenders = await all(`SELECT m.address, o.provider, o.provider_message_id,
+        COUNT(*)::int copies, array_agg(DISTINCT o.canonical_message_id) AS canonical_ids,
+        array_agg(DISTINCT COALESCE(f.name,'?')) AS folders
+      FROM message_occurrences o JOIN mailboxes m ON m.id = o.mailbox_id
+      LEFT JOIN folders f ON f.id = o.folder_id
+      GROUP BY m.address, o.provider, o.provider_message_id HAVING COUNT(*) > 1 LIMIT 3`);
+    await inc('duplicate_detected', { dupOcc, dupCanon, sample: offenders });
+  }
 
   if (run.canary) {
     const seen = await one(`SELECT 1 FROM acceptance_incidents WHERE run_id=$1 AND kind='canary_captured' LIMIT 1`, [run.id]);

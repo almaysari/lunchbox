@@ -749,6 +749,17 @@ test('durable acceptance: state in DB, samples accumulate on one run, restart is
   const cf = await sync.upsertFolder(hrBox.id, { providerFolderId: 'canary-f', name: 'Canary', type: 'inbox' });
   await sync.insertMessage(hrBox.id, cf, { providerMessageId: 'canary-1', from: 'ext@example.com',
     to: 'hr@exoticcolors.org', subject: `${CANARY} acceptance check`, receivedAt: Date.now() - 5000, sentAt: Date.now() - 9000 });
+  // structural no-duplicates: re-ingesting the SAME message via a second folder
+  // (the virtual Archived view shape) is a NO-OP — UNIQUE (mailbox_id,
+  // canonical_message_id) blocks it and the prevention is metered. This is WHY
+  // the sampler's folder-blind duplicate check cannot false-positive on the
+  // archived view: a same-canonical cross-folder copy cannot exist at all.
+  const cfArch = await sync.upsertFolder(hrBox.id, { providerFolderId: 'zoho:archived', name: 'Archived (Zoho)', type: 'archive' });
+  const rearch = await sync.insertMessage(hrBox.id, cfArch, { providerMessageId: 'canary-1', from: 'ext@example.com',
+    to: 'hr@exoticcolors.org', subject: `${CANARY} acceptance check`, receivedAt: Date.now() - 5000, sentAt: Date.now() - 9000 });
+  assert.strictEqual(rearch.occurrenceId, null, 'second-folder re-ingest is a no-op by mailbox-level dedup');
+  const canaryCopies = await db.one(`SELECT COUNT(*)::int n FROM message_occurrences WHERE mailbox_id=$1 AND provider_message_id='canary-1'`, [hrBox.id]);
+  assert.strictEqual(canaryCopies.n, 1);
 
   // healthy heartbeat → samples record worker alive, from PID A
   await db.q('DELETE FROM sync_worker_heartbeat');
@@ -763,6 +774,10 @@ test('durable acceptance: state in DB, samples accumulate on one run, restart is
   await acc.takeSample(run);
   const samples = await db.all('SELECT * FROM acceptance_samples WHERE run_id=$1 ORDER BY id', [run.id]);
   assert.strictEqual(samples.length, 3, 'all samples on the SAME run across the restart');
+  assert.ok(samples.every(s => s.duplicate_occurrences === 0),
+    'structurally-deduped archived re-ingest never trips the duplicate detector');
+  const falseDup = await db.one(`SELECT COUNT(*)::int n FROM acceptance_incidents WHERE run_id=$1 AND kind='duplicate_detected'`, [run.id]);
+  assert.strictEqual(falseDup.n, 0, 'no false duplicate_detected incidents');
   const restart = await db.one(`SELECT detail FROM acceptance_incidents WHERE run_id=$1 AND kind='restart_detected'`, [run.id]);
   assert.ok(restart, 'restart recorded as evidence');
   const rd = typeof restart.detail === 'string' ? JSON.parse(restart.detail) : restart.detail;
@@ -794,6 +809,29 @@ test('durable acceptance: state in DB, samples accumulate on one run, restart is
   assert.strictEqual(done.status, 'completed');
   // a new run can start after completion
   const run2 = await acc.startRun({ hours: 0.01, sampleSec: 5 });
+
+  // the detector MUST fire on a fingerprint SPLIT: the same provider message
+  // stored as TWO canonicals (different fp3 → e.g. a re-ingest with a shifted
+  // sent time) in two folders of one mailbox. This is the real "duplicate
+  // canonical" failure class — and the regression net against "fixing" the
+  // folder-blind GROUP BY by adding folder_id, which would hide these splits.
+  const sp1 = await sync.insertMessage(hrBox.id, cf, { providerMessageId: 'split-1', from: 'ext@example.com',
+    to: 'hr@exoticcolors.org', subject: 'split probe', receivedAt: 1751111111000, sentAt: 1751111100000 });
+  const sp2 = await sync.insertMessage(hrBox.id, cfArch, { providerMessageId: 'split-1', from: 'ext@example.com',
+    to: 'hr@exoticcolors.org', subject: 'split probe', receivedAt: 1751111111000, sentAt: 1751999900000 });
+  assert.notStrictEqual(sp1.canonicalId, sp2.canonicalId, 'distinct fingerprints → a real split exists');
+  await acc.takeSample(run2);
+  const splitSample = await db.one(`SELECT duplicate_occurrences FROM acceptance_samples WHERE run_id=$1 ORDER BY id DESC LIMIT 1`, [run2.id]);
+  assert.ok(splitSample.duplicate_occurrences >= 1, 'split detected as a duplicate');
+  const dupInc = await db.one(`SELECT detail FROM acceptance_incidents WHERE run_id=$1 AND kind='duplicate_detected' ORDER BY id DESC LIMIT 1`, [run2.id]);
+  assert.ok(dupInc, 'duplicate_detected incident recorded');
+  const dd = typeof dupInc.detail === 'string' ? JSON.parse(dupInc.detail) : dupInc.detail;
+  assert.ok(Array.isArray(dd.sample) && dd.sample.some(s => s.provider_message_id === 'split-1'
+    && Number(s.copies) >= 2 && (s.canonical_ids || []).length >= 2),
+  'incident names the offending rows (address, provider id, canonicals, folders) — no blind counts');
+
+  await db.q(`DELETE FROM message_occurrences WHERE provider_message_id='split-1'`);
+  await db.q(`DELETE FROM canonical_messages WHERE id IN ($1,$2)`, [sp1.canonicalId, sp2.canonicalId]);
   await db.q(`UPDATE acceptance_runs SET status='aborted', finished_at=now() WHERE id=$1`, [run2.id]);
 });
 
