@@ -415,8 +415,21 @@ async function loadMessages(append = false) {
   let hint = 'لا توجد رسائل هنا بعد — شغّل المزامنة أو استورد الأرشيف من لوحة الإدارة';
   if (isAdminUser(ME) && currentMailbox) {
     const t = await api(`/api/mail/mailboxes/${currentMailbox}/visibility-trace`).catch(() => null);
-    if (t) hint = `<b>${esc(t.verdict)}</b>` + (t.checks['5_stored_but_hidden'].hiddenByGrant
-      ? `<br><br><button class="btn primary" onclick="selfGrantRead(${currentMailbox})">امنحني القراءة (مدوَّن)</button>` : '');
+    if (t) {
+      const g5 = t.checks['5_stored_but_hidden'];
+      // three DIFFERENT empty states, in plain language:
+      //   hidden-by-grant → the one-click audited self-grant
+      //   zero stored     → genuinely no mail here yet (routing/archive feeds it)
+      //   otherwise       → the technical verdict as-is
+      hint = g5.hiddenByGrant
+        ? `يوجد <b>${g5.storedInDb}</b> رسالة مخزّنة لهذا الصندوق لكنها محجوبة عنك بسياسة الخصوصية —
+           القراءة تتطلب منحة صريحة مدوَّنة.<br><br>
+           <button class="btn primary" onclick="selfGrantRead(${currentMailbox})">امنحني القراءة (مدوَّن)</button>`
+        : g5.storedInDb === 0
+          ? `لا بريد مخزّنًا لهذا الصندوق بعد — بريد الصناديق المشتركة يصل عبر توجيه نسخ الأعضاء
+             لحظيًا أو عبر استيراد الأرشيف من لوحة الإدارة.`
+          : `<b>${esc(t.verdict)}</b>`;
+    }
   }
   $('messageList').innerHTML = `<div class="empty">📭<br>${hint}</div>`;
 }
