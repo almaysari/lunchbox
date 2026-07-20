@@ -810,28 +810,67 @@ test('durable acceptance: state in DB, samples accumulate on one run, restart is
   // a new run can start after completion
   const run2 = await acc.startRun({ hours: 0.01, sampleSec: 5 });
 
-  // the detector MUST fire on a fingerprint SPLIT: the same provider message
-  // stored as TWO canonicals (different fp3 → e.g. a re-ingest with a shifted
-  // sent time) in two folders of one mailbox. This is the real "duplicate
-  // canonical" failure class — and the regression net against "fixing" the
-  // folder-blind GROUP BY by adding folder_id, which would hide these splits.
+  // PROVIDER-IDENTITY GUARD (root cause of the 1056 real-tenant splits): the
+  // virtual Archived view returns the SAME provider message with drifted
+  // fields (fp3 changes), and ingestion used to mint a NEW canonical for it.
+  // Same mailbox + same provider + same provider_message_id IS the same email
+  // regardless of fingerprint drift — the second ingest must REUSE the
+  // existing canonical and be a no-op, with the reuse metered.
   const sp1 = await sync.insertMessage(hrBox.id, cf, { providerMessageId: 'split-1', from: 'ext@example.com',
     to: 'hr@exoticcolors.org', subject: 'split probe', receivedAt: 1751111111000, sentAt: 1751111100000 });
   const sp2 = await sync.insertMessage(hrBox.id, cfArch, { providerMessageId: 'split-1', from: 'ext@example.com',
     to: 'hr@exoticcolors.org', subject: 'split probe', receivedAt: 1751111111000, sentAt: 1751999900000 });
-  assert.notStrictEqual(sp1.canonicalId, sp2.canonicalId, 'distinct fingerprints → a real split exists');
+  assert.strictEqual(sp2.canonicalId, sp1.canonicalId,
+    'archived-view field drift must NOT mint a second canonical (provider identity wins)');
+  const spCopies = await db.one(`SELECT COUNT(*)::int n, COUNT(DISTINCT canonical_message_id)::int c
+    FROM message_occurrences WHERE mailbox_id=$1 AND provider_message_id='split-1'`, [hrBox.id]);
+  assert.deepStrictEqual({ n: spCopies.n, c: spCopies.c }, { n: 1, c: 1 });
+  const reused = await db.one(`SELECT COUNT(*)::int n FROM fingerprint_metrics
+    WHERE event_type='provider_identity_reused' AND canonical_a=$1`, [sp1.canonicalId]);
+  assert.ok(reused.n >= 1, 'the fingerprint drift is metered, not silent');
+
+  // the detector MUST still fire on a PRE-EXISTING split (the damage the guard
+  // now prevents, manufactured here via raw SQL exactly as it exists on the
+  // real tenant) — and the regression net against "fixing" the folder-blind
+  // GROUP BY by adding folder_id, which would hide these splits.
+  const rawA = await db.one(`INSERT INTO canonical_messages (dedup_hash, subject, sent_at) VALUES ('raw-split-a','split probe', now()) RETURNING id`);
+  const rawB = await db.one(`INSERT INTO canonical_messages (dedup_hash, subject, sent_at) VALUES ('raw-split-b','split probe', now()) RETURNING id`);
+  await db.q(`INSERT INTO message_occurrences (canonical_message_id, mailbox_id, folder_id, provider, provider_message_id, received_at)
+    VALUES ($1,$3,$4,'zoho','split-2', now()), ($2,$3,$5,'zoho','split-2', now())`, [rawA.id, rawB.id, hrBox.id, cf, cfArch]);
   await acc.takeSample(run2);
   const splitSample = await db.one(`SELECT duplicate_occurrences FROM acceptance_samples WHERE run_id=$1 ORDER BY id DESC LIMIT 1`, [run2.id]);
   assert.ok(splitSample.duplicate_occurrences >= 1, 'split detected as a duplicate');
   const dupInc = await db.one(`SELECT detail FROM acceptance_incidents WHERE run_id=$1 AND kind='duplicate_detected' ORDER BY id DESC LIMIT 1`, [run2.id]);
   assert.ok(dupInc, 'duplicate_detected incident recorded');
   const dd = typeof dupInc.detail === 'string' ? JSON.parse(dupInc.detail) : dupInc.detail;
-  assert.ok(Array.isArray(dd.sample) && dd.sample.some(s => s.provider_message_id === 'split-1'
+  assert.ok(Array.isArray(dd.sample) && dd.sample.some(s => s.provider_message_id === 'split-2'
     && Number(s.copies) >= 2 && (s.canonical_ids || []).length >= 2),
   'incident names the offending rows (address, provider id, canonicals, folders) — no blind counts');
 
-  await db.q(`DELETE FROM message_occurrences WHERE provider_message_id='split-1'`);
-  await db.q(`DELETE FROM canonical_messages WHERE id IN ($1,$2)`, [sp1.canonicalId, sp2.canonicalId]);
+  // REPAIR: merges the split (keeps the OLDEST occurrence's canonical, removes
+  // the split-off occurrence + its orphaned canonical), dry-run first, and is
+  // idempotent — this is what heals the 1056 real-tenant rows.
+  const repair = require('../modules/mail/split-repair');
+  const dry = await repair.repairSplits({ apply: false });
+  assert.ok(dry.groups >= 1 && dry.applied === false, 'dry-run reports without touching rows');
+  const applied = await repair.repairSplits({ apply: true });
+  assert.ok(applied.occurrencesRemoved >= 1 && applied.canonicalsRemoved >= 1, 'repair merged the split');
+  const after = await db.one(`SELECT COUNT(*)::int n, COUNT(DISTINCT canonical_message_id)::int c
+    FROM message_occurrences WHERE provider_message_id='split-2'`);
+  assert.deepStrictEqual({ n: after.n, c: after.c }, { n: 1, c: 1 }, 'exactly one occurrence+canonical survive');
+  const keeper = await db.one(`SELECT canonical_message_id FROM message_occurrences WHERE provider_message_id='split-2'`);
+  assert.strictEqual(Number(keeper.canonical_message_id), Number(rawA.id), 'the OLDEST canonical is kept');
+  assert.strictEqual((await db.one('SELECT COUNT(*)::int n FROM canonical_messages WHERE id=$1', [rawB.id])).n, 0,
+    'the orphaned split-off canonical is gone');
+  const again = await repair.repairSplits({ apply: true });
+  assert.strictEqual(again.groups, 0, 'idempotent: second run finds nothing');
+  // post-repair the detector goes quiet
+  await acc.takeSample(run2);
+  const calm = await db.one(`SELECT duplicate_occurrences FROM acceptance_samples WHERE run_id=$1 ORDER BY id DESC LIMIT 1`, [run2.id]);
+  assert.strictEqual(calm.duplicate_occurrences, 0);
+
+  await db.q(`DELETE FROM message_occurrences WHERE provider_message_id IN ('split-1','split-2')`);
+  await db.q(`DELETE FROM canonical_messages WHERE id IN ($1,$2)`, [sp1.canonicalId, rawA.id]);
   await db.q(`UPDATE acceptance_runs SET status='aborted', finished_at=now() WHERE id=$1`, [run2.id]);
 });
 

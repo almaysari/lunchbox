@@ -245,6 +245,32 @@ async function insertMessage(mailboxId, folderId, m, provider = 'zoho') {
   const norm = normalizeForFingerprint(m);
   const { tx } = require('../../core/db');
   return tx(async (client) => {
+    // PROVIDER-IDENTITY GUARD (root cause of 1056 real-tenant splits): the same
+    // provider message can come back with drifted fields between API views —
+    // the virtual Archived view (messages/view?status=archived) returns rows
+    // whose fingerprint anchors differ from the folder view's, so fp3 changes
+    // and a re-ingest minted a SECOND canonical for the SAME email. Same
+    // mailbox + same provider + same provider_message_id IS the same message,
+    // period: reuse its canonical, meter the drift, never split.
+    const prior = (await client.query(`SELECT o.canonical_message_id, c.dedup_hash
+        FROM message_occurrences o JOIN canonical_messages c ON c.id = o.canonical_message_id
+        WHERE o.mailbox_id = $1 AND o.provider = $2 AND o.provider_message_id = $3 LIMIT 1`,
+      [mailboxId, provider, m.providerMessageId])).rows[0];
+    if (prior) {
+      const priorId = Number(prior.canonical_message_id);
+      if (prior.dedup_hash !== hash) {
+        await recordMetric(client, { event_type: 'provider_identity_reused', fp3: hash,
+          canonical_a: priorId, mailbox_id: mailboxId,
+          detail: 'same provider message re-seen with a drifted fingerprint (view-dependent fields) — existing canonical reused' });
+      }
+      const occ2 = (await client.query(`INSERT INTO message_occurrences (canonical_message_id, mailbox_id, folder_id,
+          provider, provider_message_id, direction, received_at, envelope_to, envelope_cc, envelope_bcc)
+        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) ON CONFLICT DO NOTHING RETURNING id`,
+        [priorId, mailboxId, folderId, provider, m.providerMessageId, m.direction || 'in',
+          new Date(Number(m.receivedAt) || Date.now()), m.to || '', m.cc || '', m.bcc || ''])).rows[0];
+      return { canonicalId: priorId, occurrenceId: occ2 ? Number(occ2.id) : null, isNewCanonical: false };
+    }
+
     // Forensic oracle (RFC Message-ID, when the archive provides one):
     //   * A canonical already at THIS fp3 but carrying a DIFFERENT non-empty RFC
     //     Message-ID => two genuinely distinct emails collided on fp3. Prevent
