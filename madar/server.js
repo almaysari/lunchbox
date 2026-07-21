@@ -152,6 +152,16 @@ const server = http.createServer(async (req, res) => {
       return send(200, user ? { ...user, csrf: cryptoCore.csrfTokenFor(activeToken) } : null);
     }
 
+    // OAuth callback: lands in whatever browser profile completed the Zoho
+    // consent — often one WITHOUT a Madar session (a collector mailbox is
+    // authorized from a separate profile). No session required HERE: the real
+    // guard is the one-time hashed state (admin-minted, short TTL, single
+    // use) — without a valid state this is a 403 regardless of session.
+    if (p === '/oauth/callback' && req.method === 'GET') {
+      const handledCb = await mailRoutes.handle(req, res, url, user, body, { send, baseUrl: cfg.BASE_URL });
+      if (handledCb) return;
+    }
+
     if (!user) return send(401, { error: 'unauthenticated' });
 
     // First-login policy: initial credentials must be changed before anything else.

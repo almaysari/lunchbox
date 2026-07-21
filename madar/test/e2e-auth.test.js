@@ -317,4 +317,17 @@ test('integration hardening: isolated consumers, non-consuming reads, clean payl
   await pool.end();
 });
 
+// OAuth callback arrives in whatever browser profile completed the Zoho
+// consent — often one WITHOUT a Madar session (the collector mailbox is
+// authorized from a separate profile). The callback must be reachable without
+// a session; its real guard is the one-time hashed state: bogus state = 403
+// (state verdict), never 401 (session gate).
+test('oauth callback: reachable without a session, still guarded by the one-time state', async () => {
+  const saveJar = jar; jar = ''; // simulate the separate browser profile: no cookies at all
+  try {
+    const r = await http('GET', '/oauth/callback?code=fake&state=bogus-state-value');
+    assert.strictEqual(r.status, 403, `state verdict expected, got ${r.status} (401 = still behind the session gate)`);
+  } finally { jar = saveJar; }
+});
+
 after(() => { serverProc?.kill('SIGKILL'); });
