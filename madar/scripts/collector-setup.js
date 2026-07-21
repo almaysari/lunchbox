@@ -42,7 +42,7 @@ async function init() {
     conn = await one(`INSERT INTO connections (provider, label, accounts_base, api_base, client_id,
         client_secret_enc, scopes, created_by, encryption_key_version, status)
       SELECT provider, $2, accounts_base, api_base, client_id, client_secret_enc, scopes, created_by,
-        encryption_key_version, 'new' FROM connections WHERE id=$1 RETURNING id, status`, [src.id, LABEL]);
+        encryption_key_version, 'pending' FROM connections WHERE id=$1 RETURNING id, status`, [src.id, LABEL]);
     console.log(`created connection ${conn.id} ("${LABEL}") — credentials cloned encrypted from connection ${src.id}`);
   } else {
     console.log(`reusing pending connection ${conn.id} ("${LABEL}")`);
