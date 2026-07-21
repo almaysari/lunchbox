@@ -1419,6 +1419,60 @@ test('starvation E2E: new mail (incl. shared-mailbox routing) appears while a la
   }
 });
 
+// ---------- collector envelope routing: Delivered-To fallback ----------
+// A central capture mailbox receives group mail whose to/cc may NOT name the
+// shared address (BCC/envelope-style delivery). For mailboxes listed in
+// MADAR_COLLECTOR_ADDRESSES, an unmatched message triggers ONE raw-header
+// fetch; Delivered-To/X-Original-To/Envelope-To are matched against the same
+// production routing map. Unsupported header endpoints are capability-recorded
+// (like the archived view) and never break the cycle.
+test('collector routing: header fallback routes envelope-only mail; unsupported header API degrades gracefully', async () => {
+  const admin = byAddress['m.almaysari@exoticcolors.org'];
+  const hr = byAddress['hr@exoticcolors.org'];
+  await db.q('UPDATE mailboxes SET is_pilot=TRUE, sync_enabled=TRUE WHERE id=$1', [admin.id]);
+  await db.q("UPDATE sync_jobs SET status='cancelled', finished_at=now() WHERE status IN ('queued','running','paused')");
+  const SUBJ = 'ENV-ROUTE-' + crypto.randomUUID().slice(0, 8);
+  // envelope-only delivery: to/cc never mention hr@ — only Delivered-To does
+  const envMsg = { messageId: 'envr-1', threadId: 'tenvr', fromAddress: 'client@example.com',
+    senderName: 'Client', toAddress: 'undisclosed-recipients@example.com', subject: SUBJ,
+    summary: 'bcc-style delivery', receivedTime: String(Date.now()), sentDateInGMT: String(Date.now() - 2000),
+    hasAttachment: '0', deliveredTo: 'hr@exoticcolors.org' };
+  _messages[ADMIN_ACCOUNT_ID].splice(1, 0, envMsg);
+  process.env.MADAR_COLLECTOR_ADDRESSES = 'm.almaysari@exoticcolors.org';
+  try {
+    await sync.syncMailbox(Number(admin.id), { mode: 'realtime' });
+    const routed = await db.one(`SELECT COUNT(*)::int n FROM message_occurrences o
+      JOIN canonical_messages c ON c.id=o.canonical_message_id WHERE c.subject=$1 AND o.mailbox_id=$2`, [SUBJ, hr.id]);
+    assert.strictEqual(routed.n, 1, 'envelope-only mail routed to the shared mailbox via Delivered-To');
+
+    // WITHOUT the collector flag the fallback must not fire (API-volume guard)
+    delete process.env.MADAR_COLLECTOR_ADDRESSES;
+    const SUBJ2 = 'ENV-NOFLAG-' + crypto.randomUUID().slice(0, 8);
+    const plain = { ...envMsg, messageId: 'envr-2', subject: SUBJ2, deliveredTo: 'hr@exoticcolors.org' };
+    _messages[ADMIN_ACCOUNT_ID].splice(1, 0, plain);
+    await sync.syncMailbox(Number(admin.id), { mode: 'realtime' });
+    const notRouted = await db.one(`SELECT COUNT(*)::int n FROM message_occurrences o
+      JOIN canonical_messages c ON c.id=o.canonical_message_id WHERE c.subject=$1 AND o.mailbox_id=$2`, [SUBJ2, hr.id]);
+    assert.strictEqual(notRouted.n, 0, 'non-collector mailboxes never pay the header-fetch cost');
+    const j = _messages[ADMIN_ACCOUNT_ID].indexOf(plain); if (j > -1) _messages[ADMIN_ACCOUNT_ID].splice(j, 1);
+
+    // tenant rejecting the header endpoint: capability recorded, cycle survives
+    process.env.MADAR_COLLECTOR_ADDRESSES = 'm.almaysari@exoticcolors.org';
+    const SUBJ3 = 'ENV-UNSUP-' + crypto.randomUUID().slice(0, 8);
+    const unsup = { ...envMsg, messageId: 'envr-3', subject: SUBJ3, headerUnsupported: true };
+    _messages[ADMIN_ACCOUNT_ID].splice(1, 0, unsup);
+    await sync.syncMailbox(Number(admin.id), { mode: 'realtime' });
+    const caps = (await db.one('SELECT capabilities FROM mailboxes WHERE id=$1', [admin.id])).capabilities;
+    const capsObj = typeof caps === 'string' ? JSON.parse(caps) : caps;
+    assert.ok(String(capsObj.headerFetch || '').startsWith('unsupported'), 'header-API rejection capability-recorded');
+    const k = _messages[ADMIN_ACCOUNT_ID].indexOf(unsup); if (k > -1) _messages[ADMIN_ACCOUNT_ID].splice(k, 1);
+  } finally {
+    delete process.env.MADAR_COLLECTOR_ADDRESSES;
+    const i = _messages[ADMIN_ACCOUNT_ID].indexOf(envMsg); if (i > -1) _messages[ADMIN_ACCOUNT_ID].splice(i, 1);
+    await db.q(`UPDATE mailboxes SET capabilities = capabilities - 'headerFetch' WHERE id=$1`, [admin.id]);
+  }
+});
+
 // ---------- shared-mailbox capture diagnosis (Gate-2 failure analyzer) ----------
 // A shared mailbox with no direct API is captured via the member-copy chain:
 //   Zoho delivers to a member account → realtime pass ingests it from a synced
@@ -1770,6 +1824,43 @@ test('visibility trace: names WHY mail is not shown — "stored but hidden by gr
   assert.ok((await fakeCall('GET', '/api/mail/messages', { user: adminUser, search: `?mailbox_id=${info.id}` })).body.length > 0);
   await auth.setGrant(adminUser.id, info.id, null);
   assert.strictEqual((await fakeCall('GET', `/api/mail/mailboxes/${info.id}/visibility-trace`, { user: memberUser })).status, 403);
+});
+
+// ---------- structured search filters (collector-scale requirement) ----------
+test('messages API: structured filters — from, to/recipient, subject, attachment name, date range', async () => {
+  const info = byAddress['info@exoticcolors.org'];
+  await auth.setGrant(adminUser.id, info.id, { can_view_messages: true });
+  const f = await sync.upsertFolder(info.id, { providerFolderId: 'searchf', name: 'SearchF', type: 'inbox' });
+  const mk = (id, extra) => sync.insertMessage(info.id, f, { providerMessageId: id, from: 'searcher@vendorx.example',
+    to: 'info@exoticcolors.org', subject: 'plain probe ' + id, receivedAt: Date.parse('2026-03-15T10:00:00Z'),
+    sentAt: Date.parse('2026-03-15T09:00:00Z'), ...extra });
+  try {
+    await mk('srch-1', { subject: 'INVOICE-SRCH-77', to: 'billing-line@exoticcolors.org' });
+    const r1 = await mk('srch-2', { receivedAt: Date.parse('2024-01-05T10:00:00Z') });
+    await sync.storeAttachment(r1.canonicalId, 'srch-att', 'contract-final.pdf', 'application/pdf', Buffer.from('%PDF-1.4 srch'));
+
+    const call = (qs) => fakeCall('GET', '/api/mail/messages', { user: adminUser, search: `?mailbox_id=${info.id}&${qs}` });
+    // sender
+    assert.ok((await call('from=vendorx')).body.length >= 2, 'filter by sender');
+    // recipient (envelope of THIS mailbox's copy)
+    const byTo = (await call('to=billing-line')).body;
+    assert.strictEqual(byTo.length, 1); assert.strictEqual(byTo[0].subject, 'INVOICE-SRCH-77');
+    // subject
+    assert.strictEqual((await call('subject=INVOICE-SRCH')).body.length, 1);
+    // attachment name
+    const byAtt = (await call('attachment=contract-final')).body;
+    assert.strictEqual(byAtt.length, 1); assert.strictEqual(byAtt[0].occurrence_id, undefined ? null : byAtt[0].occurrence_id);
+    // date range isolates the 2024 message
+    const byDate = (await call('after=2024-01-01&before=2024-12-31&from=vendorx')).body;
+    assert.strictEqual(byDate.length, 1);
+    assert.ok(new Date(byDate[0].received_at).getFullYear() === 2024);
+    // filters compose with count_only
+    assert.strictEqual((await call('from=vendorx&count_only=1')).body.total, 2);
+  } finally {
+    await db.q(`DELETE FROM message_occurrences WHERE provider_message_id LIKE 'srch-%'`);
+    await db.q(`DELETE FROM canonical_messages WHERE subject LIKE '%SRCH-77%' OR subject LIKE 'plain probe srch-%'`);
+    await auth.setGrant(adminUser.id, info.id, null);
+  }
 });
 
 // ---------- mail list: pagination + total (an 11k-message mailbox is unusable

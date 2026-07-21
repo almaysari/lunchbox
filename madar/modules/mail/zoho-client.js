@@ -366,6 +366,11 @@ class ZohoClient {
   getMessageContent(accountId, folderId, messageId) {
     return this.get(`/api/accounts/${accountId}/folders/${folderId}/messages/${messageId}/content`);
   }
+  // raw RFC headers ("Get Email Header") — envelope truth (Delivered-To …) for
+  // collector routing; capability-recorded by the caller when a tenant rejects it
+  getMessageHeaders(accountId, folderId, messageId) {
+    return this.get(`/api/accounts/${accountId}/folders/${folderId}/messages/${messageId}/header`);
+  }
   getAttachmentInfo(accountId, folderId, messageId) {
     return this.get(`/api/accounts/${accountId}/folders/${folderId}/messages/${messageId}/attachmentinfo`);
   }

@@ -143,6 +143,16 @@ class ZohoMailApiConnector {
     return folder.providerFolderId;
   }
 
+  // raw headers, or null when unavailable; the HTTP status rides along so the
+  // caller can distinguish "no headers" from "endpoint unsupported here"
+  async getHeaders(folder, providerMessageId, msg = null) {
+    const fid = this._effectiveFolderId(folder, msg);
+    if (!fid) return { status: 0, headers: null };
+    const r = await this.zoho.getMessageHeaders(this.id, fid, providerMessageId);
+    const d = (r.body && r.body.data) || {};
+    return { status: r.status, headers: r.status === 200 ? (d.headerContent || d.header || null) : null };
+  }
+
   async getBody(folder, providerMessageId, msg = null) {
     const fid = this._effectiveFolderId(folder, msg);
     if (!fid) return null;

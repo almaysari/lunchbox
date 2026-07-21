@@ -625,12 +625,23 @@ function recipientAddresses(msg) {
     .toLowerCase().match(/[\w.+-]+@[\w-]+(\.[\w-]+)+/g) || []);
 }
 
-async function routeToSharedMailboxes(msg, sourceMailboxId, routing, summary, diag = null) {
+// Parse envelope-truth recipients out of raw RFC headers (Delivered-To and
+// friends) — used by the collector fallback for BCC/envelope-only delivery.
+function headerRecipientAddresses(raw) {
+  const unfolded = String(raw || '').replace(/\r?\n[ \t]+/g, ' '); // unfold continuations
+  const out = new Set();
+  for (const line of unfolded.split(/\r?\n/)) {
+    const m = line.match(/^(Delivered-To|X-Delivered-To|X-Original-To|Envelope-To|X-Envelope-To|To|Cc):\s*(.*)$/i);
+    if (m) for (const a of (m[2].toLowerCase().match(/[\w.+-]+@[\w-]+(\.[\w-]+)+/g) || [])) out.add(a);
+  }
+  return out;
+}
+
+async function routeToSharedMailboxes(msg, sourceMailboxId, routing, summary, diag = null, ctx = null) {
   if (!routing) return;
-  const recipients = recipientAddresses(msg);
-  for (const addr of recipients) {
+  const deliver = async (addr) => {
     const targetId = routing.map.get(addr);
-    if (!targetId || targetId === sourceMailboxId) continue;
+    if (!targetId || targetId === sourceMailboxId) return;
     if (diag) diag.routingContext = { messageId: msg.providerMessageId, rfcMessageId: msg.rfcMessageId || null,
       sourceMailbox: sourceMailboxId, target: addr, decision: 'route_member_copy' };
     let folderId = routing.folderCache.get(targetId);
@@ -640,6 +651,37 @@ async function routeToSharedMailboxes(msg, sourceMailboxId, routing, summary, di
     }
     const { occurrenceId } = await insertMessage(targetId, folderId, msg, 'zoho:member_copy');
     if (occurrenceId) { summary.routed++; if (diag) diag.routed++; }
+  };
+  const recipients = recipientAddresses(msg);
+  for (const addr of recipients) await deliver(addr);
+
+  // COLLECTOR fallback: a central capture mailbox receives group mail whose
+  // to/cc may not name the shared address at all (BCC/envelope delivery). If
+  // NOTHING matched the routing map, spend exactly ONE raw-header fetch and
+  // match Delivered-To/X-Original-To/Envelope-To against the same map. Gated
+  // to MADAR_COLLECTOR_ADDRESSES (ordinary mailboxes never pay this call) and
+  // capability-recorded when a tenant rejects the header endpoint.
+  const anyMapped = [...recipients].some(a => routing.map.has(a));
+  if (anyMapped || !routing.collector || routing.collector.headerFetchUnsupported
+      || !ctx || !ctx.connector || typeof ctx.connector.getHeaders !== 'function') return;
+  try {
+    const h = await ctx.connector.getHeaders(ctx.folder, msg.providerMessageId, msg);
+    if (h.status >= 400 && h.status < 500) {
+      routing.collector.headerFetchUnsupported = true;
+      await q(`UPDATE mailboxes SET capabilities = capabilities || $1::jsonb WHERE id = $2`,
+        [JSON.stringify({ headerFetch: 'unsupported:http_' + h.status }), sourceMailboxId]);
+      return;
+    }
+    if (!h.headers) return;
+    for (const addr of headerRecipientAddresses(h.headers)) {
+      if (routing.map.has(addr)) {
+        await deliver(addr);
+        if (diag) diag.routedViaHeaders = (diag.routedViaHeaders || 0) + 1;
+      }
+    }
+  } catch {
+    // auxiliary path: a header-fetch failure must never sink the cycle
+    if (diag) diag.headerFetchErrors = (diag.headerFetchErrors || 0) + 1;
   }
 }
 
@@ -686,6 +728,16 @@ async function syncMailbox(mailboxId, { maxPages = 5, userId = null, mode = 'ful
   }
   await q("UPDATE mailboxes SET status='syncing' WHERE id=$1", [mailboxId]);
   const routing = await sharedAddressMap();
+  // collector mailboxes (MADAR_COLLECTOR_ADDRESSES, comma-separated): mail
+  // that matches NO shared address in to/cc earns one raw-header fetch so
+  // envelope-only delivery (Delivered-To) still routes to its shared mailbox
+  const collectorAddrs = String(process.env.MADAR_COLLECTOR_ADDRESSES || '')
+    .toLowerCase().split(',').map(s => s.trim()).filter(Boolean);
+  if (collectorAddrs.includes(mailbox.address.toLowerCase())) {
+    const capsNow = typeof mailbox.capabilities === 'string'
+      ? JSON.parse(mailbox.capabilities || '{}') : (mailbox.capabilities || {});
+    routing.collector = { headerFetchUnsupported: String(capsNow.headerFetch || '').startsWith('unsupported') };
+  }
   const diag = newDiag(mailbox);
   const summary = { jobId, mailbox: mailbox.address, traceId: diag.traceId, mode, folders: 0, newMessages: 0, newOccurrences: 0, attachments: 0, skipped: 0, routed: 0 };
 
@@ -885,7 +937,7 @@ async function ingestOne(connector, folder, mailboxId, folderId, msg, summary, j
     return false;
   }
   if (diag) { diag.stage = 'routing'; diag.inserted++; }
-  await routeToSharedMailboxes(msg, mailboxId, routing, summary, diag);
+  await routeToSharedMailboxes(msg, mailboxId, routing, summary, diag, { connector, folder });
   summary.newOccurrences++;
   await q('UPDATE sync_jobs SET imported = imported + 1 WHERE id = $1', [jobId]);
   if (!isNewCanonical) return true; // body/attachments already captured for this canonical

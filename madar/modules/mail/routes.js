@@ -419,6 +419,34 @@ async function handle(req, res, url, user, body, helpers) {
     let where = 'o.mailbox_id = ANY($1)';
     if (folderId) { params.push(folderId); where += ` AND o.folder_id = $${params.length}`; }
     if (qtext) { params.push(qtext.split(/\s+/).join(' & ')); where += ` AND c.fts @@ to_tsquery('simple', $${params.length})`; }
+    // structured filters (collector-scale search): sender, recipient (this
+    // copy's envelope first, canonical fallback), subject, attachment name,
+    // date range — all composable with q/mailbox/folder and count_only
+    const like = (v) => '%' + String(v).replace(/[%_]/g, '\\$&') + '%';
+    const fFrom = url.searchParams.get('from');
+    if (fFrom) { params.push(like(fFrom)); where += ` AND (c.from_address ILIKE $${params.length} OR c.from_name ILIKE $${params.length})`; }
+    const fTo = url.searchParams.get('to');
+    if (fTo) {
+      params.push(like(fTo));
+      where += ` AND (o.envelope_to ILIKE $${params.length} OR o.envelope_cc ILIKE $${params.length}
+                   OR c.to_addresses ILIKE $${params.length} OR c.cc_addresses ILIKE $${params.length})`;
+    }
+    const fSubject = url.searchParams.get('subject');
+    if (fSubject) { params.push(like(fSubject)); where += ` AND c.subject ILIKE $${params.length}`; }
+    const fAtt = url.searchParams.get('attachment');
+    if (fAtt) {
+      params.push(like(fAtt));
+      where += ` AND EXISTS (SELECT 1 FROM attachments a WHERE a.canonical_message_id = c.id
+                   AND a.original_filename ILIKE $${params.length})`;
+    }
+    const fAfter = url.searchParams.get('after');
+    if (fAfter && !Number.isNaN(Date.parse(fAfter))) { params.push(new Date(fAfter)); where += ` AND o.received_at >= $${params.length}`; }
+    const fBefore = url.searchParams.get('before');
+    if (fBefore && !Number.isNaN(Date.parse(fBefore))) {
+      // a bare date means "through the END of that day"
+      params.push(new Date(String(fBefore).length === 10 ? fBefore + 'T23:59:59.999Z' : fBefore));
+      where += ` AND o.received_at <= $${params.length}`;
+    }
     // total for the SAME scope — the UI needs "showing X of Y" and paging
     // (an 11k-message mailbox rendered as a silent newest-100 page reads as
     // "no mail at all"); kept as a separate cheap call so the list response

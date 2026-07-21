@@ -192,6 +192,21 @@ function startMockZoho(port = 0) {
       if (!MESSAGES[m[1]]) return invalidAccount(m[1]);
       return ok({ messageId: m[2], content: `<p>Full HTML body of message <b>${m[2]}</b> from the mock Zoho API.</p>` });
     }
+    // raw headers ("Get Email Header") — envelope truth for collector routing.
+    // A message may carry deliveredTo (set by tests) that never appears in
+    // toAddress — exactly the BCC/envelope-delivery shape.
+    if ((m = p.match(/^\/api\/accounts\/([^/]+)\/folders\/[^/]+\/messages\/([^/]+)\/header$/))) {
+      if (!MESSAGES[m[1]]) return invalidAccount(m[1]);
+      const msg = MESSAGES[m[1]].find(x => x.messageId === m[2]);
+      const reject = () => send(404, { status: { code: 404, description: 'Invalid Input' }, data: {} });
+      if (!msg) return reject();
+      if (msg.headerUnsupported) return reject(); // tenant-rejection fixture
+      return ok({ messageId: m[2], headerContent:
+        `Return-Path: <${msg.fromAddress}>\r\n` +
+        (msg.deliveredTo ? `Delivered-To: ${msg.deliveredTo}\r\n` : '') +
+        `From: ${msg.senderName || ''} <${msg.fromAddress}>\r\nTo: ${msg.toAddress}\r\n` +
+        `Subject: ${msg.subject}\r\nDate: ${new Date(Number(msg.receivedTime)).toUTCString()}\r\n` });
+    }
     if ((m = p.match(/^\/api\/accounts\/([^/]+)\/folders\/[^/]+\/messages\/([^/]+)\/attachmentinfo$/))) {
       if (!MESSAGES[m[1]]) return invalidAccount(m[1]);
       const msg = MESSAGES[m[1]].find(x => x.messageId === m[2]);
