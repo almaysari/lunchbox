@@ -352,7 +352,11 @@ async function storeAttachment(canonicalId, providerAttachmentId, name, provider
       claimed, detected, compatible ? 'clean' : 'quarantined', key, hash]);
   return true;
   } catch (err) {
-    getStorage().deleteObject(key); // no orphan objects on DB failure
+    // content-addressed objects are SHARED across attachments — a failed
+    // insert may only clean up bytes nothing else references, otherwise it
+    // would strip storage out from under existing rows
+    const referenced = await one('SELECT 1 FROM attachments WHERE storage_key=$1 LIMIT 1', [key]);
+    if (!referenced) getStorage().deleteObject(key); // no orphan objects on DB failure
     throw err;
   }
 }

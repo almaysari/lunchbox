@@ -657,9 +657,6 @@ ALTER TABLE ONLY public.attachments
 ALTER TABLE ONLY public.attachments
     ADD CONSTRAINT attachments_pkey PRIMARY KEY (id);
 
-ALTER TABLE ONLY public.attachments
-    ADD CONSTRAINT attachments_storage_key_key UNIQUE (storage_key);
-
 ALTER TABLE ONLY public.audit_log
     ADD CONSTRAINT audit_log_pkey PRIMARY KEY (id);
 
@@ -781,6 +778,8 @@ CREATE UNIQUE INDEX idx_acceptance_one_active ON public.acceptance_runs USING bt
 CREATE INDEX idx_acceptance_samples_run ON public.acceptance_samples USING btree (run_id, id);
 
 CREATE INDEX idx_archive_imports_mailbox ON public.archive_imports USING btree (mailbox_id, id DESC);
+
+CREATE INDEX idx_attachments_storage_key ON public.attachments USING btree (storage_key);
 
 CREATE INDEX idx_audit_at ON public.audit_log USING btree (at DESC);
 

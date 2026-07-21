@@ -1549,6 +1549,30 @@ test('diagnostics: failed sync records full typed context (stage, endpoint, stac
   await db.q(`DELETE FROM mailboxes WHERE id = $1`, [broken.id]);
 });
 
+// ---------- attachments: content-addressed storage (collector-mailbox scale) ----------
+test('attachment storage: identical bytes across canonicals share ONE object; failed insert never deletes shared bytes', async () => {
+  const info2 = byAddress['info@exoticcolors.org'];
+  const cids = await db.all(`SELECT DISTINCT canonical_message_id AS id FROM message_occurrences WHERE mailbox_id=$1 LIMIT 2`, [info2.id]);
+  assert.ok(cids.length === 2, 'two canonicals available');
+  const buf = Buffer.from('%PDF-1.4 shared-bytes-test payload');
+  await sync.storeAttachment(Number(cids[0].id), 'ca-1', 'shared-bytes.pdf', 'application/pdf', buf);
+  await sync.storeAttachment(Number(cids[1].id), 'ca-2', 'shared-bytes.pdf', 'application/pdf', buf);
+  const rows = await db.all(`SELECT id, storage_key FROM attachments WHERE original_filename='shared-bytes.pdf' ORDER BY id`);
+  assert.strictEqual(rows.length, 2, 'one attachment row per canonical (metadata stays per-message)');
+  assert.strictEqual(rows[0].storage_key, rows[1].storage_key, 'same bytes → ONE stored object (content-addressed)');
+  // failure path: an insert that fails AFTER the object write (FK violation)
+  // must NOT strip the shared bytes out from under the existing rows
+  await assert.rejects(() => sync.storeAttachment(999999999, 'ca-3', 'shared-bytes.pdf', 'application/pdf', buf));
+  const { getStorage } = require('../core/storage');
+  assert.ok(getStorage().exists(rows[0].storage_key), 'shared object survived the failed insert');
+  // a genuinely unreferenced object from a failed insert still gets cleaned:
+  const orphanBuf = Buffer.from('%PDF-1.4 never-referenced payload');
+  await assert.rejects(() => sync.storeAttachment(999999999, 'ca-4', 'orphan.pdf', 'application/pdf', orphanBuf));
+  const orphanKey = require('crypto').createHash('sha256').update(orphanBuf).digest('hex').slice(0, 48);
+  assert.ok(!getStorage().exists(orphanKey), 'unreferenced failed-insert object cleaned up');
+  await db.q(`DELETE FROM attachments WHERE original_filename='shared-bytes.pdf'`);
+});
+
 // ---------- attachments ----------
 test('attachments: MIME detected from bytes, provider MIME distrusted, quarantine on mismatch', async () => {
   assert.strictEqual(detectMime(Buffer.from('%PDF-1.4 test')), 'application/pdf');

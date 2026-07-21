@@ -30,11 +30,21 @@ class LocalStorage {
     if (buffer.length > this.maxBytes) {
       throw new Error(`Attachment exceeds size limit (${buffer.length} > ${this.maxBytes} bytes)`);
     }
-    const key = crypto.randomBytes(24).toString('hex');
+    // CONTENT-ADDRESSED: identical bytes map to ONE object — with a collector
+    // mailbox receiving the whole org's mail, the same invoice forwarded
+    // through three threads must occupy disk once. The key is the sha256's
+    // first 48 hex chars (192 bits — same key format as the legacy random
+    // keys, so old objects keep resolving). A write for an existing key is
+    // skipped: the bytes are already there. Callers deleting objects must
+    // check the key is unreferenced first (attachments rows can share keys).
+    const sha = crypto.createHash('sha256').update(buffer).digest('hex');
+    const key = sha.slice(0, 48);
     const full = this._resolve(key);
-    fs.mkdirSync(path.dirname(full), { recursive: true, mode: 0o700 });
-    fs.writeFileSync(full, buffer, { mode: 0o600 });
-    return { key, sha256: crypto.createHash('sha256').update(buffer).digest('hex'), size: buffer.length };
+    if (!fs.existsSync(full)) {
+      fs.mkdirSync(path.dirname(full), { recursive: true, mode: 0o700 });
+      fs.writeFileSync(full, buffer, { mode: 0o600 });
+    }
+    return { key, sha256: sha, size: buffer.length };
   }
 
   getObject(key, range) {
