@@ -1554,6 +1554,17 @@ test('capture-diagnose: classifies every break in the shared member-copy chain f
     // 4) canary never delivered anywhere → the "check Zoho group delivery" verdict
     const ev4 = await collectEvidence('hr@exoticcolors.org', 'CAPDIAG-NEVER-SENT-' + crypto.randomUUID().slice(0, 8));
     assert.strictEqual(classifyCapture(ev4).classification, 'no_member_copy_on_zoho');
+
+    // 5) a COLLECTOR is capture surface for EVERY shared mailbox — probed even
+    //    when the stored member list predates its membership (info@ is not in
+    //    hr@'s stored members, yet must be probed when flagged as collector)
+    process.env.MADAR_COLLECTOR_ADDRESSES = 'info@exoticcolors.org';
+    try {
+      await db.q('UPDATE mailboxes SET is_pilot=TRUE, sync_enabled=TRUE WHERE address=$1', ['info@exoticcolors.org']);
+      const ev5 = await collectEvidence('hr@exoticcolors.org', 'CAPDIAG-COLL-' + crypto.randomUUID().slice(0, 8));
+      assert.ok(ev5.syncedMembers.some(m => m.address === 'info@exoticcolors.org' && m.collector),
+        'collector probed despite being absent from the stored member list');
+    } finally { delete process.env.MADAR_COLLECTOR_ADDRESSES; }
   } finally {
     const i = _messages[ADMIN_ACCOUNT_ID].indexOf(injected);
     if (i > -1) _messages[ADMIN_ACCOUNT_ID].splice(i, 1);

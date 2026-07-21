@@ -133,13 +133,25 @@ async function collectEvidence(sharedAddress, subject) {
   const members = Array.isArray(shared.members) ? shared.members
     : JSON.parse(shared.members || '[]');
   ev.members = members.map(m => m.email).filter(Boolean);
-  const probeList = ev.members.length
+  let probeList = ev.members.length
     ? await all(`SELECT * FROM mailboxes WHERE lower(address) = ANY($1)
                    AND strategy='mail_api' AND is_pilot AND sync_enabled`, [ev.members.map(a => a.toLowerCase())])
     // membership unknown (e.g. groups API returned no member list): every synced
     // mailbox is a potential capture surface — probe them all rather than guess
     : await all(`SELECT * FROM mailboxes WHERE strategy='mail_api' AND is_pilot AND sync_enabled`);
-  ev.syncedMembers = probeList.map(m => ({ mailboxId: Number(m.id), address: m.address }));
+  // COLLECTOR mailboxes are capture surface for EVERY shared mailbox — always
+  // probed, even when the STORED member list predates their group membership
+  // (discovery snapshots go stale the moment an admin adds the collector).
+  const collectorAddrs = String(process.env.MADAR_COLLECTOR_ADDRESSES || '')
+    .toLowerCase().split(',').map(s => s.trim()).filter(Boolean);
+  if (collectorAddrs.length) {
+    const collectors = await all(`SELECT * FROM mailboxes WHERE lower(address) = ANY($1)
+      AND strategy='mail_api' AND is_pilot AND sync_enabled`, [collectorAddrs]);
+    const seen = new Set(probeList.map(m => Number(m.id)));
+    for (const c of collectors) if (!seen.has(Number(c.id))) probeList.push(c);
+  }
+  ev.syncedMembers = probeList.map(m => ({ mailboxId: Number(m.id), address: m.address,
+    collector: collectorAddrs.includes(m.address.toLowerCase()) || undefined }));
 
   // (1) live Zoho truth: is the canary in a synced member's hot folder RIGHT NOW?
   for (const mb of probeList) {
