@@ -169,6 +169,37 @@ CREATE SEQUENCE public.canonical_messages_id_seq
 
 ALTER SEQUENCE public.canonical_messages_id_seq OWNED BY public.canonical_messages.id;
 
+CREATE TABLE public.collector_ingest (
+    id bigint NOT NULL,
+    mailbox_id bigint NOT NULL,
+    provider_message_id text NOT NULL,
+    occurrence_id bigint,
+    state text NOT NULL,
+    routed_to text DEFAULT ''::text NOT NULL,
+    category text DEFAULT ''::text NOT NULL,
+    error text,
+    error_stack text,
+    retryable boolean DEFAULT false NOT NULL,
+    attempts integer DEFAULT 1 NOT NULL,
+    first_seen_at timestamp with time zone DEFAULT now() NOT NULL,
+    received_at timestamp with time zone,
+    processed_at timestamp with time zone,
+    move_state text DEFAULT 'pending'::text NOT NULL,
+    target_folder text DEFAULT ''::text NOT NULL,
+    moved_at timestamp with time zone,
+    CONSTRAINT collector_ingest_move_state_check CHECK ((move_state = ANY (ARRAY['pending'::text, 'done'::text, 'skipped'::text, 'unsupported'::text, 'failed'::text]))),
+    CONSTRAINT collector_ingest_state_check CHECK ((state = ANY (ARRAY['processed'::text, 'unknown'::text, 'retrying'::text, 'failed'::text])))
+);
+
+CREATE SEQUENCE public.collector_ingest_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+ALTER SEQUENCE public.collector_ingest_id_seq OWNED BY public.collector_ingest.id;
+
 CREATE TABLE public.connections (
     id bigint NOT NULL,
     provider text DEFAULT 'zoho'::text NOT NULL,
@@ -609,6 +640,8 @@ ALTER TABLE ONLY public.audit_log ALTER COLUMN id SET DEFAULT nextval('public.au
 
 ALTER TABLE ONLY public.canonical_messages ALTER COLUMN id SET DEFAULT nextval('public.canonical_messages_id_seq'::regclass);
 
+ALTER TABLE ONLY public.collector_ingest ALTER COLUMN id SET DEFAULT nextval('public.collector_ingest_id_seq'::regclass);
+
 ALTER TABLE ONLY public.connections ALTER COLUMN id SET DEFAULT nextval('public.connections_id_seq'::regclass);
 
 ALTER TABLE ONLY public.detection_reports ALTER COLUMN id SET DEFAULT nextval('public.detection_reports_id_seq'::regclass);
@@ -665,6 +698,12 @@ ALTER TABLE ONLY public.canonical_messages
 
 ALTER TABLE ONLY public.canonical_messages
     ADD CONSTRAINT canonical_messages_pkey PRIMARY KEY (id);
+
+ALTER TABLE ONLY public.collector_ingest
+    ADD CONSTRAINT collector_ingest_mailbox_id_provider_message_id_key UNIQUE (mailbox_id, provider_message_id);
+
+ALTER TABLE ONLY public.collector_ingest
+    ADD CONSTRAINT collector_ingest_pkey PRIMARY KEY (id);
 
 ALTER TABLE ONLY public.connections
     ADD CONSTRAINT connections_pkey PRIMARY KEY (id);
@@ -787,6 +826,10 @@ CREATE INDEX idx_canonical_fts ON public.canonical_messages USING gin (fts);
 
 CREATE INDEX idx_canonical_rfc ON public.canonical_messages USING btree (rfc_message_id) WHERE (rfc_message_id <> ''::text);
 
+CREATE INDEX idx_collector_ingest_move ON public.collector_ingest USING btree (mailbox_id, move_state) WHERE (move_state = 'pending'::text);
+
+CREATE INDEX idx_collector_ingest_state ON public.collector_ingest USING btree (mailbox_id, state);
+
 CREATE INDEX idx_detection_mailbox ON public.detection_reports USING btree (mailbox_id, id DESC);
 
 CREATE INDEX idx_fp_metrics_type ON public.fingerprint_metrics USING btree (event_type, id DESC);
@@ -839,6 +882,9 @@ ALTER TABLE ONLY public.attachments
 
 ALTER TABLE ONLY public.audit_log
     ADD CONSTRAINT audit_log_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id) ON DELETE SET NULL;
+
+ALTER TABLE ONLY public.collector_ingest
+    ADD CONSTRAINT collector_ingest_mailbox_id_fkey FOREIGN KEY (mailbox_id) REFERENCES public.mailboxes(id) ON DELETE CASCADE;
 
 ALTER TABLE ONLY public.connections
     ADD CONSTRAINT connections_created_by_fkey FOREIGN KEY (created_by) REFERENCES public.users(id) ON DELETE SET NULL;

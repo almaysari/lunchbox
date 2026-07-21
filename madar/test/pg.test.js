@@ -1473,6 +1473,111 @@ test('collector routing: header fallback routes envelope-only mail; unsupported 
   }
 });
 
+// ---------- collector production hardening: ledger + organizer + retry ----------
+// The collector is ingestion-only. After processing, the organizer MOVES the
+// Zoho copy out of Inbox (Processed-<cat>/Unknown/Failed) driven entirely by
+// the durable collector_ingest ledger — restart/crash/duplicate safe, retry
+// policy applied, organized folders never re-ingested, archives forbidden.
+test('collector hardening: organize lifecycle, retry policy, restart safety, isolation, monitoring', async () => {
+  const collector = require('../modules/mail/collector');
+  const { _createdFolders } = require('./mock-zoho');
+  const admin = byAddress['m.almaysari@exoticcolors.org'];
+  const hr = byAddress['hr@exoticcolors.org'];
+  await db.q('UPDATE mailboxes SET is_pilot=TRUE, sync_enabled=TRUE WHERE id=$1', [admin.id]);
+  await db.q("UPDATE sync_jobs SET status='cancelled', finished_at=now() WHERE status IN ('queued','running','paused')");
+  process.env.MADAR_COLLECTOR_ADDRESSES = 'm.almaysari@exoticcolors.org';
+  const routedMsg = { messageId: 'collorg-1', threadId: 'tco1', fromAddress: 'client@example.com',
+    senderName: 'Client', toAddress: 'hr@exoticcolors.org', subject: 'COLLORG-ROUTED',
+    summary: 's', receivedTime: String(Date.now()), sentDateInGMT: String(Date.now() - 3000), hasAttachment: '0' };
+  const unkMsg = { messageId: 'collorg-2', threadId: 'tco2', fromAddress: 'stranger@example.com',
+    senderName: 'Stranger', toAddress: 'nobody@external.example', subject: 'COLLORG-UNKNOWN',
+    summary: 's', receivedTime: String(Date.now()), sentDateInGMT: String(Date.now() - 3000), hasAttachment: '0' };
+  _messages[ADMIN_ACCOUNT_ID].splice(1, 0, routedMsg, unkMsg);
+  try {
+    // ingest: ledger classifies processed (routed to hr@) vs unknown
+    await sync.syncMailbox(Number(admin.id), { mode: 'realtime' });
+    const led1 = await db.one(`SELECT * FROM collector_ingest WHERE mailbox_id=$1 AND provider_message_id='collorg-1'`, [admin.id]);
+    assert.strictEqual(led1.state, 'processed');
+    assert.strictEqual(led1.target_folder, 'Processed-hr');
+    assert.ok(led1.routed_to.includes('hr@exoticcolors.org'));
+    const led2 = await db.one(`SELECT * FROM collector_ingest WHERE mailbox_id=$1 AND provider_message_id='collorg-2'`, [admin.id]);
+    assert.strictEqual(led2.state, 'unknown');
+    assert.strictEqual(led2.target_folder, 'Unknown');
+    // the unknown message is STORED (never discarded), only organized aside
+    const unkStored = await db.one(`SELECT COUNT(*)::int n FROM message_occurrences o
+      JOIN canonical_messages c ON c.id=o.canonical_message_id WHERE c.subject='COLLORG-UNKNOWN' AND o.mailbox_id=$1`, [admin.id]);
+    assert.strictEqual(unkStored.n, 1);
+
+    // organizer: creates folders on Zoho, moves copies, ledger => done
+    const org1 = await collector.organizePass({ budgetMs: 30000 });
+    assert.ok(org1.moved >= 2, `moved ${org1.moved}`);
+    assert.ok((_createdFolders[ADMIN_ACCOUNT_ID] || []).some(f => f.folderName === 'Processed-hr'), 'Processed-hr created');
+    assert.ok((_createdFolders[ADMIN_ACCOUNT_ID] || []).some(f => f.folderName === 'Unknown'), 'Unknown created');
+    assert.ok(routedMsg.folderId, 'Zoho copy physically moved out of Inbox');
+    assert.strictEqual((await db.one(`SELECT move_state FROM collector_ingest WHERE mailbox_id=$1 AND provider_message_id='collorg-1'`, [admin.id])).move_state, 'done');
+
+    // RESTART SAFETY: another cycle re-scans — moved messages are gone from
+    // the Inbox view, occurrences unchanged, ledger not duplicated, and the
+    // organized folders are never ingested (skipped + latched)
+    const again = await sync.syncMailbox(Number(admin.id), { mode: 'full', maxPages: 1 });
+    assert.ok(again.foldersSkippedOrganized >= 2, 'organized folders skipped as ingest sources');
+    const occAfter = await db.one(`SELECT COUNT(*)::int n FROM message_occurrences o
+      JOIN canonical_messages c ON c.id=o.canonical_message_id WHERE c.subject='COLLORG-ROUTED'`);
+    assert.strictEqual(occAfter.n, 2, 'still exactly collector copy + routed hr copy — no re-import');
+    assert.strictEqual((await db.one(`SELECT COUNT(*)::int n FROM collector_ingest
+      WHERE mailbox_id=$1 AND provider_message_id='collorg-1'`, [admin.id])).n, 1);
+
+    // RETRY POLICY: retryable failures stay in Inbox (state retrying, no move)
+    // until max attempts, then promote to Failed with a pending move
+    process.env.MADAR_COLLECTOR_MAX_ATTEMPTS = '3';
+    assert.strictEqual(collector.isRetryable('request_timeout'), true);
+    assert.strictEqual(collector.isRetryable('http_401'), false);
+    for (let i = 0; i < 2; i++) {
+      await collector.recordOutcome({ mailboxId: admin.id, providerMessageId: 'collorg-fail',
+        receivedAt: Date.now(), error: 'boom', classification: 'http_503' });
+    }
+    let lf = await db.one(`SELECT * FROM collector_ingest WHERE mailbox_id=$1 AND provider_message_id='collorg-fail'`, [admin.id]);
+    assert.strictEqual(lf.state, 'retrying');
+    assert.strictEqual(lf.move_state, 'skipped');
+    await collector.recordOutcome({ mailboxId: admin.id, providerMessageId: 'collorg-fail',
+      receivedAt: Date.now(), error: 'boom', classification: 'http_503' });
+    lf = await db.one(`SELECT * FROM collector_ingest WHERE mailbox_id=$1 AND provider_message_id='collorg-fail'`, [admin.id]);
+    assert.strictEqual(lf.state, 'failed', 'retries spent → failed');
+    assert.strictEqual(lf.target_folder, 'Failed');
+    // non-retryable → failed immediately, reason + stack recorded
+    await collector.recordOutcome({ mailboxId: admin.id, providerMessageId: 'collorg-hardfail',
+      receivedAt: Date.now(), error: 'parse exploded', errorStack: 'Error: parse exploded\n  at x', classification: 'http_401' });
+    const hf = await db.one(`SELECT * FROM collector_ingest WHERE mailbox_id=$1 AND provider_message_id='collorg-hardfail'`, [admin.id]);
+    assert.strictEqual(hf.state, 'failed');
+    assert.ok(hf.error && hf.error_stack, 'reason and stack recorded');
+
+    // a late SUCCESS never demotes; an unroutable re-scan never demotes processed
+    await collector.recordOutcome({ mailboxId: admin.id, providerMessageId: 'collorg-1',
+      receivedAt: Date.now(), routedTo: [] });
+    assert.strictEqual((await db.one(`SELECT state FROM collector_ingest WHERE mailbox_id=$1 AND provider_message_id='collorg-1'`, [admin.id])).state,
+      'processed', 'processed rows survive routing-less re-scans');
+
+    // MONITORING: every operator counter present and consistent
+    const st = await collector.status();
+    const mb = st.mailboxes.find(x => x.address === 'm.almaysari@exoticcolors.org');
+    assert.ok(mb.processed >= 1 && mb.unknown >= 1 && mb.failed >= 2);
+    assert.ok('inboxPendingApprox' in mb && 'avgProcessingLatencySec' in mb && 'oldestUnprocessedAgeSec' in mb);
+
+    // ISOLATION: historical archives may NEVER enter through the collector
+    await assert.rejects(() => sync.importArchiveZip(Number(admin.id), Buffer.alloc(0), null), /forbidden/);
+  } finally {
+    delete process.env.MADAR_COLLECTOR_ADDRESSES;
+    delete process.env.MADAR_COLLECTOR_MAX_ATTEMPTS;
+    for (const m of [routedMsg, unkMsg]) {
+      const i = _messages[ADMIN_ACCOUNT_ID].indexOf(m);
+      if (i > -1) _messages[ADMIN_ACCOUNT_ID].splice(i, 1);
+    }
+    // restore the mock world for later tests: undo Zoho-side moves + ledger
+    for (const m of _messages[ADMIN_ACCOUNT_ID]) delete m.folderId;
+    await db.q('DELETE FROM collector_ingest WHERE mailbox_id=$1', [admin.id]);
+  }
+});
+
 // ---------- shared-mailbox capture diagnosis (Gate-2 failure analyzer) ----------
 // A shared mailbox with no direct API is captured via the member-copy chain:
 //   Zoho delivers to a member account → realtime pass ingests it from a synced

@@ -202,6 +202,18 @@ async function tickOnce({ source = 'worker' } = {}) {
     result.realtimePassMs = Date.now() - realtimeStart;
     state.lastRealtimePassMs = result.realtimePassMs;
 
+    // ---- COLLECTOR ORGANIZER: bounded, idempotent, AFTER realtime (never
+    // delays new-mail capture); all state in the collector_ingest ledger so a
+    // crash mid-pass simply resumes next tick. Contained: an organizer error
+    // must never kill the tick.
+    try {
+      const collector = require('./collector');
+      if (collector.collectorAddresses().length) {
+        result.collectorOrganize = await collector.organizePass({ budgetMs: 15000 });
+        state.lastCollectorOrganize = { at: Date.now(), ...result.collectorOrganize };
+      }
+    } catch (e) { result.collectorOrganizeError = String(e.message || e); }
+
     // ---- PASS 2: BACKFILL — ONE mailbox per tick, bounded time slice. ----
     // Round-robin over mailboxes that still have pending backfill; the slice
     // yields on budget (cursor persisted) so the next tick's realtime pass is
@@ -388,7 +400,11 @@ async function liveStatus() {
       thisProcess: { enabled: state.enabled, pid: PID, isWorkerHost: state.enabled },
       lastBackfill: state.lastBackfill || null,      // last backfill checkpoint slice
       lastRealtimePassMs: state.lastRealtimePassMs || null,
+      lastCollectorOrganize: state.lastCollectorOrganize || null,
     },
+    // collector ledger monitoring: pending/processed/failed/unknown/retrying,
+    // move backlog, latency, oldest unprocessed age — from durable state only
+    collector: await require('./collector').status().catch(() => null),
     recentCycles: await recentCycles(8),
     mailboxes: rows,
   };

@@ -650,6 +650,9 @@ async function routeToSharedMailboxes(msg, sourceMailboxId, routing, summary, di
       routing.folderCache.set(targetId, folderId);
     }
     const { occurrenceId } = await insertMessage(targetId, folderId, msg, 'zoho:member_copy');
+    // the collector ledger needs the routed TARGETS even when the occurrence
+    // already existed (idempotent re-scan) — record the address either way
+    (msg._routedTo = msg._routedTo || []).push(addr);
     if (occurrenceId) { summary.routed++; if (diag) diag.routed++; }
   };
   const recipients = recipientAddresses(msg);
@@ -741,6 +744,33 @@ async function syncMailbox(mailboxId, { maxPages = 5, userId = null, mode = 'ful
   const diag = newDiag(mailbox);
   const summary = { jobId, mailbox: mailbox.address, traceId: diag.traceId, mode, folders: 0, newMessages: 0, newOccurrences: 0, attachments: 0, skipped: 0, routed: 0 };
 
+  // COLLECTOR containment: one poisoned message must never sink the gateway's
+  // cycle. Every collector-inbox message outcome — success, unroutable,
+  // failure (with its classification for the retry policy) — lands in the
+  // collector_ingest ledger that drives organization + monitoring. Ordinary
+  // mailboxes keep the strict fail-the-cycle behavior unchanged.
+  const ingestGuarded = async (fG, folderIdG, msgG) => {
+    if (!routing.collector) return ingestOne(connector, fG, mailboxId, folderIdG, msgG, summary, jobId, routing, diag);
+    const collector = require('./collector');
+    try {
+      msgG._routedTo = [];
+      const inserted = await ingestOne(connector, fG, mailboxId, folderIdG, msgG, summary, jobId, routing, diag);
+      // skipped (already-stored) messages never reach routing — recover the
+      // targets from the headers so pre-ledger rows still get organized
+      const routedTo = (msgG._routedTo && msgG._routedTo.length) ? msgG._routedTo
+        : (!inserted ? [...recipientAddresses(msgG)].filter(a => routing.map.has(a) && routing.map.get(a) !== mailboxId) : []);
+      await collector.recordOutcome({ mailboxId, providerMessageId: msgG.providerMessageId,
+        receivedAt: msgG.receivedAt, routedTo });
+    } catch (err) {
+      if (err instanceof JobStopped) throw err; // control transitions are not message failures
+      await collector.recordOutcome({ mailboxId, providerMessageId: msgG.providerMessageId,
+        receivedAt: msgG.receivedAt, error: err.message || String(err), errorStack: err.stack || null,
+        classification: err.classification || null, httpStatus: err.httpStatus || null });
+      summary.collectorContained = (summary.collectorContained || 0) + 1;
+      if (diag) diag.collectorContained = (diag.collectorContained || 0) + 1;
+    }
+  };
+
   try {
     // Realtime pass folder source: the DB cache, not a per-mailbox API call.
     // With 30+ mailboxes at paced RPM, one listFolders per mailbox per tick
@@ -767,9 +797,19 @@ async function syncMailbox(mailboxId, { maxPages = 5, userId = null, mode = 'ful
       await q('INSERT INTO sync_state (mailbox_id, folder_id) VALUES ($1,$2) ON CONFLICT DO NOTHING', [mailboxId, folderId]);
       const state = await one('SELECT * FROM sync_state WHERE mailbox_id=$1 AND folder_id=$2', [mailboxId, folderId]);
 
+      // COLLECTOR folder policy: Processed-*/Failed/Unknown are organizer
+      // OUTPUTS — never ingest sources (that is what makes moved messages
+      // "ignored correctly" after restarts, on top of the dedup guarantees).
+      // 'Retry' is the manual requeue surface: scanned HOT like the Inbox.
+      if (routing.collector && require('./collector').ORGANIZED_RE.test(f.name)) {
+        await advanceCursor(mailboxId, folderId, 1, { backfillDone: true });
+        summary.foldersSkippedOrganized = (summary.foldersSkippedOrganized || 0) + 1;
+        continue;
+      }
       // Folder scheduler by mode. hot = where new mail lands (realtime duty);
       // everything else is rotation/backfill territory (the backfill slice).
-      const hot = f.type === 'inbox' || f.type === 'sent';
+      const hot = f.type === 'inbox' || f.type === 'sent'
+        || (routing.collector && f.name === 'Retry');
       let doNewest, doBackfill;
       if (mode === 'realtime') {
         if (!hot) { summary.foldersSkippedCold = (summary.foldersSkippedCold || 0) + 1; continue; }
@@ -835,7 +875,7 @@ async function syncMailbox(mailboxId, { maxPages = 5, userId = null, mode = 'ful
       await q('UPDATE sync_jobs SET discovered = discovered + $1 WHERE id = $2', [newest.length, jobId]);
       for (const msg of newest) {
         await checkpoint(jobId);
-        await ingestOne(connector, f, mailboxId, folderId, msg, summary, jobId, routing, diag);
+        await ingestGuarded(f, folderId, msg);
       }
       } // doNewest
 
@@ -858,7 +898,7 @@ async function syncMailbox(mailboxId, { maxPages = 5, userId = null, mode = 'ful
             // at the page start; the redo next slice is dedup-cheap.
             if (Date.now() > sliceDeadline) { summary.yielded = true; break; }
             await checkpoint(jobId);
-            await ingestOne(connector, f, mailboxId, folderId, msg, summary, jobId, routing, diag);
+            await ingestGuarded(f, folderId, msg);
           }
           if (summary.yielded) break;
           if (batch.length < PAGE_SIZE) {
@@ -966,6 +1006,12 @@ async function ingestOne(connector, folder, mailboxId, folderId, msg, summary, j
 async function importArchiveZip(mailboxId, zipBuffer, userId) {
   const mailbox = await one('SELECT * FROM mailboxes WHERE id = $1', [mailboxId]);
   if (!mailbox) throw new Error('mailbox not found');
+  // ISOLATION INVARIANT: the collector is a LIVE-traffic gateway only —
+  // historical archives go straight to their target (virtual) mailbox through
+  // this importer, never through the collector's Inbox or identity.
+  if (require('./collector').isCollectorAddress(mailbox.address)) {
+    throw new Error(`archive import into the collector mailbox (${mailbox.address}) is forbidden — import into the target shared mailbox directly`);
+  }
   const summary = { mailbox: mailbox.address, imported: 0, duplicates: 0, attachments: 0, quarantined: 0, folders: new Set() };
 
   for (const msg of messagesFromExportZip(zipBuffer)) {

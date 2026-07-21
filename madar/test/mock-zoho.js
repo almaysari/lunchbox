@@ -86,8 +86,18 @@ const ARCHIVE_MESSAGES = {
 };
 const PDF = Buffer.from('%PDF-1.4\n1 0 obj<</Type/Catalog>>endobj\ntrailer<</Root 1 0 R>>\n%%EOF', 'latin1');
 
+// collector-organization fixtures: folders created at runtime + message moves
+const CREATED_FOLDERS = {}; // accountId -> [{folderId, folderName, folderType:''}]
+
 function startMockZoho(port = 0) {
   const server = http.createServer((req, res) => {
+    const chunks = [];
+    req.on('data', c => chunks.push(c));
+    req.on('end', () => handle(req, res, Buffer.concat(chunks).toString('utf8')));
+  });
+  function handle(req, res, rawBody) {
+    let reqBody = {};
+    try { reqBody = JSON.parse(rawBody || '{}'); } catch { reqBody = {}; }
     const url = new URL(req.url, 'http://mock');
     const p = url.pathname;
     const send = (status, body) => { res.writeHead(status, { 'Content-Type': 'application/json' }); res.end(JSON.stringify(body)); };
@@ -158,6 +168,16 @@ function startMockZoho(port = 0) {
     if ((m = p.match(/^\/api\/accounts\/([^/]+)\/folders$/))) {
       const id = m[1];
       if (id === ADMIN_ACCOUNT_ID || id === INFO_ORG_ACCOUNT_ID) {
+        // folder CREATE (collector organization) — write-scope surface
+        if (req.method === 'POST') {
+          if (!reqBody.folderName) return send(400, { status: { code: 400, description: 'folderName required' } });
+          CREATED_FOLDERS[id] = CREATED_FOLDERS[id] || [];
+          const existing = CREATED_FOLDERS[id].find(f => f.folderName === reqBody.folderName);
+          if (existing) return ok(existing);
+          const nf = { folderId: id + '-cf' + (CREATED_FOLDERS[id].length + 1), folderName: reqBody.folderName, folderType: '' };
+          CREATED_FOLDERS[id].push(nf);
+          return ok(nf);
+        }
         const folders = [
           { folderId: id + '-f1', folderName: 'Inbox', folderType: 'Inbox' },
           { folderId: id + '-f2', folderName: 'Sent', folderType: 'Sent' },
@@ -165,9 +185,23 @@ function startMockZoho(port = 0) {
         // archived mail lives in a normal listed folder — the pipeline must
         // ingest it autonomously like any other cold folder
         if (id === ADMIN_ACCOUNT_ID) folders.push({ folderId: id + '-f3', folderName: 'Archive', folderType: 'Archive' });
-        return ok(folders);
+        return ok(folders.concat(CREATED_FOLDERS[id] || []));
       }
       return invalidAccount(id); // non-account id → literal observed rejection
+    }
+    // message MOVE (collector organization): PUT updatemessage, mode=moveMessage
+    if ((m = p.match(/^\/api\/accounts\/([^/]+)\/updatemessage$/)) && req.method === 'PUT') {
+      const id = m[1];
+      if (!MESSAGES[id]) return invalidAccount(id);
+      if (reqBody.mode !== 'moveMessage' || !reqBody.destfolderId || !Array.isArray(reqBody.messageId)) {
+        return send(400, { status: { code: 400, description: 'mode/destfolderId/messageId required' } });
+      }
+      let moved = 0;
+      for (const mid of reqBody.messageId) {
+        const msg = MESSAGES[id].find(x => x.messageId === String(mid));
+        if (msg) { msg.folderId = String(reqBody.destfolderId); moved++; }
+      }
+      return ok({ moved });
     }
     if ((m = p.match(/^\/api\/accounts\/([^/]+)\/messages\/view$/))) {
       const id = m[1];
@@ -185,7 +219,10 @@ function startMockZoho(port = 0) {
       }
       const all = folderId.endsWith('-f2') ? []
         : folderId.endsWith('-f3') ? (ARCHIVE_MESSAGES[id] || [])
-        : MESSAGES[id];
+        // runtime-created folder (collector organization): only messages MOVED there
+        : folderId.includes('-cf') ? MESSAGES[id].filter(x => x.folderId === folderId)
+        // primary Inbox view: messages NOT moved elsewhere
+        : MESSAGES[id].filter(x => !x.folderId);
       return ok(all.slice(start - 1, start - 1 + limit));
     }
     if ((m = p.match(/^\/api\/accounts\/([^/]+)\/folders\/[^/]+\/messages\/([^/]+)\/content$/))) {
@@ -218,7 +255,7 @@ function startMockZoho(port = 0) {
       return res.end(PDF);
     }
     send(404, { status: { code: 404, description: 'URL Rule is not configured' } });
-  });
+  }
 
   // scan@ scenario: metadata visible in groups, folders probe rejected — the
   // generic invalidAccount above covers it since scan@ has no account id.
@@ -228,4 +265,4 @@ function startMockZoho(port = 0) {
 
 const TOKEN_STATS = { requests: 0 };
 
-module.exports = { startMockZoho, ZOID, ADMIN_ACCOUNT_ID, INFO_ORG_ACCOUNT_ID, _messages: MESSAGES, _tokenStats: TOKEN_STATS };
+module.exports = { startMockZoho, ZOID, ADMIN_ACCOUNT_ID, INFO_ORG_ACCOUNT_ID, _messages: MESSAGES, _tokenStats: TOKEN_STATS, _createdFolders: CREATED_FOLDERS };

@@ -125,11 +125,37 @@ async function finish() {
   console.log('\n' + JSON.stringify(out, null, 2));
 }
 
+// PHASE 3 (optional, owner decision): folder organization inside the collector
+// needs WRITE scopes — on the COLLECTOR connection ONLY (the admin connection
+// stays read-only). This mints a re-consent URL showing the expanded scopes;
+// nothing changes until the owner approves that screen.
+async function grantWrite() {
+  const conn = await one(`SELECT id, scopes FROM connections WHERE label=$1 ORDER BY id DESC LIMIT 1`, [LABEL]);
+  if (!conn) { console.error('no "Madar Capture" connection — run init first'); process.exit(1); }
+  const WRITE_SCOPES = ['ZohoMail.folders.ALL', 'ZohoMail.messages.ALL'];
+  const scopes = [...new Set(String(conn.scopes || '').split(',').map(s => s.trim()).filter(Boolean)
+    .concat(WRITE_SCOPES))].join(',');
+  await q('UPDATE connections SET scopes=$2 WHERE id=$1', [conn.id, scopes]);
+  const { ZohoClient } = require('../modules/mail/zoho-client');
+  const zoho = await ZohoClient.forConnection(Number(conn.id));
+  const state = randomToken();
+  await q(`INSERT INTO oauth_states (state_hash, connection_id, created_by, expires_at)
+           VALUES ($1,$2,NULL,$3)`, [sha256(Buffer.from(state)), conn.id, new Date(Date.now() + 10 * 60 * 1000)]);
+  const redirect = (process.env.BASE_URL || 'http://localhost:3000') + '/oauth/callback';
+  console.log('write scopes staged on the COLLECTOR connection only (admin connection untouched).');
+  console.log('ACTION: approve the expanded consent in the collector browser profile:');
+  console.log('\n' + zoho.authorizeUrl(redirect) + '&state=' + state + '\n');
+  console.log('after approving, the organizer starts moving processed mail on the next worker tick.');
+  console.log('If the write surface is rejected by the tenant, it is capability-recorded and');
+  console.log('ingestion continues unchanged (organization deferred, reported in live-sync status).');
+}
+
 (async () => {
   const cmd = process.argv[2];
   if (cmd === 'init') await init();
   else if (cmd === 'finish') await finish();
-  else { console.error('usage: collector-setup.js init | finish --address <collector-address> [--wait-sec N]'); process.exit(2); }
+  else if (cmd === 'grant-write') await grantWrite();
+  else { console.error('usage: collector-setup.js init | finish --address <collector-address> [--wait-sec N] | grant-write'); process.exit(2); }
   await closeDb();
   process.exit(0);
 })().catch(async e => { console.error('collector-setup failed:', e.message || e); try { await closeDb(); } catch {} process.exit(2); });

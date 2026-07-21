@@ -290,10 +290,10 @@ class ZohoClient {
   // body-read failure malformed_response. Nothing is ever collapsed into a bare
   // "HTTP 0": the original exception is preserved (sanitized) in body.originalError
   // and the request evidence in meta (redacted headers, timing, timeout, abort).
-  async get(pathname, { raw = false } = {}) {
+  async get(pathname, { raw = false, method = 'GET', jsonBody = null } = {}) {
     const url = new URL(pathname, this.conn.api_base).toString();
     const meta = {
-      url, method: 'GET', host: new URL(url).host,
+      url, method, host: new URL(url).host,
       headers: { Authorization: '[REDACTED Zoho-oauthtoken]' },
       timeoutMs: REQUEST_TIMEOUT_MS, abortControllerCreated: true, abortFired: false, abortReason: null,
       attempt: 1, retriesConfigured: 0,
@@ -320,7 +320,10 @@ class ZohoClient {
     let res;
     try {
       res = await fetch(url, {
-        headers: { Authorization: 'Zoho-oauthtoken ' + token },
+        method,
+        headers: { Authorization: 'Zoho-oauthtoken ' + token,
+          ...(jsonBody != null ? { 'Content-Type': 'application/json' } : {}) },
+        body: jsonBody != null ? JSON.stringify(jsonBody) : undefined,
         signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
       });
     } catch (err) {
@@ -370,6 +373,16 @@ class ZohoClient {
   // collector routing; capability-recorded by the caller when a tenant rejects it
   getMessageHeaders(accountId, folderId, messageId) {
     return this.get(`/api/accounts/${accountId}/folders/${folderId}/messages/${messageId}/header`);
+  }
+  // WRITE surface — collector-connection only (needs write scopes approved by
+  // the owner in a dedicated consent; callers capability-record rejections and
+  // degrade gracefully, they never assume writes are available)
+  createFolder(accountId, folderName) {
+    return this.get(`/api/accounts/${accountId}/folders`, { method: 'POST', jsonBody: { folderName } });
+  }
+  moveMessages(accountId, destFolderId, messageIds) {
+    return this.get(`/api/accounts/${accountId}/updatemessage`, { method: 'PUT',
+      jsonBody: { mode: 'moveMessage', destfolderId: String(destFolderId), messageId: messageIds.map(String) } });
   }
   getAttachmentInfo(accountId, folderId, messageId) {
     return this.get(`/api/accounts/${accountId}/folders/${folderId}/messages/${messageId}/attachmentinfo`);
