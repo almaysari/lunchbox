@@ -213,5 +213,64 @@ async function status() {
   return { enabled: true, mailboxes: perMailbox };
 }
 
+// Pre-create the WHOLE organization tree up front (owner mandate: the
+// structure is visible in the collector before the first message lands).
+// The organizer only creates folders it is about to move into — it never
+// creates 'Retry' (a manual requeue surface, not a move target) and creates
+// Processed-<cat> lazily. Idempotent: the live folder list seeds the id cache
+// first, because re-creating an existing name is a 4xx on real tenants and
+// the caps cache can be lost to a discovery re-run — without the seed, a
+// harmless re-run would falsely record the write surface as unsupported.
+async function ensureFolders() {
+  const out = { mailboxes: [] };
+  const addrs = collectorAddresses();
+  if (!addrs.length) return out;
+  const shared = await all(`SELECT address FROM mailboxes WHERE detected_type='shared_mailbox'
+    AND NOT (lower(address) = ANY($1)) ORDER BY address`, [addrs]);
+  const wanted = [...Object.values(ORG_FOLDERS),
+    ...shared.map(r => PROCESSED_PREFIX + String(r.address).split('@')[0].toLowerCase())];
+  const boxes = await all(`SELECT * FROM mailboxes WHERE lower(address) = ANY($1)
+    AND strategy='mail_api' AND is_pilot AND sync_enabled`, [addrs]);
+  for (const box of boxes) {
+    const caps = typeof box.capabilities === 'string' ? JSON.parse(box.capabilities || '{}') : (box.capabilities || {});
+    const rep = { address: box.address, ensured: [], created: [], errors: [], unsupported: null };
+    out.mailboxes.push(rep);
+    if (String(caps.collectorWrites || '').startsWith('unsupported')) { rep.unsupported = caps.collectorWrites; continue; }
+    const { ZohoClient } = require('./zoho-client');
+    const { ZohoMailApiConnector } = require('./connectors/zoho-mail-api');
+    let zoho, accountId;
+    try {
+      zoho = await ZohoClient.cachedForConnection(box.connection_id);
+      accountId = new ZohoMailApiConnector(zoho, box).id;
+    } catch (e) { rep.errors.push('client:' + (e.message || 'unknown')); continue; }
+    const folderIds = caps.collectorFolders || {};
+    let dirty = false;
+    const lf = await zoho.getFolders(accountId);
+    if (lf.status === 200 && Array.isArray(lf.body && lf.body.data)) {
+      for (const f of lf.body.data) {
+        if (f && f.folderName && f.folderId && wanted.includes(f.folderName) && !folderIds[f.folderName]) {
+          folderIds[f.folderName] = String(f.folderId); dirty = true;
+        }
+      }
+    }
+    for (const name of wanted) {
+      if (folderIds[name]) { rep.ensured.push(name); continue; }
+      const cr = await zoho.createFolder(accountId, name);
+      if (cr.status === 200 || cr.status === 201) {
+        const d = (cr.body && cr.body.data) || {};
+        if (d.folderId) { folderIds[name] = String(d.folderId); rep.created.push(name); rep.ensured.push(name); dirty = true; }
+        else rep.errors.push(name + ':no_folder_id');
+      } else if (cr.status >= 400 && cr.status < 500) {
+        caps.collectorWrites = 'unsupported:http_' + cr.status; rep.unsupported = caps.collectorWrites; dirty = true; break;
+      } else rep.errors.push(name + ':http_' + cr.status); // transport/5xx: next run retries
+    }
+    if (dirty) {
+      caps.collectorFolders = folderIds;
+      await q('UPDATE mailboxes SET capabilities=$1 WHERE id=$2', [JSON.stringify(caps), box.id]);
+    }
+  }
+  return out;
+}
+
 module.exports = { collectorAddresses, isCollectorAddress, categoryFor, isRetryable,
-  recordOutcome, organizePass, status, ORGANIZED_RE, ORG_FOLDERS, PROCESSED_PREFIX };
+  recordOutcome, organizePass, ensureFolders, status, ORGANIZED_RE, ORG_FOLDERS, PROCESSED_PREFIX };

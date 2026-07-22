@@ -152,6 +152,27 @@ function startMockZoho(port = 0) {
       return ok({ count: page.length, groups: page, domains: ['exoticcolors.org', 'thetaurus.world'] });
     }
     let m;
+    // group member management (mirror workflow) — write-scope surface
+    if ((m = p.match(new RegExp(`^/api/organization/${ZOID}/groups/(\\d+)$`))) && req.method === 'PUT') {
+      const g = ALL_GROUPS.find(x => String(x.zgid) === m[1]);
+      if (!g) return send(404, { status: { code: 404, description: 'Group not found' } });
+      // tenant-rejection fixture: scan@'s group refuses member management — the
+      // mirror workflow must contain + classify this, never crash or loop
+      if (g.emailId === 'scan@exoticcolors.org') {
+        return send(403, { status: { code: 403, description: 'Unauthorized group operation' }, data: {} });
+      }
+      if (reqBody.mode !== 'addMailGroupMember' || !Array.isArray(reqBody.mailGroupMemberList)) {
+        return send(400, { status: { code: 400, description: 'mode/mailGroupMemberList required' } });
+      }
+      g.mailGroupMemberList = g.mailGroupMemberList || [];
+      for (const mm of reqBody.mailGroupMemberList) {
+        const email = String(mm.memberEmailId || '').toLowerCase();
+        if (email && !g.mailGroupMemberList.some(x => String(x.memberEmailId).toLowerCase() === email)) {
+          g.mailGroupMemberList.push({ role: mm.role || 'member', status: 'active', memberEmailId: email });
+        }
+      }
+      return ok({ zgid: g.zgid, added: reqBody.mailGroupMemberList.length });
+    }
     if ((m = p.match(new RegExp(`^/api/organization/${ZOID}/groups/(\\d+)$`)))) {
       const g = ALL_GROUPS.find(x => String(x.zgid) === m[1]);
       return g ? ok(g) : send(404, { status: { code: 404, description: 'Group not found' } });
@@ -265,4 +286,4 @@ function startMockZoho(port = 0) {
 
 const TOKEN_STATS = { requests: 0 };
 
-module.exports = { startMockZoho, ZOID, ADMIN_ACCOUNT_ID, INFO_ORG_ACCOUNT_ID, _messages: MESSAGES, _tokenStats: TOKEN_STATS, _createdFolders: CREATED_FOLDERS };
+module.exports = { startMockZoho, ZOID, ADMIN_ACCOUNT_ID, INFO_ORG_ACCOUNT_ID, _messages: MESSAGES, _tokenStats: TOKEN_STATS, _createdFolders: CREATED_FOLDERS, _groups: ALL_GROUPS };

@@ -2200,6 +2200,88 @@ test('detection evidence sanitized: no tokens, no message PII, no attachment dow
   // (org-scope reports carry integrity when produced via the discover route)
 });
 
+// ---------- collector prepare: folder tree up front + group mirrors ----------
+// Owner mandate: (1) the whole organization tree exists in the collector BEFORE
+// the first message lands — the organizer creates folders lazily and NEVER
+// creates 'Retry' (a manual requeue surface, not a move target); (2) "mirrors":
+// the collector address becomes a member of every shared Zoho group so group
+// mail gets a mirrored copy into the collector. Membership writes go through a
+// DEDICATED consent connection — the admin read connection is never upgraded.
+test('collector prepare-folders + group mirrors: idempotent tree, live-verified membership, contained rejection', async () => {
+  const collector = require('../modules/mail/collector');
+  const mirror = require('../modules/mail/mirror');
+  const { _createdFolders, _groups } = require('./mock-zoho');
+  const admin = byAddress['m.almaysari@exoticcolors.org'];
+  await db.q('UPDATE mailboxes SET is_pilot=TRUE, sync_enabled=TRUE WHERE id=$1', [admin.id]);
+  process.env.MADAR_COLLECTOR_ADDRESSES = 'm.almaysari@exoticcolors.org';
+  try {
+    // ---- the tree: Failed/Unknown/Retry + Processed-<localpart> per shared mailbox
+    const f1 = await collector.ensureFolders();
+    const mb1 = f1.mailboxes.find(x => x.address === 'm.almaysari@exoticcolors.org');
+    assert.ok(mb1, 'collector mailbox covered');
+    const names = (_createdFolders[ADMIN_ACCOUNT_ID] || []).map(f => f.folderName);
+    for (const want of ['Failed', 'Unknown', 'Retry', 'Processed-finance', 'Processed-hr', 'Processed-ai', 'Processed-inventory']) {
+      assert.ok(names.includes(want), `${want} exists after ensureFolders`);
+    }
+    assert.ok(!names.includes('Processed-m.almaysari'), 'no Processed- folder for the collector itself');
+    // idempotent: a second run creates nothing (live list + cache both seed it)
+    const before = (_createdFolders[ADMIN_ACCOUNT_ID] || []).length;
+    const f2 = await collector.ensureFolders();
+    const mb2 = f2.mailboxes.find(x => x.address === 'm.almaysari@exoticcolors.org');
+    assert.strictEqual(mb2.created.length, 0, 'second run creates no folders');
+    assert.strictEqual((_createdFolders[ADMIN_ACCOUNT_ID] || []).length, before);
+    // folder ids cached on the mailbox row (organizer reuses them)
+    const capsRow = await db.one('SELECT capabilities FROM mailboxes WHERE id=$1', [admin.id]);
+    const caps = typeof capsRow.capabilities === 'string' ? JSON.parse(capsRow.capabilities) : capsRow.capabilities;
+    assert.ok(caps.collectorFolders && caps.collectorFolders['Retry'], 'Retry id cached');
+
+    // ---- mirrors: plan reads LIVE membership (stored member lists go stale)
+    process.env.MADAR_COLLECTOR_ADDRESSES = 'madar.capture@exoticcolors.org';
+    const plan1 = await mirror.planMirror();
+    const missing1 = plan1.groups.filter(g => g.state === 'missing').map(g => g.address);
+    assert.ok(missing1.includes('finance@exoticcolors.org'), 'finance missing the collector');
+    assert.ok(missing1.includes('ai@exoticcolors.org'), 'ai missing the collector');
+    assert.ok(!plan1.groups.some(g => g.address === 'madar.capture@exoticcolors.org'), 'collector is not a mirror target');
+
+    // apply refuses to run without the dedicated consent connection
+    await assert.rejects(() => mirror.applyMirror(), /Madar Groups Admin/);
+
+    // simulate the approved consent: dedicated connection, groups scope ONLY,
+    // with the tokens the real consent would have minted (refresh included)
+    await db.q(`INSERT INTO connections (provider, label, accounts_base, api_base, client_id,
+        client_secret_enc, refresh_token_enc, scopes, created_by, encryption_key_version, status)
+      SELECT provider, 'Madar Groups Admin', accounts_base, api_base, client_id, client_secret_enc,
+        refresh_token_enc, 'ZohoMail.organization.groups.ALL', created_by, encryption_key_version, 'connected'
+      FROM connections WHERE refresh_token_enc IS NOT NULL ORDER BY id LIMIT 1`);
+    const res = await mirror.applyMirror();
+    // scan@'s tenant rejection is contained + classified; everything else lands
+    const scan = res.applied.find(r => r.address === 'scan@exoticcolors.org');
+    assert.ok(scan && /^rejected:http_4\d\d$/.test(scan.verdict),
+      `scan verdict: ${scan && scan.verdict} — applied: ${JSON.stringify(res.applied)}`);
+    const fin = res.applied.find(r => r.address === 'finance@exoticcolors.org');
+    assert.strictEqual(fin && fin.verdict, 'mirrored', 'membership confirmed by live re-read');
+    // audited per change
+    const audited = await db.one(`SELECT COUNT(*)::int n FROM audit_log WHERE action='collector.mirror.add'`);
+    assert.ok(audited.n >= res.applied.length, 'every membership write audited');
+    // idempotent: re-plan sees membership; re-apply touches only the rejected group
+    const plan2 = await mirror.planMirror();
+    assert.strictEqual(plan2.groups.find(g => g.address === 'finance@exoticcolors.org').state, 'already_mirrored');
+    const res2 = await mirror.applyMirror();
+    assert.ok(res2.applied.length >= 1 && res2.applied.every(r => r.address === 'scan@exoticcolors.org'),
+      'second apply retries only the still-missing (rejected) group');
+    // honesty: membership is not delivery — the note points at the e2e proof
+    assert.ok(/e2e/.test(res.note), 'delivery caveat present');
+  } finally {
+    delete process.env.MADAR_COLLECTOR_ADDRESSES;
+    await db.q(`DELETE FROM connections WHERE label='Madar Groups Admin'`);
+    for (const g of _groups) {
+      if (Array.isArray(g.mailGroupMemberList)) {
+        g.mailGroupMemberList = g.mailGroupMemberList.filter(x => String(x.memberEmailId).toLowerCase() !== 'madar.capture@exoticcolors.org');
+      }
+    }
+  }
+});
+
 // ---------- health ----------
 test('health reflects database availability', async () => {
   assert.strictEqual(await db.healthy(), true);

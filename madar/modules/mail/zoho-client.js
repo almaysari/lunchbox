@@ -384,6 +384,14 @@ class ZohoClient {
     return this.get(`/api/accounts/${accountId}/updatemessage`, { method: 'PUT',
       jsonBody: { mode: 'moveMessage', destfolderId: String(destFolderId), messageId: messageIds.map(String) } });
   }
+  // GROUP member management — used ONLY by the mirror workflow over the
+  // dedicated 'Madar Groups Admin' connection (its own consent; the discovery
+  // connection stays read-only). Add-only: this client has no remove call.
+  addGroupMembers(zoid, zgid, emails) {
+    return this.get(`/api/organization/${zoid}/groups/${zgid}`, { method: 'PUT',
+      jsonBody: { mode: 'addMailGroupMember',
+        mailGroupMemberList: emails.map(e => ({ memberEmailId: String(e).toLowerCase(), role: 'member' })) } });
+  }
   getAttachmentInfo(accountId, folderId, messageId) {
     return this.get(`/api/accounts/${accountId}/folders/${folderId}/messages/${messageId}/attachmentinfo`);
   }

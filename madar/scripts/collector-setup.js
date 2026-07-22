@@ -150,12 +150,26 @@ async function grantWrite() {
   console.log('ingestion continues unchanged (organization deferred, reported in live-sync status).');
 }
 
+// PHASE 4 (after grant-write): pre-create the WHOLE organization tree so the
+// structure is visible in Zoho before the first message lands — including
+// 'Retry', which the organizer never creates (manual requeue surface, not a
+// move target). Idempotent; safe to re-run any time.
+async function prepareFolders() {
+  const res = await require('../modules/mail/collector').ensureFolders();
+  if (!res.mailboxes.length) {
+    console.error('no collector mailbox eligible — check MADAR_COLLECTOR_ADDRESSES / pilot+sync flags');
+    process.exit(1);
+  }
+  console.log(JSON.stringify(res, null, 2));
+}
+
 (async () => {
   const cmd = process.argv[2];
   if (cmd === 'init') await init();
   else if (cmd === 'finish') await finish();
   else if (cmd === 'grant-write') await grantWrite();
-  else { console.error('usage: collector-setup.js init | finish --address <collector-address> [--wait-sec N] | grant-write'); process.exit(2); }
+  else if (cmd === 'prepare-folders') await prepareFolders();
+  else { console.error('usage: collector-setup.js init | finish --address <collector-address> [--wait-sec N] | grant-write | prepare-folders'); process.exit(2); }
   await closeDb();
   process.exit(0);
 })().catch(async e => { console.error('collector-setup failed:', e.message || e); try { await closeDb(); } catch {} process.exit(2); });
