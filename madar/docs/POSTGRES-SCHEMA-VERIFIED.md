@@ -62,7 +62,8 @@ CREATE TABLE public.acceptance_samples (
     duplicate_canonicals integer DEFAULT 0 NOT NULL,
     transport_errors jsonb,
     rss_bytes bigint,
-    detail jsonb
+    detail jsonb,
+    worker_started_at timestamp with time zone
 );
 
 CREATE SEQUENCE public.acceptance_samples_id_seq

@@ -785,9 +785,10 @@ test('durable acceptance: state in DB, samples accumulate on one run, restart is
   await acc.takeSample(run);
   await acc.takeSample(run);
 
-  // "container restart": the worker comes back under a NEW pid — the sampler
-  // must CONTINUE the same run and record restart_detected, not lose the soak
-  await db.q('UPDATE sync_worker_heartbeat SET pid = 2222, updated_at = now()');
+  // "container restart": in Docker the pid is ALWAYS 1 — the restart signal is
+  // the BOOT IDENTITY (heartbeat started_at). Same pid + new boot time must
+  // still be detected; the sampler CONTINUES the same run.
+  await db.q(`UPDATE sync_worker_heartbeat SET pid = 2222, started_at = now() + interval '1 second', updated_at = now()`);
   await acc.takeSample(run);
   const samples = await db.all('SELECT * FROM acceptance_samples WHERE run_id=$1 ORDER BY id', [run.id]);
   assert.strictEqual(samples.length, 3, 'all samples on the SAME run across the restart');
@@ -810,12 +811,48 @@ test('durable acceptance: state in DB, samples accumulate on one run, restart is
   assert.strictEqual(ev.checks.survives_restart.restartsObserved, 1);
   assert.strictEqual(ev.verdict, 'PASS');
 
-  // stuck state must flip the verdict — the harness cannot be a rubber stamp
-  await db.q(`UPDATE acceptance_samples SET stuck_jobs = 3 WHERE id = $1`, [samples[1].id]);
+  // grow the run past the restart's grace window (5 samples at 60s cadence):
+  // three more samples on the SAME boot — indexes beyond the graced range
+  await acc.takeSample(run); await acc.takeSample(run); await acc.takeSample(run);
+  const S6 = await db.all('SELECT * FROM acceptance_samples WHERE run_id=$1 ORDER BY id', [run.id]);
+  assert.strictEqual(S6.length, 6);
+  const tail1 = S6[4].id, tail2 = S6[5].id; // both OUTSIDE the boot grace window
+
+  // stuck state must PERSIST to flip the verdict: a single-sample blip (the
+  // instant between a dead lease and the reconciler healing it, especially at
+  // boot) is reported but not a failure — TWO consecutive unexcused samples are.
+  await db.q(`UPDATE acceptance_samples SET stuck_jobs = 3 WHERE id = $1`, [tail2]);
+  const evBlip = await acc.evaluateRun(run.id);
+  assert.strictEqual(evBlip.checks.no_stuck_jobs.pass, true, 'single-sample blip is not a failure');
+  assert.ok(evBlip.checks.no_stuck_jobs.transientBlips >= 1, 'but it IS reported');
+  await db.q(`UPDATE acceptance_samples SET stuck_jobs = 3 WHERE id = $1`, [tail1]);
   const evBad = await acc.evaluateRun(run.id);
-  assert.strictEqual(evBad.checks.no_stuck_jobs.pass, false);
+  assert.strictEqual(evBad.checks.no_stuck_jobs.pass, false, 'persistent stuck fails');
   assert.strictEqual(evBad.verdict, 'FAIL');
-  await db.q(`UPDATE acceptance_samples SET stuck_jobs = 0 WHERE id = $1`, [samples[1].id]);
+  await db.q(`UPDATE acceptance_samples SET stuck_jobs = 0 WHERE id IN ($1,$2)`, [tail1, tail2]);
+
+  // restart downtime is EXCUSED by the boot-change grace window: the sample at
+  // the boot boundary reads stale — uptime still passes with the excusal
+  // reported; an unexcused stale sample far from any boot fails
+  await db.q(`UPDATE acceptance_samples SET worker_alive = FALSE WHERE id = $1`, [samples[2].id]);
+  const evGrace = await acc.evaluateRun(run.id);
+  assert.strictEqual(evGrace.checks.worker_uptime.pass, true, 'restart-window staleness excused');
+  assert.ok(evGrace.checks.worker_uptime.excusedByRestartGrace >= 1);
+  assert.strictEqual(evGrace.checks.survives_restart.pass, true);
+  await db.q(`UPDATE acceptance_samples SET worker_alive = FALSE WHERE id = $1`, [tail2]);
+  const evDown = await acc.evaluateRun(run.id);
+  assert.strictEqual(evDown.checks.worker_uptime.pass, false, 'staleness far from any boot is a REAL uptime failure');
+  await db.q(`UPDATE acceptance_samples SET worker_alive = TRUE WHERE id IN ($1,$2)`, [samples[2].id, tail2]);
+
+  // transport blips within budget pass (reported); sustained volume fails
+  await db.q(`UPDATE acceptance_samples SET transport_errors = '{"dns":1,"timeout":1}' WHERE id = $1`, [tail1]);
+  const evBlip2 = await acc.evaluateRun(run.id);
+  assert.strictEqual(evBlip2.checks.transport_health.pass, true, 'two blips over the run are within budget');
+  assert.strictEqual(evBlip2.checks.transport_health.errors, 2);
+  await db.q(`UPDATE acceptance_samples SET transport_errors = '{"dns":99}' WHERE id = $1`, [tail1]);
+  const evStorm = await acc.evaluateRun(run.id);
+  assert.strictEqual(evStorm.checks.transport_health.pass, false, 'sustained transport errors fail');
+  await db.q(`UPDATE acceptance_samples SET transport_errors = '{}' WHERE id = $1`, [tail1]);
 
   // finishing: past ends_at the sampler loop completes the run with a stored verdict
   await db.q(`UPDATE acceptance_runs SET ends_at = now() - interval '1 second' WHERE id=$1`, [run.id]);

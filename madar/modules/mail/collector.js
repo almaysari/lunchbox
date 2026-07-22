@@ -166,6 +166,9 @@ async function organizePass({ budgetMs = 15000, batch = 50 } = {}) {
         await q(`UPDATE collector_ingest SET move_state='done', moved_at=now() WHERE id = ANY($1)`,
           [rows.map(r => r.id)]);
         out.moved += rows.length;
+        // evidence-record the working write surface once (monitoring shows
+        // 'supported' instead of a forever-'untested')
+        if (caps.collectorWrites !== 'supported') { caps.collectorWrites = 'supported'; capsDirty = true; }
       } else if (mv.status >= 400 && mv.status < 500) { await recordUnsupported(mv.status); stop = true; }
       else { out.errors++; } // transient: stays pending for the next pass
     }
