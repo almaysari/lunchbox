@@ -15,11 +15,16 @@
 //     browser profile where the ORG ADMIN is signed in. The existing admin
 //     connection is never upgraded — it stays read-only.
 //
-//   apply [--only a@x,b@y]:
-//     docker compose exec app node scripts/collector-mirror.js apply
-//   → add-only membership writes through the dedicated connection, each one
-//     verified by a live re-read and audited. A group's rejection is
-//     classified and reported; the rest still apply. Idempotent.
+//   apply --include a@x,b@y   OR   apply --file /path/to/reviewed-list.txt:
+//     docker compose exec -it app node scripts/collector-mirror.js apply --include finance@exoticcolors.org
+//   → REQUIRES an explicit allowlist — "all missing groups" is never treated
+//     as approved. Policy-excluded groups (mirror.EXCLUDED_FOR_NOW) are
+//     refused even when allowlisted. Prints the final exact write set and
+//     asks for typed confirmation (APPLY) before any write. Add-only
+//     membership writes through the dedicated connection, each verified by a
+//     live re-read and audited; a group's rejection is classified and
+//     reported, the rest still apply. Idempotent; everything not allowlisted
+//     is left completely unchanged.
 //
 // Membership is necessary but NOT sufficient for delivery — group settings
 // decide whether members receive copies. The authoritative proof remains the
@@ -79,13 +84,47 @@ async function grant() {
 }
 
 async function apply() {
-  const onlyArg = arg('--only');
-  const only = onlyArg && onlyArg !== true
-    ? String(onlyArg).toLowerCase().split(',').map(s => s.trim()).filter(Boolean) : null;
-  const res = await mirror.applyMirror({ only });
+  // explicit allowlist only — refuse anything else
+  const allowlist = [];
+  const inc = arg('--include');
+  if (inc && inc !== true) allowlist.push(...String(inc).split(','));
+  const file = arg('--file');
+  if (file && file !== true) {
+    allowlist.push(...require('fs').readFileSync(String(file), 'utf8').split(/[\s,]+/));
+  }
+  const allow = [...new Set(allowlist.map(s => s.trim().toLowerCase()).filter(Boolean))];
+  if (!allow.length) {
+    console.error('REFUSED: an explicit allowlist is required — "all missing groups" is never approved by default.');
+    console.error('  collector-mirror.js apply --include a@x,b@y');
+    console.error('  collector-mirror.js apply --file /path/to/reviewed-list.txt   (addresses separated by newlines/commas)');
+    process.exit(2);
+  }
+
+  const p = await mirror.planMirror();
+  const resolved = mirror.resolveWriteSet(p, allow);
+  const collectorAddr = p.collector[0];
+
+  console.log('allowlist resolution:');
+  if (resolved.excludedByPolicy.length) console.log('  EXCLUDED by policy (never written):  ' + resolved.excludedByPolicy.join(', '));
+  if (resolved.unknownAddresses.length) console.log('  UNKNOWN (no such shared group):      ' + resolved.unknownAddresses.join(', '));
+  if (resolved.alreadyMirrored.length) console.log('  already mirrored (no write needed):  ' + resolved.alreadyMirrored.join(', '));
+  if (resolved.unreadable.length) console.log('  unreadable right now (skipped):      ' + resolved.unreadable.join(', '));
+  if (!resolved.writeSet.length) {
+    console.log('\nfinal write set is EMPTY — nothing to do, nothing was written.');
+    return;
+  }
+  console.log(`\nFINAL WRITE SET — ${collectorAddr} will be added as a member of exactly these ${resolved.writeSet.length} group(s):`);
+  for (const g of resolved.writeSet) console.log(`  + ${g.address}  (zgid ${g.zgid})`);
+  console.log('everything not listed above is left completely unchanged.');
+
+  const { askVisible } = require('./lib-prompt');
+  const answer = await askVisible(`\ntype APPLY to proceed (anything else aborts): `);
+  if (answer !== 'APPLY') { console.log('aborted — nothing written.'); return; }
+
+  const res = await mirror.applyMirror({ allowlist: allow });
   console.log(JSON.stringify(res, null, 2));
   const bad = res.applied.filter(r => r.verdict !== 'mirrored');
-  console.log(`\n${res.applied.length} write(s): ${res.applied.length - bad.length} mirrored, ${bad.length} not confirmed`);
+  console.log(`\n${res.applied.length} write(s): ${res.applied.length - bad.length} mirrored (live-reread verified), ${bad.length} not confirmed`);
   console.log('delivery proof per group: scripts/e2e-proof.js (membership alone is not delivery)');
 }
 
@@ -94,7 +133,7 @@ async function apply() {
   if (cmd === 'plan') await plan();
   else if (cmd === 'grant') await grant();
   else if (cmd === 'apply') await apply();
-  else { console.error('usage: collector-mirror.js [plan] | grant | apply [--only a@x,b@y]'); process.exit(2); }
+  else { console.error('usage: collector-mirror.js [plan] | grant | apply --include a@x,b@y | apply --file <reviewed-list>'); process.exit(2); }
   await closeDb();
   process.exit(0);
 })().catch(async e => { console.error('collector-mirror failed:', e.message || e); try { await closeDb(); } catch {} process.exit(2); });

@@ -11,6 +11,9 @@
 //     NEVER upgraded.
 //   * add-only: this module can add the collector to a group, never remove or
 //     modify anyone. Idempotent: an already-present member is skipped by plan.
+//   * EXPLICIT ALLOWLIST ONLY: apply refuses to run without one — "all missing
+//     groups" is never treated as approved. Policy-excluded groups
+//     (EXCLUDED_FOR_NOW) are refused even when explicitly allowlisted.
 //   * contained per group: one tenant rejection (4xx) is classified and
 //     reported, the rest of the groups still apply. Every write is audited.
 //   * honesty: membership is necessary but NOT sufficient for delivery —
@@ -22,6 +25,38 @@ const { audit } = require('../../core/audit');
 
 const GROUPS_ADMIN_LABEL = 'Madar Groups Admin';
 const GROUPS_WRITE_SCOPE = 'ZohoMail.organization.groups.ALL';
+
+// Owner-mandated policy exclusions: these groups are NEVER written to, even
+// when explicitly allowlisted — apply refuses them and reports why. Lifting
+// one is a code change (reviewed + tested), not a CLI flag.
+const EXCLUDED_FOR_NOW = [
+  'all@exoticcolors.ae',
+  'all@exoticcolors.org',
+  'ismail.yassin@exoticcolors.org',
+  'notifications@exoticcolors.org',
+  'system@exoticcolors.org',
+  'officemailrestrictions@exoticcolors.org',
+  'access@exoticcolors.org',
+];
+
+// Deterministic write-set resolution — pure, so the CLI can show the operator
+// the EXACT set before confirmation and apply recomputes the same answer.
+function resolveWriteSet(plan, allowlist) {
+  const allow = [...new Set((allowlist || []).map(a => String(a).toLowerCase().trim()).filter(Boolean))];
+  const excludedByPolicy = allow.filter(a => EXCLUDED_FOR_NOW.includes(a));
+  const eligible = allow.filter(a => !EXCLUDED_FOR_NOW.includes(a));
+  const byAddr = new Map(plan.groups.map(g => [String(g.address).toLowerCase(), g]));
+  const unknownAddresses = eligible.filter(a => !byAddr.has(a));
+  const writeSet = [], alreadyMirrored = [], unreadable = [];
+  for (const a of eligible) {
+    const g = byAddr.get(a);
+    if (!g) continue;
+    if (g.state === 'missing') writeSet.push(g);
+    else if (g.state === 'already_mirrored') alreadyMirrored.push(a);
+    else unreadable.push(a);
+  }
+  return { writeSet, excludedByPolicy, unknownAddresses, alreadyMirrored, unreadable };
+}
 
 function liveMembers(body) {
   const d = (body && body.data) || {};
@@ -54,9 +89,14 @@ async function planMirror() {
   return { collector: addrs, groups };
 }
 
-async function applyMirror({ only = null } = {}) {
+async function applyMirror({ allowlist = null } = {}) {
+  const allow = (Array.isArray(allowlist) ? allowlist : []).map(a => String(a).toLowerCase().trim()).filter(Boolean);
+  if (!allow.length) {
+    throw new Error('an explicit allowlist is required (--include a@x,b@y or --file <reviewed list>) — apply NEVER treats "all missing groups" as approved');
+  }
   const plan = await planMirror();
   const collectorAddr = plan.collector[0];
+  const resolved = resolveWriteSet(plan, allow);
   const conn = await one(`SELECT id FROM connections WHERE label=$1 AND status='connected'
     ORDER BY id DESC LIMIT 1`, [GROUPS_ADMIN_LABEL]);
   if (!conn) {
@@ -64,7 +104,7 @@ async function applyMirror({ only = null } = {}) {
   }
   const { ZohoClient } = require('./zoho-client');
   const zoho = await ZohoClient.cachedForConnection(Number(conn.id));
-  const targets = plan.groups.filter(g => g.state === 'missing' && (!only || only.includes(g.address)));
+  const targets = resolved.writeSet;
   const applied = [];
   for (const g of targets) {
     let verdict, httpStatus = null, classification = null;
@@ -86,10 +126,13 @@ async function applyMirror({ only = null } = {}) {
   }
   return {
     collector: collectorAddr, applied,
-    alreadyMirrored: plan.groups.filter(g => g.state === 'already_mirrored').map(g => g.address),
-    unreadable: plan.groups.filter(g => g.state === 'unreadable').map(g => g.address),
+    excludedByPolicy: resolved.excludedByPolicy,
+    unknownAddresses: resolved.unknownAddresses,
+    alreadyMirrored: resolved.alreadyMirrored,
+    unreadableAllowlisted: resolved.unreadable,
     note: 'membership is necessary but NOT sufficient for delivery — group settings decide member copies; the authoritative proof is the e2e capture probe (scripts/e2e-proof.js)',
   };
 }
 
-module.exports = { planMirror, applyMirror, GROUPS_ADMIN_LABEL, GROUPS_WRITE_SCOPE };
+module.exports = { planMirror, applyMirror, resolveWriteSet,
+  GROUPS_ADMIN_LABEL, GROUPS_WRITE_SCOPE, EXCLUDED_FOR_NOW };

@@ -2243,8 +2243,24 @@ test('collector prepare-folders + group mirrors: idempotent tree, live-verified 
     assert.ok(missing1.includes('ai@exoticcolors.org'), 'ai missing the collector');
     assert.ok(!plan1.groups.some(g => g.address === 'madar.capture@exoticcolors.org'), 'collector is not a mirror target');
 
-    // apply refuses to run without the dedicated consent connection
-    await assert.rejects(() => mirror.applyMirror(), /Madar Groups Admin/);
+    // SAFEGUARD: apply refuses without an explicit allowlist — "all missing"
+    // is NEVER treated as approved
+    await assert.rejects(() => mirror.applyMirror(), /allowlist/);
+    await assert.rejects(() => mirror.applyMirror({ allowlist: [] }), /allowlist/);
+
+    // the write set is resolved deterministically BEFORE any write: policy
+    // exclusions are refused even when explicitly included, typos surface as
+    // unknown, and everything else must be a known missing group
+    const allowlist = ['finance@exoticcolors.org', 'hr@exoticcolors.org', 'scan@exoticcolors.org',
+      'system@exoticcolors.org', 'typo@exoticcolors.org'];
+    const resolved = mirror.resolveWriteSet(plan1, allowlist);
+    assert.deepStrictEqual(resolved.writeSet.map(g => g.address).sort(),
+      ['finance@exoticcolors.org', 'hr@exoticcolors.org', 'scan@exoticcolors.org']);
+    assert.deepStrictEqual(resolved.excludedByPolicy, ['system@exoticcolors.org']);
+    assert.deepStrictEqual(resolved.unknownAddresses, ['typo@exoticcolors.org']);
+
+    // with an allowlist but no consent connection: still refuses
+    await assert.rejects(() => mirror.applyMirror({ allowlist }), /Madar Groups Admin/);
 
     // simulate the approved consent: dedicated connection, groups scope ONLY,
     // with the tokens the real consent would have minted (refresh included)
@@ -2253,8 +2269,17 @@ test('collector prepare-folders + group mirrors: idempotent tree, live-verified 
       SELECT provider, 'Madar Groups Admin', accounts_base, api_base, client_id, client_secret_enc,
         refresh_token_enc, 'ZohoMail.organization.groups.ALL', created_by, encryption_key_version, 'connected'
       FROM connections WHERE refresh_token_enc IS NOT NULL ORDER BY id LIMIT 1`);
-    const res = await mirror.applyMirror();
-    // scan@'s tenant rejection is contained + classified; everything else lands
+    const res = await mirror.applyMirror({ allowlist });
+    // ONLY the allowlisted write set is attempted — nothing else
+    assert.deepStrictEqual(res.applied.map(r => r.address).sort(),
+      ['finance@exoticcolors.org', 'hr@exoticcolors.org', 'scan@exoticcolors.org']);
+    assert.deepStrictEqual(res.excludedByPolicy, ['system@exoticcolors.org']);
+    assert.deepStrictEqual(res.unknownAddresses, ['typo@exoticcolors.org']);
+    // non-allowlisted missing groups are left completely unchanged on Zoho
+    const aiGroup = _groups.find(g => g.emailId === 'ai@exoticcolors.org');
+    assert.ok(!aiGroup.mailGroupMemberList.some(x => String(x.memberEmailId).toLowerCase() === 'madar.capture@exoticcolors.org'),
+      'ai@ (missing but not allowlisted) untouched');
+    // scan@'s tenant rejection is contained + classified; the rest land
     const scan = res.applied.find(r => r.address === 'scan@exoticcolors.org');
     assert.ok(scan && /^rejected:http_4\d\d$/.test(scan.verdict),
       `scan verdict: ${scan && scan.verdict} — applied: ${JSON.stringify(res.applied)}`);
@@ -2266,7 +2291,7 @@ test('collector prepare-folders + group mirrors: idempotent tree, live-verified 
     // idempotent: re-plan sees membership; re-apply touches only the rejected group
     const plan2 = await mirror.planMirror();
     assert.strictEqual(plan2.groups.find(g => g.address === 'finance@exoticcolors.org').state, 'already_mirrored');
-    const res2 = await mirror.applyMirror();
+    const res2 = await mirror.applyMirror({ allowlist });
     assert.ok(res2.applied.length >= 1 && res2.applied.every(r => r.address === 'scan@exoticcolors.org'),
       'second apply retries only the still-missing (rejected) group');
     // honesty: membership is not delivery — the note points at the e2e proof
