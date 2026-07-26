@@ -1,0 +1,5 @@
+# Runtime data: OAuth tokens, messages, attachments, local db — never commit.
+data/
+data-demo/
+.env
+node_modules/

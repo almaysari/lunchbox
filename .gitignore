@@ -1,0 +1,4 @@
+# third-party agent skills — installed per-session, never committed
+.agents/
+.claude/
+skills-lock.json

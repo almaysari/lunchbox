@@ -1,0 +1,971 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>مدار — منصة الشركة</title>
+<style>
+  :root {
+    --bg:#f4f6fa; --card:#fff; --ink:#17233b; --muted:#64748b; --brand:#2545d3;
+    --brand-soft:#e8ecfd; --line:#e4e8f0; --ok:#157f3d; --ok-soft:#e3f5ea;
+    --warn:#92400e; --warn-soft:#fdf0e0; --bad:#b3261e; --bad-soft:#fdeceb;
+  }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:"Segoe UI",Tahoma,Arial,sans-serif; background:var(--bg); color:var(--ink); font-size:14px; }
+  header { background:var(--card); border-bottom:1px solid var(--line); padding:10px 22px; display:flex; align-items:center; gap:14px; }
+  .logo { width:36px; height:36px; border-radius:10px; background:var(--brand); color:#fff; display:grid; place-items:center; font-weight:700; }
+  h1 { font-size:17px; margin:0; }
+  .sub { color:var(--muted); font-size:12px; }
+  .spacer { flex:1; }
+  nav button { font:inherit; border:none; background:none; padding:8px 14px; border-radius:8px; cursor:pointer; color:var(--muted); }
+  nav button.active { background:var(--brand-soft); color:var(--brand); font-weight:600; }
+  main { max-width:1180px; margin:18px auto; padding:0 18px; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:16px 18px; margin-bottom:14px; }
+  button.btn { font:inherit; cursor:pointer; border:1px solid var(--line); background:var(--card); color:var(--ink); padding:7px 14px; border-radius:8px; }
+  button.primary { background:var(--brand); border-color:var(--brand); color:#fff; }
+  button.btn:disabled { opacity:.5; cursor:default; }
+  input, select { font:inherit; padding:8px 12px; border:1px solid var(--line); border-radius:8px; background:var(--card); }
+  table { width:100%; border-collapse:collapse; font-size:13px; }
+  th, td { text-align:right; padding:8px 10px; border-bottom:1px solid var(--line); vertical-align:top; }
+  th { color:var(--muted); font-weight:600; font-size:12px; }
+  .tag { display:inline-block; font-size:11px; padding:2px 9px; border-radius:99px; margin:1px; white-space:nowrap; }
+  .tag.shared_mailbox { background:var(--brand-soft); color:var(--brand); }
+  .tag.user { background:var(--ok-soft); color:var(--ok); }
+  .tag.distribution_list, .tag.stream_group { background:#eef2f7; color:var(--muted); }
+  .tag.ready, .tag.ok { background:var(--ok-soft); color:var(--ok); }
+  .tag.no_live_api, .tag.warn { background:var(--warn-soft); color:var(--warn); }
+  .tag.error, .tag.bad { background:var(--bad-soft); color:var(--bad); }
+  .tag.gray { background:#eef2f7; color:var(--muted); }
+  .stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:12px; margin-bottom:14px; }
+  .stat { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:12px 15px; }
+  .stat .n { font-size:24px; font-weight:700; }
+  .stat .l { color:var(--muted); font-size:12px; }
+  .banner { border-radius:10px; padding:10px 14px; font-size:13px; margin-bottom:12px; }
+  .banner.warn { background:var(--warn-soft); color:var(--warn); }
+  .banner.ok { background:var(--ok-soft); color:var(--ok); }
+  .banner.bad { background:var(--bad-soft); color:var(--bad); }
+  .cols { display:grid; grid-template-columns:250px 300px 1fr; gap:12px; min-height:60vh; }
+  .list-item { padding:9px 12px; border-radius:8px; cursor:pointer; border-bottom:1px solid var(--line); }
+  .list-item:hover { background:var(--bg); }
+  .list-item.active { background:var(--brand-soft); }
+  .msg-from { font-weight:600; font-size:13px; }
+  .msg-sub { font-size:12.5px; }
+  .msg-snip, .msg-time { color:var(--muted); font-size:11.5px; }
+  .scroll { overflow-y:auto; max-height:70vh; }
+  pre.evidence { direction:ltr; text-align:left; background:#0f172a; color:#cde3ff; padding:12px; border-radius:8px; font-size:11px; overflow:auto; max-height:340px; }
+  dialog { border:none; border-radius:14px; padding:0; width:min(900px,94vw); max-height:88vh; }
+  ::backdrop { background: rgba(15,23,42,.45); }
+  .dlg-head { display:flex; align-items:center; gap:10px; padding:12px 16px; border-bottom:1px solid var(--line); }
+  .dlg-body { padding:14px 18px; overflow:auto; max-height:74vh; }
+  #login { max-width:360px; margin:12vh auto; }
+  #login input { width:100%; margin-bottom:10px; }
+  .attach { display:inline-flex; gap:6px; align-items:center; background:var(--brand-soft); color:var(--brand); border-radius:8px; padding:5px 11px; font-size:12.5px; text-decoration:none; margin:3px 3px 0 0; }
+  .row { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+  .body-frame { border:1px solid var(--line); border-radius:8px; width:100%; min-height:300px; background:#fff; }
+  /* ---- mail client layout ---- */
+  .mailwrap { display:grid; grid-template-columns:250px 360px minmax(0,1fr); gap:12px; height:calc(100vh - 132px); }
+  .pane { padding:0; overflow:hidden; display:flex; flex-direction:column; margin-bottom:0; }
+  .pane-head { display:flex; gap:8px; padding:10px 12px; border-bottom:1px solid var(--line); align-items:center; }
+  .scrollfill { overflow-y:auto; flex:1; min-height:0; }
+  .rail-group { font-size:11px; color:var(--muted); padding:12px 14px 4px; font-weight:700; letter-spacing:.3px; }
+  .mb-item { padding:8px 12px; cursor:pointer; border-inline-start:3px solid transparent; }
+  .mb-item:hover { background:var(--bg); }
+  .mb-item.active { background:var(--brand-soft); border-inline-start-color:var(--brand); }
+  .mb-item .addr { color:var(--muted); font-size:11px; direction:ltr; text-align:right; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .chips { display:flex; gap:6px; padding:8px 12px; flex-wrap:wrap; border-bottom:1px solid var(--line); }
+  .chip { font-size:12px; border:1px solid var(--line); background:var(--card); border-radius:99px; padding:3px 12px; cursor:pointer; color:var(--muted); }
+  .chip.active { background:var(--brand); color:#fff; border-color:var(--brand); }
+  .msg-item { display:grid; grid-template-columns:36px minmax(0,1fr) auto; gap:2px 10px; padding:10px 12px; cursor:pointer; border-bottom:1px solid var(--line); }
+  .msg-item:hover { background:var(--bg); }
+  .msg-item.active { background:var(--brand-soft); }
+  .avatar { width:34px; height:34px; border-radius:50%; background:var(--brand-soft); color:var(--brand); display:grid; place-items:center; font-weight:700; grid-row:1/4; }
+  .m-from { font-weight:600; font-size:13px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .m-time { color:var(--muted); font-size:11px; white-space:nowrap; }
+  .m-sub { grid-column:2/4; font-size:12.5px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .m-snip { grid-column:2/4; color:var(--muted); font-size:11.5px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .empty { color:var(--muted); text-align:center; padding:52px 16px; font-size:13px; line-height:2; }
+  .view-head { padding:16px 18px 12px; border-bottom:1px solid var(--line); }
+  .view-body { padding:12px 18px; display:flex; flex-direction:column; flex:1; min-height:0; }
+  .view-body .body-frame { flex:1; min-height:380px; }
+  #morePager { border-top:1px solid var(--line); padding:8px 12px; text-align:center; }
+  #morePager:empty { display:none; border:none; padding:0; }
+  @media (max-width:1000px){ .mailwrap { grid-template-columns:1fr; height:auto; } .pane { min-height:240px; max-height:60vh; } }
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">م</div>
+  <div><h1>مدار</h1><div class="sub">منصة الشركة الموحدة — قسم البريد</div></div>
+  <div class="spacer"></div>
+  <nav id="nav" style="display:none">
+    <button data-tab="mail" class="active">📥 البريد</button>
+    <button data-tab="admin">⚙️ الإدارة</button>
+  </nav>
+  <span id="userChip" class="tag gray" style="display:none"></span>
+  <button id="logoutBtn" class="btn" style="display:none">خروج</button>
+</header>
+
+<main>
+  <!-- ================= LOGIN ================= -->
+  <div id="login" class="card" style="display:none">
+    <h3 style="margin-top:0">تسجيل الدخول</h3>
+    <input id="loginEmail" placeholder="البريد الإلكتروني" autocomplete="username">
+    <input id="loginPass" type="password" placeholder="كلمة المرور">
+    <button class="btn primary" style="width:100%" onclick="doLogin()">دخول</button>
+    <p id="loginErr" style="color:var(--bad)"></p>
+    <p class="sub" id="loginHint"></p>
+  </div>
+
+  <!-- ================= MAIL ================= -->
+  <div id="tab-mail" style="display:none">
+    <div class="mailwrap">
+      <div class="pane card scrollfill" id="mailboxList"></div>
+      <div class="pane card">
+        <div class="pane-head">
+          <input id="q" type="search" placeholder="بحث في الرسائل..." style="flex:1;min-width:0">
+          <button class="btn" onclick="resetAndLoad()" title="تحديث">⟳</button>
+        </div>
+        <div class="chips" id="folderChips" style="display:none"></div>
+        <div class="sub" id="mailScope" style="padding:6px 14px 2px"></div>
+        <div class="scrollfill" id="messageList"><div class="empty">📬<br>اختر صندوقًا من القائمة</div></div>
+        <div id="morePager"></div>
+      </div>
+      <div class="pane card scrollfill" id="messageView"><div class="empty">📭<br>اختر رسالة لعرضها</div></div>
+    </div>
+  </div>
+
+  <!-- ================= ADMIN ================= -->
+  <div id="tab-admin" style="display:none">
+    <div id="adminBanners"></div>
+    <div class="stats" id="adminStats"></div>
+
+    <div class="card">
+      <div class="row" style="justify-content:space-between">
+        <h3 style="margin:0">اتصالات المؤسسة (OAuth)</h3>
+        <button class="btn" onclick="toggle('connForm')">+ إضافة اتصال Zoho</button>
+      </div>
+      <div id="connForm" style="display:none;margin-top:12px" class="row">
+        <input id="cLabel" placeholder="اسم الاتصال" value="Zoho — Exotic Colors">
+        <input id="cClientId" placeholder="Client ID" style="min-width:220px">
+        <input id="cClientSecret" placeholder="Client Secret" type="password" style="min-width:220px">
+        <input id="cAccounts" placeholder="Accounts Base" value="https://accounts.zoho.com">
+        <input id="cApi" placeholder="Mail API Base" value="https://mail.zoho.com">
+        <button class="btn primary" onclick="createConnection()">حفظ</button>
+      </div>
+      <table id="connTable" style="margin-top:10px"></table>
+    </div>
+
+    <div class="card">
+      <div class="row" style="justify-content:space-between">
+        <h3 style="margin:0">اكتشاف صناديق المؤسسة</h3>
+        <span class="sub">المصدر النهائي: Zoho API — القائمة المرجعية للتحقق فقط</span>
+      </div>
+      <div id="comparison" style="margin-top:10px"></div>
+    </div>
+
+    <div class="card">
+      <div class="row" style="justify-content:space-between">
+        <h3 style="margin:0">استلام أرشيفات المؤسسة <span class="sub" id="intakeSummary"></span></h3>
+        <button class="btn primary" onclick="batchIntake()">📦 رفع أرشيفات متعددة (ربط تلقائي بالصناديق)</button>
+      </div>
+      <div class="sub" style="margin:6px 0">التصدير من Zoho eDiscovery يدوي حتمًا (موثّق في DECISIONS) — كل ما بعد التنزيل يجري هنا: اختر كل ملفات ZIP دفعة واحدة، وسيُقترح ربط كل ملف بصندوقه من اسمه، وتؤكد الربط قبل البدء.</div>
+      <table id="intakeTable"></table>
+    </div>
+
+    <div class="card">
+      <div class="row" style="justify-content:space-between">
+        <h3 style="margin:0">مراقبة المزامنة الحية <span class="sub" id="liveWorker"></span></h3>
+        <button class="btn" onclick="liveTickNow()">⟳ مزامنة الآن</button>
+      </div>
+      <div class="sub" style="margin:6px 0">القراءة الحية المباشرة ممكنة فقط للصناديق ذات accountId (مثبت بالأدلة). الصناديق المشتركة تُلتقط رسائلها الجديدة عبر التوجيه: أي رسالة مزامنة معنونة لصندوق مشترك مسجّل تنشأ لها نسخة في صندوقها (نفس الرسالة الكانونية — صفر ازدواج مع الأرشيف لاحقًا).</div>
+      <table id="liveTable"></table>
+    </div>
+
+    <div class="card">
+      <div class="row" style="justify-content:space-between">
+        <h3 style="margin:0">هوية الرسالة (Canonical Identity v3) <span class="sub" id="fpStatus"></span></h3>
+        <button class="btn" onclick="loadFpMetrics()">↻ تحديث</button>
+      </div>
+      <div class="sub" style="margin:6px 0">القرار مفتوح حتى الإثبات على أرشيف eDiscovery حقيقي. المقاييس تُسجَّل داخل النظام لحظة الاستيعاب، وRFC Message-ID مرجع جنائي مستقل. التقرير النهائي: <code>node scripts/validate-fp3.js &lt;folder&gt;</code>.</div>
+      <table id="fpTable"></table>
+    </div>
+
+    <div class="card">
+      <div class="row" style="justify-content:space-between">
+        <h3 style="margin:0">تشخيص المزامنة (Diagnostics) <span class="sub" id="diagSummary"></span></h3>
+        <button class="btn" onclick="loadDiagnostics()">↻ تحديث</button>
+      </div>
+      <div class="sub" style="margin:6px 0">آخر دورة لكل صندوق: المرحلة، آخر Endpoint، المقروء/المُدرج/المتجاهل/الموجّه، وآخر استثناء كامل (Stack + سياق HTTP/SQL/Routing).</div>
+      <table id="diagTable"></table>
+      <div id="diagErrors" style="margin-top:8px"></div>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-top:0">سجل الصناديق <span class="sub" id="mbCount"></span></h3>
+      <table id="mbTable"></table>
+    </div>
+
+    <div class="card">
+      <div class="row" style="justify-content:space-between">
+        <h3 style="margin:0">المستخدمون والصلاحيات</h3>
+        <button class="btn" onclick="toggle('userForm')">+ مستخدم</button>
+      </div>
+      <div id="userForm" style="display:none;margin-top:10px" class="row">
+        <input id="uEmail" placeholder="email"><input id="uName" placeholder="الاسم">
+        <input id="uPass" placeholder="كلمة المرور" type="password">
+        <select id="uRole">
+          <option value="member">member</option>
+          <option value="auditor">auditor</option>
+          <option value="mail_admin">mail_admin</option>
+          <option value="security_admin">security_admin</option>
+          <option value="platform_admin">platform_admin</option>
+        </select>
+        <button class="btn primary" onclick="createUser()">إنشاء</button>
+      </div>
+      <table id="usersTable" style="margin-top:10px"></table>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-top:0">سجل التدقيق</h3>
+      <table id="auditTable"></table>
+    </div>
+  </div>
+</main>
+
+<dialog id="dlg">
+  <div class="dlg-head"><strong id="dlgTitle"></strong><div class="spacer"></div>
+    <button class="btn" onclick="document.getElementById('dlg').close()">إغلاق ✕</button></div>
+  <div class="dlg-body" id="dlgBody"></div>
+</dialog>
+
+<script>
+let ME = null, MAILBOXES = [], currentMailbox = null;
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+let CSRF = '';
+const api = async (path, opts = {}, retried = false) => {
+  const r = await fetch(path, { ...opts,
+    headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': CSRF, ...(opts.headers || {}) },
+    body: opts.body && typeof opts.body !== 'string' && !(opts.body instanceof Blob) ? JSON.stringify(opts.body) : opts.body });
+  const j = await r.json().catch(() => ({}));
+  if (!r.ok) {
+    // session rotation refreshes the CSRF token — refetch it once and retry
+    if (r.status === 403 && String(j.error || '').includes('CSRF') && !retried) {
+      const me = await fetch('/api/auth/me').then(x => x.json()).catch(() => null);
+      if (me && me.csrf) { CSRF = me.csrf; return api(path, opts, true); }
+    }
+    // surface the traceable id/class instead of a bare status — the operator
+    // can paste the trace into the Diagnostics page for the full stack
+    const e = new Error(j.error || ('HTTP ' + r.status));
+    e.errorId = j.errorId; e.traceId = j.traceId; e.stage = j.stage; e.errorClass = j.errorClass;
+    throw e;
+  }
+  return j;
+};
+const isAdminUser = u => u && u.roles && (u.roles.includes('platform_admin') || u.roles.includes('mail_admin'));
+const fmtT = t => t ? new Date(Number(t)).toLocaleString('ar', { dateStyle:'medium', timeStyle:'short' }) : '—';
+const TYPE_AR = { shared_mailbox:'صندوق مشترك', user:'صندوق مستخدم', distribution_list:'قائمة توزيع', stream_group:'مجموعة Streams', unknown:'غير معروف' };
+const STRAT_AR = { mail_api:'قراءة حية (Mail API)', ediscovery_import:'استيراد أرشيف eDiscovery', moderation_only:'مراجعة فقط', none:'—' };
+
+async function boot() {
+  ME = await api('/api/auth/me');
+  if (!ME && location.hash.startsWith('#auto:')) {
+    // demo convenience: #auto:email:password — server still verifies credentials
+    const [, email, pass] = location.hash.slice(1).split(':');
+    try { await api('/api/auth/login', { method:'POST', body:{ email, password: pass } }); ME = await api('/api/auth/me'); } catch {}
+    history.replaceState(null, '', location.pathname + (location.search || ''));
+  }
+  if (!ME) {
+    $('login').style.display='';
+    try { // hint appears ONLY on a fresh install with zero users
+      const st = await api('/api/auth/setup-status');
+      $('loginHint').textContent = st.hasUsers ? ''
+        : 'لا يوجد مستخدمون بعد — أنشئ أول Admin: docker compose exec app npm run create-admin';
+    } catch {}
+    return;
+  }
+  CSRF = ME.csrf || '';
+  if (ME.mustChangePassword) { renderForcedChange(); return; }
+  $('login').style.display='none';
+  $('nav').style.display = isAdminUser(ME) ? '' : 'none';
+  $('userChip').style.display=''; $('userChip').textContent = ME.email + ' (' + (ME.roles || []).join('،') + ')';
+  $('logoutBtn').style.display='';
+  showTab(new URLSearchParams(location.search).get('tab') === 'admin' && isAdminUser(ME) ? 'admin' : 'mail');
+  if (isAdminUser(ME)) loadAdmin();
+  loadMailboxesForMail();
+}
+function renderForcedChange() {
+  $('login').style.display = '';
+  $('login').innerHTML = `
+    <h3 style="margin-top:0">تغيير كلمة المرور إلزامي</h3>
+    <p class="sub">هذه أول جلسة بكلمة المرور المبدئية — يجب تغييرها قبل استخدام المنصة. بعد التغيير تُبطل كل الجلسات وتسجل الدخول من جديد.</p>
+    <input id="curPass" type="password" placeholder="كلمة المرور الحالية">
+    <input id="newPass" type="password" placeholder="كلمة المرور الجديدة (12+ حرفًا)">
+    <button class="btn primary" style="width:100%" onclick="doForcedChange()">تغيير وإعادة الدخول</button>
+    <p id="loginErr" style="color:var(--bad)"></p>`;
+}
+async function doForcedChange() {
+  try {
+    await api('/api/auth/change-password', { method:'POST', body:{ current_password:$('curPass').value, new_password:$('newPass').value } });
+    location.reload();
+  } catch (e) { $('loginErr').textContent = e.message; }
+}
+async function doLogin() {
+  try {
+    await api('/api/auth/login', { method:'POST', body:{ email:$('loginEmail').value, password:$('loginPass').value } });
+    location.reload();
+  } catch (e) { $('loginErr').textContent = e.message; }
+}
+$('logoutBtn').onclick = async () => { await api('/api/auth/logout', { method:'POST' }); location.reload(); };
+document.querySelectorAll('#nav button').forEach(b => b.onclick = () => showTab(b.dataset.tab));
+function showTab(t) {
+  document.querySelectorAll('#nav button').forEach(b => b.classList.toggle('active', b.dataset.tab === t));
+  $('tab-mail').style.display = t === 'mail' ? '' : 'none';
+  $('tab-admin').style.display = t === 'admin' ? '' : 'none';
+}
+function toggle(id) { $(id).style.display = $(id).style.display === 'none' ? '' : 'none'; }
+
+/* ================= MAIL ================= */
+let currentFolder = null, MSG_OFFSET = 0, MSG_TOTAL = null, MSG_SHOWN = 0;
+const MSG_PAGE = 100;
+const initial = s => (String(s || '?').trim()[0] || '?').toUpperCase();
+// relative time, mail-client style: time for today, «أمس», short date otherwise
+const fmtRel = t => {
+  if (!t) return '—';
+  const d = new Date(Number(t)), now = new Date();
+  if (d.toDateString() === now.toDateString()) return d.toLocaleTimeString('ar', { timeStyle: 'short' });
+  if (new Date(now - 864e5).toDateString() === d.toDateString()) return 'أمس';
+  return d.toLocaleDateString('ar', { day: 'numeric', month: 'short',
+    ...(d.getFullYear() !== now.getFullYear() ? { year: 'numeric' } : {}) });
+};
+
+async function loadMailboxesForMail() {
+  MAILBOXES = await api('/api/mail/mailboxes');
+  const groups = [
+    ['صناديق المستخدمين', MAILBOXES.filter(m => m.detectedType === 'user')],
+    ['الصناديق المشتركة', MAILBOXES.filter(m => m.detectedType === 'shared_mailbox')],
+    ['أخرى', MAILBOXES.filter(m => !['user', 'shared_mailbox'].includes(m.detectedType))],
+  ];
+  $('mailboxList').innerHTML =
+    `<div class="mb-item ${!currentMailbox ? 'active' : ''}" onclick="selectMailbox(null)" style="font-weight:600;padding-top:12px">🔍 كل الصناديق</div>` +
+    groups.filter(([, l]) => l.length).map(([t, l]) =>
+      `<div class="rail-group">${t} (${l.length})</div>` +
+      l.map(m => `
+      <div class="mb-item ${currentMailbox === m.id ? 'active' : ''}" onclick="selectMailbox(${m.id})">
+        <div style="font-weight:600;font-size:13px">${esc(m.displayName || m.address)} ${m.isPilot ? '<span class="tag ok">Pilot</span>' : ''}</div>
+        <div class="addr">${esc(m.address)}</div>
+      </div>`).join('')).join('');
+  await loadFolderChips();
+  resetAndLoad();
+}
+async function selectMailbox(id) {
+  currentMailbox = id; currentFolder = null;
+  await loadMailboxesForMail();
+}
+async function loadFolderChips() {
+  if (!currentMailbox) { $('folderChips').style.display = 'none'; currentFolder = null; return; }
+  const folders = await api(`/api/mail/mailboxes/${currentMailbox}/folders`).catch(() => []);
+  if (!folders.length) { $('folderChips').style.display = 'none'; currentFolder = null; return; }
+  $('folderChips').style.display = '';
+  $('folderChips').innerHTML =
+    `<span class="chip ${!currentFolder ? 'active' : ''}" onclick="setFolder(null)">الكل</span>` +
+    folders.map(f => `<span class="chip ${currentFolder === f.id ? 'active' : ''}" onclick="setFolder(${f.id})">${esc(f.name)}</span>`).join('');
+}
+async function setFolder(id) { currentFolder = id; await loadFolderChips(); resetAndLoad(); }
+function resetAndLoad() { MSG_OFFSET = 0; MSG_TOTAL = null; MSG_SHOWN = 0; loadMessages(false); }
+function msgParams() {
+  const params = new URLSearchParams();
+  if (currentMailbox) params.set('mailbox_id', currentMailbox);
+  if (currentFolder) params.set('folder_id', currentFolder);
+  const q = $('q').value.trim();
+  if (q) params.set('q', q);
+  return params;
+}
+async function loadMessages(append = false) {
+  const params = msgParams();
+  if (MSG_TOTAL == null) {
+    const c = await api('/api/mail/messages?' + params + '&count_only=1').catch(() => null);
+    MSG_TOTAL = c ? c.total : null;
+  }
+  params.set('limit', MSG_PAGE); params.set('offset', MSG_OFFSET);
+  // an unauthorized mailbox answers 404 by design (anti-enumeration) — for the
+  // UI that IS the "hidden by grant" case, not an error to explode on
+  const msgs = await api('/api/mail/messages?' + params).catch(() => []);
+  const html = msgs.map(m => `
+    <div class="msg-item" id="occ-${m.occurrence_id}" onclick="openMessage(${m.occurrence_id})">
+      <div class="avatar">${esc(initial(m.from_name || m.from_address))}</div>
+      <div class="m-from">${esc(m.from_name || m.from_address)}</div>
+      <div class="m-time">${fmtRel(m.received_at)} ${m.has_attachments ? '📎' : ''}${m.direction === 'out' ? ' ↗' : ''}</div>
+      <div class="m-sub">${esc(m.subject || '(بلا موضوع)')}</div>
+      <div class="m-snip">${esc((m.snippet || '').slice(0, 110))}</div>
+    </div>`).join('');
+  if (append) $('messageList').insertAdjacentHTML('beforeend', html);
+  else $('messageList').innerHTML = html;
+  MSG_SHOWN = (append ? MSG_SHOWN : 0) + msgs.length;
+  $('mailScope').textContent = (currentMailbox
+    ? (MAILBOXES.find(m => m.id === currentMailbox)?.address || '')
+    : 'كل الصناديق المصرّح لك بها')
+    + (MSG_TOTAL != null ? ` — ${MSG_SHOWN} من ${MSG_TOTAL} رسالة` : '');
+  $('morePager').innerHTML = (MSG_TOTAL != null && MSG_SHOWN < MSG_TOTAL && msgs.length === MSG_PAGE)
+    ? `<button class="btn" onclick="loadMore()">تحميل ${Math.min(MSG_PAGE, MSG_TOTAL - MSG_SHOWN)} رسالة أقدم (${MSG_SHOWN}/${MSG_TOTAL})</button>` : '';
+  if (MSG_SHOWN) return;
+
+  // empty: for an admin this is usually the content-privacy policy (no read
+  // grant), NOT missing data — say so instead of a misleading "no messages".
+  let hint = 'لا توجد رسائل هنا بعد — شغّل المزامنة أو استورد الأرشيف من لوحة الإدارة';
+  if (isAdminUser(ME) && currentMailbox) {
+    const t = await api(`/api/mail/mailboxes/${currentMailbox}/visibility-trace`).catch(() => null);
+    if (t) {
+      const g5 = t.checks['5_stored_but_hidden'];
+      // three DIFFERENT empty states, in plain language:
+      //   hidden-by-grant → the one-click audited self-grant
+      //   zero stored     → genuinely no mail here yet (routing/archive feeds it)
+      //   otherwise       → the technical verdict as-is
+      hint = g5.hiddenByGrant
+        ? `يوجد <b>${g5.storedInDb}</b> رسالة مخزّنة لهذا الصندوق لكنها محجوبة عنك بسياسة الخصوصية —
+           القراءة تتطلب منحة صريحة مدوَّنة.<br><br>
+           <button class="btn primary" onclick="selfGrantRead(${currentMailbox})">امنحني القراءة (مدوَّن)</button>`
+        : g5.storedInDb === 0
+          ? `لا بريد مخزّنًا لهذا الصندوق بعد — بريد الصناديق المشتركة يصل عبر توجيه نسخ الأعضاء
+             لحظيًا أو عبر استيراد الأرشيف من لوحة الإدارة.`
+          : `<b>${esc(t.verdict)}</b>`;
+    }
+  }
+  $('messageList').innerHTML = `<div class="empty">📭<br>${hint}</div>`;
+}
+async function loadMore() { MSG_OFFSET += MSG_PAGE; await loadMessages(true); }
+$('q').addEventListener('keydown', e => { if (e.key === 'Enter') resetAndLoad(); });
+async function openMessage(occId) {
+  document.querySelectorAll('.msg-item.active').forEach(x => x.classList.remove('active'));
+  $('occ-' + occId)?.classList.add('active');
+  const m = await api('/api/mail/occurrences/' + occId);
+  $('messageView').innerHTML = `
+    <div class="view-head">
+      <h3 style="margin:0 0 10px;font-size:16px">${esc(m.subject || '(بلا موضوع)')}</h3>
+      <div style="display:flex;gap:10px;align-items:center">
+        <div class="avatar">${esc(initial(m.from_name || m.from_address))}</div>
+        <div style="min-width:0;flex:1">
+          <div style="font-weight:600">${esc(m.from_name || m.from_address)}
+            <span class="sub" style="direction:ltr;display:inline-block">&lt;${esc(m.from_address)}&gt;</span></div>
+          <div class="sub">إلى: ${esc(m.to_addresses || '—')}${m.cc_addresses ? ' — نسخة: ' + esc(m.cc_addresses) : ''}</div>
+        </div>
+        <div class="sub" style="white-space:nowrap">${fmtT(m.received_at)}</div>
+      </div>
+      ${(m.appearsIn || []).length > 1 ? `<div class="sub" style="margin-top:6px">تظهر أيضًا في: ${m.appearsIn.map(o => esc(o.address + (o.folder ? ' / ' + o.folder : ''))).join('، ')}</div>` : ''}
+      ${(m.attachments || []).length ? `<div style="margin-top:8px">${m.attachments.map(a => a.quarantine_status === 'quarantined'
+    ? `<span class="attach" style="background:var(--bad-soft);color:var(--bad)">🚫 ${esc(a.name)} (محجور — النوع الفعلي يخالف المعلن)</span>`
+    : `<a class="attach" href="/api/mail/attachments/${a.id}" target="_blank">📎 ${esc(a.name)} <small>(${Math.round(a.size / 1024)}KB)</small></a>
+       <a class="attach" href="/api/mail/attachments/${a.id}?download=1" title="تنزيل">⬇</a>`).join('')}</div>` : ''}
+    </div>
+    <div class="view-body">
+      <iframe class="body-frame" sandbox="" srcdoc="${esc(m.body_html || '<p style=&quot;font-family:sans-serif&quot;>' + esc(m.snippet || '') + '</p>')}"></iframe>
+    </div>`;
+}
+
+/* ================= ADMIN ================= */
+async function loadAdmin() {
+  await Promise.all([loadConnections(), loadDiscovery(), loadMailboxesAdmin(), loadIntake(), loadLiveSync(), loadFpMetrics(), loadDiagnostics(), loadUsers(), loadAudit()]);
+  if (!window._liveTimer) window._liveTimer = setInterval(() => { if (location.hash !== '#mail') { loadLiveSync().catch(() => {}); loadIntake().catch(() => {}); loadDiagnostics().catch(() => {}); } }, 30000);
+}
+
+/* ---------- canonical identity v3 collision metrics ---------- */
+async function loadFpMetrics() {
+  const d = await api('/api/mail/fingerprint-metrics');
+  const m = d.metrics;
+  $('fpStatus').textContent = `(${d.status} — ثقة الربط ${d.correlationConfidence})`;
+  $('fpTable').innerHTML = `<tr><th>المقياس</th><th>القيمة</th></tr>
+    <tr><td>رسائل canonical</td><td>${d.canonicals}</td></tr>
+    <tr><td>نسخ (occurrences)</td><td>${d.occurrences}</td></tr>
+    <tr><td>تصادمات fp3 (دمج كاذب مُنِع)</td><td>${m.false_merges_prevented} ${m.false_merges_prevented ? '<span class="tag bad">راجع</span>' : '<span class="tag ok">0</span>'}</td></tr>
+    <tr><td>انقسام كاذب مُكتشَف</td><td>${m.false_splits_detected} ${m.false_splits_detected ? '<span class="tag bad">راجع</span>' : '<span class="tag ok">0</span>'}</td></tr>
+    <tr><td>تكرارات مُنِعت</td><td>${m.duplicates_prevented}</td></tr>
+    <tr><td>غير قابلة للربط زمنيًا</td><td>${m.time_unlinkable}</td></tr>
+    <tr><td>ثقة الارتباط (Correlation Confidence)</td><td><b>${d.correlationConfidence}</b></td></tr>`;
+}
+
+/* ---------- diagnostics ---------- */
+async function loadDiagnostics() {
+  const d = await api('/api/mail/diagnostics');
+  window._diag = d;
+  const errs = d.recentErrors.length;
+  $('diagSummary').textContent = errs ? `(${errs} خطأ حديث)` : '(لا أخطاء حديثة)';
+  $('diagTable').innerHTML = `<tr><th>الصندوق</th><th>النتيجة</th><th>المرحلة</th><th>آخر Endpoint</th><th>مقروء/مُدرج/متجاهل/موجّه</th><th>آخر تشغيل</th><th></th></tr>` +
+    (d.latestByMailbox.length ? d.latestByMailbox.map(r => `<tr>
+      <td class="sub" style="direction:ltr;text-align:right">${esc(r.mailbox || '—')}</td>
+      <td>${r.outcome === 'error' ? '<span class="tag bad">خطأ</span>' : '<span class="tag ok">سليم</span>'}</td>
+      <td>${esc(r.stage)}</td>
+      <td class="sub" style="direction:ltr;text-align:left;font-size:11px">${esc(r.endpoint || '—')}${r.httpStatus ? ` (HTTP ${r.httpStatus})` : ''}</td>
+      <td>${r.read}/${r.inserted}/${r.skipped}/${r.routed}</td>
+      <td>${fmtT(r.at)}</td>
+      <td><button class="btn" onclick="showDiag('${esc(r.traceId)}')">تفاصيل</button></td>
+    </tr>`).join('') : '<tr><td colspan="7" class="sub">لا دورات مزامنة بعد.</td></tr>');
+  $('diagErrors').innerHTML = errs
+    ? `<div class="banner bad">أحدث الأخطاء: ${d.recentErrors.slice(0, 5).map(r => `${esc(r.mailbox)} — [${esc(r.stage)}] ${esc((r.error && r.error.message) || '')} <a href="#" onclick="showDiag('${esc(r.traceId)}');return false">${esc(r.traceId)}</a>`).join(' • ')}</div>`
+    : '';
+}
+async function showDiag(traceId) {
+  const r = await api('/api/mail/diagnostics?trace_id=' + encodeURIComponent(traceId));
+  const e = r.error || {};
+  $('dlgTitle').textContent = 'تشخيص المزامنة — ' + traceId;
+  $('dlgBody').innerHTML = `
+    <table>
+      <tr><th>الصندوق</th><td>${esc(r.mailbox || '—')}</td></tr>
+      <tr><th>النتيجة</th><td>${esc(r.outcome)}</td></tr>
+      <tr><th>المرحلة عند التوقف</th><td><b>${esc(r.stage)}</b></td></tr>
+      <tr><th>آخر Endpoint</th><td style="direction:ltr;text-align:left">${esc(r.endpoint || '—')}${r.httpStatus ? ` — HTTP ${r.httpStatus}` : ''}</td></tr>
+      <tr><th>عدّادات</th><td>مقروء: ${r.read} — مُدرج: ${r.inserted} — متجاهل: ${r.skipped} — موجّه: ${r.routed}</td></tr>
+      ${r.responseSample ? `<tr><th>عيّنة الاستجابة</th><td style="direction:ltr;text-align:left"><code>${esc(JSON.stringify(r.responseSample))}</code></td></tr>` : ''}
+      ${e.class ? `<tr><th>نوع الخطأ</th><td>${esc(e.class)}</td></tr>` : ''}
+      ${e.message ? `<tr><th>الرسالة</th><td>${esc(e.message)}</td></tr>` : ''}
+      ${e.sqlState ? `<tr><th>SQLSTATE / Constraint</th><td style="direction:ltr;text-align:left">${esc(e.sqlState)}${e.constraint ? ' / ' + esc(e.constraint) : ''}</td></tr>` : ''}
+      ${e.routing ? `<tr><th>سياق التوجيه</th><td style="direction:ltr;text-align:left"><code>${esc(JSON.stringify(e.routing))}</code></td></tr>` : ''}
+    </table>
+    ${e.stack ? `<h4>Stack trace كامل</h4><pre class="evidence">${esc(e.stack)}</pre>` : '<div class="sub">لا استثناء — الدورة اكتملت بنجاح.</div>'}`;
+  $('dlg').showModal();
+}
+
+/* ---------- live sync monitoring ---------- */
+async function loadLiveSync() {
+  const d = await api('/api/mail/live-sync/status');
+  const w = d.worker;
+  $('liveWorker').textContent = w.running
+    ? `(نشطة — كل ${w.intervalSec}ث — آخر دورة: ${w.lastTickAt ? fmtT(w.lastTickAt) : '—'})`
+    : w.stale ? `(غير مستجيبة — آخر نبضة قبل ${w.ageSec}ث — أعد تشغيل الخدمة)`
+    : '(متوقفة — MADAR_LIVE_SYNC=off)';
+  $('liveTable').innerHTML = `<tr><th>الصندوق</th><th>مسار الالتقاط</th><th>آخر مزامنة</th><th>آخر رسالة</th><th>آخر UID</th><th>جديد 24س</th><th>الحالة/الأخطاء</th><th></th></tr>` +
+    d.mailboxes.map(r => {
+      const cap = r.captureVia === 'direct_api' ? '<span class="tag ok">API مباشر</span>'
+        : r.captureVia === 'routed_member_copy' ? '<span class="tag warn">توجيه نسخة العضو</span>' : '—';
+      const err = r.worker.lastError || (r.lastJob && r.lastJob.status === 'failed' ? r.lastJob.error : null);
+      const state = err
+        ? `<span class="tag bad">خطأ</span><div class="sub">${esc(err)}</div>${r.worker.backoffUntil ? `<div class="sub">إعادة محاولة: ${fmtT(r.worker.backoffUntil)}</div>` : ''}`
+        : r.liveEligible
+          ? (r.syncEnabled && r.isPilot ? '<span class="tag ok">تعمل</span>' : '<span class="tag gray">غير مفعّلة (Pilot/بدء صريح)</span>')
+          : '<span class="tag gray">عبر التوجيه فقط</span>';
+      return `<tr>
+        <td><b>${esc(r.displayName)}</b><div class="sub" style="direction:ltr;text-align:right">${esc(r.address)}</div></td>
+        <td>${cap}</td>
+        <td>${r.lastSyncAt ? fmtT(r.lastSyncAt) : '—'}</td>
+        <td>${r.lastMessageAt ? fmtT(r.lastMessageAt) : '—'}</td>
+        <td class="sub" style="direction:ltr">${esc(r.lastUid || '—')}</td>
+        <td>${r.newLast24h}</td>
+        <td>${state}</td>
+        <td>${r.liveEligible ? `<button class="btn" onclick="retryLive(${r.mailboxId})">Retry</button> ` : ''}<button class="btn" onclick="visibilityTrace(${r.mailboxId})">لِمَ لا أرى البريد؟</button></td>
+      </tr>`;
+    }).join('');
+}
+async function visibilityTrace(id) {
+  const t = await api(`/api/mail/mailboxes/${id}/visibility-trace`);
+  const c = t.checks;
+  const yn = b => b ? '<span class="tag ok">نعم</span>' : '<span class="tag bad">لا</span>';
+  const g5 = c['5_stored_but_hidden'];
+  $('dlgTitle').textContent = 'تشخيص الرؤية — ' + t.mailbox;
+  $('dlgBody').innerHTML = `
+    <div class="banner ${/محفوظة|فشلت|عالق|غير مفعّلة|متوقف/.test(t.verdict) ? 'bad' : 'ok'}"><b>الحكم:</b> ${esc(t.verdict)}</div>
+    <table>
+      <tr><th>1) العامل يعمل؟</th><td>${yn(c['1_worker_running'].ok)} — كل ${c['1_worker_running'].intervalSec}ث، آخر دورة: ${c['1_worker_running'].lastTickAt ? fmtT(c['1_worker_running'].lastTickAt) : '—'}</td></tr>
+      <tr><th>2) دورة حديثة؟</th><td>${yn(c['2_recent_cycle'].ok)} — ${c['2_recent_cycle'].lastCycleAt ? fmtT(c['2_recent_cycle'].lastCycleAt) : 'لا شيء'} (مهمة: ${esc(c['2_recent_cycle'].lastJobStatus || '—')})</td></tr>
+      <tr><th>3) جُلبت من Zoho؟</th><td>${yn(c['3_fetched_from_zoho'].ok)} — read=${c['3_fetched_from_zoho'].read}${c['3_fetched_from_zoho'].httpStatus ? `, HTTP ${c['3_fetched_from_zoho'].httpStatus}` : ''}</td></tr>
+      <tr><th>4) inserted / المؤشر / dedup</th><td>inserted=${c['4_inserted_or_cursor_dedup'].inserted}, skipped=${c['4_inserted_or_cursor_dedup'].skipped}, تكرارات=${c['4_inserted_or_cursor_dedup'].duplicatesPrevented}<br><span class="sub">${c['4_inserted_or_cursor_dedup'].cursors.map(x => `${esc(x.folder||'?')}: backfillDone=${x.backfillDone}, nextStart=${x.nextStart}${x.lastError?` خطأ:${esc(x.lastError)}`:''}`).join('<br>') || 'لا مؤشرات'}</span></td></tr>
+      <tr><th>5) محفوظة لكن محجوبة؟</th><td>مخزّنة=${g5.storedInDb} (24س: ${g5.storedLast24h}) — لديك صلاحية قراءة: ${yn(g5.youHaveReadGrant)} — في مجموعتك المقروءة: ${yn(g5.mailboxInYourReadableSet)} — قرّاء ممنوحون: ${g5.anyReadersGranted}${g5.hiddenByGrant ? ' <span class="tag bad">محجوبة بالصلاحية</span>' : ''}</td></tr>
+      <tr><th>6) status = syncing؟</th><td>${esc(c['6_status_syncing'].status)}${c['6_status_syncing'].stuck ? ' <span class="tag bad">عالق</span>' : ''}<br><span class="sub">${esc(c['6_status_syncing'].statusDetail||'')}</span></td></tr>
+      <tr><th>7) آخر diagnostics</th><td>${c['7_last_diagnostics'] ? `trace ${esc(c['7_last_diagnostics'].traceId)} — ${esc(c['7_last_diagnostics'].outcome)} @ ${esc(c['7_last_diagnostics'].stage)} — read=${c['7_last_diagnostics'].read} inserted=${c['7_last_diagnostics'].inserted} skipped=${c['7_last_diagnostics'].skipped} routed=${c['7_last_diagnostics'].routed}` : 'لا شيء'}</td></tr>
+    </table>
+    ${g5.hiddenByGrant ? `<div class="row" style="margin-top:8px;justify-content:flex-end"><button class="btn primary" onclick="selfGrantRead(${id})">امنحني القراءة الآن (مدوَّن)</button></div>` : ''}
+    ${c['7_last_diagnostics'] && c['7_last_diagnostics'].error ? `<h4>Stack آخر خطأ</h4><pre class="evidence">${esc(c['7_last_diagnostics'].error.stack||'')}</pre>` : ''}`;
+  $('dlg').showModal();
+}
+async function selfGrantRead(id) {
+  const me = await api('/api/auth/me');
+  await api('/api/admin/grants', { method: 'POST', body: { user_id: me.id, mailbox_id: id,
+    flags: { can_view_messages: true, can_view_attachments: true } } });
+  banners('<div class="banner ok">مُنِحت صلاحية القراءة (مدوَّنة في التدقيق) — افتح تبويب البريد الآن.</div>');
+  $('dlg').close(); loadMailboxesForMail();
+}
+async function liveTickNow() {
+  banners('<div class="banner warn">دورة مزامنة يدوية جارية لكل الصناديق المفعّلة...</div>');
+  const r = await api('/api/mail/live-sync/tick', { method: 'POST', body: {} });
+  banners(`<div class="banner ok">دورة المزامنة: نجحت ${r.synced} — مؤجلة backoff: ${r.skippedBackoff} — مشغولة: ${r.skippedBusy} — فشلت: ${r.failed}</div>`);
+  loadLiveSync(); loadMailboxesForMail();
+}
+async function retryLive(id) {
+  banners('<div class="banner warn">إعادة محاولة المزامنة...</div>');
+  try {
+    const s = await api(`/api/mail/mailboxes/${id}/sync`, { method: 'POST', body: {} });
+    banners(`<div class="banner ok">تمت: ${s.newOccurrences} حدث جديد${s.routed ? `، وُجّه للصناديق المشتركة: ${s.routed}` : ''}. (تتبّع: ${esc(s.traceId || '—')})</div>`);
+  } catch (e) { errBanner(e, 'فشلت إعادة المحاولة'); }
+  loadLiveSync(); loadDiagnostics();
+}
+
+/* ---------- org-wide archive intake ---------- */
+const INTAKE_STATE = {
+  pending: ['Pending — بانتظار الأرشيف', 'gray'],
+  importing: ['Importing — جاري الاستيراد', 'warn'],
+  completed: ['Completed — مكتمل', 'ok'],
+  failed: ['Failed — فشل', 'bad'],
+};
+async function loadIntake() {
+  const d = await api('/api/mail/archive-intake');
+  window._intake = d;
+  $('intakeSummary').textContent =
+    `(${d.summary.completed}/${d.summary.total} مكتمل — ${d.summary.pending} بانتظار — ${d.summary.failed} فاشل)`;
+  $('intakeTable').innerHTML = `<tr><th>الصندوق</th><th>الحالة</th><th>رسائل مستوردة</th><th>مرفقات</th><th>أجزاء</th><th>آخر الملفات</th><th></th></tr>` +
+    d.mailboxes.map(r => {
+      const [label, cls] = INTAKE_STATE[r.state] || [r.state, 'gray'];
+      return `<tr>
+      <td><b>${esc(r.displayName)}</b><div class="sub" style="direction:ltr;text-align:right">${esc(r.address)}</div></td>
+      <td><span class="tag ${cls}">${esc(label)}</span></td>
+      <td>${r.imported}</td><td>${r.attachments}</td>
+      <td>${r.completedParts}${r.failedParts ? ` <span class="tag bad">فشل: ${r.failedParts}</span>` : ''}</td>
+      <td class="sub" style="direction:ltr;text-align:left;font-size:11px">${r.imports.slice(0, 3).map(i =>
+        `${esc(i.filename || '#' + i.id)} — ${esc(i.status)}${i.error ? ' (' + esc(i.error) + ')' : ''}`).join('<br>') || '—'}</td>
+      <td><button class="btn" onclick="uploadArchive(${r.mailboxId})">رفع ZIP لهذا الصندوق</button></td>
+    </tr>`;
+    }).join('');
+}
+// Filename -> mailbox proposal. Proposal ONLY: the admin confirms every binding
+// before anything is imported (message-source correctness is non-negotiable).
+function guessMailboxForFile(name, mailboxes) {
+  const n = name.toLowerCase();
+  for (const m of mailboxes) {
+    const addr = m.address.toLowerCase();
+    const variants = [addr, addr.replace(/[@.]/g, '_'), addr.replace(/[@.]/g, '-'), addr.replace('@', '_at_')];
+    if (variants.some(v => n.includes(v))) return m.mailboxId;
+  }
+  // local-part match only if it is unambiguous across all shared mailboxes
+  const locals = {};
+  for (const m of mailboxes) {
+    const lp = m.address.toLowerCase().split('@')[0];
+    (locals[lp] = locals[lp] || []).push(m.mailboxId);
+  }
+  for (const [lp, ids] of Object.entries(locals)) {
+    if (ids.length === 1 && new RegExp('(^|[^a-z0-9])' + lp.replace(/[.*+?^${}()|[\]\\-]/g, '\\$&') + '([^a-z0-9]|$)').test(n)) return ids[0];
+  }
+  return null;
+}
+function batchIntake() {
+  const inp = document.createElement('input');
+  inp.type = 'file'; inp.accept = '.zip'; inp.multiple = true;
+  inp.onchange = () => {
+    const files = [...inp.files]; if (!files.length) return;
+    const boxes = (window._intake && window._intake.mailboxes) || [];
+    window._batchFiles = files;
+    const rows = files.map((f, i) => {
+      const guess = guessMailboxForFile(f.name, boxes);
+      return `<tr>
+        <td style="direction:ltr;text-align:left">${esc(f.name)}<div class="sub">${(f.size / 1048576).toFixed(1)}MB</div></td>
+        <td><select id="bmap${i}">
+          <option value="">— اختر الصندوق —</option>
+          ${boxes.map(b => `<option value="${b.mailboxId}" ${guess === b.mailboxId ? 'selected' : ''}>${esc(b.address)}</option>`).join('')}
+        </select>${guess ? '' : ' <span class="tag warn">لم يُتعرف من الاسم</span>'}</td>
+      </tr>`;
+    }).join('');
+    $('dlgTitle').textContent = 'تأكيد ربط الأرشيفات بالصناديق قبل الاستيراد';
+    $('dlgBody').innerHTML = `
+      <div class="sub">الربط أدناه اقتراح من أسماء الملفات — راجعه وصحّح أي ملف قبل البدء. لن يُستورد أي ملف بلا صندوق محدد.</div>
+      <table><tr><th>الملف</th><th>الصندوق الهدف</th></tr>${rows}</table>
+      <div class="row" style="margin-top:10px;justify-content:flex-end">
+        <button class="btn primary" onclick="runBatchIntake()">ابدأ استيراد الكل</button>
+      </div>
+      <div id="batchProgress" style="margin-top:8px"></div>`;
+    $('dlg').showModal();
+  };
+  inp.click();
+}
+async function runBatchIntake() {
+  const files = window._batchFiles || [];
+  const plan = [];
+  for (let i = 0; i < files.length; i++) {
+    const v = $('bmap' + i).value;
+    if (!v) { $('batchProgress').innerHTML = `<div class="banner bad">الملف «${esc(files[i].name)}» بلا صندوق — حدده أو أزل اختياره.</div>`; return; }
+    plan.push({ file: files[i], mailboxId: Number(v) });
+  }
+  let done = 0, imported = 0, attachments = 0, duplicates = 0;
+  const failures = [];
+  for (const p of plan) {
+    $('batchProgress').innerHTML = `<div class="banner warn">جاري ${done + 1}/${plan.length}: ${esc(p.file.name)}…</div>`;
+    const r = await fetch(`/api/mail/mailboxes/${p.mailboxId}/import-archive`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/zip', 'X-CSRF-Token': CSRF, 'X-File-Name': encodeURIComponent(p.file.name) },
+      body: p.file,
+    });
+    const j = await r.json();
+    if (r.ok) { imported += j.imported; attachments += j.attachments; duplicates += j.duplicates; }
+    else failures.push(`${p.file.name}: ${j.error}`);
+    done++;
+    loadIntake();
+  }
+  $('batchProgress').innerHTML = (failures.length
+    ? `<div class="banner bad">فشل ${failures.length} ملف:<br>${failures.map(esc).join('<br>')}</div>` : '')
+    + `<div class="banner ok">اكتمل ${plan.length - failures.length}/${plan.length}: ${imported} رسالة، ${attachments} مرفق، تكرارات مُنعت: ${duplicates}.</div>`;
+  loadIntake(); loadMailboxesAdmin(); loadMailboxesForMail();
+}
+async function loadConnections() {
+  const conns = await api('/api/mail/connections');
+  $('connTable').innerHTML = '<tr><th>الاسم</th><th>المزوّد</th><th>Client ID</th><th>الحالة</th><th></th></tr>' +
+    conns.map(c => `<tr>
+      <td>${esc(c.label)}</td><td>${esc(c.provider)}</td>
+      <td style="direction:ltr">${esc(String(c.client_id).slice(0, 18))}…</td>
+      <td><span class="tag ${c.authorized ? 'ok' : 'warn'}">${c.authorized ? 'مصرّح' : 'بانتظار الموافقة'}</span></td>
+      <td class="row">
+        ${!c.authorized ? `<button class="btn" onclick="authorizeConn(${c.id})">ربط OAuth</button>` : ''}
+        <button class="btn primary" onclick="runDiscover(${c.id})">🔎 اكتشاف الصناديق</button>
+      </td></tr>`).join('');
+}
+async function createConnection() {
+  await api('/api/mail/connections', { method:'POST', body:{
+    label:$('cLabel').value, client_id:$('cClientId').value, client_secret:$('cClientSecret').value,
+    accounts_base:$('cAccounts').value, api_base:$('cApi').value } });
+  toggle('connForm'); loadConnections();
+}
+async function authorizeConn(id) {
+  const r = await api(`/api/mail/connections/${id}/authorize-url`);
+  location.href = r.url;
+}
+async function runDiscover(id) {
+  banners('<div class="banner warn">جاري الاكتشاف من Zoho API...</div>');
+  try {
+    await api('/api/mail/discover', { method:'POST', body:{ connection_id:id } });
+    banners('');
+    await loadAdmin(); await loadMailboxesForMail();
+  } catch (e) { banners(`<div class="banner bad">فشل الاكتشاف: ${esc(e.message)}</div>`); }
+}
+function banners(html) { $('adminBanners').innerHTML = html; }
+// Rich error banner: shows the real message + class + trace id with a direct
+// link into Diagnostics — never a bare "internal error".
+function errBanner(e, prefix) {
+  const trace = e.traceId ? ` — <a href="#" onclick="showDiag('${e.traceId}');return false">تتبّع ${esc(e.traceId)}</a>` : '';
+  const meta = [e.errorClass, e.stage ? 'مرحلة: ' + e.stage : '', e.errorId ? 'رقم: ' + e.errorId : '']
+    .filter(Boolean).map(esc).join(' — ');
+  banners(`<div class="banner bad">${esc(prefix)}: ${esc(e.message)}${meta ? ` <span class="sub">(${meta})</span>` : ''}${trace}</div>`);
+}
+
+let PLATFORM_MODE = null;
+async function loadDiscovery() {
+  if (!PLATFORM_MODE) PLATFORM_MODE = (await api('/api/status')).mode;
+  const d = await api('/api/mail/discovery-status');
+  const c = d.comparison;
+  if (!c) { $('comparison').innerHTML = '<div class="sub">لم يتم تشغيل الاكتشاف بعد — أضف اتصالًا واضغط "اكتشاف الصناديق".</div>'; return; }
+  // Terminology is strict: Mock Discovery (demo) vs Live Zoho API Discovery.
+  const modeBanner = PLATFORM_MODE === 'demo'
+    ? '<div class="banner warn">⚠️ هذه نتائج <b>Mock Discovery</b> من محاكي محلي في الوضع التجريبي — ليست استجابة Zoho الحقيقية، ولا تثبت شيئًا عن حسابكم. المقارنة أدناه هي Fixture Validation فقط.</div>'
+    : '<div class="banner ok">✅ <b>Live Zoho API Discovery</b> — النتائج أدناه من استجابات Zoho الفعلية بعد OAuth.</div>';
+  $('adminStats').innerHTML = `
+    <div class="stat"><div class="n">${c.expectedCount}</div><div class="l">Expected (المرجع)</div></div>
+    <div class="stat"><div class="n">${c.discoveredCount}</div><div class="l">${PLATFORM_MODE === 'demo' ? 'أعادها الـMock' : 'Returned by Zoho API'}</div></div>
+    <div class="stat"><div class="n" style="color:var(--ok)">${c.matched.length}</div><div class="l">Matched</div></div>
+    <div class="stat"><div class="n" style="color:${c.missing.length ? 'var(--bad)' : 'var(--ok)'}">${c.missing.length}</div><div class="l">Missing</div></div>
+    <div class="stat"><div class="n">${c.extra.length}</div><div class="l">Unexpected</div></div>`;
+  $('comparison').innerHTML = modeBanner + `
+    ${c.missing.length ? `<div class="banner bad">صناديق في المرجع لم تُعِدها الاستجابة: ${c.missing.map(esc).join('، ')}</div>` : '<div class="banner ok">كل صناديق المرجع ظهرت في الاستجابة ✓</div>'}
+    ${c.extra.length ? `<div class="banner warn">عناوين في الاستجابة وليست في المرجع: ${c.extra.map(esc).join('، ')}</div>` : ''}
+    ${d.authorizedAs ? `<div class="sub">تم التصريح بحساب: <b style="direction:ltr">${esc(d.authorizedAs)}</b> — تأكد أنه حساب الأدمن الصحيح</div>` : ''}
+    ${d.integrity && (d.integrity.aliasCollisions?.length || d.integrity.duplicateProviderIds?.length || d.integrity.sameAddressFromMultipleEndpoints?.length)
+      ? `<div class="banner warn">تنبيهات تكامل: aliases متصادمة: ${(d.integrity.aliasCollisions||[]).length} — معرفات مكررة: ${(d.integrity.duplicateProviderIds||[]).length} — عناوين من أكثر من endpoint: ${(d.integrity.sameAddressFromMultipleEndpoints||[]).length}</div>`
+      : '<div class="sub">تكامل الاكتشاف: لا تصادم aliases، لا معرفات مكررة، لا عناوين مزدوجة المصدر</div>'}
+    <div class="sub">آخر اكتشاف: ${fmtT(d.at)} —
+      <a href="#" onclick="showEvidence();return false">عرض الأدلة الخام (Sanitized)</a> —
+      <a href="#" onclick="showEndpointMatrix();return false">مصفوفة الوصول لكل Endpoint (أدلة القراءة الحية)</a></div>`;
+  window._lastEvidence = d.evidence;
+}
+
+const MATRIX_CLS = {
+  success: ['✅ نجاح', 'ok'],
+  success_moderation_only: ['🟡 طابور المراجعة فقط', 'warn'],
+  empty_data: ['⚪ 200 بلا بيانات', 'warn'],
+  identifier_rejected: ['⛔ معرف مرفوض (غير مدعوم للكيان)', 'bad'],
+  permission_denied: ['🔒 رفض صلاحية', 'bad'],
+  not_attempted_no_account_id: ['— لا accountId (تعذر المحاولة بنيويًا)', 'warn'],
+  not_attempted_dependency: ['— لم تُجرَّب (تعتمد على فشل سابق)', 'warn'],
+};
+async function showEndpointMatrix() {
+  const mx = await api('/api/mail/discovery/endpoint-matrix');
+  const rows = mx.rows.map(r => {
+    const [label] = MATRIX_CLS[r.classification] || [r.classification];
+    return `<tr>
+      <td style="white-space:nowrap"><b>${esc(r.mailbox)}</b><br><span class="sub">${esc(r.detectedType)}</span></td>
+      <td style="direction:ltr;text-align:left;font-size:11px">${esc(r.endpoint)}${r.url ? `<br><span class="sub">${esc(r.url)}</span>` : ''}</td>
+      <td style="direction:ltr">${r.status ?? '—'}</td>
+      <td>${esc(label)}<br><span class="sub">${esc(r.reason)}</span></td>
+      <td style="direction:ltr;text-align:left;font-size:10.5px">${r.response ? esc(JSON.stringify(r.response)) : '—'}</td>
+    </tr>`;
+  }).join('');
+  $('dlgTitle').textContent = 'مصفوفة الوصول — كل endpoint رسمي جُرّب لقراءة الرسائل (من الأدلة المخزنة، بلا نداء جديد)';
+  $('dlgBody').innerHTML = `
+    ${mx.liveSharedMailboxReadProven
+      ? `<div class="banner warn">تنبيه: ثبتت قراءة حية لصناديق مشتركة عبر: ${mx.liveSharedReadMailboxes.map(esc).join('، ')} — راجع الصفوف الخضراء قبل اعتماد eDiscovery وحيدًا.</div>`
+      : `<div class="banner ok">كل المسارات الرسمية المختبرة تثبت عدم إمكانية القراءة الحية لرسائل الصناديق المشتركة — مسار الأرشيف الوحيد: استيراد eDiscovery (+ طابور المراجعة للمحتجز فقط).</div>`}
+    <div class="sub">ملخص التصنيفات: ${Object.entries(mx.summary).map(([k, v]) => `${esc((MATRIX_CLS[k] || [k])[0])}: ${v}`).join(' — ')} | صناديق مغطاة: ${mx.mailboxesCovered}</div>
+    <div style="overflow:auto;max-height:56vh"><table>
+      <tr><th>الصندوق</th><th>Endpoint / URL</th><th>Status</th><th>التصنيف والسبب</th><th>Response (Sanitized)</th></tr>
+      ${rows}
+    </table></div>
+    <div class="sub" style="margin-top:8px"><a href="#" onclick='showEvidence(window._lastMatrix, "مصفوفة الوصول — JSON خام");return false'>عرض JSON الخام للمصفوفة</a></div>`;
+  window._lastMatrix = mx;
+  $('dlg').showModal();
+}
+function showEvidence(obj, title) {
+  $('dlgTitle').textContent = title || 'أدلة الاكتشاف الخام (بدون توكنات)';
+  $('dlgBody').innerHTML = `<pre class="evidence">${esc(JSON.stringify(obj || window._lastEvidence, null, 2))}</pre>`;
+  $('dlg').showModal();
+}
+
+async function loadMailboxesAdmin() {
+  const boxes = await api('/api/mail/mailboxes');
+  $('mbCount').textContent = `(${boxes.length})`;
+  $('mbTable').innerHTML = `<tr><th>العنوان</th><th>النوع</th><th>مستوى الوصول</th><th>طريقة الربط</th><th>الحالة</th><th>Aliases</th><th>مراجعة</th><th>Pilot</th><th></th></tr>` +
+    boxes.map(m => `<tr>
+      <td><b>${esc(m.displayName)}</b><div class="sub" style="direction:ltr;text-align:right">${esc(m.address)}</div></td>
+      <td><span class="tag ${m.detectedType}">${TYPE_AR[m.detectedType] || esc(m.detectedType)}</span></td>
+      <td><span class="tag gray">${esc(m.accessLevel || '—')}</span></td>
+      <td><span class="tag ${m.strategy === 'mail_api' ? 'ok' : 'warn'}">${STRAT_AR[m.strategy] || esc(m.strategy)}</span></td>
+      <td><span class="tag ${esc(m.status)}">${esc(m.status)}</span><div class="sub">${esc((m.statusDetail || '').slice(0, 80))}</div></td>
+      <td>${m.aliases.map(a => `<span class="tag gray" style="direction:ltr">${esc(a)}</span>`).join('') || '—'}</td>
+      <td>${m.moderationCount ? `<span class="tag warn">${m.moderationCount} معلقة</span>` : '—'}</td>
+      <td><input type="checkbox" ${m.isPilot ? 'checked' : ''} onchange="setPilot(${m.id}, this.checked)"></td>
+      <td class="row">
+        <button class="btn" onclick="openMailboxDetail(${m.id})">التفاصيل</button>
+        ${m.strategy === 'mail_api' ? `<button class="btn primary" ${m.isPilot ? '' : 'disabled title="فعّل Pilot أولًا"'} onclick="openPilotReview(${m.id})">مراجعة وبدء Pilot Sync</button>
+        <button class="btn" onclick="openJobs(${m.id})">المهام</button>` : ''}
+        ${m.strategy === 'ediscovery_import' ? `<button class="btn" onclick="uploadArchive(${m.id})">رفع أرشيف ZIP</button>` : ''}
+      </td></tr>`).join('');
+}
+async function openJobs(mailboxId) {
+  const jobs = await api(`/api/mail/mailboxes/${mailboxId}/sync-jobs`);
+  $('dlgTitle').textContent = 'مهام المزامنة';
+  $('dlgBody').innerHTML = jobs.length ? `<table>
+    <tr><th>#</th><th>الحالة</th><th>مكتشَف</th><th>مستورد</th><th>متخطى</th><th>أخطاء</th><th>Cursor</th><th></th></tr>` +
+    jobs.map(j => `<tr>
+      <td>${j.id}</td><td><span class="tag ${j.status === 'completed' ? 'ok' : j.status === 'failed' ? 'bad' : 'warn'}">${esc(j.status)}</span></td>
+      <td>${j.discovered}</td><td>${j.imported}</td><td>${j.skipped}</td><td>${j.errors}</td><td>${j.current_cursor}</td>
+      <td class="row">
+        ${['queued','running'].includes(j.status) ? `<button class="btn" onclick="jobCtl(${j.id},'pause',${mailboxId})">⏸ إيقاف مؤقت</button>` : ''}
+        ${j.status === 'paused' ? `<button class="btn primary" onclick="document.getElementById('dlg').close();runSync(${mailboxId})">▶ استئناف</button>` : ''}
+        ${['queued','running','paused'].includes(j.status) ? `<button class="btn" onclick="jobCtl(${j.id},'cancel',${mailboxId})">✕ إلغاء</button>` : ''}
+      </td></tr>`).join('') + '</table>' : '<div class="sub">لا مهام بعد</div>';
+  $('dlg').showModal();
+}
+async function jobCtl(jobId, action, mailboxId) {
+  await api(`/api/mail/sync-jobs/${jobId}/${action}`, { method:'POST', body:{} });
+  openJobs(mailboxId);
+}
+async function setPilot(id, on) {
+  await api(`/api/mail/mailboxes/${id}/pilot`, { method:'POST', body:{ on } });
+  loadMailboxesAdmin();
+}
+// Mandatory pre-sync review: nothing syncs until the admin reads this and
+// explicitly presses "Start Read-Only Pilot Sync".
+async function openPilotReview(id) {
+  const m = await api('/api/mail/mailboxes/' + id);
+  const caps = m.capabilities || {}; const ids = caps.ids || {};
+  $('dlgTitle').textContent = 'مراجعة ما قبل المزامنة — ' + m.address;
+  $('dlgBody').innerHTML = `
+    <table>
+      <tr><th>النوع كما أعادته الاستجابة</th><td>${TYPE_AR[m.detectedType] || esc(m.detectedType)}</td></tr>
+      <tr><th>Provider IDs</th><td style="direction:ltr">groupId: ${esc(ids.groupId || '—')} | accountId: ${esc(ids.accountId || '—')} | mailboxId: ${esc(ids.mailboxId || '—')} | in Org Accounts: ${ids.appearsInOrgAccounts ? 'yes' : 'no'}</td></tr>
+      <tr><th>طريقة الوصول المختبرة</th><td>${esc(caps.workingIdKind || '—')} = <span style="direction:ltr">${esc(caps.workingId || '—')}</span></td></tr>
+      <tr><th>عدد المجلدات</th><td>${caps.folderCount ?? '—'}</td></tr>
+      <tr><th>الأرشيف القديم عبر API</th><td>${caps.messages ? '✅ متاح بالترقيم (Backfill)' : '❌ غير متاح'}</td></tr>
+      <tr><th>Sent</th><td>${caps.sent ? '✅ متاح' : '❌ لم يظهر'}</td></tr>
+      <tr><th>المرفقات</th><td>معلومات: ${caps.attachmentInfo === null ? 'لم تُختبر (لا رسالة بمرفق في العينة)' : caps.attachmentInfo ? '✅' : '❌'} — تنزيل فعلي: ${caps.attachmentDownload === null || caps.attachmentDownload === undefined ? 'لم يُختبر' : caps.attachmentDownload ? '✅' : '❌'}</td></tr>
+      <tr><th>محتوى الرسائل (Content)</th><td>${caps.content ? '✅' : '❌'}</td></tr>
+      <tr><th>endpoint المجموعة</th><td>${caps.groupMessagesEndpoint === 'moderation_queue_only' ? 'طابور مراجعة فقط — ليس الأرشيف' : esc(caps.groupMessagesEndpoint || 'لا ينطبق')}</td></tr>
+      <tr><th>الاستراتيجية</th><td><b>${STRAT_AR[m.strategy]}</b></td></tr>
+      <tr><th>سبب اختيارها</th><td>${esc(m.statusDetail || 'قدرة قراءة حية مثبتة بالفحص أعلاه')}</td></tr>
+      <tr><th>ما لن يصل إليه النظام</th><td>${caps.messages ? (caps.sent ? 'لا شيء معروف ضمن المجلدات الظاهرة' : 'مجلد Sent لم يظهر في الفحص') : 'الرسائل الحية بالكامل — الأرشيف يتطلب استيراد eDiscovery'}</td></tr>
+    </table>
+    <div class="banner warn" style="margin-top:10px">المزامنة قراءة فقط: لا تعديل، لا تعليم كمقروء، لا حذف، لا نقل، ولا أي كتابة على جانب Zoho.</div>
+    <button class="btn primary" style="width:100%" onclick="document.getElementById('dlg').close(); runSync(${m.id})">Start Read-Only Pilot Sync ▶</button>`;
+  $('dlg').showModal();
+}
+async function runSync(id) {
+  banners('<div class="banner warn">مزامنة قراءة-فقط جارية (ملتزمة بحد المعدل ~25 طلب/دقيقة)...</div>');
+  try {
+    const s = await api(`/api/mail/mailboxes/${id}/sync`, { method:'POST' });
+    banners(`<div class="banner ok">اكتملت المزامنة: ${s.newMessages} رسالة جديدة، ${s.attachments} مرفق، ${s.folders} مجلد.</div>`);
+    loadMailboxesAdmin(); loadMailboxesForMail();
+  } catch (e) { banners(`<div class="banner bad">فشلت المزامنة: ${esc(e.message)}</div>`); }
+}
+function uploadArchive(id) {
+  // Zoho eDiscovery may split a large export into several ZIP parts — accept
+  // them all at once; sequential import is duplicate-safe (canonical dedup).
+  const inp = document.createElement('input');
+  inp.type = 'file'; inp.accept = '.zip'; inp.multiple = true;
+  inp.onchange = async () => {
+    const files = [...inp.files]; if (!files.length) return;
+    let imported = 0, attachments = 0, duplicates = 0;
+    for (let i = 0; i < files.length; i++) {
+      banners(`<div class="banner warn">جاري استيراد الأرشيف ${i + 1}/${files.length}: ${esc(files[i].name)} (استيراد أرشيفي رسمي — ليس مزامنة حية)...</div>`);
+      const r = await fetch(`/api/mail/mailboxes/${id}/import-archive`, { method:'POST', headers:{ 'Content-Type':'application/zip', 'X-CSRF-Token': CSRF, 'X-File-Name': encodeURIComponent(files[i].name) }, body:files[i] });
+      const j = await r.json();
+      if (!r.ok) { banners(`<div class="banner bad">فشل الملف ${esc(files[i].name)}: ${esc(j.error)}</div>`); loadIntake(); return; }
+      imported += j.imported; attachments += j.attachments; duplicates += j.duplicates;
+    }
+    banners(`<div class="banner ok">استيراد الأرشيف (${files.length} ملف): ${imported} رسالة، ${attachments} مرفق، تكرارات مُنعت: ${duplicates}.</div>`);
+    loadIntake(); loadMailboxesAdmin(); loadMailboxesForMail();
+  };
+  inp.click();
+}
+async function openMailboxDetail(id) {
+  const m = await api('/api/mail/mailboxes/' + id);
+  $('dlgTitle').textContent = m.address;
+  $('dlgBody').innerHTML = `
+    <table>
+      <tr><th>النوع المكتشف</th><td>${TYPE_AR[m.detectedType] || esc(m.detectedType)}</td></tr>
+      <tr><th>طريقة الربط الحالية</th><td>${STRAT_AR[m.strategy]} <span class="sub">(قابلة للتغيير دون فقدان البيانات)</span>
+        ${m.capabilities.confidence ? `<span class="tag ${m.capabilities.confidence === 'high' ? 'ok' : 'warn'}">ثقة: ${m.capabilities.confidence}</span>` : ''}</td></tr>
+      <tr><th>الحالة</th><td>${esc(m.status)} — ${esc(m.statusDetail)}</td></tr>
+      <tr><th>Zoho Group ID</th><td style="direction:ltr">${esc(m.providerGroupId || '—')}</td></tr>
+      <tr><th>Zoho Account ID</th><td style="direction:ltr">${esc(m.providerAccountId || 'لا يوجد — لم يُرجعه أي endpoint')}</td></tr>
+      <tr><th>مستوى الوصول</th><td>${esc(m.accessLevel || '—')}</td></tr>
+      <tr><th>الأعضاء</th><td>${m.members.map(x => `<span class="tag gray" style="direction:ltr">${esc(x.email)} (${esc(x.role)})</span>`).join('') || '—'}</td></tr>
+      <tr><th>المشرفون</th><td>${m.moderators.map(x => `<span class="tag gray" style="direction:ltr">${esc(x)}</span>`).join('') || '—'}</td></tr>
+      <tr><th>القدرات المثبتة بالفحص</th><td>
+        مجلدات: ${m.capabilities.folders ? '✅ (' + (m.capabilities.folderCount || 0) + ')' : '❌'} —
+        رسائل: ${m.capabilities.messages ? '✅' : '❌'} —
+        محتوى: ${m.capabilities.content ? '✅' : '❌'} —
+        مرفقات: ${m.capabilities.attachmentInfo == null ? '؟' : m.capabilities.attachmentInfo ? '✅' : '❌'}${m.capabilities.attachmentDownload ? ' (تنزيل فعلي ✅)' : ''} —
+        Sent: ${m.capabilities.sent ? '✅' : '❌'} —
+        طابور المراجعة: ${m.capabilities.moderationQueueReadable ? '✅ (المراجعة فقط، ليس الأرشيف)' : '—'}</td></tr>
+    </table>
+    <h4>الدليل الخام (نتائج API الحرفية بعد التعقيم)</h4>
+    <pre class="evidence">${esc(JSON.stringify(m.lastDetection, null, 2))}</pre>`;
+  $('dlg').showModal();
+}
+
+async function loadUsers() {
+  const users = await api('/api/admin/users');
+  const boxes = await api('/api/mail/mailboxes');
+  $('usersTable').innerHTML = '<tr><th>البريد</th><th>الاسم</th><th>الأدوار</th><th>الصلاحيات على الصناديق (قراءة + عرض/تنزيل مرفقات)</th></tr>' +
+    users.map(u => {
+      const admin = (u.roles || []).some(r => ['platform_admin', 'mail_admin'].includes(r));
+      return `<tr>
+      <td style="direction:ltr;text-align:right">${esc(u.email)}</td><td>${esc(u.name)}</td>
+      <td>${(u.roles || []).map(r => `<span class="tag ${r.includes('admin') ? 'ok' : 'gray'}">${esc(r)}</span>`).join('')}</td>
+      <td>${admin ? '<span class="sub">كل الصناديق (عبر الدور)</span>' : boxes.map(b => {
+        const g = u.grants.find(x => Number(x.mailbox_id) === b.id && x.can_view_messages);
+        return `<label style="white-space:nowrap;margin-inline-end:10px;font-size:12px">
+          <input type="checkbox" ${g ? 'checked' : ''} onchange="setGrant(${u.id},${b.id},this.checked)"> ${esc(b.address)}</label>`;
+      }).join('')}</td></tr>`;
+    }).join('');
+}
+async function createUser() {
+  await api('/api/admin/users', { method:'POST', body:{ email:$('uEmail').value, name:$('uName').value, password:$('uPass').value, roles:[$('uRole').value] } });
+  toggle('userForm'); loadUsers();
+}
+// UI preset "قراءة": view messages + view/download attachments. Finer flags via API.
+async function setGrant(userId, mailboxId, on) {
+  await api('/api/admin/grants', { method:'POST', body:{ user_id:userId, mailbox_id:mailboxId,
+    flags: on ? { can_view_messages:true, can_view_attachments:true, can_download_attachments:true } : null } });
+}
+async function loadAudit() {
+  const rows = await api('/api/admin/audit');
+  $('auditTable').innerHTML = '<tr><th>الوقت</th><th>المستخدم</th><th>الإجراء</th><th>الهدف</th></tr>' +
+    rows.slice(0, 40).map(a => `<tr><td>${fmtT(a.at)}</td><td style="direction:ltr;text-align:right">${esc(a.user_email || 'النظام')}</td>
+      <td>${esc(a.action)}</td><td style="direction:ltr;text-align:right">${esc(a.target)}</td></tr>`).join('');
+}
+
+boot();
+</script>
+</body>
+</html>

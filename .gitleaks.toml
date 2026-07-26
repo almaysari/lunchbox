@@ -1,0 +1,18 @@
+# Gitleaks configuration — extends the default ruleset.
+# Allowlist is intentionally NARROW: only the exact dummy fixtures used by the
+# redaction tests (they exist precisely to prove secrets get redacted).
+# Do NOT allowlist whole directories.
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Known dummy fixtures in redaction tests"
+regexTarget = "line"
+regexes = [
+  '''refresh_token: abcdef1234567890''',
+  '''supersecretvalue123''',
+  # E2E auth-lifecycle test fixtures (test/e2e-auth.test.js) — dummy values
+  '''initial-pass-123456''',
+  '''permanent-pass-654321''',
+  '''anything-long-123''',
+]

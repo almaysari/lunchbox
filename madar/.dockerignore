@@ -1,0 +1,7 @@
+# secrets and runtime data must NEVER enter the build context / image layers
+.env
+data/
+data-demo/
+node_modules/
+.git/
+*.md

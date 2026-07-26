@@ -1,0 +1,49 @@
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: madar
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+      POSTGRES_DB: madar
+    volumes:
+      - madar_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U madar -d madar"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    ports:
+      - "127.0.0.1:5432:5432"
+    restart: unless-stopped
+
+  app:
+    build: .
+    depends_on:
+      postgres:
+        condition: service_healthy
+    # Secrets reach the container ONLY via env_file → process.env.
+    # .env never enters the build context (.dockerignore) or image layers.
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      # container-specific overrides (win over env_file values)
+      PORT: 3000
+      DATABASE_URL: postgresql://madar:${POSTGRES_PASSWORD}@postgres:5432/madar
+      MADAR_ATTACH_DIR: /var/lib/madar/attachments
+      MADAR_LIVE_SYNC_INTERVAL_SEC: ${MADAR_LIVE_SYNC_INTERVAL_SEC:-120}
+      MAX_ATTACHMENT_MB: ${MAX_ATTACHMENT_MB:-25}
+    volumes:
+      - madar_attachments:/var/lib/madar/attachments
+    ports:
+      - "127.0.0.1:3000:3000"
+    healthcheck:
+      test: ["CMD-SHELL", "node -e \"fetch('http://localhost:3000/health/ready').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))\""]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+volumes:
+  madar_pgdata:
+  madar_attachments:
