@@ -70,4 +70,6 @@ jobs:
           git config user.email "cookbook-bot@users.noreply.github.com"
           git add cookbook/index.html cookbook/img cookbook/Al-Maysari-Family-Cookbook.pdf cookbook/preview
           git commit -m "Build cookbook PDF [skip ci]" || echo "nothing to commit"
-          git pull --rebase origin main && git push
+          git fetch origin main
+          git rebase -X theirs origin/main || (git rebase --abort && git reset --soft origin/main && git commit -m "Build cookbook PDF [skip ci]")
+          git push
