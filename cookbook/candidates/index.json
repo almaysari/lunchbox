@@ -1,0 +1,1511 @@
+{
+ "1": {
+  "name": "Chicken Biryani",
+  "cands": [
+   {
+    "file": "yt_video.jpg",
+    "src": "youtube",
+    "page": "https://www.youtube.com/watch?v=rngAYfGgVGw",
+    "title": "Simple Chicken Biryani (Pinoy Style) - Maine Cooks"
+   },
+   {
+    "file": "c00.jpg",
+    "src": "commons",
+    "title": "File:A home made plate of mutton biryani served with chicken kassa cooked in the bengali style.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/23/A_home_made_plate_of_mutton_biryani_served_with_chicken_kassa_cooked_in_the_bengali_style.jpg/960px-A_home_made_plate_of_mutton_biryani_served_with_chicken_kassa_cooked_in_the_bengali_style.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "page": "https://commons.wikimedia.org/wiki/File:A_home_made_plate_of_mutton_biryani_served_with_chicken_kassa_cooked_in_the_bengali_style.jpg",
+    "w": 4718,
+    "h": 3517,
+    "license": "CC BY-SA 4.0",
+    "author": "Subhrajyoti07"
+   },
+   {
+    "file": "c01.jpg",
+    "src": "commons",
+    "title": "File:Chicken Biryani 4.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/80/Chicken_Biryani_4.jpg/960px-Chicken_Biryani_4.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "page": "https://commons.wikimedia.org/wiki/File:Chicken_Biryani_4.jpg",
+    "w": 3024,
+    "h": 4032,
+    "license": "CC BY-SA 4.0",
+    "author": "Gaurav Dhwaj Khadka"
+   },
+   {
+    "file": "c02.jpg",
+    "src": "commons",
+    "title": "File:Chicken Biryani Salad.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a1/Chicken_Biryani_Salad.jpg/960px-Chicken_Biryani_Salad.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "page": "https://commons.wikimedia.org/wiki/File:Chicken_Biryani_Salad.jpg",
+    "w": 2048,
+    "h": 1536,
+    "license": "CC BY-SA 4.0",
+    "author": "Dr. Chinchu C."
+   },
+   {
+    "file": "c03.jpg",
+    "src": "commons",
+    "title": "File:Chicken Dum Biryani 03.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/38/Chicken_Dum_Biryani_03.jpg/960px-Chicken_Dum_Biryani_03.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "page": "https://commons.wikimedia.org/wiki/File:Chicken_Dum_Biryani_03.jpg",
+    "w": 9248,
+    "h": 6936,
+    "license": "CC BY-SA 4.0",
+    "author": "Vis M"
+   },
+   {
+    "file": "c04.jpg",
+    "src": "commons",
+    "title": "File:Chicken Hyderabadi Biryani.JPG",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c0/Chicken_Hyderabadi_Biryani.JPG/960px-Chicken_Hyderabadi_Biryani.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "page": "https://commons.wikimedia.org/wiki/File:Chicken_Hyderabadi_Biryani.JPG",
+    "w": 4288,
+    "h": 2848,
+    "license": "CC BY-SA 4.0",
+    "author": "Dheerajk88"
+   },
+   {
+    "file": "c05.jpg",
+    "src": "commons",
+    "title": "File:Chicken biriyani- My cafe restaurant - Meghalaya DSC 009.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5b/Chicken_biriyani-_My_cafe_restaurant_-_Meghalaya_DSC_009.jpg/960px-Chicken_biriyani-_My_cafe_restaurant_-_Meghalaya_DSC_009.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "page": "https://commons.wikimedia.org/wiki/File:Chicken_biriyani-_My_cafe_restaurant_-_Meghalaya_DSC_009.jpg",
+    "w": 4238,
+    "h": 3472,
+    "license": "CC BY-SA 4.0",
+    "author": "Gitika Gayan"
+   },
+   {
+    "file": "c06.jpg",
+    "src": "commons",
+    "title": "File:Chicken biryani 02-06-2015 (India).jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b5/Chicken_biryani_02-06-2015_%28India%29.jpg/960px-Chicken_biryani_02-06-2015_%28India%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "page": "https://commons.wikimedia.org/wiki/File:Chicken_biryani_02-06-2015_(India).jpg",
+    "w": 1200,
+    "h": 719,
+    "license": "CC BY-SA 4.0",
+    "author": "Shivani shipra"
+   },
+   {
+    "file": "c07.jpg",
+    "src": "commons",
+    "title": "File:Chicken biryani 3.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a8/Chicken_biryani_3.jpg/960px-Chicken_biryani_3.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "page": "https://commons.wikimedia.org/wiki/File:Chicken_biryani_3.jpg",
+    "w": 3648,
+    "h": 2736,
+    "license": "CC BY-SA 2.0",
+    "author": "pelican"
+   },
+   {
+    "file": "c08.jpg",
+    "src": "commons",
+    "title": "File:Dum Biryani Plate.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/38/Dum_Biryani_Plate.jpg/960px-Dum_Biryani_Plate.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "page": "https://commons.wikimedia.org/wiki/File:Dum_Biryani_Plate.jpg",
+    "w": 1600,
+    "h": 1200,
+    "license": "CC BY-SA 3.0",
+    "author": "Umesh Tongbra"
+   },
+   {
+    "file": "c09.jpg",
+    "src": "commons",
+    "title": "File:Shrimp Biriyani.JPG",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5f/Shrimp_Biriyani.JPG/960px-Shrimp_Biriyani.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "page": "https://commons.wikimedia.org/wiki/File:Shrimp_Biriyani.JPG",
+    "w": 4288,
+    "h": 2848,
+    "license": "CC BY-SA 3.0",
+    "author": "Jyothis"
+   },
+   {
+    "file": "c10.jpg",
+    "src": "commons",
+    "title": "File:Biryani 1.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c8/Biryani_1.jpg/960px-Biryani_1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "page": "https://commons.wikimedia.org/wiki/File:Biryani_1.jpg",
+    "w": 3024,
+    "h": 4032,
+    "license": "CC BY-SA 4.0",
+    "author": "Gaurav Dhwaj Khadka"
+   },
+   {
+    "file": "c11.jpg",
+    "src": "commons",
+    "title": "File:Biryani 2.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/60/Biryani_2.jpg/960px-Biryani_2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "page": "https://commons.wikimedia.org/wiki/File:Biryani_2.jpg",
+    "w": 2304,
+    "h": 4096,
+    "license": "CC BY-SA 4.0",
+    "author": "Rithwik Ponnam"
+   },
+   {
+    "file": "c12.jpg",
+    "src": "commons",
+    "title": "File:Biryani 3.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b7/Biryani_3.jpg/960px-Biryani_3.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "page": "https://commons.wikimedia.org/wiki/File:Biryani_3.jpg",
+    "w": 16320,
+    "h": 12240,
+    "license": "CC BY-SA 4.0",
+    "author": "Gannu03"
+   },
+   {
+    "file": "c13.jpg",
+    "src": "commons",
+    "title": "File:Biryani 4.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/ed/Biryani_4.jpg/960px-Biryani_4.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "page": "https://commons.wikimedia.org/wiki/File:Biryani_4.jpg",
+    "w": 3000,
+    "h": 4000,
+    "license": "CC BY-SA 4.0",
+    "author": "Gannu03"
+   }
+  ]
+ },
+ "2": {
+  "name": "Lamb Biryani",
+  "cands": [
+   {
+    "file": "yt_video.jpg",
+    "src": "youtube",
+    "page": "https://www.youtube.com/watch?v=eWe1Mjzvf9w",
+    "title": "Arabic Mutton Biryani - Food Fusion"
+   },
+   {
+    "file": "c00.jpg",
+    "src": "commons",
+    "title": "File:A home made plate of mutton biryani served with chicken kassa cooked in the bengali style.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/23/A_home_made_plate_of_mutton_biryani_served_with_chicken_kassa_cooked_in_the_bengali_style.jpg/960px-A_home_made_plate_of_mutton_biryani_served_with_chicken_kassa_cooked_in_the_bengali_style.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "page": "https://commons.wikimedia.org/wiki/File:A_home_made_plate_of_mutton_biryani_served_with_chicken_kassa_cooked_in_the_bengali_style.jpg",
+    "w": 4718,
+    "h": 3517,
+    "license": "CC BY-SA 4.0",
+    "author": "Subhrajyoti07"
+   },
+   {
+    "file": "c01.jpg",
+    "src": "commons",
+    "title": "File:Biryani Home.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/35/Biryani_Home.jpg/960px-Biryani_Home.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "page": "https://commons.wikimedia.org/wiki/File:Biryani_Home.jpg",
+    "w": 1600,
+    "h": 1200,
+    "license": "CC BY-SA 4.0",
+    "author": "Shyamveer.singh1982"
+   },
+   {
+    "file": "c02.jpg",
+    "src": "commons",
+    "title": "File:Biryani Raita.jpg",
+    "thumb": "https://upload.wikimedia.org/wikipedia/commons/1/1e/Biryani_Raita.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+    "page": "https://commons.wikimedia.org/wiki/File:Biryani_Raita.jpg",
+    "w": 830,
+    "h": 467,
+    "license": "CC BY-SA 4.0",
+    "author": "Pradeepraajkumar1981"
+   },
+   {
+    "file": "c03.jpg",
+    "src": "commons",
+    "title": "File:Muglai Mutton biryani with whole spiced potato.JPG",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/11/Muglai_Mutton_biryani_with_whole_spiced_potato.JPG/960px-Muglai_Mutton_biryani_with_whole_spiced_potato.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "page": "https://commons.wikimedia.org/wiki/File:Muglai_Mutton_biryani_with_whole_spiced_potato.JPG",
+    "w": 3920,
+    "h": 2204,
+    "license": "CC BY-SA 4.0",
+    "author": "Gupchup"
+   },
+   {
+    "file": "c04.jpg",
+    "src": "commons",
+    "title": "File:Mutton Biryani, Singapore.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/89/Mutton_Biryani%2C_Singapore.jpg/960px-Mutton_Biryani%2C_Singapore.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "page": "https://commons.wikimedia.org/wiki/File:Mutton_Biryani,_Singapore.jpg",
+    "w": 4038,
+    "h": 2696,
+    "license": "CC BY-SA 4.0",
+    "author": "EurovisionNim"
+   },
+   {
+    "file": "c05.jpg",
+    "src": "commons",
+    "title": "File:Mutton Biryani..JPG",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/88/Mutton_Biryani..JPG/960px-Mutton_Biryani..JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "page": "https://commons.wikimedia.org/wiki/File:Mutton_Biryani..JPG",
+    "w": 4896,
+    "h": 3672,
+    "license": "CC0",
+    "author": "Miansari66"
+   },
+   {
+    "file": "c06.jpg",
+    "src": "commons",
+    "title": "File:Mutton biryani.JPG",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b9/Mutton_biryani.JPG/960px-Mutton_biryani.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "page": "https://commons.wikimedia.org/wiki/File:Mutton_biryani.JPG",
+    "w": 4608,
+    "h": 2592,
+    "license": "CC BY-SA 4.0",
+    "author": "Bhaskaranaidu"
+   },
+   {
+    "file": "c07.jpg",
+    "src": "commons",
+    "title": "File:Mutton biryani made with lamb.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/fa/Mutton_biryani_made_with_lamb.jpg/960px-Mutton_biryani_made_with_lamb.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "page": "https://commons.wikimedia.org/wiki/File:Mutton_biryani_made_with_lamb.jpg",
+    "w": 4000,
+    "h": 3000,
+    "license": "CC BY-SA 4.0",
+    "author": "GrammarFascist"
+   },
+   {
+    "file": "c08.jpg",
+    "src": "commons",
+    "title": "File:Pista house mutton biryani.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/9e/Pista_house_mutton_biryani.jpg/960px-Pista_house_mutton_biryani.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "page": "https://commons.wikimedia.org/wiki/File:Pista_house_mutton_biryani.jpg",
+    "w": 963,
+    "h": 1280,
+    "license": "CC BY-SA 4.0",
+    "author": "Manyamgrains"
+   },
+   {
+    "file": "c09.jpg",
+    "src": "commons",
+    "title": "File:Shrimp Biriyani.JPG",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5f/Shrimp_Biriyani.JPG/960px-Shrimp_Biriyani.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "page": "https://commons.wikimedia.org/wiki/File:Shrimp_Biriyani.JPG",
+    "w": 4288,
+    "h": 2848,
+    "license": "CC BY-SA 3.0",
+    "author": "Jyothis"
+   },
+   {
+    "file": "c10.jpg",
+    "src": "commons",
+    "title": "File:52 - lamb biryani^ - geograph.org.uk - 3180205.jpg",
+    "thumb": "https://upload.wikimedia.org/wikipedia/commons/5/55/52_-_lamb_biryani%5E_-_geograph.org.uk_-_3180205.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+    "page": "https://commons.wikimedia.org/wiki/File:52_-_lamb_biryani%5E_-_geograph.org.uk_-_3180205.jpg",
+    "w": 640,
+    "h": 455,
+    "license": "CC BY-SA 2.0",
+    "author": "Graham Horn "
+   },
+   {
+    "file": "c11.jpg",
+    "src": "commons",
+    "title": "File:Biryani of lamb.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f7/Biryani_of_lamb.jpg/960px-Biryani_of_lamb.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "page": "https://commons.wikimedia.org/wiki/File:Biryani_of_lamb.jpg",
+    "w": 4208,
+    "h": 2368,
+    "license": "CC BY-SA 4.0",
+    "author": "Thamizhpparithi Maari"
+   },
+   {
+    "file": "c12.jpg",
+    "src": "commons",
+    "title": "File:Home-made lamb biryani (15726514577).jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/33/Home-made_lamb_biryani_%2815726514577%29.jpg/960px-Home-made_lamb_biryani_%2815726514577%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "page": "https://commons.wikimedia.org/wiki/File:Home-made_lamb_biryani_(15726514577).jpg",
+    "w": 2651,
+    "h": 2651,
+    "license": "CC BY 2.0",
+    "author": "Vee Satayamas from Bangkok, Thailand"
+   },
+   {
+    "file": "c13.jpg",
+    "src": "commons",
+    "title": "File:Lamb Biryani.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/2d/Lamb_Biryani.jpg/960px-Lamb_Biryani.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "page": "https://commons.wikimedia.org/wiki/File:Lamb_Biryani.jpg",
+    "w": 3264,
+    "h": 2448,
+    "license": "CC BY-SA 4.0",
+    "author": "AKSHRAJJODHA"
+   }
+  ]
+ },
+ "3": {
+  "name": "Chicken Maqluba",
+  "cands": [
+   {
+    "file": "yt_video.jpg",
+    "src": "youtube",
+    "page": "https://www.youtube.com/watch?v=Fs0Nyg9hayY",
+    "title": "How to make Chicken Maqluba - Recipes are Simple"
+   },
+   {
+    "file": "c00.jpg",
+    "src": "commons",
+    "title": "File:Makluba.JPG",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/2d/Makluba.JPG/960px-Makluba.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "page": "https://commons.wikimedia.org/wiki/File:Makluba.JPG",
+    "w": 4224,
+    "h": 3168,
+    "license": "Public domain",
+    "author": "Arafataslan"
+   },
+   {
+    "file": "c01.jpg",
+    "src": "commons",
+    "title": "File:Malta - Qrendi - Misrah tal-Maqluba - Il-Maqluba 09 ies.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5c/Malta_-_Qrendi_-_Misrah_tal-Maqluba_-_Il-Maqluba_09_ies.jpg/960px-Malta_-_Qrendi_-_Misrah_tal-Maqluba_-_Il-Maqluba_09_ies.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "page": "https://commons.wikimedia.org/wiki/File:Malta_-_Qrendi_-_Misrah_tal-Maqluba_-_Il-Maqluba_09_ies.jpg",
+    "w": 5616,
+    "h": 3744,
+    "license": "CC BY-SA 3.0",
+    "author": "Frank Vincentz"
+   },
+   {
+    "file": "c02.jpg",
+    "src": "commons",
+    "title": "File:Malta - Qrendi - Misrah tal-Maqluba - Il-Maqluba 13 ies.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/67/Malta_-_Qrendi_-_Misrah_tal-Maqluba_-_Il-Maqluba_13_ies.jpg/960px-Malta_-_Qrendi_-_Misrah_tal-Maqluba_-_Il-Maqluba_13_ies.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "page": "https://commons.wikimedia.org/wiki/File:Malta_-_Qrendi_-_Misrah_tal-Maqluba_-_Il-Maqluba_13_ies.jpg",
+    "w": 5616,
+    "h": 3744,
+    "license": "CC BY-SA 3.0",
+    "author": "Frank Vincentz"
+   },
+   {
+    "file": "c03.jpg",
+    "src": "commons",
+    "title": "File:Malta - Qrendi - Misrah tal-Maqluba - Il-Maqluba 17 ies.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/2a/Malta_-_Qrendi_-_Misrah_tal-Maqluba_-_Il-Maqluba_17_ies.jpg/960px-Malta_-_Qrendi_-_Misrah_tal-Maqluba_-_Il-Maqluba_17_ies.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "page": "https://commons.wikimedia.org/wiki/File:Malta_-_Qrendi_-_Misrah_tal-Maqluba_-_Il-Maqluba_17_ies.jpg",
+    "w": 5616,
+    "h": 3744,
+    "license": "CC BY-SA 3.0",
+    "author": "Frank Vincentz"
+   },
+   {
+    "file": "c04.jpg",
+    "src": "commons",
+    "title": "File:Malta - Qrendi - Misrah tal-Maqluba - Il-Maqluba 18 ies.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/cb/Malta_-_Qrendi_-_Misrah_tal-Maqluba_-_Il-Maqluba_18_ies.jpg/960px-Malta_-_Qrendi_-_Misrah_tal-Maqluba_-_Il-Maqluba_18_ies.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "page": "https://commons.wikimedia.org/wiki/File:Malta_-_Qrendi_-_Misrah_tal-Maqluba_-_Il-Maqluba_18_ies.jpg",
+    "w": 5616,
+    "h": 3744,
+    "license": "CC BY-SA 3.0",
+    "author": "Frank Vincentz"
+   },
+   {
+    "file": "c05.jpg",
+    "src": "commons",
+    "title": "File:Maqloubeh.JPG",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/92/Maqloubeh.JPG/960px-Maqloubeh.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "page": "https://commons.wikimedia.org/wiki/File:Maqloubeh.JPG",
+    "w": 2816,
+    "h": 2112,
+    "license": "CC BY-SA 3.0",
+    "author": "Nasib Bitar"
+   },
+   {
+    "file": "c06.jpg",
+    "src": "commons",
+    "title": "File:Modern Iraqi maqluba with two different rice colors.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/35/Modern_Iraqi_maqluba_with_two_different_rice_colors.jpg/960px-Modern_Iraqi_maqluba_with_two_different_rice_colors.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "page": "https://commons.wikimedia.org/wiki/File:Modern_Iraqi_maqluba_with_two_different_rice_colors.jpg",
+    "w": 3024,
+    "h": 4032,
+    "license": "CC BY-SA 4.0",
+    "author": "Ghazwan Mattoka"
+   },
+   {
+    "file": "c07.jpg",
+    "src": "commons",
+    "title": "File:طبخة المقلوبة Maqluba.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/7b/%D8%B7%D8%A8%D8%AE%D8%A9_%D8%A7%D9%84%D9%85%D9%82%D9%84%D9%88%D8%A8%D8%A9_Maqluba.jpg/960px-%D8%B7%D8%A8%D8%AE%D8%A9_%D8%A7%D9%84%D9%85%D9%82%D9%84%D9%88%D8%A8%D8%A9_Maqluba.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "page": "https://commons.wikimedia.org/wiki/File:%D8%B7%D8%A8%D8%AE%D8%A9_%D8%A7%D9%84%D9%85%D9%82%D9%84%D9%88%D8%A8%D8%A9_Maqluba.jpg",
+    "w": 4032,
+    "h": 3024,
+    "license": "CC BY-SA 4.0",
+    "author": "Ramadan9044"
+   },
+   {
+    "file": "c08.jpg",
+    "src": "commons",
+    "title": "File:طبخة المقلوبة Maqluba (cropped).jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/83/%D8%B7%D8%A8%D8%AE%D8%A9_%D8%A7%D9%84%D9%85%D9%82%D9%84%D9%88%D8%A8%D8%A9_Maqluba_%28cropped%29.jpg/960px-%D8%B7%D8%A8%D8%AE%D8%A9_%D8%A7%D9%84%D9%85%D9%82%D9%84%D9%88%D8%A8%D8%A9_Maqluba_%28cropped%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "page": "https://commons.wikimedia.org/wiki/File:%D8%B7%D8%A8%D8%AE%D8%A9_%D8%A7%D9%84%D9%85%D9%82%D9%84%D9%88%D8%A8%D8%A9_Maqluba_(cropped).jpg",
+    "w": 2890,
+    "h": 2167,
+    "license": "CC BY-SA 4.0",
+    "author": "Ramadan9044"
+   },
+   {
+    "file": "c09.jpg",
+    "src": "commons",
+    "title": "File:مقلوبة سورية.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/89/%D9%85%D9%82%D9%84%D9%88%D8%A8%D8%A9_%D8%B3%D9%88%D8%B1%D9%8A%D8%A9.jpg/960px-%D9%85%D9%82%D9%84%D9%88%D8%A8%D8%A9_%D8%B3%D9%88%D8%B1%D9%8A%D8%A9.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "page": "https://commons.wikimedia.org/wiki/File:%D9%85%D9%82%D9%84%D9%88%D8%A8%D8%A9_%D8%B3%D9%88%D8%B1%D9%8A%D8%A9.jpg",
+    "w": 3984,
+    "h": 2816,
+    "license": "CC BY-SA 4.0",
+    "author": "ساندرا"
+   },
+   {
+    "file": "c10.jpg",
+    "src": "commons",
+    "title": "File:مقلوبة.png",
+    "thumb": "https://upload.wikimedia.org/wikipedia/commons/1/1e/%D9%85%D9%82%D9%84%D9%88%D8%A8%D8%A9.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+    "page": "https://commons.wikimedia.org/wiki/File:%D9%85%D9%82%D9%84%D9%88%D8%A8%D8%A9.png",
+    "w": 557,
+    "h": 577,
+    "license": "CC BY-SA 4.0",
+    "author": "تالا"
+   },
+   {
+    "file": "c11.jpg",
+    "src": "commons",
+    "title": "File:Maqluba.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/71/Maqluba.jpg/960px-Maqluba.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "page": "https://commons.wikimedia.org/wiki/File:Maqluba.jpg",
+    "w": 1928,
+    "h": 1322,
+    "license": "CC BY-SA 3.0",
+    "author": "Bazel"
+   }
+  ]
+ },
+ "4": {
+  "name": "Lamb Maqluba",
+  "cands": [
+   {
+    "file": "yt_video.jpg",
+    "src": "youtube",
+    "page": "https://www.youtube.com/watch?v=-JwapADzlRA",
+    "title": "Maqluba with Lamb - Cooking Gorgeous"
+   },
+   {
+    "file": "c00.jpg",
+    "src": "commons",
+    "title": "File:Makluba.JPG",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/2d/Makluba.JPG/960px-Makluba.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "page": "https://commons.wikimedia.org/wiki/File:Makluba.JPG",
+    "w": 4224,
+    "h": 3168,
+    "license": "Public domain",
+    "author": "Arafataslan"
+   },
+   {
+    "file": "c01.jpg",
+    "src": "commons",
+    "title": "File:Malta - Qrendi - Misrah tal-Maqluba - Il-Maqluba 09 ies.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5c/Malta_-_Qrendi_-_Misrah_tal-Maqluba_-_Il-Maqluba_09_ies.jpg/960px-Malta_-_Qrendi_-_Misrah_tal-Maqluba_-_Il-Maqluba_09_ies.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "page": "https://commons.wikimedia.org/wiki/File:Malta_-_Qrendi_-_Misrah_tal-Maqluba_-_Il-Maqluba_09_ies.jpg",
+    "w": 5616,
+    "h": 3744,
+    "license": "CC BY-SA 3.0",
+    "author": "Frank Vincentz"
+   },
+   {
+    "file": "c02.jpg",
+    "src": "commons",
+    "title": "File:Malta - Qrendi - Misrah tal-Maqluba - Il-Maqluba 13 ies.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/67/Malta_-_Qrendi_-_Misrah_tal-Maqluba_-_Il-Maqluba_13_ies.jpg/960px-Malta_-_Qrendi_-_Misrah_tal-Maqluba_-_Il-Maqluba_13_ies.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "page": "https://commons.wikimedia.org/wiki/File:Malta_-_Qrendi_-_Misrah_tal-Maqluba_-_Il-Maqluba_13_ies.jpg",
+    "w": 5616,
+    "h": 3744,
+    "license": "CC BY-SA 3.0",
+    "author": "Frank Vincentz"
+   },
+   {
+    "file": "c03.jpg",
+    "src": "commons",
+    "title": "File:Malta - Qrendi - Misrah tal-Maqluba - Il-Maqluba 17 ies.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/2a/Malta_-_Qrendi_-_Misrah_tal-Maqluba_-_Il-Maqluba_17_ies.jpg/960px-Malta_-_Qrendi_-_Misrah_tal-Maqluba_-_Il-Maqluba_17_ies.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "page": "https://commons.wikimedia.org/wiki/File:Malta_-_Qrendi_-_Misrah_tal-Maqluba_-_Il-Maqluba_17_ies.jpg",
+    "w": 5616,
+    "h": 3744,
+    "license": "CC BY-SA 3.0",
+    "author": "Frank Vincentz"
+   },
+   {
+    "file": "c04.jpg",
+    "src": "commons",
+    "title": "File:Malta - Qrendi - Misrah tal-Maqluba - Il-Maqluba 18 ies.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/cb/Malta_-_Qrendi_-_Misrah_tal-Maqluba_-_Il-Maqluba_18_ies.jpg/960px-Malta_-_Qrendi_-_Misrah_tal-Maqluba_-_Il-Maqluba_18_ies.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "page": "https://commons.wikimedia.org/wiki/File:Malta_-_Qrendi_-_Misrah_tal-Maqluba_-_Il-Maqluba_18_ies.jpg",
+    "w": 5616,
+    "h": 3744,
+    "license": "CC BY-SA 3.0",
+    "author": "Frank Vincentz"
+   },
+   {
+    "file": "c05.jpg",
+    "src": "commons",
+    "title": "File:Maqloubeh.JPG",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/92/Maqloubeh.JPG/960px-Maqloubeh.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "page": "https://commons.wikimedia.org/wiki/File:Maqloubeh.JPG",
+    "w": 2816,
+    "h": 2112,
+    "license": "CC BY-SA 3.0",
+    "author": "Nasib Bitar"
+   },
+   {
+    "file": "c06.jpg",
+    "src": "commons",
+    "title": "File:Modern Iraqi maqluba with two different rice colors.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/35/Modern_Iraqi_maqluba_with_two_different_rice_colors.jpg/960px-Modern_Iraqi_maqluba_with_two_different_rice_colors.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "page": "https://commons.wikimedia.org/wiki/File:Modern_Iraqi_maqluba_with_two_different_rice_colors.jpg",
+    "w": 3024,
+    "h": 4032,
+    "license": "CC BY-SA 4.0",
+    "author": "Ghazwan Mattoka"
+   },
+   {
+    "file": "c07.jpg",
+    "src": "commons",
+    "title": "File:طبخة المقلوبة Maqluba.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/7b/%D8%B7%D8%A8%D8%AE%D8%A9_%D8%A7%D9%84%D9%85%D9%82%D9%84%D9%88%D8%A8%D8%A9_Maqluba.jpg/960px-%D8%B7%D8%A8%D8%AE%D8%A9_%D8%A7%D9%84%D9%85%D9%82%D9%84%D9%88%D8%A8%D8%A9_Maqluba.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "page": "https://commons.wikimedia.org/wiki/File:%D8%B7%D8%A8%D8%AE%D8%A9_%D8%A7%D9%84%D9%85%D9%82%D9%84%D9%88%D8%A8%D8%A9_Maqluba.jpg",
+    "w": 4032,
+    "h": 3024,
+    "license": "CC BY-SA 4.0",
+    "author": "Ramadan9044"
+   },
+   {
+    "file": "c08.jpg",
+    "src": "commons",
+    "title": "File:طبخة المقلوبة Maqluba (cropped).jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/83/%D8%B7%D8%A8%D8%AE%D8%A9_%D8%A7%D9%84%D9%85%D9%82%D9%84%D9%88%D8%A8%D8%A9_Maqluba_%28cropped%29.jpg/960px-%D8%B7%D8%A8%D8%AE%D8%A9_%D8%A7%D9%84%D9%85%D9%82%D9%84%D9%88%D8%A8%D8%A9_Maqluba_%28cropped%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "page": "https://commons.wikimedia.org/wiki/File:%D8%B7%D8%A8%D8%AE%D8%A9_%D8%A7%D9%84%D9%85%D9%82%D9%84%D9%88%D8%A8%D8%A9_Maqluba_(cropped).jpg",
+    "w": 2890,
+    "h": 2167,
+    "license": "CC BY-SA 4.0",
+    "author": "Ramadan9044"
+   },
+   {
+    "file": "c09.jpg",
+    "src": "commons",
+    "title": "File:مقلوبة سورية.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/89/%D9%85%D9%82%D9%84%D9%88%D8%A8%D8%A9_%D8%B3%D9%88%D8%B1%D9%8A%D8%A9.jpg/960px-%D9%85%D9%82%D9%84%D9%88%D8%A8%D8%A9_%D8%B3%D9%88%D8%B1%D9%8A%D8%A9.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "page": "https://commons.wikimedia.org/wiki/File:%D9%85%D9%82%D9%84%D9%88%D8%A8%D8%A9_%D8%B3%D9%88%D8%B1%D9%8A%D8%A9.jpg",
+    "w": 3984,
+    "h": 2816,
+    "license": "CC BY-SA 4.0",
+    "author": "ساندرا"
+   },
+   {
+    "file": "c10.jpg",
+    "src": "commons",
+    "title": "File:Maqluba.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/71/Maqluba.jpg/960px-Maqluba.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "page": "https://commons.wikimedia.org/wiki/File:Maqluba.jpg",
+    "w": 1928,
+    "h": 1322,
+    "license": "CC BY-SA 3.0",
+    "author": "Bazel"
+   }
+  ]
+ },
+ "5": {
+  "name": "Yellow Rice with Peri-Peri Chicken (Nando's style)",
+  "cands": [
+   {
+    "file": "yt_video.jpg",
+    "src": "youtube",
+    "page": "https://www.youtube.com/watch?v=aI5f6PM590I",
+    "title": "Roasted Peri-Peri Chicken with Yellow Rice - Chef RV Manabat"
+   }
+  ]
+ },
+ "6": {
+  "name": "Lamb Kabsa",
+  "cands": [
+   {
+    "file": "yt_video.jpg",
+    "src": "youtube",
+    "page": "https://www.youtube.com/watch?v=HfnTOP4p_ek",
+    "title": "How to cook Saudi Kabsa Lamb (Tagalog) - madam kikay cooking"
+   }
+  ]
+ },
+ "7": {
+  "name": "Chicken Kabsa",
+  "cands": [
+   {
+    "file": "yt_video.jpg",
+    "src": "youtube",
+    "page": "https://www.youtube.com/watch?v=JhTIBKOpUEY",
+    "title": "Kabsa Rice with Chicken (Saudi / Tagalog) - Yamyam Arabicfood"
+   }
+  ]
+ },
+ "8": {
+  "name": "Chicken Bukhari Rice",
+  "cands": [
+   {
+    "file": "yt_video.jpg",
+    "src": "youtube",
+    "page": "https://www.youtube.com/watch?v=FKP7Cuvo2tM",
+    "title": "Bukhari Rice with Chicken - The cookbook"
+   }
+  ]
+ },
+ "9": {
+  "name": "Lamb Bukhari Rice",
+  "cands": [
+   {
+    "file": "yt_video.jpg",
+    "src": "youtube",
+    "page": "https://www.youtube.com/watch?v=JjuCxo2Jwco",
+    "title": "Bukhari Rice with Lamb (Tagalog) - Rebecca Cooking Channel"
+   },
+   {
+    "file": "c00.jpg",
+    "src": "commons",
+    "title": "File:Bukhari Rice ارز بخاري بالدجاج.JPG",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/23/Bukhari_Rice_%D8%A7%D8%B1%D8%B2_%D8%A8%D8%AE%D8%A7%D8%B1%D9%8A_%D8%A8%D8%A7%D9%84%D8%AF%D8%AC%D8%A7%D8%AC.JPG/960px-Bukhari_Rice_%D8%A7%D8%B1%D8%B2_%D8%A8%D8%AE%D8%A7%D8%B1%D9%8A_%D8%A8%D8%A7%D9%84%D8%AF%D8%AC%D8%A7%D8%AC.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "page": "https://commons.wikimedia.org/wiki/File:Bukhari_Rice_%D8%A7%D8%B1%D8%B2_%D8%A8%D8%AE%D8%A7%D8%B1%D9%8A_%D8%A8%D8%A7%D9%84%D8%AF%D8%AC%D8%A7%D8%AC.JPG",
+    "w": 4896,
+    "h": 3672,
+    "license": "CC0",
+    "author": "Miansari66"
+   },
+   {
+    "file": "c01.jpg",
+    "src": "commons",
+    "title": "File:Afghan Palaw.JPG",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a3/Afghan_Palaw.JPG/960px-Afghan_Palaw.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "page": "https://commons.wikimedia.org/wiki/File:Afghan_Palaw.JPG",
+    "w": 5184,
+    "h": 3456,
+    "license": "CC BY-SA 3.0",
+    "author": "ANBI"
+   },
+   {
+    "file": "c02.jpg",
+    "src": "commons",
+    "title": "File:Afghan Palo.jpg",
+    "thumb": "https://upload.wikimedia.org/wikipedia/commons/d/dd/Afghan_Palo.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+    "page": "https://commons.wikimedia.org/wiki/File:Afghan_Palo.jpg",
+    "w": 584,
+    "h": 438,
+    "license": "CC BY-SA 1.0",
+    "author": "Jost Wagner"
+   },
+   {
+    "file": "c03.jpg",
+    "src": "commons",
+    "title": "File:Afghan dishes.JPG",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/54/Afghan_dishes.JPG/960px-Afghan_dishes.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "page": "https://commons.wikimedia.org/wiki/File:Afghan_dishes.JPG",
+    "w": 5184,
+    "h": 3456,
+    "license": "CC BY-SA 3.0",
+    "author": "ANBI"
+   },
+   {
+    "file": "c04.jpg",
+    "src": "commons",
+    "title": "File:Afghani Palaw.JPG",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/ee/Afghani_Palaw.JPG/960px-Afghani_Palaw.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "page": "https://commons.wikimedia.org/wiki/File:Afghani_Palaw.JPG",
+    "w": 5184,
+    "h": 3456,
+    "license": "CC BY-SA 3.0",
+    "author": "ANBI"
+   },
+   {
+    "file": "c05.jpg",
+    "src": "commons",
+    "title": "File:Afghani Pualo 2.JPG",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/cf/Afghani_Pualo_2.JPG/960px-Afghani_Pualo_2.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "page": "https://commons.wikimedia.org/wiki/File:Afghani_Pualo_2.JPG",
+    "w": 2816,
+    "h": 2112,
+    "license": "CC0",
+    "author": "Miansari66"
+   },
+   {
+    "file": "c06.jpg",
+    "src": "commons",
+    "title": "File:Afghani Pulao 1.JPG",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/79/Afghani_Pulao_1.JPG/960px-Afghani_Pulao_1.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "page": "https://commons.wikimedia.org/wiki/File:Afghani_Pulao_1.JPG",
+    "w": 2816,
+    "h": 2112,
+    "license": "CC0",
+    "author": "Miansari66"
+   },
+   {
+    "file": "c07.jpg",
+    "src": "commons",
+    "title": "File:Kabuli Pulao.JPG",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/eb/Kabuli_Pulao.JPG/960px-Kabuli_Pulao.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "page": "https://commons.wikimedia.org/wiki/File:Kabuli_Pulao.JPG",
+    "w": 2816,
+    "h": 2112,
+    "license": "CC0",
+    "author": "Miansari66"
+   },
+   {
+    "file": "c08.jpg",
+    "src": "commons",
+    "title": "File:Qabuli.jpg",
+    "thumb": "https://upload.wikimedia.org/wikipedia/commons/0/07/Qabuli.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+    "page": "https://commons.wikimedia.org/wiki/File:Qabuli.jpg",
+    "w": 604,
+    "h": 402,
+    "license": "Public domain",
+    "author": "Artacoana"
+   },
+   {
+    "file": "c09.jpg",
+    "src": "commons",
+    "title": "File:Qabuli palao (rice with carrots & raisins) with lamb - Afghanistan - 04272008.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/66/Qabuli_palao_%28rice_with_carrots_%26_raisins%29_with_lamb_-_Afghanistan_-_04272008.jpg/960px-Qabuli_palao_%28rice_with_carrots_%26_raisins%29_with_lamb_-_Afghanistan_-_04272008.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "page": "https://commons.wikimedia.org/wiki/File:Qabuli_palao_(rice_with_carrots_%26_raisins)_with_lamb_-_Afghanistan_-_04272008.jpg",
+    "w": 2592,
+    "h": 1944,
+    "license": "CC BY 2.0",
+    "author": "Chen Zhao"
+   }
+  ]
+ },
+ "10": {
+  "name": "Chicken Curry with Boiled Eggs",
+  "cands": [
+   {
+    "file": "yt_video.jpg",
+    "src": "youtube",
+    "page": "https://www.youtube.com/watch?v=LnmiOuZqZNk",
+    "title": "How to Cook Chicken Curry with Boiled Eggs - Enjoy Cooking with AL"
+   },
+   {
+    "file": "c00.jpg",
+    "src": "commons",
+    "title": "File:Chicken-egg Curry.jpg",
+    "thumb": "https://upload.wikimedia.org/wikipedia/commons/6/6b/Chicken-egg_Curry.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+    "page": "https://commons.wikimedia.org/wiki/File:Chicken-egg_Curry.jpg",
+    "w": 960,
+    "h": 1280,
+    "license": "CC BY-SA 4.0",
+    "author": "Hiba Umair"
+   },
+   {
+    "file": "c01.jpg",
+    "src": "commons",
+    "title": "File:Chicken & Egg Curry Rice (4).jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/ad/Chicken_%26_Egg_Curry_Rice_%284%29.jpg/960px-Chicken_%26_Egg_Curry_Rice_%284%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "page": "https://commons.wikimedia.org/wiki/File:Chicken_%26_Egg_Curry_Rice_(4).jpg",
+    "w": 3024,
+    "h": 3024,
+    "license": "CC BY-SA 4.0",
+    "author": "SnapMeUp"
+   },
+   {
+    "file": "c02.jpg",
+    "src": "commons",
+    "title": "File:Chicken & Egg Curry for Rice.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/cc/Chicken_%26_Egg_Curry_for_Rice.jpg/960px-Chicken_%26_Egg_Curry_for_Rice.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "page": "https://commons.wikimedia.org/wiki/File:Chicken_%26_Egg_Curry_for_Rice.jpg",
+    "w": 3024,
+    "h": 3024,
+    "license": "CC BY-SA 4.0",
+    "author": "SnapMeUp"
+   },
+   {
+    "file": "c03.jpg",
+    "src": "commons",
+    "title": "File:Chicken Biriyani with Egg, Chicken Fry, Chicken Curry and Onion Raitha.JPG",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/98/Chicken_Biriyani_with_Egg%2C_Chicken_Fry%2C_Chicken_Curry_and_Onion_Raitha.JPG/960px-Chicken_Biriyani_with_Egg%2C_Chicken_Fry%2C_Chicken_Curry_and_Onion_Raitha.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "page": "https://commons.wikimedia.org/wiki/File:Chicken_Biriyani_with_Egg,_Chicken_Fry,_Chicken_Curry_and_Onion_Raitha.JPG",
+    "w": 3240,
+    "h": 2580,
+    "license": "CC BY-SA 4.0",
+    "author": "Nundhaa"
+   },
+   {
+    "file": "c04.jpg",
+    "src": "commons",
+    "title": "File:Chicken Egg Curry - Howrah 2013-06-08 9271.JPG",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/76/Chicken_Egg_Curry_-_Howrah_2013-06-08_9271.JPG/960px-Chicken_Egg_Curry_-_Howrah_2013-06-08_9271.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "page": "https://commons.wikimedia.org/wiki/File:Chicken_Egg_Curry_-_Howrah_2013-06-08_9271.JPG",
+    "w": 6016,
+    "h": 4000,
+    "license": "CC BY 3.0",
+    "author": "Biswarup Ganguly"
+   },
+   {
+    "file": "c05.jpg",
+    "src": "commons",
+    "title": "File:Chicken Egg Curry - Kolkata 2011-02-26 1749.JPG",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/45/Chicken_Egg_Curry_-_Kolkata_2011-02-26_1749.JPG/960px-Chicken_Egg_Curry_-_Kolkata_2011-02-26_1749.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "page": "https://commons.wikimedia.org/wiki/File:Chicken_Egg_Curry_-_Kolkata_2011-02-26_1749.JPG",
+    "w": 4288,
+    "h": 2848,
+    "license": "CC BY 3.0",
+    "author": "Biswarup Ganguly"
+   },
+   {
+    "file": "c06.jpg",
+    "src": "commons",
+    "title": "File:Chicken curry with egg paratha and pulao.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/ca/Chicken_curry_with_egg_paratha_and_pulao.jpg/960px-Chicken_curry_with_egg_paratha_and_pulao.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "page": "https://commons.wikimedia.org/wiki/File:Chicken_curry_with_egg_paratha_and_pulao.jpg",
+    "w": 3024,
+    "h": 4032,
+    "license": "CC BY-SA 4.0",
+    "author": "Nilu1220"
+   },
+   {
+    "file": "c07.jpg",
+    "src": "commons",
+    "title": "File:Egg + Chicken Curry.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f5/Egg_%2B_Chicken_Curry.jpg/960px-Egg_%2B_Chicken_Curry.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "page": "https://commons.wikimedia.org/wiki/File:Egg_%2B_Chicken_Curry.jpg",
+    "w": 1632,
+    "h": 916,
+    "license": "CC BY-SA 4.0",
+    "author": "Sivakumar"
+   },
+   {
+    "file": "c08.jpg",
+    "src": "commons",
+    "title": "File:Japanese Curry Chicken and Fried Egg with Rice.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/86/Japanese_Curry_Chicken_and_Fried_Egg_with_Rice.jpg/960px-Japanese_Curry_Chicken_and_Fried_Egg_with_Rice.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "page": "https://commons.wikimedia.org/wiki/File:Japanese_Curry_Chicken_and_Fried_Egg_with_Rice.jpg",
+    "w": 5520,
+    "h": 4140,
+    "license": "CC BY-SA 4.0",
+    "author": "Ceeseven"
+   },
+   {
+    "file": "c09.jpg",
+    "src": "commons",
+    "title": "File:Wild rice, hard-boiled egg, and chopped chicken breast, with curry powder, soy sauce, and black pepper - Massachusetts.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/87/Wild_rice%2C_hard-boiled_egg%2C_and_chopped_chicken_breast%2C_with_curry_powder%2C_soy_sauce%2C_and_black_pepper_-_Massachusetts.jpg/960px-Wild_rice%2C_hard-boiled_egg%2C_and_chopped_chicken_breast%2C_with_curry_powder%2C_soy_sauce%2C_and_black_pepper_-_Massachusetts.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "page": "https://commons.wikimedia.org/wiki/File:Wild_rice,_hard-boiled_egg,_and_chopped_chicken_breast,_with_curry_powder,_soy_sauce,_and_black_pepper_-_Massachusetts.jpg",
+    "w": 2655,
+    "h": 2655,
+    "license": "CC0",
+    "author": "Daderot"
+   },
+   {
+    "file": "c10.jpg",
+    "src": "commons",
+    "title": "File:Egg Curry 2022.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/23/Egg_Curry_2022.jpg/960px-Egg_Curry_2022.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "page": "https://commons.wikimedia.org/wiki/File:Egg_Curry_2022.jpg",
+    "w": 2988,
+    "h": 3820,
+    "license": "CC BY-SA 4.0",
+    "author": "Yakshitha"
+   },
+   {
+    "file": "c11.jpg",
+    "src": "commons",
+    "title": "File:Egg Curry 4.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/1d/Egg_Curry_4.jpg/960px-Egg_Curry_4.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "page": "https://commons.wikimedia.org/wiki/File:Egg_Curry_4.jpg",
+    "w": 3024,
+    "h": 4032,
+    "license": "CC BY-SA 4.0",
+    "author": "Gaurav Dhwaj Khadka"
+   },
+   {
+    "file": "c12.jpg",
+    "src": "commons",
+    "title": "File:Egg Soup Curry.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/7e/Egg_Soup_Curry.jpg/960px-Egg_Soup_Curry.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "page": "https://commons.wikimedia.org/wiki/File:Egg_Soup_Curry.jpg",
+    "w": 3024,
+    "h": 4032,
+    "license": "CC BY-SA 4.0",
+    "author": "Gaurav Dhwaj Khadka"
+   },
+   {
+    "file": "c13.jpg",
+    "src": "commons",
+    "title": "File:Egg curry 1.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/ba/Egg_curry_1.jpg/960px-Egg_curry_1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "page": "https://commons.wikimedia.org/wiki/File:Egg_curry_1.jpg",
+    "w": 5632,
+    "h": 4000,
+    "license": "CC BY-SA 4.0",
+    "author": "Dolon Prova"
+   }
+  ]
+ },
+ "11": {
+  "name": "Chicken with Vegetables in the Oven",
+  "cands": [
+   {
+    "file": "yt_video.jpg",
+    "src": "youtube",
+    "page": "https://www.youtube.com/watch?v=4jEgNMqNw6Q",
+    "title": "Filipino Style Roasted Chicken with Vegetables - Food Bae PH"
+   },
+   {
+    "file": "c00.jpg",
+    "src": "commons",
+    "title": "File:Butterfly chicken with roasted vegetables - Massachusetts.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4b/Butterfly_chicken_with_roasted_vegetables_-_Massachusetts.jpg/960px-Butterfly_chicken_with_roasted_vegetables_-_Massachusetts.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "page": "https://commons.wikimedia.org/wiki/File:Butterfly_chicken_with_roasted_vegetables_-_Massachusetts.jpg",
+    "w": 2015,
+    "h": 2028,
+    "license": "CC0",
+    "author": "Daderot"
+   },
+   {
+    "file": "c01.jpg",
+    "src": "commons",
+    "title": "File:Chef Salad.JPG",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/89/Chef_Salad.JPG/960px-Chef_Salad.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "page": "https://commons.wikimedia.org/wiki/File:Chef_Salad.JPG",
+    "w": 1600,
+    "h": 1200,
+    "license": "Public domain",
+    "author": "Gesalbte"
+   },
+   {
+    "file": "c02.jpg",
+    "src": "commons",
+    "title": "File:Chicken and vegetables, Christmas 2022 - Massachusetts.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4f/Chicken_and_vegetables%2C_Christmas_2022_-_Massachusetts.jpg/960px-Chicken_and_vegetables%2C_Christmas_2022_-_Massachusetts.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "page": "https://commons.wikimedia.org/wiki/File:Chicken_and_vegetables,_Christmas_2022_-_Massachusetts.jpg",
+    "w": 2933,
+    "h": 2933,
+    "license": "CC0",
+    "author": "Daderot"
+   },
+   {
+    "file": "c03.jpg",
+    "src": "commons",
+    "title": "File:Chicken and vegetables, roasted - Massachusetts.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/6a/Chicken_and_vegetables%2C_roasted_-_Massachusetts.jpg/960px-Chicken_and_vegetables%2C_roasted_-_Massachusetts.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "page": "https://commons.wikimedia.org/wiki/File:Chicken_and_vegetables,_roasted_-_Massachusetts.jpg",
+    "w": 2244,
+    "h": 2244,
+    "license": "CC0",
+    "author": "Daderot"
+   },
+   {
+    "file": "c04.jpg",
+    "src": "commons",
+    "title": "File:Liat Portal for Foodie Disorder - Grilled Chicken with Roasted Vegetables.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d6/Liat_Portal_for_Foodie_Disorder_-_Grilled_Chicken_with_Roasted_Vegetables.jpg/960px-Liat_Portal_for_Foodie_Disorder_-_Grilled_Chicken_with_Roasted_Vegetables.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "page": "https://commons.wikimedia.org/wiki/File:Liat_Portal_for_Foodie_Disorder_-_Grilled_Chicken_with_Roasted_Vegetables.jpg",
+    "w": 3024,
+    "h": 4032,
+    "license": "CC BY-SA 4.0",
+    "author": "HaJunkiyada"
+   },
+   {
+    "file": "c05.jpg",
+    "src": "commons",
+    "title": "File:Liat Portal for Foodie Disorder - Homemade chicken lunch with roasted vegetables and babaganoush.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/08/Liat_Portal_for_Foodie_Disorder_-_Homemade_chicken_lunch_with_roasted_vegetables_and_babaganoush.jpg/960px-Liat_Portal_for_Foodie_Disorder_-_Homemade_chicken_lunch_with_roasted_vegetables_and_babaganoush.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "page": "https://commons.wikimedia.org/wiki/File:Liat_Portal_for_Foodie_Disorder_-_Homemade_chicken_lunch_with_roasted_vegetables_and_babaganoush.jpg",
+    "w": 3024,
+    "h": 4032,
+    "license": "CC BY-SA 4.0",
+    "author": "HaJunkiyada"
+   },
+   {
+    "file": "c06.jpg",
+    "src": "commons",
+    "title": "File:Liat Portal for Foodie Disorder - Roast chicken with peas and green salad.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/31/Liat_Portal_for_Foodie_Disorder_-_Roast_chicken_with_peas_and_green_salad.jpg/960px-Liat_Portal_for_Foodie_Disorder_-_Roast_chicken_with_peas_and_green_salad.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "page": "https://commons.wikimedia.org/wiki/File:Liat_Portal_for_Foodie_Disorder_-_Roast_chicken_with_peas_and_green_salad.jpg",
+    "w": 3024,
+    "h": 4032,
+    "license": "CC BY-SA 4.0",
+    "author": "HaJunkiyada"
+   },
+   {
+    "file": "c07.jpg",
+    "src": "commons",
+    "title": "File:Liat Portal for Foodie Disorder - Roasted Chicken with Seasonal Vegetables.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/61/Liat_Portal_for_Foodie_Disorder_-_Roasted_Chicken_with_Seasonal_Vegetables.jpg/960px-Liat_Portal_for_Foodie_Disorder_-_Roasted_Chicken_with_Seasonal_Vegetables.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "page": "https://commons.wikimedia.org/wiki/File:Liat_Portal_for_Foodie_Disorder_-_Roasted_Chicken_with_Seasonal_Vegetables.jpg",
+    "w": 3024,
+    "h": 4032,
+    "license": "CC BY-SA 4.0",
+    "author": "HaJunkiyada"
+   },
+   {
+    "file": "c08.jpg",
+    "src": "commons",
+    "title": "File:Liat Portal for Foodie Disorder - Roasted chicken with vegetables and white rice.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/62/Liat_Portal_for_Foodie_Disorder_-_Roasted_chicken_with_vegetables_and_white_rice.jpg/960px-Liat_Portal_for_Foodie_Disorder_-_Roasted_chicken_with_vegetables_and_white_rice.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "page": "https://commons.wikimedia.org/wiki/File:Liat_Portal_for_Foodie_Disorder_-_Roasted_chicken_with_vegetables_and_white_rice.jpg",
+    "w": 3024,
+    "h": 4032,
+    "license": "CC BY-SA 4.0",
+    "author": "HaJunkiyada"
+   },
+   {
+    "file": "c09.jpg",
+    "src": "commons",
+    "title": "File:PXL 20230523 164106755 Marshall University Drinko Library coffee shop food yogurts, chef salad, and fruit cups and salad dressing.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/26/PXL_20230523_164106755_Marshall_University_Drinko_Library_coffee_shop_food_yogurts%2C_chef_salad%2C_and_fruit_cups_and_salad_dressing.jpg/960px-PXL_20230523_164106755_Marshall_University_Drinko_Library_coffee_shop_food_yogurts%2C_chef_salad%2C_and_fruit_cups_and_salad_dressing.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "page": "https://commons.wikimedia.org/wiki/File:PXL_20230523_164106755_Marshall_University_Drinko_Library_coffee_shop_food_yogurts,_chef_salad,_and_fruit_cups_and_salad_dressing.jpg",
+    "w": 4032,
+    "h": 3024,
+    "license": "CC BY-SA 4.0",
+    "author": "WalkingRadiance"
+   },
+   {
+    "file": "c10.jpg",
+    "src": "commons",
+    "title": "File:20111012-FNCS-LSC-0260 - Flickr - USDAgov.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/57/20111012-FNCS-LSC-0260_-_Flickr_-_USDAgov.jpg/960px-20111012-FNCS-LSC-0260_-_Flickr_-_USDAgov.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "page": "https://commons.wikimedia.org/wiki/File:20111012-FNCS-LSC-0260_-_Flickr_-_USDAgov.jpg",
+    "w": 4928,
+    "h": 3264,
+    "license": "Public domain",
+    "author": "U.S. Department of Agriculture"
+   },
+   {
+    "file": "c11.jpg",
+    "src": "commons",
+    "title": "File:Chicken wings and hot chips from Red Rooster and a can of Coke No Sugar.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c9/Chicken_wings_and_hot_chips_from_Red_Rooster_and_a_can_of_Coke_No_Sugar.jpg/960px-Chicken_wings_and_hot_chips_from_Red_Rooster_and_a_can_of_Coke_No_Sugar.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "page": "https://commons.wikimedia.org/wiki/File:Chicken_wings_and_hot_chips_from_Red_Rooster_and_a_can_of_Coke_No_Sugar.jpg",
+    "w": 2866,
+    "h": 2172,
+    "license": "CC BY 2.0",
+    "author": "David Jackmanson from Brisbane, Australia"
+   },
+   {
+    "file": "c12.jpg",
+    "src": "commons",
+    "title": "File:HKU 香港大學 Canteen Pokfulam Campus restaurant kitchen counter August 2022 Px3 01.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/10/HKU_%E9%A6%99%E6%B8%AF%E5%A4%A7%E5%AD%B8_Canteen_Pokfulam_Campus_restaurant_kitchen_counter_August_2022_Px3_01.jpg/960px-HKU_%E9%A6%99%E6%B8%AF%E5%A4%A7%E5%AD%B8_Canteen_Pokfulam_Campus_restaurant_kitchen_counter_August_2022_Px3_01.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "page": "https://commons.wikimedia.org/wiki/File:HKU_%E9%A6%99%E6%B8%AF%E5%A4%A7%E5%AD%B8_Canteen_Pokfulam_Campus_restaurant_kitchen_counter_August_2022_Px3_01.jpg",
+    "w": 3000,
+    "h": 4000,
+    "license": "CC BY-SA 4.0",
+    "author": "POASIEKUNG KAM GEE"
+   },
+   {
+    "file": "c13.jpg",
+    "src": "commons",
+    "title": "File:HK food 大家樂 Cafe de Coral Restaurant 下午茶餐 afternoon tea kitchen order counter plastic bag chicken wing corn tray cup drink Oct-2015 Corncob.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/89/HK_food_%E5%A4%A7%E5%AE%B6%E6%A8%82_Cafe_de_Coral_Restaurant_%E4%B8%8B%E5%8D%88%E8%8C%B6%E9%A4%90_afternoon_tea_kitchen_order_counter_plastic_bag_chicken_wing_corn_tray_cup_drink_Oct-2015_Corncob.jpg/960px-HK_food_%E5%A4%A7%E5%AE%B6%E6%A8%82_Cafe_de_Coral_Restaurant_%E4%B8%8B%E5%8D%88%E8%8C%B6%E9%A4%90_afternoon_tea_kitchen_order_counter_plastic_bag_chicken_wing_corn_tray_cup_drink_Oct-2015_Corncob.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "page": "https://commons.wikimedia.org/wiki/File:HK_food_%E5%A4%A7%E5%AE%B6%E6%A8%82_Cafe_de_Coral_Restaurant_%E4%B8%8B%E5%8D%88%E8%8C%B6%E9%A4%90_afternoon_tea_kitchen_order_counter_plastic_bag_chicken_wing_corn_tray_cup_drink_Oct-2015_Corncob.jpg",
+    "w": 3264,
+    "h": 1836,
+    "license": "CC BY-SA 4.0",
+    "author": "Hoofayefatie"
+   }
+  ]
+ },
+ "12": {
+  "name": "Chicken Salona",
+  "cands": [
+   {
+    "file": "yt_video.jpg",
+    "src": "youtube",
+    "page": "https://www.youtube.com/watch?v=CkJ57o5iWv8",
+    "title": "How to cook Chicken Salona - Marilou Recipes"
+   },
+   {
+    "file": "c00.jpg",
+    "src": "commons",
+    "title": "File:Fleurcup and tampons.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/04/Fleurcup_and_tampons.jpg/960px-Fleurcup_and_tampons.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "page": "https://commons.wikimedia.org/wiki/File:Fleurcup_and_tampons.jpg",
+    "w": 2024,
+    "h": 1522,
+    "license": "CC BY-SA 3.0",
+    "author": "גביע האלופות, http://saloona.co.il/shnot30/"
+   },
+   {
+    "file": "c01.jpg",
+    "src": "commons",
+    "title": "File:Maraq.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/ee/Maraq.jpg/960px-Maraq.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "page": "https://commons.wikimedia.org/wiki/File:Maraq.jpg",
+    "w": 2950,
+    "h": 3116,
+    "license": "CC BY 4.0",
+    "author": "Abu Isa"
+   },
+   {
+    "file": "c02.jpg",
+    "src": "commons",
+    "title": "File:Saloonay Chawal..JPG",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/af/Saloonay_Chawal..JPG/960px-Saloonay_Chawal..JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "page": "https://commons.wikimedia.org/wiki/File:Saloonay_Chawal..JPG",
+    "w": 4896,
+    "h": 3672,
+    "license": "CC0",
+    "author": "Miansari66"
+   },
+   {
+    "file": "c03.jpg",
+    "src": "commons",
+    "title": "File:Vegan stall Israel 2014.jpg",
+    "thumb": "https://upload.wikimedia.org/wikipedia/commons/9/90/Vegan_stall_Israel_2014.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+    "page": "https://commons.wikimedia.org/wiki/File:Vegan_stall_Israel_2014.jpg",
+    "w": 900,
+    "h": 1200,
+    "license": "CC BY-SA 4.0",
+    "author": "מיכל ביאל ויסלברג"
+   },
+   {
+    "file": "c04.jpg",
+    "src": "commons",
+    "title": "File:Yemenite vegetable soup.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/3b/Yemenite_vegetable_soup.jpg/960px-Yemenite_vegetable_soup.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "page": "https://commons.wikimedia.org/wiki/File:Yemenite_vegetable_soup.jpg",
+    "w": 1760,
+    "h": 1168,
+    "license": "CC BY-SA 2.0",
+    "author": "stu_spivack"
+   },
+   {
+    "file": "c05.jpg",
+    "src": "commons",
+    "title": "File:Yuuki2.jpg",
+    "thumb": "https://upload.wikimedia.org/wikipedia/commons/9/9a/Yuuki2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+    "page": "https://commons.wikimedia.org/wiki/File:Yuuki2.jpg",
+    "w": 707,
+    "h": 1245,
+    "license": "CC BY-SA 3.0",
+    "author": "גביע האלופות, http://saloona.co.il/shnot30/"
+   },
+   {
+    "file": "c06.jpg",
+    "src": "commons",
+    "title": "File:Yuuki2 in hand.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c8/Yuuki2_in_hand.jpg/960px-Yuuki2_in_hand.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "page": "https://commons.wikimedia.org/wiki/File:Yuuki2_in_hand.jpg",
+    "w": 1496,
+    "h": 1747,
+    "license": "CC BY-SA 3.0",
+    "author": "גביע האלופות, http://saloona.co.il/shnot30/"
+   },
+   {
+    "file": "c07.jpg",
+    "src": "commons",
+    "title": "File:Amfissa apopsi.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/3b/Amfissa_apopsi.jpg/960px-Amfissa_apopsi.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "page": "https://commons.wikimedia.org/wiki/File:Amfissa_apopsi.jpg",
+    "w": 1249,
+    "h": 810,
+    "license": "Attribution",
+    "author": "The original uploader was Lemur12 at Greek Wikipedia."
+   },
+   {
+    "file": "c08.jpg",
+    "src": "commons",
+    "title": "File:Ancient Salona - Solin 26.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/6c/Ancient_Salona_-_Solin_26.jpg/960px-Ancient_Salona_-_Solin_26.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "page": "https://commons.wikimedia.org/wiki/File:Ancient_Salona_-_Solin_26.jpg",
+    "w": 6000,
+    "h": 4000,
+    "license": "CC BY 2.0",
+    "author": "TimeTravelRome"
+   },
+   {
+    "file": "c09.jpg",
+    "src": "commons",
+    "title": "File:Episcopal Center (Salona) 03.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/35/Episcopal_Center_%28Salona%29_03.jpg/960px-Episcopal_Center_%28Salona%29_03.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "page": "https://commons.wikimedia.org/wiki/File:Episcopal_Center_(Salona)_03.jpg",
+    "w": 7278,
+    "h": 3307,
+    "license": "CC BY-SA 4.0",
+    "author": "Bernard Gagnon"
+   },
+   {
+    "file": "c10.jpg",
+    "src": "commons",
+    "title": "File:Porta Caesarea (Salona).jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4c/Porta_Caesarea_%28Salona%29.jpg/960px-Porta_Caesarea_%28Salona%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "page": "https://commons.wikimedia.org/wiki/File:Porta_Caesarea_(Salona).jpg",
+    "w": 5002,
+    "h": 3335,
+    "license": "CC BY-SA 4.0",
+    "author": "Bernard Gagnon"
+   },
+   {
+    "file": "c11.jpg",
+    "src": "commons",
+    "title": "File:Salona, Croatia 20240107 05.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f9/Salona%2C_Croatia_20240107_05.jpg/960px-Salona%2C_Croatia_20240107_05.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "page": "https://commons.wikimedia.org/wiki/File:Salona,_Croatia_20240107_05.jpg",
+    "w": 4000,
+    "h": 3000,
+    "license": "CC BY-SA 4.0",
+    "author": "Argo Navis"
+   },
+   {
+    "file": "c12.jpg",
+    "src": "commons",
+    "title": "File:Salona, Croatia 20240107 07.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/dc/Salona%2C_Croatia_20240107_07.jpg/960px-Salona%2C_Croatia_20240107_07.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "page": "https://commons.wikimedia.org/wiki/File:Salona,_Croatia_20240107_07.jpg",
+    "w": 3000,
+    "h": 4000,
+    "license": "CC BY-SA 4.0",
+    "author": "Argo Navis"
+   },
+   {
+    "file": "c13.jpg",
+    "src": "commons",
+    "title": "File:Salona, Croatia 20240107 09.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e3/Salona%2C_Croatia_20240107_09.jpg/960px-Salona%2C_Croatia_20240107_09.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "page": "https://commons.wikimedia.org/wiki/File:Salona,_Croatia_20240107_09.jpg",
+    "w": 4000,
+    "h": 3000,
+    "license": "CC BY-SA 4.0",
+    "author": "Argo Navis"
+   }
+  ]
+ },
+ "13": {
+  "name": "Lamb Salona",
+  "cands": [
+   {
+    "file": "yt_video.jpg",
+    "src": "youtube",
+    "page": "https://www.youtube.com/watch?v=v2XMC2IOE3Y",
+    "title": "How to cook Salona Laham - Marilou Recipes"
+   }
+  ]
+ },
+ "14": {
+  "name": "Mahshi Malfouf (Stuffed Cabbage Rolls)",
+  "cands": [
+   {
+    "file": "yt_video.jpg",
+    "src": "youtube",
+    "page": "https://www.youtube.com/watch?v=8lVHVC6YXww",
+    "title": "How to make Cabbage Rolls / Malfouf - Kitchen with Sorayda"
+   }
+  ]
+ },
+ "15": {
+  "name": "Cajun Chicken with Lobia (Black-eyed Peas) and White Rice",
+  "cands": [
+   {
+    "file": "yt_video.jpg",
+    "src": "youtube",
+    "page": "https://www.youtube.com/watch?v=9qW7bqSpTNo",
+    "title": "Easy Cajun Grilled Chicken - Simple Living with Ms Tania"
+   },
+   {
+    "file": "yt_video2.jpg",
+    "src": "youtube",
+    "page": "https://www.youtube.com/watch?v=LoCbOF7PuFY",
+    "title": "Black-eyed beans (Lobia) Egyptian way"
+   }
+  ]
+ },
+ "16": {
+  "name": "Grilled Chicken with Molokhia and White Rice",
+  "cands": [
+   {
+    "file": "yt_video.jpg",
+    "src": "youtube",
+    "page": "https://www.youtube.com/watch?v=vgyfk9PCN-Q",
+    "title": "Molokhia with Chicken (Saluyot sa Tagalog) - Mohd & Ley Omari"
+   }
+  ]
+ },
+ "17": {
+  "name": "Okra (Bamia) with Lamb and White Rice",
+  "cands": [
+   {
+    "file": "yt_video.jpg",
+    "src": "youtube",
+    "page": "https://www.youtube.com/watch?v=yypa-uNFKr0",
+    "title": "Marag Bamya with Lamb - Angeline Canja"
+   }
+  ]
+ },
+ "18": {
+  "name": "Fried Chicken with Okra Stew and White Rice",
+  "cands": [
+   {
+    "file": "yt_video.jpg",
+    "src": "youtube",
+    "page": "https://www.youtube.com/watch?v=sc4QnMwS2V8",
+    "title": "Okra / Bamia with Chicken Salona - Marilou Recipes"
+   }
+  ]
+ },
+ "19": {
+  "name": "Musakhan Chicken with White Rice (Oven)",
+  "cands": [
+   {
+    "file": "yt_video.jpg",
+    "src": "youtube",
+    "page": "https://www.youtube.com/watch?v=cI6NslzSkNc",
+    "title": "Easy way to cook Chicken Musakhan - Els Kusinera"
+   }
+  ]
+ },
+ "20": {
+  "name": "Spaghetti with Meatballs",
+  "cands": [
+   {
+    "file": "yt_video.jpg",
+    "src": "youtube",
+    "page": "https://www.youtube.com/watch?v=MAETFavPMXM",
+    "title": "Easy Spaghetti and Meatballs - Preppy Kitchen"
+   },
+   {
+    "file": "yt_video2.jpg",
+    "src": "youtube",
+    "page": "https://www.youtube.com/watch?v=YOG4UdcXMkU",
+    "title": "Spaghetti & Meatballs Pinoy Style (Tagalog) - Mommy-Go-Round"
+   }
+  ]
+ },
+ "21": {
+  "name": "Mashed Potato with Grilled Chicken",
+  "cands": [
+   {
+    "file": "yt_video.jpg",
+    "src": "youtube",
+    "page": "https://www.youtube.com/watch?v=EOa-jQXmVTg",
+    "title": "Grilled Chicken Breast with Creamy Mashed Potato - Priyanka Banerjee"
+   },
+   {
+    "file": "yt_video2.jpg",
+    "src": "youtube",
+    "page": "https://www.youtube.com/watch?v=Zl2DkxTpQ-4",
+    "title": "Mashed Potato Recipe (Tagalog) - Juniors Tagalog Cooking Channel"
+   }
+  ]
+ },
+ "22": {
+  "name": "Chicken with Spinach and White Rice",
+  "cands": [
+   {
+    "file": "yt_video.jpg",
+    "src": "youtube",
+    "page": "https://www.youtube.com/watch?v=YebEQ7smBb8",
+    "title": "Spinach Chicken Curry (Palak Chicken) - Curries With Bumbi"
+   }
+  ]
+ },
+ "23": {
+  "name": "Madhbi Chicken with Rice",
+  "cands": [
+   {
+    "file": "yt_video.jpg",
+    "src": "youtube",
+    "page": "https://www.youtube.com/watch?v=3SNfPJp44rg",
+    "title": "Arabic Style Chicken Madhbi - Cook with Alma"
+   }
+  ]
+ },
+ "S1": {
+  "name": "Fattoush Salad",
+  "cands": [
+   {
+    "file": "yt_video.jpg",
+    "src": "youtube",
+    "page": "https://www.youtube.com/watch?v=Lh2ujK9IFS0",
+    "title": "The best fattoush salad - Feel Good Foodie"
+   }
+  ]
+ },
+ "S2": {
+  "name": "Walnut Salad",
+  "cands": [
+   {
+    "file": "yt_video.jpg",
+    "src": "youtube",
+    "page": "https://www.youtube.com/watch?v=v_z0g5IuD88",
+    "title": "10-Minute Apple Walnut Salad - Broke Bank Vegan"
+   }
+  ]
+ },
+ "S3": {
+  "name": "Corn Salad",
+  "cands": [
+   {
+    "file": "yt_video.jpg",
+    "src": "youtube",
+    "page": "https://www.youtube.com/watch?v=TXT9LxDGGKE",
+    "title": "The Best Corn Salad - Inspired Taste"
+   }
+  ]
+ },
+ "S4": {
+  "name": "Burghul (Bulgur) Salad / Tabbouleh",
+  "cands": [
+   {
+    "file": "yt_video.jpg",
+    "src": "youtube",
+    "page": "https://www.youtube.com/watch?v=q2FVkPV2mds",
+    "title": "Tabouli Salad Recipe - The Mediterranean Dish"
+   }
+  ]
+ },
+ "S5": {
+  "name": "Green Mix Salad",
+  "cands": [
+   {
+    "file": "yt_video.jpg",
+    "src": "youtube",
+    "page": "https://www.youtube.com/watch?v=shaMtIC4RbI",
+    "title": "Pinaka Madaling Vegetable Salad - Friend-Cheap Menu"
+   }
+  ]
+ },
+ "S6": {
+  "name": "Greek Salad",
+  "cands": [
+   {
+    "file": "yt_video.jpg",
+    "src": "youtube",
+    "page": "https://www.youtube.com/watch?v=fLiFdOR_ifI",
+    "title": "Greek Salad Recipe - Natasha's Kitchen"
+   }
+  ]
+ },
+ "S7": {
+  "name": "Caesar Salad with Grilled Chicken",
+  "cands": [
+   {
+    "file": "yt_video.jpg",
+    "src": "youtube",
+    "page": "https://www.youtube.com/watch?v=QIipQHe0css",
+    "title": "Perfect Chicken Caesar Salad - Inspired Taste"
+   },
+   {
+    "file": "yt_video2.jpg",
+    "src": "youtube",
+    "page": "https://www.youtube.com/watch?v=tNIg71OMCtY",
+    "title": "Filipino-Style Caesar Salad - Yummy PH"
+   }
+  ]
+ },
+ "S8": {
+  "name": "Halloumi Salad",
+  "cands": [
+   {
+    "file": "yt_video.jpg",
+    "src": "youtube",
+    "page": "https://www.youtube.com/watch?v=thMEHZCmLCI",
+    "title": "Grilled Halloumi Salad - The Cooking Foodie"
+   }
+  ]
+ },
+ "S9": {
+  "name": "Jarjeer (Rocket) Salad",
+  "cands": [
+   {
+    "file": "yt_video.jpg",
+    "src": "youtube",
+    "page": "https://www.youtube.com/watch?v=MzWj-JF9AIo",
+    "title": "Arugula / Jarjeer Salad - Els Kusinera"
+   }
+  ]
+ }
+}
