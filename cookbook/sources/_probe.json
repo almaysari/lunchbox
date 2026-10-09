@@ -1,0 +1,119 @@
+{
+ "sayidaty_home": {
+  "status": 200,
+  "final": "https://kitchen.sayidaty.net/",
+  "len": 222816,
+  "title": " مطبخ سيدتي",
+  "recipe_links": [
+   "https://kitchen.sayidaty.net/recipes/index/category/19",
+   "https://kitchen.sayidaty.net/recipes/index/category/18",
+   "https://kitchen.sayidaty.net/recipes/index/category/25",
+   "https://kitchen.sayidaty.net/recipes/index/category/20",
+   "https://kitchen.sayidaty.net/recipes/index/category/21",
+   "https://kitchen.sayidaty.net/recipes/index/category/32",
+   "https://kitchen.sayidaty.net/recipes/index/category/47",
+   "https://kitchen.sayidaty.net/recipes/index/category/48"
+  ]
+ },
+ "sayidaty_search": {
+  "status": 200,
+  "final": "https://kitchen.sayidaty.net/recipes/search?q=%D9%83%D8%A8%D8%B3%D8%A9",
+  "len": 172331,
+  "title": " مطبخ سيدتي",
+  "recipe_links": [
+   "https://kitchen.sayidaty.net/recipes/index/category/19",
+   "https://kitchen.sayidaty.net/recipes/index/category/18",
+   "https://kitchen.sayidaty.net/recipes/index/category/25",
+   "https://kitchen.sayidaty.net/recipes/index/category/20",
+   "https://kitchen.sayidaty.net/recipes/index/category/21",
+   "https://kitchen.sayidaty.net/recipes/index/category/32",
+   "https://kitchen.sayidaty.net/recipes/index/category/47",
+   "https://kitchen.sayidaty.net/recipes/index/category/48"
+  ]
+ },
+ "sayidaty_chef": {
+  "status": 200,
+  "final": "https://kitchen.sayidaty.net/recipes/index/chef/4243",
+  "len": 264113,
+  "title": " آخر الوصفات – مطبخ سيدتي - سميرة بشارات",
+  "recipe_links": [
+   "https://kitchen.sayidaty.net/recipes/index/category/19",
+   "https://kitchen.sayidaty.net/recipes/index/category/18",
+   "https://kitchen.sayidaty.net/recipes/index/category/25",
+   "https://kitchen.sayidaty.net/recipes/index/category/20",
+   "https://kitchen.sayidaty.net/recipes/index/category/21",
+   "https://kitchen.sayidaty.net/recipes/index/category/32",
+   "https://kitchen.sayidaty.net/recipes/index/category/47",
+   "https://kitchen.sayidaty.net/recipes/index/category/48"
+  ]
+ },
+ "manal_home": {
+  "status": 200,
+  "final": "https://www.manalonline.com/recipes/",
+  "len": 50509,
+  "title": "جميع الوصفات — منال العالم",
+  "recipe_links": [
+   "/recipes/",
+   "/recipes/",
+   "/recipes/",
+   "/recipes/",
+   "/recipes/tag/دجاج/",
+   "/recipes/tag/لحم/",
+   "/recipes/tag/سمك-ومأكولات-بحرية/",
+   "/recipes/tag/خضار/"
+  ]
+ },
+ "manal_search": {
+  "status": 200,
+  "final": "https://www.manalonline.com/?s=%D8%A8%D8%B1%D9%8A%D8%A7%D9%86%D9%8A",
+  "len": 94558,
+  "title": "منال العالم — وصفات عربية أصيلة",
+  "recipe_links": [
+   "/recipes/",
+   "/recipes/",
+   "/recipes/",
+   "/recipes/",
+   "/recipes/"
+  ]
+ },
+ "shamlola_home": {
+  "status": 200,
+  "final": "https://www.shamlola.com/recipes",
+  "len": 74531,
+  "title": "وصفات شملولة, وصفات سهلة وسريعة, وصفات اكلات   - شملولة",
+  "recipe_links": [
+   "https://www.shamlola.com/recipes",
+   "https://www.shamlola.com/recipes",
+   "https://www.shamlola.com/recipes/طريقة-عمل-كباب-الحلة-اللذيذة-والشهية",
+   "https://www.shamlola.com/recipes/طريقة عمل كازا باستا",
+   "https://www.shamlola.com/recipes/طريقة عمل التلبينة النبوية",
+   "https://www.shamlola.com/recipes/طريقة عمل صوص ثاوزند ايلاند",
+   "https://www.shamlola.com/recipes/طريقة عمل سيراتشا صوص",
+   "https://www.shamlola.com/recipes/طريقة عمل خبز البريوش"
+  ]
+ },
+ "shamlola_search": {
+  "status": 200,
+  "final": "https://www.shamlola.com/failed",
+  "len": 39726,
+  "title": "موقع طبخ, وصفات طبخ و اكلات متنوعة - شملولة",
+  "recipe_links": [
+   "https://www.shamlola.com/recipes",
+   "https://www.shamlola.com/recipes"
+  ]
+ },
+ "bing": {
+  "status": 200,
+  "final": "https://www.bing.com/search?q=%D9%83%D8%A8%D8%B3%D8%A9+site%3Akitchen.sayidaty.net",
+  "len": 98308,
+  "title": "كبسة site:kitchen.sayidaty.net - بحث",
+  "recipe_links": []
+ },
+ "ddg": {
+  "status": 202,
+  "final": "https://html.duckduckgo.com/html/?q=%D9%83%D8%A8%D8%B3%D8%A9+site%3Akitchen.sayidaty.net",
+  "len": 14252,
+  "title": "\n        DuckDuckGo\n    ",
+  "recipe_links": []
+ }
+}
