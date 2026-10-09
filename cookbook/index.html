@@ -1,0 +1,966 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Al Maysari Family Cookbook</title><style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Tajawal:wght@500;700;800&display=swap');
+:root{--ink:#1e1810;--muted:#6f6257;--line:#e6ddd1;--accent:#c8522a;--green:#2f6b4a;--gold:#b8862a;--paper:#fff;--cream:#faf6ef}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:#ebe6de;color:var(--ink);font-family:Inter,'Segoe UI',Arial,sans-serif;font-size:11.5px;line-height:1.45}
+.ar{font-family:Tajawal,'Segoe UI',Arial,sans-serif;direction:rtl}
+.page{width:210mm;min-height:297mm;background:var(--paper);margin:10mm auto;padding:14mm 14mm 12mm;position:relative;page-break-after:always;break-after:page;box-shadow:0 2px 14px rgba(0,0,0,.08)}
+.page:last-child{page-break-after:auto}
+@page{size:A4;margin:0}
+@media print{html,body{background:#fff}.page{margin:0;box-shadow:none;width:210mm;height:297mm;overflow:hidden}.no-print{display:none}}
+
+/* cover */
+.cover{background:var(--ink);color:#fff;display:flex;flex-direction:column;justify-content:space-between;padding:20mm}
+.cover .kicker{letter-spacing:.3em;text-transform:uppercase;font-size:11px;color:#e8a87c}
+.cover h1{font-size:46px;font-weight:800;line-height:1.05;margin-top:12px}
+.cover h1 span{color:#e8a87c}
+.cover .sub{font-size:16px;color:#d9cfc3;margin-top:14px;max-width:120mm}
+.cover .ar-title{font-size:30px;margin-top:8px;color:#f5e6d0}
+.cover .meta{border-top:1px solid #4a3d31;padding-top:10px;font-size:12px;color:#bfae9c;display:flex;justify-content:space-between}
+.cover-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin:16px 0}
+.cover-grid img{width:100%;height:46mm;object-fit:cover;border-radius:6px;display:block}
+
+/* generic */
+h2.section{font-size:26px;font-weight:800;margin-bottom:4px}
+.section-sub{color:var(--muted);font-size:13px;margin-bottom:14px}
+.rule{height:3px;background:var(--accent);width:60px;margin:8px 0 14px}
+.toc{columns:2;column-gap:10mm;font-size:12px}
+.toc li{list-style:none;display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px dotted var(--line);break-inside:avoid}
+.toc li b{color:var(--accent);min-width:26px;display:inline-block}
+.toc li .ar{color:var(--muted);font-size:11px}
+.toc .lang{font-size:9px;border-radius:3px;padding:1px 5px;background:#eef3ee;color:var(--green);font-weight:700;margin-left:6px}
+.toc .lang.en{background:#eeeff6;color:#3b4a8a}
+
+/* recipe page */
+.rhead{display:flex;gap:6mm;align-items:stretch;margin-bottom:6mm}
+.rhead .photo{width:78mm;height:52mm;object-fit:cover;border-radius:8px;flex-shrink:0;background:#eee}
+.rhead .ph{width:78mm;height:52mm;border-radius:8px;flex-shrink:0;background:linear-gradient(135deg,#f3e9db,#e8d9c4);display:flex;align-items:center;justify-content:center;font-size:54px}
+.rhead .title{flex:1;display:flex;flex-direction:column;justify-content:space-between}
+.num{font-size:11px;font-weight:700;color:var(--accent);letter-spacing:.2em}
+.rhead h1{font-size:24px;line-height:1.1;font-weight:800;margin:4px 0 2px}
+.rhead .ar{font-size:18px;color:var(--muted);font-weight:700;text-align:left;direction:rtl;display:inline-block}
+.intro{color:#4a3f36;font-size:11.5px;margin-top:6px}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.chip{font-size:10px;font-weight:700;border:1px solid var(--line);border-radius:20px;padding:3px 9px;background:var(--cream)}
+.chip.acc{border-color:#efcdbd;background:#fdf1ea;color:var(--accent)}
+
+.cols{display:grid;grid-template-columns:86mm 1fr;gap:7mm}
+h3{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);margin-bottom:6px;font-weight:800}
+table.ing{width:100%;border-collapse:collapse;font-size:10.5px}
+table.ing th{text-align:left;font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding:4px 5px;border-bottom:2px solid var(--ink)}
+table.ing th.q{text-align:center;width:22mm}
+table.ing td{padding:4px 5px;border-bottom:1px solid var(--line);vertical-align:top}
+table.ing td.q{text-align:center;font-weight:700;white-space:nowrap}
+table.ing td.q.p2{background:#fdf6ee}
+ol.steps{padding-left:0;list-style:none;counter-reset:s}
+ol.steps li{counter-increment:s;position:relative;padding-left:26px;margin-bottom:7px;font-size:11px}
+ol.steps li::before{content:counter(s);position:absolute;left:0;top:0;width:19px;height:19px;border-radius:50%;background:var(--ink);color:#fff;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center}
+.tl{background:#fff8ea;border:1.5px solid #f0d9a8;border-left:5px solid var(--gold);border-radius:8px;padding:8px 10px;margin-top:8px}
+.tl b{display:block;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#8a6412;margin-bottom:4px}
+.tl li{margin-left:14px;font-size:10.5px;margin-bottom:2px}
+.foot{position:absolute;left:14mm;right:14mm;bottom:8mm;display:flex;justify-content:space-between;align-items:flex-end;border-top:1px solid var(--line);padding-top:6px}
+.foot .brand{font-size:9.5px;color:var(--muted)}
+.qr{display:flex;align-items:center;gap:8px}
+.qr img{width:24mm;height:24mm;display:block}
+.qr .t{font-size:9.5px;line-height:1.3;max-width:62mm}
+.qr .t b{display:block;font-size:10px;color:var(--ink)}
+.qr .lang{font-size:9px;font-weight:800;color:#fff;background:var(--green);border-radius:3px;padding:1px 6px;display:inline-block;margin-bottom:3px}
+.qr .lang.en{background:#3b4a8a}
+
+/* salads: 2 per page */
+.salad{display:grid;grid-template-columns:58mm 1fr 26mm;gap:5mm;padding:5mm 0;border-bottom:1.5px solid var(--line);break-inside:avoid}
+.salad:last-of-type{border-bottom:none}
+.salad img.photo{width:58mm;height:42mm;object-fit:cover;border-radius:8px}
+.salad .ph{width:58mm;height:42mm;border-radius:8px;background:linear-gradient(135deg,#e9f1e6,#d6e6d0);display:flex;align-items:center;justify-content:center;font-size:40px}
+.salad h2{font-size:17px;font-weight:800}
+.salad .ar{font-size:13px;color:var(--muted);direction:rtl;display:inline-block;margin-left:8px}
+.salad table.ing{font-size:9.5px;margin-top:4px}
+.salad ol.steps li{font-size:10px;margin-bottom:3px}
+.salad .tl{padding:5px 8px;margin-top:5px}
+.salad .qrs{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:8.5px;text-align:center}
+.salad .qrs img{width:24mm;height:24mm}
+
+/* fruits + rules */
+.fruit{display:grid;grid-template-columns:44px 1fr;gap:10px;padding:10px 0;border-bottom:1px solid var(--line);align-items:start}
+.fruit .n{width:40px;height:40px;border-radius:50%;background:var(--accent);color:#fff;font-weight:800;font-size:16px;display:flex;align-items:center;justify-content:center}
+.fruit h4{font-size:14px;font-weight:800}
+.fruit .tlname{color:var(--green);font-size:11px;font-weight:700}
+.rules{display:grid;grid-template-columns:1fr 1fr;gap:6mm}
+.rule-card{border:1.5px solid var(--line);border-radius:10px;padding:10px 12px;break-inside:avoid}
+.rule-card h4{font-size:12px;font-weight:800;margin-bottom:6px;display:flex;gap:6px;align-items:center}
+.rule-card li{margin-left:14px;font-size:10.5px;margin-bottom:3px}
+.rule-card .tlx{color:#8a6412;font-size:10px;margin-top:4px;font-style:italic}
+.danger{background:#fdf1ea;border-color:#efcdbd}
+</style></head><body>
+<section class="page cover">
+  <div>
+    <div class="kicker">Family Cookbook · Cooking Guide</div>
+    <h1>Al Maysari<br><span>Family Kitchen</span></h1>
+    <div class="ar-title ar" style="text-align:left;direction:rtl;display:inline-block">دليل الطبخ لعائلة الميسري</div>
+    <p class="sub">23 main dishes, 9 salads and 5 fruit preparations. Every recipe has exact quantities for 1 or 2 persons, step-by-step method, Tagalog reminders and a QR code to a cooking video.</p>
+  </div>
+  <div class="cover-grid"><img src="https://images.pexels.com/photos/37404187/pexels-photo-37404187.jpeg?auto=compress&amp;cs=tinysrgb&amp;h=627&amp;fit=crop&amp;w=1200" alt=""><img src="https://images.pexels.com/photos/32986473/pexels-photo-32986473.jpeg?auto=compress&amp;cs=tinysrgb&amp;h=627&amp;fit=crop&amp;w=1200" alt=""><img src="https://images.pexels.com/photos/17650193/pexels-photo-17650193.jpeg?auto=compress&amp;cs=tinysrgb&amp;h=627&amp;fit=crop&amp;w=1200" alt=""><img src="https://images.pexels.com/photos/37324505/pexels-photo-37324505.png?auto=compress&amp;cs=tinysrgb&amp;h=627&amp;fit=crop&amp;w=1200" alt=""><img src="https://images.pexels.com/photos/18698231/pexels-photo-18698231.jpeg?auto=compress&amp;cs=tinysrgb&amp;h=627&amp;fit=crop&amp;w=1200" alt=""><img src="https://images.pexels.com/photos/6210933/pexels-photo-6210933.jpeg?auto=compress&amp;cs=tinysrgb&amp;h=627&amp;fit=crop&amp;w=1200" alt=""></div>
+  <div class="meta"><span>Prepared for the household helper · English + Tagalog</span><span>Abu Dhabi · October 2026</span></div>
+</section>
+
+<section class="page">
+  <h2 class="section">House Rules of the Kitchen</h2>
+  <div class="section-sub">Read this page first. These rules apply to every recipe. · <span class="ar">قواعد المطبخ</span></div>
+  <div class="rule">
+  </div>
+  <div class="rules">
+    <div class="rule-card danger"><h4>⚠️ Einas (Madam) – ALWAYS</h4><ul>
+      <li>NO spicy food. No chili, no hot sauce, no "medium". Mild only.</li>
+      <li>NO regular milk or cream. Use OAT milk or lactose-free milk/cheese only.</li>
+      <li>NO beans / legumes (lobia, chickpeas, lentils, foul).</li>
+      <li>NO seafood or fish.</li>
+      <li>Chicken is her meat. Lamb or beef dishes: cook her a chicken version or a salad with grilled chicken.</li>
+      <li>She is pregnant: food must be fully cooked (no pink chicken, no runny eggs), fresh, and clean.</li></ul>
+      <div class="tlx">Tagalog: Walang maanghang, walang regular na gatas, walang beans, walang isda. Manok lang. Lutong-luto lahat.</div></div>
+    <div class="rule-card"><h4>👨‍💼 Mohamed (Sir)</h4><ul>
+      <li>All cuisines. Chicken, lamb and beef.</li>
+      <li>Does NOT eat: foul (fava beans), mujaddara, seafood.</li>
+      <li>Likes: fresh juice, fresh fruit. No bread with breakfast.</li>
+      <li>Spice level: mild to medium. Chili sauce on the side, never mixed in.</li></ul></div>
+    <div class="rule-card"><h4>📏 Quantities</h4><ul>
+      <li>Every table has two columns: 1 person and 2 persons. Use the column that was requested that day.</li>
+      <li>1 cup = 250 ml. 1 tbsp = 15 ml. 1 tsp = 5 ml. Use the measuring cups and spoons in the drawer, not a random glass.</li>
+      <li>Rice: always wash 3 times until the water is clear, then soak 20-30 min.</li>
+      <li>Dinner portions are half of lunch portions unless told otherwise.</li></ul>
+      <div class="tlx">Gamitin ang measuring cup at kutsara. Huwag tantiyahin.</div></div>
+    <div class="rule-card"><h4>🔥 Cooking basics</h4><ul>
+      <li>Onion "golden": medium heat 8-12 min, stir often. Brown = good. Black = throw away and start again.</li>
+      <li>Chicken is cooked when juices run CLEAR and no pink near the bone (74 °C).</li>
+      <li>Lamb is ready only when a fork goes in easily. If hard, cook longer with a little water.</li>
+      <li>Rice: after adding water, boil 2 min, then cover and LOWEST heat, no stirring, no opening.</li>
+      <li>Taste the food before serving. Salt is added in small steps.</li></ul>
+      <div class="tlx">Tikman bago ihain. Asin paunti-unti.</div></div>
+    <div class="rule-card"><h4>🧼 Hygiene &amp; safety</h4><ul>
+      <li>Wash hands before cooking and after touching raw chicken or meat.</li>
+      <li>Separate board and knife for raw meat and for vegetables.</li>
+      <li>Cool food before closing any lunch box. Sauces in a separate small box.</li>
+      <li>Leftovers: into the fridge within 1 hour, in a closed container, labelled with the day.</li></ul></div>
+    <div class="rule-card"><h4>📱 Videos (QR codes)</h4><ul>
+      <li>Every recipe has a QR code at the bottom. Open the camera on the phone, point at the code, tap the link.</li>
+      <li>Green label = Tagalog video. Blue label = English video.</li>
+      <li>Watch the video ONCE fully before cooking the dish for the first time. Then follow the written recipe in this book for quantities.</li>
+      <li>If something is unclear, ask BEFORE cooking, not after.</li></ul>
+      <div class="tlx">Panoorin ang video nang buo bago magluto sa unang beses. Magtanong bago, hindi pagkatapos.</div></div>
+  </div>
+</section>
+<section class="page"><h2 class="section">Contents</h2><div class="section-sub">23 main dishes · 9 salads · 5 night fruit preparations</div><div class="rule"></div><h3>Main dishes</h3><ul class="toc"><li><span><b>01</b>Chicken Biryani<span class="lang ">TA</span></span><span class="ar">برياني دجاج</span></li><li><span><b>02</b>Lamb Biryani<span class="lang en">EN</span></span><span class="ar">برياني لحم</span></li><li><span><b>03</b>Chicken Maqluba<span class="lang en">EN</span></span><span class="ar">مقلوبة دجاج</span></li><li><span><b>04</b>Lamb Maqluba<span class="lang en">EN</span></span><span class="ar">مقلوبة لحم</span></li><li><span><b>05</b>Yellow Rice with Peri-Peri Chicken (Nando&#x27;s style)<span class="lang ">TA</span></span><span class="ar">أرز أصفر مع دجاج بيري بيري</span></li><li><span><b>06</b>Lamb Kabsa<span class="lang ">TA</span></span><span class="ar">كبسة لحم</span></li><li><span><b>07</b>Chicken Kabsa<span class="lang ">TA</span></span><span class="ar">كبسة دجاج</span></li><li><span><b>08</b>Chicken Bukhari Rice<span class="lang en">EN</span></span><span class="ar">رز بخاري بالدجاج</span></li><li><span><b>09</b>Lamb Bukhari Rice<span class="lang ">TA</span></span><span class="ar">رز بخاري باللحم</span></li><li><span><b>10</b>Chicken Curry with Boiled Eggs<span class="lang en">EN</span></span><span class="ar">كاري دجاج مع بيض مسلوق</span></li><li><span><b>11</b>Chicken with Vegetables in the Oven<span class="lang ">TA</span></span><span class="ar">دجاج بالخضار في الفرن</span></li><li><span><b>12</b>Chicken Salona<span class="lang ">TA</span></span><span class="ar">صالونة دجاج</span></li><li><span><b>13</b>Lamb Salona<span class="lang ">TA</span></span><span class="ar">صالونة لحم</span></li><li><span><b>14</b>Mahshi Malfouf (Stuffed Cabbage Rolls)<span class="lang ">TA</span></span><span class="ar">محشي ملفوف</span></li><li><span><b>15</b>Cajun Chicken with Lobia (Black-eyed Peas) and White Rice<span class="lang en">EN</span></span><span class="ar">دجاج كاجن مع لوبيا ورز أبيض</span></li><li><span><b>16</b>Grilled Chicken with Molokhia and White Rice<span class="lang ">TA</span></span><span class="ar">دجاج مشوي مع ملوخية ورز</span></li><li><span><b>17</b>Okra (Bamia) with Lamb and White Rice<span class="lang ">TA</span></span><span class="ar">بامية باللحم مع رز</span></li><li><span><b>18</b>Fried Chicken with Okra Stew and White Rice<span class="lang ">TA</span></span><span class="ar">دجاج مقلي مع بامية ورز</span></li><li><span><b>19</b>Musakhan Chicken with White Rice (Oven)<span class="lang ">TA</span></span><span class="ar">مسخن دجاج بالرز</span></li><li><span><b>20</b>Spaghetti with Meatballs<span class="lang en">EN</span></span><span class="ar">سباغيتي بكرات اللحم</span></li><li><span><b>21</b>Mashed Potato with Grilled Chicken<span class="lang en">EN</span></span><span class="ar">بطاطس مهروسة مع دجاج مشوي</span></li><li><span><b>22</b>Chicken with Spinach and White Rice<span class="lang en">EN</span></span><span class="ar">دجاج بالسبانخ مع رز</span></li><li><span><b>23</b>Madhbi Chicken with Rice<span class="lang en">EN</span></span><span class="ar">دجاج مظبي مع رز</span></li></ul><h3 style="margin-top:14px">Salads</h3><ul class="toc"><li><span><b>S1</b>Fattoush Salad<span class="lang en">EN</span></span><span class="ar">سلطة فتوش</span></li><li><span><b>S2</b>Walnut Salad<span class="lang en">EN</span></span><span class="ar">سلطة الجوز</span></li><li><span><b>S3</b>Corn Salad<span class="lang en">EN</span></span><span class="ar">سلطة الذرة</span></li><li><span><b>S4</b>Burghul (Bulgur) Salad / Tabbouleh<span class="lang en">EN</span></span><span class="ar">سلطة برغل / تبولة</span></li><li><span><b>S5</b>Green Mix Salad<span class="lang ">TA</span></span><span class="ar">سلطة خضراء مشكلة</span></li><li><span><b>S6</b>Greek Salad<span class="lang en">EN</span></span><span class="ar">سلطة يونانية</span></li><li><span><b>S7</b>Caesar Salad with Grilled Chicken<span class="lang en">EN</span></span><span class="ar">سلطة سيزر بالدجاج</span></li><li><span><b>S8</b>Halloumi Salad<span class="lang en">EN</span></span><span class="ar">سلطة حلوم</span></li><li><span><b>S9</b>Jarjeer (Rocket) Salad<span class="lang ">TA</span></span><span class="ar">سلطة جرجير</span></li></ul>
+    <h3 style="margin-top:14px">Night fruit preparation</h3><p style="font-size:11px;color:#4a3f36">See the last page: five fruit combinations, three kinds each, prepared the night before.</p></section>
+
+<section class="page">
+  <div class="rhead">
+    <img class="photo" src="https://images.pexels.com/photos/37404187/pexels-photo-37404187.jpeg?auto=compress&amp;cs=tinysrgb&amp;h=627&amp;fit=crop&amp;w=1200" alt="" loading="lazy">
+    <div class="title">
+      <div>
+        <div class="num">RECIPE 01 / 23</div>
+        <h1>Chicken Biryani</h1>
+        <span class="ar">برياني دجاج</span>
+        <p class="intro">Layered basmati rice with marinated chicken, fried onions and saffron. Cooked on &#x27;dum&#x27; (sealed pot, low heat) so the steam finishes the rice.</p>
+      </div>
+      <div class="chips"><span class="chip">⏱ 1 h 15 min</span><span class="chip">Level: Medium</span></div>
+    </div>
+  </div>
+  <div class="cols">
+    <div>
+      <h3>Ingredients</h3>
+      <table class="ing"><thead><tr><th>Ingredient</th><th class="q">1 person</th><th class="q">2 persons</th></tr></thead><tbody><tr><td>Chicken (thigh/leg, bone-in)</td><td class="q">300 g (2 pcs)</td><td class="q p2">600 g (4 pcs)</td></tr><tr><td>Basmati rice, washed, soaked 30 min</td><td class="q">1 cup (200 g)</td><td class="q p2">2 cups (400 g)</td></tr><tr><td>Plain yogurt</td><td class="q">3 tbsp</td><td class="q p2">6 tbsp</td></tr><tr><td>Onion, thinly sliced</td><td class="q">1 medium</td><td class="q p2">2 medium</td></tr><tr><td>Tomato, chopped</td><td class="q">1 small</td><td class="q p2">1 large</td></tr><tr><td>Ginger-garlic paste</td><td class="q">1 tsp</td><td class="q p2">2 tsp</td></tr><tr><td>Biryani masala</td><td class="q">1 tbsp</td><td class="q p2">2 tbsp</td></tr><tr><td>Turmeric</td><td class="q">1/4 tsp</td><td class="q p2">1/2 tsp</td></tr><tr><td>Kashmiri red chili powder (mild)</td><td class="q">1/2 tsp</td><td class="q p2">1 tsp</td></tr><tr><td>Whole spices: cinnamon stick, 3 cardamom, 2 cloves, 1 bay leaf</td><td class="q">1 set</td><td class="q p2">1 set</td></tr><tr><td>Fresh mint + coriander, chopped</td><td class="q">2 tbsp</td><td class="q p2">4 tbsp</td></tr><tr><td>Saffron in 2 tbsp warm milk</td><td class="q">small pinch</td><td class="q p2">big pinch</td></tr><tr><td>Ghee or oil</td><td class="q">2 tbsp</td><td class="q p2">4 tbsp</td></tr><tr><td>Salt</td><td class="q">to taste</td><td class="q p2">to taste</td></tr></tbody></table>
+    </div>
+    <div>
+      <h3>Method</h3>
+      <ol class="steps"><li>Marinate chicken with yogurt, ginger-garlic, biryani masala, turmeric, chili, salt. Minimum 30 min (overnight is best).</li><li>Fry sliced onion in ghee on medium heat until deep golden and crispy (10-12 min). Remove half for topping.</li><li>Add marinated chicken to the pot with the remaining onion. Cook 10 min until chicken is sealed and sauce thick. Add tomato, cook 5 min.</li><li>In another pot boil 6 cups water with salt and whole spices. Add soaked rice. Boil 5-6 min until rice is 70 percent cooked (still firm in center). Drain.</li><li>Layer: chicken at bottom, rice on top, then fried onion, mint, coriander and saffron milk.</li><li>Cover pot with a clean cloth then the lid (seal). Cook LOW heat 20 min. Turn off. Rest 10 min without opening.</li><li>Serve from the side with a flat spoon so layers stay. Serve with raita (yogurt + cucumber).</li></ol>
+      <div class="tl"><b>Mahalagang paalala (Tagalog)</b><ul><li>Rice ay 70% lang luto bago i-layer. Kung lutong-luto na, magiging lata (mushy).</li><li>Huwag buksan ang takip sa 20 min na dum. Pinakamababang apoy.</li><li>Sibuyas dapat golden brown talaga, hindi sunog (mapait).</li></ul></div>
+    </div>
+  </div>
+  <div class="foot">
+    <div class="brand">Al Maysari Family Cookbook · Mohamed &amp; Einas · 2026</div>
+    <div style="display:flex"><div class="qr"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAANIAAADSCAIAAACw+wkVAAAExklEQVR4nO3dO44lRRCGUQaxAUws9r8sLEyW0Hg41UYqFZlf3eEcc9T1mOpfKUVHPn58fX39Anf9Wr8A/0diR0DsCIgdAbEj8Nvzn/784/f77/Gfv/7+Z+Q+K/+L57OeV+29z9Q3nHrDt/1OjXYExI6A2BEQOwJiR+CbSvZpqrp8mqqw3lY57t157z572t+p0Y6A2BEQOwJiR0DsCCxVsk83q7Cb3dW2In7+zN5VN/vIe88y2hEQOwJiR0DsCIgdgc1K9m2mKr5zc5vbTu7bGO0IiB0BsSMgdgTEjsBHVrLnuplT9vq/5/qtb2O0IyB2BMSOgNgREDsCm5Xs++upm+tJVyrim3OAp/q/5xjtCIgdAbEjIHYExI7AUiX7c8xonerSTvVS92rbqc5y+zs12hEQOwJiR0DsCIgdgW8q2ff3W1e083KnauSVn9mrf1tGOwJiR0DsCIgdAbEjsHSebLvC9G1dyHPd1ae3nVL0ZO9iPobYERA7AmJHQOwIHNzx6dzJOHu17c2K+ObK2Snnvs/zzkY7AmJHQOwIiB0BsSPw4+vra+Oyt53Weu5Ze26e5jO1B9TNZxntCIgdAbEjIHYExI5AfArPub7tuWetPH2vjt6bWT11JtHTua9qtCMgdgTEjoDYERA7At/0ZM/Ner3ZJ52qAfee9fS2HnF7mq3RjoDYERA7AmJHQOwIXD2F51zFN3V+zbn6d2p+795V7V8n9GR5BbEjIHYExI6A2BEY68m+rQq7uZJ3ak7y1LPavzxYJ8tLiR0BsSMgdgTEjsDSjk9TNdfN3Xrfdu7MinPfeeWqvfdxCg8fQ+wIiB0BsSMgdgQ2z5Nd8Ykn0eyZqvhuzm0+V6Xa8YmXEjsCYkdA7AiIHYHNvYvbvYJX3qfdm3dv9+Cpk2r3rpra/2qF0Y6A2BEQOwJiR0DsCIydJ3vOuR2G21W6bVe07eQa7QiIHQGxIyB2BMSOwNjexTfruylTXdGVc2D33FzxOnXVCqMdAbEjIHYExI6A2BG4ep7s09vOwXl6207OK26enOsUHj6G2BEQOwJiR0DsCCxVsnva+nfvPlPas3Jufp+9pxvtCIgdAbEjIHYExI7A0uzim7XS1B6/K1edWxW78jM3O8tTpr6Y0Y6A2BEQOwJiR0DsCGzOLr45m/dtdz5X7a68z9vWGq/Qk+UVxI6A2BEQOwJiR2DzFJ4V52quqapwylRnee/ON+dIT72P0Y6A2BEQOwJiR0DsCHxTyU5VYSturiddufPNubs3z8Dde59zVxntCIgdAbEjIHYExI7AN5VsOzd170SbvZWqK96//9WKczX73n2MdgTEjoDYERA7AmJH4Cc5hWfvWXvOnWiz4m09WXsX8zHEjoDYERA7AmJHYHOd7PtXqu5ZqcvaynrvDafYu5gPJnYExI6A2BEQOwIHd3xqnevtTu3UNLWf0rmzhM493WhHQOwIiB0BsSMgdgQ+spI91xGeWm9781nn3vncdzbaERA7AmJHQOwIiB2BzUr25v5Fe1Vh299cMXVK783KeorRjoDYERA7AmJHQOwILFWy7W7GN58+tb/x1LzlvTWwN2tk62T5GGJHQOwIiB0BsSPwzd7FcJrRjoDYERA7AmJHQOwI/AsupuZYKfnSygAAAABJRU5ErkJggg==" alt="QR"><div class="t"><span class="lang ">Tagalog</span><b>Scan to watch the cooking video</b>Simple Chicken Biryani (Pinoy Style) - Maine Cooks</div></div></div>
+  </div>
+</section>
+
+<section class="page">
+  <div class="rhead">
+    <img class="photo" src="https://images.pexels.com/photos/32986470/pexels-photo-32986470.jpeg?auto=compress&amp;cs=tinysrgb&amp;h=627&amp;fit=crop&amp;w=1200" alt="" loading="lazy">
+    <div class="title">
+      <div>
+        <div class="num">RECIPE 02 / 23</div>
+        <h1>Lamb Biryani</h1>
+        <span class="ar">برياني لحم</span>
+        <p class="intro">Same method as chicken biryani but the lamb is cooked first until tender. Lamb needs more time than chicken; never rush it.</p>
+      </div>
+      <div class="chips"><span class="chip">⏱ 2 h</span><span class="chip">Level: Medium</span></div>
+    </div>
+  </div>
+  <div class="cols">
+    <div>
+      <h3>Ingredients</h3>
+      <table class="ing"><thead><tr><th>Ingredient</th><th class="q">1 person</th><th class="q">2 persons</th></tr></thead><tbody><tr><td>Lamb with bone, cut in pieces</td><td class="q">300 g</td><td class="q p2">600 g</td></tr><tr><td>Basmati rice, washed, soaked 30 min</td><td class="q">1 cup</td><td class="q p2">2 cups</td></tr><tr><td>Plain yogurt</td><td class="q">3 tbsp</td><td class="q p2">6 tbsp</td></tr><tr><td>Onion, thinly sliced</td><td class="q">1 large</td><td class="q p2">2 large</td></tr><tr><td>Tomato, chopped</td><td class="q">1</td><td class="q p2">2</td></tr><tr><td>Ginger-garlic paste</td><td class="q">1 tsp</td><td class="q p2">2 tsp</td></tr><tr><td>Biryani masala</td><td class="q">1 tbsp</td><td class="q p2">2 tbsp</td></tr><tr><td>Turmeric + mild red chili</td><td class="q">1/4 tsp + 1/2 tsp</td><td class="q p2">1/2 tsp + 1 tsp</td></tr><tr><td>Whole spices (cinnamon, cardamom, cloves, bay leaf)</td><td class="q">1 set</td><td class="q p2">1 set</td></tr><tr><td>Mint + coriander, chopped</td><td class="q">2 tbsp</td><td class="q p2">4 tbsp</td></tr><tr><td>Saffron in warm milk</td><td class="q">pinch</td><td class="q p2">big pinch</td></tr><tr><td>Ghee</td><td class="q">2 tbsp</td><td class="q p2">4 tbsp</td></tr><tr><td>Salt</td><td class="q">to taste</td><td class="q p2">to taste</td></tr></tbody></table>
+    </div>
+    <div>
+      <h3>Method</h3>
+      <ol class="steps"><li>Marinate lamb with yogurt, ginger-garlic, masala, turmeric, chili, salt. Minimum 1 hour.</li><li>Fry onion in ghee until deep golden. Remove half for topping.</li><li>Add lamb with marinade to the pot. Cook on medium 10 min, add tomato and 1 cup water. Cover and simmer 60-75 min until lamb is tender (fork goes in easily). Sauce should be thick, not watery.</li><li>Par-boil rice in salted water with whole spices 5-6 min (70 percent cooked). Drain.</li><li>Layer lamb at the bottom, rice on top, fried onion, herbs, saffron milk.</li><li>Seal with cloth and lid. LOW heat 25 min. Rest 10 min.</li><li>Serve with raita and salad.</li></ol>
+      <div class="tl"><b>Mahalagang paalala (Tagalog)</b><ul><li>Lamb dapat malambot na bago i-layer ang rice. Kung matigas pa, dagdagan ng tubig at pakuluan pa.</li><li>Alisin ang labis na mantika sa ibabaw ng lamb bago ilagay ang rice.</li></ul></div>
+    </div>
+  </div>
+  <div class="foot">
+    <div class="brand">Al Maysari Family Cookbook · Mohamed &amp; Einas · 2026</div>
+    <div style="display:flex"><div class="qr"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAANIAAADSCAIAAACw+wkVAAAEy0lEQVR4nO3dMY5cKRSG0emRNzChI+9/WRNN6CXUZA5MS0YI+F7Z54TWq4Lu/nWla3jw8Xq9/oK7/q4nwJ9I7AiIHQGxIyB2BL6M//Tt6z/35/HDv/99/+Uz4wzHT838FDOfmpnPaNfvcNcMn/Y3Ve0IiB0BsSMgdgTEjsAnnexorZubsdZhnZvPud52rdee+Z417d9UtSMgdgTEjoDYERA7AlOd7OhmF3ZuBXZmrDVrHfH4zNqnbq4jr42l2hEQOwJiR0DsCIgdgcVOtrWrdxvt+p6nreQ+jWpHQOwIiB0BsSMgdgTespN9/tuj5972Pbcr+CbVjoDYERA7AmJHQOwILHayz++nzu0TXhvr5h7gXeu/56h2BMSOgNgREDsCYkdgqpN9xx2tu95UHe1aS13rbXftN27/pqodAbEjIHYExI6A2BH4pJN9/nrr8+3qkWeeWet/W6odAbEjIHYExI6A2BGYuk/25rlD41jnRt91Wu+57rL9SWc4u5i3IXYExI6A2BEQOwLxmuy5bu5cP96urp5zbq/1SLUjIHYExI6A2BEQOwLbzi5u7zDd1V3u+tS5nvTm+7bnVsNVOwJiR0DsCIgdAbEjcPDEp7VTds/1U+fuuBm/Z9cM23t5zu1JVu0IiB0BsSMgdgTEjsDUe7Kjp70Hujb6uR551K4a7+p2d/3GVDsCYkdA7AiIHQGxI/Dxer1++qebO37b9dZzz8zMcLS23tp232tjqXYExI6A2BEQOwJiR2Cqk233r+4a/ea+5bX57Brr5kq3E594G2JHQOwIiB0BsSPwSSc7urnm+LSx1kZfc3M1fBe38PA2xI6A2BEQOwJiR+Dgmuzv0SeOznXfo3O9fztn1Y6A2BEQOwJiR0DsCCzewnOuK1wz0z2dW8mdeWZXT9qeIz3zqRmqHQGxIyB2BMSOgNgR2La7+Jynvc36tH3UN0ffNWfVjoDYERA7AmJHQOwILN7CM2rfXV2za31zbf13bazR2i20u0Zfo9oREDsCYkdA7AiIHYHFNdlzHei5e3B2uXmfTrsmO9q1SqvaERA7AmJHQOwIiB2BxROfbt6eM3pabztqb2udGWvXDNf+50G1IyB2BMSOgNgREDsCiyc+tXe8ts+M1k5qam8g2sV9srwNsSMgdgTEjoDYEdi2JnuuV1rTvu3bzmftm2/uSVbtCIgdAbEjIHYExI7AtjXZcztRn3Yv7Witt725A3ntm8/17KodAbEjIHYExI6A2BH4pJNd6wFvfmrGO64a75rh086JGql2BMSOgNgREDsCYkdg2y08u6zdaLO2wnhT20c/rWtW7QiIHQGxIyB2BMSOwNTu4psrpzPPnOt2d+1/3nV2U7vX+tx9u6odAbEjIHYExI6A2BFYfE/2ae+u7upSz709OvM9M3b9FGt2nf2l2hEQOwJiR0DsCIgdgcVO9vdw86TimXXkp90ldG501Y6A2BEQOwJiR0DsCLxlJ9uek3zu1tf2mZs7mVU7AmJHQOwIiB0BsSOw7Raec9a6wnZ9c8a5zvHmjbdrVDsCYkdA7AiIHQGxIzDVyban/t4c/dwZRzNu7jeeGX209j8GI9WOgNgREDsCYkdA7Ah8vF6veg78cVQ7AmJHQOwIiB0BsSPwP/VO2hVVvbLQAAAAAElFTkSuQmCC" alt="QR"><div class="t"><span class="lang en">English</span><b>Scan to watch the cooking video</b>Arabic Mutton Biryani - Food Fusion</div></div></div>
+  </div>
+</section>
+
+<section class="page">
+  <div class="rhead">
+    <img class="photo" src="https://images.pexels.com/photos/37324505/pexels-photo-37324505.png?auto=compress&amp;cs=tinysrgb&amp;h=627&amp;fit=crop&amp;w=1200" alt="" loading="lazy">
+    <div class="title">
+      <div>
+        <div class="num">RECIPE 03 / 23</div>
+        <h1>Chicken Maqluba</h1>
+        <span class="ar">مقلوبة دجاج</span>
+        <p class="intro">Palestinian &#x27;upside-down&#x27; rice. Fried eggplant, cauliflower and potato are layered with chicken and rice, then the whole pot is flipped onto a tray.</p>
+      </div>
+      <div class="chips"><span class="chip">⏱ 1 h 30 min</span><span class="chip">Level: Medium</span></div>
+    </div>
+  </div>
+  <div class="cols">
+    <div>
+      <h3>Ingredients</h3>
+      <table class="ing"><thead><tr><th>Ingredient</th><th class="q">1 person</th><th class="q">2 persons</th></tr></thead><tbody><tr><td>Chicken pieces, bone-in</td><td class="q">350 g</td><td class="q p2">700 g</td></tr><tr><td>Basmati rice, washed, soaked 20 min</td><td class="q">1 cup</td><td class="q p2">2 cups</td></tr><tr><td>Eggplant, sliced 1 cm</td><td class="q">1/2 medium</td><td class="q p2">1 medium</td></tr><tr><td>Cauliflower florets</td><td class="q">1 cup</td><td class="q p2">2 cups</td></tr><tr><td>Potato, sliced 1 cm</td><td class="q">1 small</td><td class="q p2">1 large</td></tr><tr><td>Tomato, sliced</td><td class="q">1</td><td class="q p2">2</td></tr><tr><td>Onion, chopped</td><td class="q">1/2</td><td class="q p2">1</td></tr><tr><td>Maqluba / 7-spice (baharat)</td><td class="q">1 tsp</td><td class="q p2">2 tsp</td></tr><tr><td>Turmeric</td><td class="q">1/4 tsp</td><td class="q p2">1/2 tsp</td></tr><tr><td>Cinnamon stick, 2 cardamom, 1 bay leaf</td><td class="q">1 set</td><td class="q p2">1 set</td></tr><tr><td>Chicken stock (from boiling chicken)</td><td class="q">1.5 cups</td><td class="q p2">3 cups</td></tr><tr><td>Oil for frying</td><td class="q">as needed</td><td class="q p2">as needed</td></tr><tr><td>Toasted almonds / pine nuts for topping</td><td class="q">1 tbsp</td><td class="q p2">2 tbsp</td></tr><tr><td>Salt + black pepper</td><td class="q">to taste</td><td class="q p2">to taste</td></tr></tbody></table>
+    </div>
+    <div>
+      <h3>Method</h3>
+      <ol class="steps"><li>Boil chicken with onion, whole spices and salt for 25 min. Keep the stock. Brown the chicken pieces in a little oil.</li><li>Salt eggplant slices 10 min, pat dry. Fry eggplant, cauliflower and potato separately until golden. Drain on paper.</li><li>Mix drained rice with baharat, turmeric, salt.</li><li>In a deep pot, put a layer of tomato slices at the bottom, then chicken, then fried vegetables, then rice on top. Press gently.</li><li>Pour hot stock slowly down the side until it just covers the rice. Bring to boil, then cover and cook LOW 35-40 min until liquid is absorbed.</li><li>Turn off, rest 10 min. Put a large tray on top of the pot and flip it over in one quick move. Wait 2 min, lift the pot.</li><li>Top with toasted nuts and parsley. Serve with yogurt and salad.</li></ol>
+      <div class="tl"><b>Mahalagang paalala (Tagalog)</b><ul><li>Prituhin ang gulay hanggang golden, hindi mantikang-mantika. Patuluin sa paper towel.</li><li>Pag ibabaliktad, isang mabilis na galaw. Huwag mag-alinlangan.</li><li>Rice sa ibabaw lang, tubig (stock) dapat abot lang sa rice, hindi sobra.</li></ul></div>
+    </div>
+  </div>
+  <div class="foot">
+    <div class="brand">Al Maysari Family Cookbook · Mohamed &amp; Einas · 2026</div>
+    <div style="display:flex"><div class="qr"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAANIAAADSCAIAAACw+wkVAAAE0UlEQVR4nO3dMa4UORSG0WHEBgiJ2P+yiAhZQpNNgJ+QZdn+qplzwifKVd39y9LluuxPr9frH7jr3/oB+D8SOwJiR0DsCIgdgc/jn759/XL/Of7z/cfP3/6y9jxr44xXjXY9z9rIM+OsjXzO+MxmOwJiR0DsCIgdAbEj8EElO1qrnmbcrN12fYpd4+x6wrVx2t/UbEdA7AiIHQGxIyB2BKYq2dG5vuTNe83UgO0n3fU8a3efsfZJzXYExI6A2BEQOwJiR2Cxkr3pXDW3VoU9rbd7rrt6jtmOgNgREDsCYkdA7Ai8QSU7Wqttz603ntHe/WnMdgTEjoDYERA7AmJHYLGSbWvAXVft6u0+bZw1N39Tsx0BsSMgdgTEjoDYEZiqZNsKazTTk/Vv/qz9Tc12BMSOgNgREDsCYkfgg0r2aaten7YL05p2nKf9pmY7AmJHQOwIiB0BsSMwdZ7srj7gzL1Gu86UmXnmm6e+njuBaMauTu5aNsx2BMSOgNgREDsCYkfg4I5P5yq+XV3ac33SXXtSrTm3AnnXN2+2IyB2BMSOgNgREDsC8Y5Pu/qku+qyXVet2dXJPffMu2pbsx0BsSMgdgTEjoDYEVisZM+9rXlz/6Jza6TbcdbuNWPX85jtCIgdAbEjIHYExI7A1I5Pa+uEx6t2jbPm3Mhrdx/t+n7Ovde8i9mOgNgREDsCYkdA7AhsW118rsfX1lw37752r/b78Z4sb0PsCIgdAbEjIHYEpvYunnFuj6N2H+CbK4fPdVdvvtvrPVkeSuwIiB0BsSMgdgS27V3cnt1zbjfjtTqxHad9B3ZmHLMdAbEjIHYExI6A2BH49Hq9fvvTzXNOz3UqZ9x8d3XX84x2fT83e9ZmOwJiR0DsCIgdAbEjMNWTvXk+6drdd131/BNd1+41c9XM3dfOSBqZ7QiIHQGxIyB2BMSOwMEdn2aqnnP91tG5u+96wnN7Kd/8v4iZf2O2IyB2BMSOgNgREDsCH6wunvG03uXoafXv01ZNj86dATQy2xEQOwJiR0DsCIgdgalKtj0Hdsa593afr93beY3ZjoDYERA7AmJHQOwILL4nO7q5L/GucdrdnNpzec6xupiHEjsCYkdA7AiIHYHF82RvngVz8wTVm1eNbtat7Upmsx0BsSMgdgTEjoDYEfigkr3ZgV0b+eY+UbvOpZ2xq0Jvd46aYbYjIHYExI6A2BEQOwKLPdmZq9o3Z0czz3Ou4zl6x1p7V7/ebEdA7AiIHQGxIyB2BBb3Lr6p3Tnqb90DanTzxFuzHQGxIyB2BMSOgNgR2NaT3WVthW37humMc7sHr514265SNtsREDsCYkdA7AiIHYFtexev2VXftXtA7dqT6mknzK6NM/OEZjsCYkdA7AiIHQGxIzBVyY7aeqo9qac942bGrl7quU9qtiMgdgTEjoDYERA7AouV7Ds6d5pP2zWesdbbPbci2mxHQOwIiB0BsSMgdgTeoJI912G82ZPdda+2a+wUHt6Y2BEQOwJiR0DsCCxWsjdX2K6dnnPu7jPOvTn7NHqyvA2xIyB2BMSOgNgRmKpk23pqbY3ruV7qzN3XatKZcUa71gnPPM+MmW/ebEdA7AiIHQGxIyB2BN7gPFn+PmY7AmJHQOwIiB0BsSPwC6UV1THQpTVDAAAAAElFTkSuQmCC" alt="QR"><div class="t"><span class="lang en">English</span><b>Scan to watch the cooking video</b>How to make Chicken Maqluba - Recipes are Simple</div></div></div>
+  </div>
+</section>
+
+<section class="page">
+  <div class="rhead">
+    <img class="photo" src="https://images.pexels.com/photos/7469422/pexels-photo-7469422.jpeg?auto=compress&amp;cs=tinysrgb&amp;h=627&amp;fit=crop&amp;w=1200" alt="" loading="lazy">
+    <div class="title">
+      <div>
+        <div class="num">RECIPE 04 / 23</div>
+        <h1>Lamb Maqluba</h1>
+        <span class="ar">مقلوبة لحم</span>
+        <p class="intro">Same as chicken maqluba, but lamb is simmered first until tender and its rich stock cooks the rice.</p>
+      </div>
+      <div class="chips"><span class="chip">⏱ 2 h</span><span class="chip">Level: Medium</span></div>
+    </div>
+  </div>
+  <div class="cols">
+    <div>
+      <h3>Ingredients</h3>
+      <table class="ing"><thead><tr><th>Ingredient</th><th class="q">1 person</th><th class="q">2 persons</th></tr></thead><tbody><tr><td>Lamb with bone, pieces</td><td class="q">350 g</td><td class="q p2">700 g</td></tr><tr><td>Basmati rice, washed, soaked</td><td class="q">1 cup</td><td class="q p2">2 cups</td></tr><tr><td>Eggplant, sliced</td><td class="q">1/2</td><td class="q p2">1</td></tr><tr><td>Cauliflower florets</td><td class="q">1 cup</td><td class="q p2">2 cups</td></tr><tr><td>Potato, sliced</td><td class="q">1 small</td><td class="q p2">1 large</td></tr><tr><td>Tomato, sliced</td><td class="q">1</td><td class="q p2">2</td></tr><tr><td>Onion</td><td class="q">1/2</td><td class="q p2">1</td></tr><tr><td>7-spice (baharat) + turmeric</td><td class="q">1 tsp + 1/4 tsp</td><td class="q p2">2 tsp + 1/2 tsp</td></tr><tr><td>Cinnamon, cardamom, bay leaf</td><td class="q">1 set</td><td class="q p2">1 set</td></tr><tr><td>Lamb stock</td><td class="q">1.5 cups</td><td class="q p2">3 cups</td></tr><tr><td>Oil for frying</td><td class="q">as needed</td><td class="q p2">as needed</td></tr><tr><td>Toasted nuts</td><td class="q">1 tbsp</td><td class="q p2">2 tbsp</td></tr><tr><td>Salt, pepper</td><td class="q">to taste</td><td class="q p2">to taste</td></tr></tbody></table>
+    </div>
+    <div>
+      <h3>Method</h3>
+      <ol class="steps"><li>Boil lamb with onion, whole spices and salt 60-75 min until tender. Skim the foam in the first 10 min. Keep the stock.</li><li>Fry eggplant, cauliflower and potato until golden. Drain.</li><li>Season rice with baharat, turmeric and salt.</li><li>Layer in pot: tomato slices, lamb, fried vegetables, rice. Pour hot stock to cover rice.</li><li>Boil, then cover and cook LOW 35-40 min. Rest 10 min. Flip onto tray.</li><li>Top with nuts. Serve with yogurt.</li></ol>
+      <div class="tl"><b>Mahalagang paalala (Tagalog)</b><ul><li>Alisin ang bula (foam) habang pinakukuluan ang lamb para malinis ang stock.</li><li>Lamb dapat malambot BAGO i-layer.</li></ul></div>
+    </div>
+  </div>
+  <div class="foot">
+    <div class="brand">Al Maysari Family Cookbook · Mohamed &amp; Einas · 2026</div>
+    <div style="display:flex"><div class="qr"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAANIAAADSCAIAAACw+wkVAAAEwElEQVR4nO3dMa7cNhRA0fwgG0jpyvtfVqqUWcKkMwxwCoIgeTX2OaXhkeb7Xwh4FkV9vV6vP+CuP+svwO9IdgRkR0B2BGRH4K/xj75/+/v+9/jhn3//23KcmZ9iPNf4qbXvs+vfcNc3fNrv1NWOgOwIyI6A7AjIjsCbSXa0a7oc7ZqwnjY5rh157Thr2t+pqx0B2RGQHQHZEZAdgalJdnRzCjs3S86ca83aRDz+nbVP3byPvHYuVzsCsiMgOwKyIyA7AouTbGvX7DY6t7a5vZP7NK52BGRHQHYEZEdAdgQ+cpJ9/tOja2c/d7/1aVztCMiOgOwIyI6A7AgsTrLPn6fOrRNeO9fNNcDnVl/v4mpHQHYEZEdAdgRkR2Bqkv3EFa27nlQd7bqXujbb7lpv3P5OXe0IyI6A7AjIjoDsCLyZZJ9/v3XG0947szYjz/ydtfm35WpHQHYEZEdAdgRkR2DqfbI39x0az7V29rWdgWecu7s6etpbikb2LuZjyI6A7AjIjoDsCMT3ZM9Nc+fm8fbu6jk3/7/C1Y6A7AjIjoDsCMiOwNfr9Vr42LlnRWe0+xLPuPk2n117QN08l6sdAdkRkB0B2RGQHYGp1cW7nNsHadd64137Ce+a0Nv38rgnyy9FdgRkR0B2BGRHYPGe7GjXLDnzqTXuEf/s5l318VOudgRkR0B2BGRHQHYEtu34dG5fpplvOHPkmePc/EnXvs/Mp3Yd+dzdXlc7ArIjIDsCsiMgOwJT75Ndc+5O5c31xjNH3rUmee1cN3dqmuE5WR5KdgRkR0B2BGRHYGp18c231ZybE2+uJV5zbvqecXPtt6sdAdkRkB0B2RGQHYHF1cUzdq0TXnPzTuWuia+dUm+ukXa1IyA7ArIjIDsCsiOw7S08o5v77rZ3cm8+I3zOuZ/CJMsjyI6A7AjIjoDsCBycZHc5tyr45lO6T9u3eca5/4twtSMgOwKyIyA7ArIjsO052Zt7Bc8cedTuQLXrXGtnb//nYeRqR0B2BGRHQHYEZEfg4Ptk2/fOjM6tN37ap0beJwuyoyA7ArIjIDsCbybZm8+Btit+z/lV5/GZ7+M5WR5KdgRkR0B2BGRHYPF9sjdn2xlrx7m5tvncFH/zX37XcVztCMiOgOwIyI6A7AhcvSc74/lPvLYroj/xvUXuyfIIsiMgOwKyIyA7AgfvyZ57EvPmrr8zdt3fXDvyrnnz5nuEXe0IyI6A7AjIjoDsCLyZZNfml/ZT5+boc9pdmteOvGtqdrUjIDsCsiMgOwKyI/Bmkr25M9JonMJuPk+661OjmzPy6NzM7n2yfAzZEZAdAdkRkB2BqdXF56awXfcBz+3LNHOuc+ufb+7tPNo1+3tOlkeQHQHZEZAdAdkRWHxO9uY8tebcDks3nycd7Zqj19i7mA8mOwKyIyA7ArIjsDjJtnbtHHVuT+aZc938Kc7tLuV9snwM2RGQHQHZEZAdgY+cZNs7wk9b7Xxz1fQM92R5KNkRkB0B2RGQHYFtb+E559zbWtv9jW++K/ZpZ3e1IyA7ArIjIDsCsiMwNcm2uxmfm1Lbc41u3hVtVzK72hGQHQHZEZAdAdkR+Hq9XvV34LfjakdAdgRkR0B2BGRH4H/L0Onq33yOUAAAAABJRU5ErkJggg==" alt="QR"><div class="t"><span class="lang en">English</span><b>Scan to watch the cooking video</b>Maqluba with Lamb - Cooking Gorgeous</div></div></div>
+  </div>
+</section>
+
+<section class="page">
+  <div class="rhead">
+    <img class="photo" src="https://images.pexels.com/photos/24866509/pexels-photo-24866509.jpeg?auto=compress&amp;cs=tinysrgb&amp;h=627&amp;fit=crop&amp;w=1200" alt="" loading="lazy">
+    <div class="title">
+      <div>
+        <div class="num">RECIPE 05 / 23</div>
+        <h1>Yellow Rice with Peri-Peri Chicken (Nando&#x27;s style)</h1>
+        <span class="ar">أرز أصفر مع دجاج بيري بيري</span>
+        <p class="intro">Grilled chicken in a tangy peri-peri marinade with turmeric yellow rice. Use MILD peri-peri for Einas; medium for Mohamed.</p>
+      </div>
+      <div class="chips"><span class="chip">⏱ 1 h (plus marinating)</span><span class="chip">Level: Easy</span></div>
+    </div>
+  </div>
+  <div class="cols">
+    <div>
+      <h3>Ingredients</h3>
+      <table class="ing"><thead><tr><th>Ingredient</th><th class="q">1 person</th><th class="q">2 persons</th></tr></thead><tbody><tr><td>Chicken thighs or half chicken</td><td class="q">350 g</td><td class="q p2">700 g</td></tr><tr><td>Peri-peri sauce (Nando&#x27;s bottle) MILD</td><td class="q">3 tbsp</td><td class="q p2">6 tbsp</td></tr><tr><td>Lemon juice</td><td class="q">1 tbsp</td><td class="q p2">2 tbsp</td></tr><tr><td>Garlic, minced</td><td class="q">2 cloves</td><td class="q p2">4 cloves</td></tr><tr><td>Paprika + oregano</td><td class="q">1/2 tsp each</td><td class="q p2">1 tsp each</td></tr><tr><td>Olive oil</td><td class="q">1 tbsp</td><td class="q p2">2 tbsp</td></tr><tr><td>Basmati rice, washed</td><td class="q">1 cup</td><td class="q p2">2 cups</td></tr><tr><td>Turmeric</td><td class="q">1/2 tsp</td><td class="q p2">1 tsp</td></tr><tr><td>Butter</td><td class="q">1 tbsp</td><td class="q p2">2 tbsp</td></tr><tr><td>Water</td><td class="q">1.5 cups</td><td class="q p2">3 cups</td></tr><tr><td>Salt</td><td class="q">to taste</td><td class="q p2">to taste</td></tr></tbody></table>
+    </div>
+    <div>
+      <h3>Method</h3>
+      <ol class="steps"><li>Score the chicken with a knife. Mix peri-peri sauce, lemon, garlic, paprika, oregano, oil, salt. Coat chicken. Marinate 1 hour minimum (overnight best).</li><li>Oven 200 C. Place chicken on a tray skin side up. Bake 35-40 min, brush more sauce halfway. Last 5 min grill setting for char. Juices must run clear.</li><li>Rice: melt butter, add turmeric and rice, stir 1 min. Add water and salt. Boil, cover, LOW 15 min. Rest 5 min, fluff with fork.</li><li>Serve chicken on rice with extra sauce on the side and a green salad or corn.</li></ol>
+      <div class="tl"><b>Mahalagang paalala (Tagalog)</b><ul><li>Para kay Einas: MILD peri-peri lang, walang extra chili.</li><li>Chicken luto kapag malinaw ang katas (hindi pula) sa pinakamakapal na parte.</li></ul></div>
+    </div>
+  </div>
+  <div class="foot">
+    <div class="brand">Al Maysari Family Cookbook · Mohamed &amp; Einas · 2026</div>
+    <div style="display:flex"><div class="qr"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAANIAAADSCAIAAACw+wkVAAAEsUlEQVR4nO3dMW4dNwBAwTjIBVymyv2P5Sqlj6B0KcJfEATJt+vMlIa8+yU9EKDIXX77+vr6De76vf4A/B/JjoDsCMiOgOwI/DH+019/fr//Of714++f//mX8fPs+pqZu4/Wfj67rjxznbUrnzN+ZqMdAdkRkB0B2RGQHYEPM9nR2uxpxrkZ1tqVZ2bEa3PSXVfepf2dGu0IyI6A7AjIjoDsCEzNZEfn1iXPWVulXVsn3bVyujZrvrluu3Yvox0B2RGQHQHZEZAdgcWZ7E1re4lHu3Ygz7i5I/qNjHYEZEdAdgRkR0B2BF4wkz034zt35ZmZ9a4V6nale43RjoDsCMiOgOwIyI7A4ky2faLz3H7am8/t3lxrnnHzd2q0IyA7ArIjIDsCsiMwNZNt97ie26l7bsfvzc+zpv2dGu0IyI6A7AjIjoDsCHx743myu3b83jy7Z01793OMdgRkR0B2BGRHQHYEPsxkd+1xvencG5+eP7d9/huxnCfLI8iOgOwIyI6A7Ah82F286ynLczO+p+3vXXve9txe4ps7kNd+70Y7ArIjIDsCsiMgOwKLz8nuejfvudlue8LOruucO/F2l7WfqtGOgOwIyI6A7AjIjsCHmezNc05vnqdz87TWXd/FaNffB87tIZ+5jtGOgOwIyI6A7AjIjsDUc7Iz2hXYtXvN3P3mG4af9oTyud+p0Y6A7AjIjoDsCMiOwOJ5sjNuno56c94649xfA3Zdp30m12hHQHYEZEdAdgRkR+Dgmuwbz4Gd8ca5bbtuOzLaEZAdAdkRkB0B2RGYOk/25jOVN+ekM59n1O4lnrnOqD2lyO5iHkF2BGRHQHYEZEdg8Y1Pa24+hdq+qfiNs90Zu95ZbbQjIDsCsiMgOwKyI7B4nuzNpyx3zW3PzX/PvSv43Ok5u078sSbLa8iOgOwIyI6A7AhMrcmOzq2cPn/d9mln96x9p+0ubqMdAdkRkB0B2RGQHYHFNdld2n3LN6+86+8Du9y818hoR0B2BGRHQHYEZEdg6hSem+uto5vv7901vzv3v9qf4a7rGO0IyI6A7AjIjoDsCEydwtO+U/fcvZ72XqZdnn8mkdGOgOwIyI6A7AjIjsDiTLZ9n3C7Lrnm5t7dXXbNf73xiUeQHQHZEZAdAdkRmNpdPHr+ebLn/lf7TO6vwWhHQHYEZEdAdgRkR2BqTXZ0cwY6euP+55m731zXXrNrFm+0IyA7ArIjIDsCsiPwYSb7NO2e5F33mtE+u3pz9dloR0B2BGRHQHYEZEdg8TzZc87ty23Xmmeuc/MM3HPv2rImy0PJjoDsCMiOgOwITD0ne3OH7YybT7Pumreufc0uT9t9bbQjIDsCsiMgOwKyI7D4xqddM9DWudNq2t3FN3cpr812jXYEZEdAdgRkR0B2BBZnsq1dK54312R33WvXG7FuXnlktCMgOwKyIyA7ArIj8IKZ7LlZ2M13HLWzyxnnzjYaGe0IyI6A7AjIjoDsCBw8T/amdg10zc2Tc592vq3RjoDsCMiOgOwIyI7A1Ey2fZtxO5s795zsrq952nuJZxjtCMiOgOwIyI6A7Ai84DxZfj1GOwKyIyA7ArIjIDsC/wDB5/kQWIbENwAAAABJRU5ErkJggg==" alt="QR"><div class="t"><span class="lang ">Tagalog</span><b>Scan to watch the cooking video</b>Roasted Peri-Peri Chicken with Yellow Rice - Chef RV Manabat</div></div></div>
+  </div>
+</section>
+
+<section class="page">
+  <div class="rhead">
+    <img class="photo" src="https://images.pexels.com/photos/32986473/pexels-photo-32986473.jpeg?auto=compress&amp;cs=tinysrgb&amp;h=627&amp;fit=crop&amp;w=1200" alt="" loading="lazy">
+    <div class="title">
+      <div>
+        <div class="num">RECIPE 06 / 23</div>
+        <h1>Lamb Kabsa</h1>
+        <span class="ar">كبسة لحم</span>
+        <p class="intro">The classic Gulf rice. Lamb is simmered with tomato, dried lime (loomi) and kabsa spices; the rice cooks in the same stock.</p>
+      </div>
+      <div class="chips"><span class="chip">⏱ 2 h</span><span class="chip">Level: Medium</span></div>
+    </div>
+  </div>
+  <div class="cols">
+    <div>
+      <h3>Ingredients</h3>
+      <table class="ing"><thead><tr><th>Ingredient</th><th class="q">1 person</th><th class="q">2 persons</th></tr></thead><tbody><tr><td>Lamb with bone</td><td class="q">350 g</td><td class="q p2">700 g</td></tr><tr><td>Basmati rice, washed, soaked 20 min</td><td class="q">1 cup</td><td class="q p2">2 cups</td></tr><tr><td>Onion, chopped</td><td class="q">1</td><td class="q p2">2</td></tr><tr><td>Tomato, grated or chopped</td><td class="q">1 large</td><td class="q p2">2 large</td></tr><tr><td>Tomato paste</td><td class="q">1 tbsp</td><td class="q p2">2 tbsp</td></tr><tr><td>Garlic, minced</td><td class="q">2 cloves</td><td class="q p2">4 cloves</td></tr><tr><td>Kabsa spice mix</td><td class="q">1 tbsp</td><td class="q p2">2 tbsp</td></tr><tr><td>Dried lime (loomi), pierced</td><td class="q">1</td><td class="q p2">2</td></tr><tr><td>Cinnamon stick, 3 cardamom, 2 cloves, 1 bay leaf</td><td class="q">1 set</td><td class="q p2">1 set</td></tr><tr><td>Carrot, grated (optional)</td><td class="q">1/2</td><td class="q p2">1</td></tr><tr><td>Ghee / oil</td><td class="q">2 tbsp</td><td class="q p2">4 tbsp</td></tr><tr><td>Water</td><td class="q">2.5 cups</td><td class="q p2">5 cups</td></tr><tr><td>Raisins + toasted almonds for topping</td><td class="q">1 tbsp each</td><td class="q p2">2 tbsp each</td></tr><tr><td>Salt</td><td class="q">to taste</td><td class="q p2">to taste</td></tr></tbody></table>
+    </div>
+    <div>
+      <h3>Method</h3>
+      <ol class="steps"><li>Fry onion in ghee until golden. Add garlic, lamb. Brown 5 min.</li><li>Add tomato, tomato paste, kabsa spice, loomi, whole spices, salt. Stir 3 min.</li><li>Add water. Boil, skim foam, cover, simmer 60-75 min until lamb is tender.</li><li>Take out lamb pieces, keep warm. Measure the stock: you need 1.5 cups stock per 1 cup rice (add water if less).</li><li>Add rice and carrot to the stock. Boil 2 min, cover, LOW 18-20 min. Rest 5 min.</li><li>Optional: put lamb under the oven grill 5 min for colour. Serve lamb on rice, top with raisins and almonds. Serve with daqoos (tomato chili sauce) and salad.</li></ol>
+      <div class="tl"><b>Mahalagang paalala (Tagalog)</b><ul><li>Sukatin ang stock: 1.5 cups stock = 1 cup rice. Ito ang sikreto ng magandang kabsa.</li><li>Butasin ang loomi (dried lime) para lumabas ang lasa.</li></ul></div>
+    </div>
+  </div>
+  <div class="foot">
+    <div class="brand">Al Maysari Family Cookbook · Mohamed &amp; Einas · 2026</div>
+    <div style="display:flex"><div class="qr"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAANIAAADSCAIAAACw+wkVAAAE0klEQVR4nO3dMY4jNxCGUa/hCzh05PsfayOHPsI4c7A9AVEg+fXsvhcOJHZL+lFADZvkt4+Pj9/grt/rG+BXJHYExI6A2BEQOwJ/PP/0919/3r+P/33/598f/jK7n9k4z3c97bqf2cgr48xGPud5z6odAbEjIHYExI6A2BH4pJN9mnVPK2a928q7nq/Z9Sl2jbPrDmfjtL+pakdA7AiIHQGxIyB2BJY62adz85Ir11rpbWdzoOdmhFecu5/Z1VfMPqlqR0DsCIgdAbEjIHYEhp3sTTf71tn9zLxtnJtUOwJiR0DsCIgdAbEj8AU62addve1N77/Dm1Q7AmJHQOwIiB0BsSMw7GRvdmGzp15na2ln3jbOzM3fVLUjIHYExI6A2BEQOwJLnWzbYT3N5mR/5dc8tb+pakdA7AiIHQGxIyB2BD7pZN/21OvbdmGaacd522+q2hEQOwJiR0DsCIgdgaXzZM+tS911guqu02Nvnvp67vTYFTd3e3aeLK8gdgTEjoDYERA7AgfnZM91fLtmac/Nk+46A3fmbbs9P6l2BMSOgNgREDsCYkdgaU72adc86UqvtOusnLd1c0/vX9+669tQ7QiIHQGxIyB2BMSOwNKOTzdXqp7bB2l2rRVvG+fp5i+48hrVjoDYERA7AmJHQOwIHDxPdtfa1V12dXO7rv40+35u9uy7RlbtCIgdAbEjIHYExI7A0jrZ2Rzorr5s5Xnjcz3pzV1/zz1HPXPueWzVjoDYERA7AmJHQOwIDNfJ3jxT5uZK1XNXv3l67M31trM+WrUjIHYExI6A2BEQOwLDp4vf383NzEbedYc392Q+1+16upiXEjsCYkdA7AiIHYFvHx8fP/zpXP/ydHN/p6d27ersfp52fT83/6ug2hEQOwJiR0DsCIgdgYN7F587zWfFrpW8M+fOAJpda+VdM07h4csQOwJiR0DsCIgdgaVO9tzc3Ln5xNlrzj3Ne3Oc2bVunpGk2hEQOwJiR0DsCIgdgavnyc5G3vXM7crVV15zc7Vveyruk6eL+cLEjoDYERA7AmJHYGmd7Ll1oOfGObcH1Pu9bR+tJ9WOgNgREDsCYkdA7Ah80smuuLkS81xn/XRzR9/2c7X7RKl2BMSOgNgREDsCYkdgeJ5se4bL7F0393eaadcjr9j1SVU7AmJHQOwIiB0BsSOwbU723JOo565+c15yxbn1rbvs+n5UOwJiR0DsCIgdAbEjMJyTXXnX2/q7t81dtvskrzi3j7RqR0DsCIgdAbEjIHYEhnOyN7U98s+x49OKmyfeqnYExI6A2BEQOwJiR2DbnOwuu55SXul23/YM8LmRz3WpM6odAbEjIHYExI6A2BEYnie7y809kM89XTx7183djNvv8Em1IyB2BMSOgNgREDsCS53sU9tPndtvqj1ldZebZxLNqHYExI6A2BEQOwJiR2DYyb7frtnet71mZja3e66LV+0IiB0BsSMgdgTEjsAX6GR3zf+urJM9Nye761rtrPGu2V7VjoDYERA7AmJHQOwIfLJ3cdsZndsvd9fVV7ztxNtdzMnyhYkdAbEjIHYExI7AUid707kzTGfOdc2zcVZGvrkv8WyOWLUjIHYExI6A2BEQOwJf4DxZfj6qHQGxIyB2BMSOgNgR+A9DY/HVcGa3OgAAAABJRU5ErkJggg==" alt="QR"><div class="t"><span class="lang ">Tagalog</span><b>Scan to watch the cooking video</b>How to cook Saudi Kabsa Lamb (Tagalog) - madam kikay cooking</div></div></div>
+  </div>
+</section>
+
+<section class="page">
+  <div class="rhead">
+    <img class="photo" src="https://images.pexels.com/photos/17650193/pexels-photo-17650193.jpeg?auto=compress&amp;cs=tinysrgb&amp;h=627&amp;fit=crop&amp;w=1200" alt="" loading="lazy">
+    <div class="title">
+      <div>
+        <div class="num">RECIPE 07 / 23</div>
+        <h1>Chicken Kabsa</h1>
+        <span class="ar">كبسة دجاج</span>
+        <p class="intro">Same as lamb kabsa with chicken; faster. Chicken is finished under the grill for golden skin.</p>
+      </div>
+      <div class="chips"><span class="chip">⏱ 1 h 15 min</span><span class="chip">Level: Easy</span></div>
+    </div>
+  </div>
+  <div class="cols">
+    <div>
+      <h3>Ingredients</h3>
+      <table class="ing"><thead><tr><th>Ingredient</th><th class="q">1 person</th><th class="q">2 persons</th></tr></thead><tbody><tr><td>Chicken pieces, bone-in (leg + thigh)</td><td class="q">350 g</td><td class="q p2">700 g</td></tr><tr><td>Basmati rice, washed, soaked</td><td class="q">1 cup</td><td class="q p2">2 cups</td></tr><tr><td>Onion, chopped</td><td class="q">1</td><td class="q p2">2</td></tr><tr><td>Tomato, chopped</td><td class="q">1</td><td class="q p2">2</td></tr><tr><td>Tomato paste</td><td class="q">1 tbsp</td><td class="q p2">2 tbsp</td></tr><tr><td>Garlic</td><td class="q">2 cloves</td><td class="q p2">4 cloves</td></tr><tr><td>Kabsa spice</td><td class="q">1 tbsp</td><td class="q p2">2 tbsp</td></tr><tr><td>Dried lime (loomi)</td><td class="q">1</td><td class="q p2">2</td></tr><tr><td>Cinnamon, cardamom, cloves, bay leaf</td><td class="q">1 set</td><td class="q p2">1 set</td></tr><tr><td>Carrot, grated</td><td class="q">1/2</td><td class="q p2">1</td></tr><tr><td>Ghee</td><td class="q">2 tbsp</td><td class="q p2">4 tbsp</td></tr><tr><td>Water</td><td class="q">2 cups</td><td class="q p2">4 cups</td></tr><tr><td>Raisins + almonds</td><td class="q">1 tbsp each</td><td class="q p2">2 tbsp each</td></tr><tr><td>Salt</td><td class="q">to taste</td><td class="q p2">to taste</td></tr></tbody></table>
+    </div>
+    <div>
+      <h3>Method</h3>
+      <ol class="steps"><li>Fry onion in ghee until golden. Add garlic and chicken, brown 5 min each side.</li><li>Add tomato, paste, kabsa spice, loomi, whole spices, salt. Stir 3 min. Add water. Cover, simmer 25 min.</li><li>Remove chicken. Put chicken on a tray in the oven, grill 200 C 10 min until golden.</li><li>Measure stock (1.5 cups per cup of rice). Add rice and carrot. Boil 2 min, cover, LOW 18 min. Rest 5 min.</li><li>Serve chicken on rice with raisins, almonds, daqoos sauce and salad.</li></ol>
+      <div class="tl"><b>Mahalagang paalala (Tagalog)</b><ul><li>Huwag masyadong matagal ang chicken sa kaldero, 25 min lang, tapos sa oven para hindi matunaw.</li><li>Rice: LOW heat, takip, huwag haluin habang niluluto.</li></ul></div>
+    </div>
+  </div>
+  <div class="foot">
+    <div class="brand">Al Maysari Family Cookbook · Mohamed &amp; Einas · 2026</div>
+    <div style="display:flex"><div class="qr"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAANIAAADSCAIAAACw+wkVAAAErklEQVR4nO3dMY7jNgBA0WyQC6RMlfsfa6uUOYLTpYhcEATJTzvvlYuxJM98EOBSon68Xq9f4Kxf6wvg/0h2BGRHQHYEZEfgt+c//fnH7+ev418///r7P//yvJ5VPzNy9qe538+qI48cZ+7I+zyv2WhHQHYEZEdAdgRkR+DNTPZpbvY0YtXcbW5uO2fVcVZd4dxx2r+p0Y6A7AjIjoDsCMiOwNBM9mnfuuTIuVbN1Fat5M6d/eT1zJ19xNw3NdoRkB0B2RGQHQHZEZicyZ60b7315KfuP85JRjsCsiMgOwKyIyA7Ah8wk336xLnbvrudP5HRjoDsCMiOgOwIyI7A5Ez25Cys3a1oxKorvG1fpn2MdgRkR0B2BGRHQHYEhmayt80lT+5v/B0/89T+TY12BGRHQHYEZEdAdgTezGRvu+t1btej29ZJ2+Pc9jc12hGQHQHZEZAdAdkRGHqf7L49l/a9hWffuW47zpxVK7lzbRjtCMiOgOwIyI6A7Agc3fHp5Oxp7nrmrLrCVdez7w7kVTNrox0B2RGQHQHZEZAdgcnnZFetOY4ceW5WeP9s7mnf862rrnnVb8NoR0B2BGRHQHYEZEdg8jnZdvXw5Dx6xP3HWcWaLB9MdgRkR0B2BGRHYNndxffvu7vqnuQ5+56c3Xf39b41a6MdAdkRkB0B2RGQHYEfr9dr06Fvu5t33w5LJ+9AHnFy3jp3ZKMdAdkRkB0B2RGQHYGhvYufTu5otGrNcdU175vtrvqZdu4/8imjHQHZEZAdAdkRkB2BN2uyt92JevI4T7dd4cm7lEc+NcdoR0B2BGRHQHYEZEdgciZ7ctVv5Ozt/bQnr+dp35r1yLnmjmO0IyA7ArIjIDsCsiMwtOPTbW+0ue3+57mz37+66n2yfBXZEZAdAdkRkB2BoR2f9j3j+XRyD+QRJ99oc9sK9b6/l9GOgOwIyI6A7AjIjsDQjk/73l+zb0Z82xWe/KbtSre7i7mU7AjIjoDsCMiOwNBzsret+j2dnH3f5uTbc1Yx2hGQHQHZEZAdAdkRmHyf7Mk3qN62U/G+Wfx33LPt7mIuJTsCsiMgOwKyIzD5PtlVn9rn5PXseyb35M5RI1b9r4LRjoDsCMiOgOwIyI7Am5nsbW9Q3XeuESfn9SPfon3jz6qzG+0IyI6A7AjIjoDsCCxbkx1x//29q+bI+77FvtXVVZ+y4xOXkh0B2RGQHQHZEZh8Tvak9j7h2+6aHnFyVX1ubmu0IyA7ArIjIDsCsiNwdE12xMk10H17KY+c/eSR26drn4x2BGRHQHYEZEdAdgTezGSf2qdQb3sy9Glunrhvp+KRc81ZNf812hGQHQHZEZAdAdkRGJrJPt32ftJVu/6u2iu4tWot1ftk+SqyIyA7ArIjIDsCkzPZT7RvTfbkz8xZtbbrLTx8MNkRkB0B2RGQHYEPmMm2dyDve7vQd6waewsPH0N2BGRHQHYEZEfgzd7F7dta9+2Xu+rsI07Of+c+1d4fbrQjIDsCsiMgOwKyIzA0kz1p1X7C++aSI2ffd5yRI598l9Dcb95oR0B2BGRHQHYEZEfgA94ny/cx2hGQHQHZEZAdAdkR+AcVg9013jBtLAAAAABJRU5ErkJggg==" alt="QR"><div class="t"><span class="lang ">Tagalog</span><b>Scan to watch the cooking video</b>Kabsa Rice with Chicken (Saudi / Tagalog) - Yamyam Arabicfood</div></div></div>
+  </div>
+</section>
+
+<section class="page">
+  <div class="rhead">
+    <img class="photo" src="https://images.pexels.com/photos/18698228/pexels-photo-18698228.jpeg?auto=compress&amp;cs=tinysrgb&amp;h=627&amp;fit=crop&amp;w=1200" alt="" loading="lazy">
+    <div class="title">
+      <div>
+        <div class="num">RECIPE 08 / 23</div>
+        <h1>Chicken Bukhari Rice</h1>
+        <span class="ar">رز بخاري بالدجاج</span>
+        <p class="intro">Lightly spiced rice with carrot, raisins and tomato paste, served with grilled chicken and the Bukhari tomato salsa.</p>
+      </div>
+      <div class="chips"><span class="chip">⏱ 1 h 15 min</span><span class="chip">Level: Easy</span></div>
+    </div>
+  </div>
+  <div class="cols">
+    <div>
+      <h3>Ingredients</h3>
+      <table class="ing"><thead><tr><th>Ingredient</th><th class="q">1 person</th><th class="q">2 persons</th></tr></thead><tbody><tr><td>Chicken pieces</td><td class="q">350 g</td><td class="q p2">700 g</td></tr><tr><td>Basmati rice, washed, soaked</td><td class="q">1 cup</td><td class="q p2">2 cups</td></tr><tr><td>Onion, chopped</td><td class="q">1</td><td class="q p2">2</td></tr><tr><td>Carrot, cut in thin sticks</td><td class="q">1</td><td class="q p2">2</td></tr><tr><td>Tomato paste</td><td class="q">1.5 tbsp</td><td class="q p2">3 tbsp</td></tr><tr><td>Garlic</td><td class="q">2 cloves</td><td class="q p2">4 cloves</td></tr><tr><td>Cumin + coriander powder</td><td class="q">1/2 tsp each</td><td class="q p2">1 tsp each</td></tr><tr><td>Cinnamon stick, 3 cardamom, 2 cloves</td><td class="q">1 set</td><td class="q p2">1 set</td></tr><tr><td>Raisins</td><td class="q">2 tbsp</td><td class="q p2">4 tbsp</td></tr><tr><td>Chicken stock / water</td><td class="q">1.5 cups</td><td class="q p2">3 cups</td></tr><tr><td>Ghee / oil</td><td class="q">2 tbsp</td><td class="q p2">4 tbsp</td></tr><tr><td>Chicken marinade: yogurt 2 tbsp, lemon, garlic, paprika, salt</td><td class="q">1 set</td><td class="q p2">2 sets</td></tr><tr><td>Salsa: 2 tomatoes, 1 green chili (skip for Einas), garlic, coriander, lemon, salt</td><td class="q">1 set</td><td class="q p2">1 set</td></tr></tbody></table>
+    </div>
+    <div>
+      <h3>Method</h3>
+      <ol class="steps"><li>Marinate chicken 30 min. Bake at 200 C for 35 min, grill the last 5 min.</li><li>Fry onion in ghee until golden. Add garlic, carrot, whole spices, cumin, coriander. Cook 3 min.</li><li>Add tomato paste, stir 2 min. Add rice, stir gently 1 min.</li><li>Add stock and salt. Boil, cover, LOW 18 min. Add raisins on top for the last 5 min. Rest 5 min.</li><li>Blend salsa ingredients roughly (not smooth). Serve chicken on rice with salsa and cucumber-yogurt.</li></ol>
+      <div class="tl"><b>Mahalagang paalala (Tagalog)</b><ul><li>Carrot dapat manipis (matchstick) para maluto kasabay ng rice.</li><li>Salsa: walang sili para kay Einas. Hiwalay na lalagyan.</li></ul></div>
+    </div>
+  </div>
+  <div class="foot">
+    <div class="brand">Al Maysari Family Cookbook · Mohamed &amp; Einas · 2026</div>
+    <div style="display:flex"><div class="qr"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAANIAAADSCAIAAACw+wkVAAAE1ElEQVR4nO3dMY4jNxCGUY/hCzh05PsfayOHPoKcOeEASxAkv5b2vXAhqVujHwRqq5r8er1ev8Fdv9c3wK9I7AiIHQGxIyB2BP4Y/+nvv/68fx//+/HPvz99zXiH47tmvsXMu2buZ7Trb7jrDp/2m1rtCIgdAbEjIHYExI7AN5XsaK2am9FWWKNzte1arT3zOWva39RqR0DsCIgdAbEjIHYEpirZ0c0q7FwtOXOtNWsV8fiatXfd7COvXctqR0DsCIgdAbEjIHYEFivZ51ur+HZ1Kp/WyX0aqx0BsSMgdgTEjoDYEfiQSnatSj1XFZ572vfcVPBNVjsCYkdA7AiIHQGxI7BYyX5GPTVj10zyzRngc9PXu1jtCIgdAbEjIHYExI7AVCX7GROtu3Y83tVLXattd3WW29/UakdA7AiIHQGxIyB2BL6pZD+j3/q0c2fWauSZ16zVvy2rHQGxIyB2BMSOgNgRmDpPtn3C9NzVd+3We666bL/pDHsX8zbEjoDYERA7AmJH4GBPdlfFt6uyvjmXe/PJ2V1u/n+F1Y6A2BEQOwJiR0DsCHy9Xq+fvmjXLkPnTms9d601N0/zOffrnLuW1Y6A2BEQOwJiR0DsCMSn8Nw8d+bctcbP2TW3fLOvPfOu0dodWu0IiB0BsSMgdgTEjsA3PdlzVc+am2ez7qpAR8/vEZ+rW0dWOwJiR0DsCIgdAbEjsNiTvfns6rmZ5Jv1783O6dq3uDkRbbUjIHYExI6A2BEQOwIHp4vPdSpvdhhnPnnXTPLatW7u7bxrT2arHQGxIyB2BMSOgNgR2Lbj0+hcD3SXc3X0mps7a938nJHVjoDYERA7AmJHQOwILJ4nO2PXaTW7nLvWrorv3Kz1zRN2TBfzUGJHQOwIiB0BsSMw1ZMd3TxPZ+3q7R5HN8+33eXc878jqx0BsSMgdgTEjoDYEYhP4TlXK+16xnNXh/pmnbhWEa9V6PYu5m2IHQGxIyB2BMSOwLbp4nMnn950bhemc/fztOeIZ1jtCIgdAbEjIHYExI7A4o5P5yZjz03qtnslPe1dM58z2vXrWO0IiB0BsSMgdgTEjsA3lezT6qmb57fu8o4nEM3Ytfu01Y6A2BEQOwJiR0DsCCw+J3uzbh3t6gjf7OSe62u/Yx/ZakdA7AiIHQGxIyB2BBZ7sk/bqWlNOwM84+aOTze/hdWOgNgREDsCYkdA7AgcnC4etefOtLswnauan/Y3NF3MQ4kdAbEjIHYExI7AN9PFu06Z2fWudjfjc9o9qdbuZ9dvYbUjIHYExI6A2BEQOwJTp/DctHaiTfuk6oxzM9Izzs1sr32O1Y6A2BEQOwJiR0DsCEzt+NSeWHpuV6hdO/HOfPLMHc685vnP25ou5qHEjoDYERA7AmJHYNvexTNu9iXPVaA3z28d7foWa3Y9/2u1IyB2BMSOgNgREDsCi5XsZ7h5Uu3M1PS5HnE7oa0nyyOIHQGxIyB2BMSOwFtWsuemXndd/VzleO41uypiPVkeSuwIiB0BsSMgdgQWK9mbc8I3zwDaVc3NaJ+BHd2crLbaERA7AmJHQOwIiB2BqUq23c345tXbbu9abbtrT+a1/zHwnCxvQ+wIiB0BsSMgdgS+Xq9XfQ/8cqx2BMSOgNgREDsCYkfgP1IY38xfUY33AAAAAElFTkSuQmCC" alt="QR"><div class="t"><span class="lang en">English</span><b>Scan to watch the cooking video</b>Bukhari Rice with Chicken - The cookbook</div></div></div>
+  </div>
+</section>
+
+<section class="page">
+  <div class="rhead">
+    <img class="photo" src="https://images.pexels.com/photos/17650169/pexels-photo-17650169.jpeg?auto=compress&amp;cs=tinysrgb&amp;h=627&amp;fit=crop&amp;w=1200" alt="" loading="lazy">
+    <div class="title">
+      <div>
+        <div class="num">RECIPE 09 / 23</div>
+        <h1>Lamb Bukhari Rice</h1>
+        <span class="ar">رز بخاري باللحم</span>
+        <p class="intro">Bukhari rice cooked in lamb stock, served with the tender boiled-then-grilled lamb.</p>
+      </div>
+      <div class="chips"><span class="chip">⏱ 2 h</span><span class="chip">Level: Medium</span></div>
+    </div>
+  </div>
+  <div class="cols">
+    <div>
+      <h3>Ingredients</h3>
+      <table class="ing"><thead><tr><th>Ingredient</th><th class="q">1 person</th><th class="q">2 persons</th></tr></thead><tbody><tr><td>Lamb with bone</td><td class="q">350 g</td><td class="q p2">700 g</td></tr><tr><td>Basmati rice, washed, soaked</td><td class="q">1 cup</td><td class="q p2">2 cups</td></tr><tr><td>Onion</td><td class="q">1</td><td class="q p2">2</td></tr><tr><td>Carrot, thin sticks</td><td class="q">1</td><td class="q p2">2</td></tr><tr><td>Tomato paste</td><td class="q">1.5 tbsp</td><td class="q p2">3 tbsp</td></tr><tr><td>Garlic</td><td class="q">2 cloves</td><td class="q p2">4 cloves</td></tr><tr><td>Cumin, coriander, black pepper</td><td class="q">1/2 tsp each</td><td class="q p2">1 tsp each</td></tr><tr><td>Cinnamon, cardamom, cloves, 1 bay leaf</td><td class="q">1 set</td><td class="q p2">1 set</td></tr><tr><td>Raisins</td><td class="q">2 tbsp</td><td class="q p2">4 tbsp</td></tr><tr><td>Ghee</td><td class="q">2 tbsp</td><td class="q p2">4 tbsp</td></tr><tr><td>Water for boiling lamb</td><td class="q">4 cups</td><td class="q p2">6 cups</td></tr><tr><td>Salt</td><td class="q">to taste</td><td class="q p2">to taste</td></tr></tbody></table>
+    </div>
+    <div>
+      <h3>Method</h3>
+      <ol class="steps"><li>Boil lamb with half the onion, whole spices and salt 60-75 min until tender. Skim foam. Keep stock.</li><li>Take lamb out. Grill in oven 200 C 10 min for colour.</li><li>Fry the other onion in ghee golden. Add garlic, carrot, spices, tomato paste. Cook 3 min. Add rice, stir 1 min.</li><li>Add 1.5 cups stock per cup rice, salt. Boil, cover, LOW 18 min. Raisins last 5 min. Rest 5 min.</li><li>Serve lamb on rice with tomato salsa and yogurt.</li></ol>
+      <div class="tl"><b>Mahalagang paalala (Tagalog)</b><ul><li>Lamb malambot muna bago gawin ang rice.</li><li>Stock ang gamitin sa rice, hindi plain water, para malasa.</li></ul></div>
+    </div>
+  </div>
+  <div class="foot">
+    <div class="brand">Al Maysari Family Cookbook · Mohamed &amp; Einas · 2026</div>
+    <div style="display:flex"><div class="qr"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAANIAAADSCAIAAACw+wkVAAAEvUlEQVR4nO3dPY6kNRSGUQaxAUIi9r8sIkKWUGQkbgnLsv244ZxwVOWvuuqVpTvXPz8+n89PcNfP9Qfg/0jsCIgdAbEjIHYEfhn/6ffffr3/Of7xx59/bRln5q8YnzW+a+3z7PoOd33C135Tsx0BsSMgdgTEjoDYEfiikh3tqi5HaxXWubrsXG07M/LaOGva39RsR0DsCIgdAbEjIHYEpirZ0c0q7GZ3te2ljq9Ze9fNPvLas8x2BMSOgNgREDsCYkdgsZJ9za6K79za5raT+xqzHQGxIyB2BMSOgNgR+JaV7Llu5i5r/d9z/dbXmO0IiB0BsSMgdgTEjsBiJft+PXVzX+rMyDfXAO/q/55jtiMgdgTEjoDYERA7AlOV7H9jRetordrd1Utdq213Vejtb2q2IyB2BMSOgNgREDsCX1Sy7/dbZ7x278xajTzzmrX6t2W2IyB2BMSOgNgREDsCU/fJtjtMzz1913rjc9Vl+5fOcHYx34bYERA7AmJHQOwIHDzx6TvejDOj7a6ec+77GUc22xEQOwJiR0DsCIgdgW2V7K69omvPGs2cZjzj5i2rayPvul3o3I23I7MdAbEjIHYExI6A2BH48fl8/vVFa+fl7urAnqt/b54nPGPX97P2rpvfqtmOgNgREDsCYkdA7Ags7pNdc/MUpvd7xGuvWXvXrl9w1zhmOwJiR0DsCIgdAbEj8EVPdlcHdsZ3HGftWW2/dde7ZsYZ6cnyBLEjIHYExI6A2BGYqmTP7fo8d+/qzdOlbq5J3vVXtN+z2Y6A2BEQOwJiR0DsCEzdJ3uuf3fzfp+bu1nXxnntxONz65bNdgTEjoDYERA7AmJHYLEne7MmbU9hGp1bXTx67QaiXV1asx0BsSMgdgTEjoDYEdhWyY7O9XZHbdf43Pdz080K3WxHQOwIiB0BsSMgdgSmbuEZ3TyXqd0Z2t56054afe4zm+0IiB0BsSMgdgTEjsC2W3jWaq7X+pK7dqrerEDbfbJrzHYExI6A2BEQOwJiR2CxJzu6uaOzrX9fuxnn/VuT7JPlCWJHQOwIiB0BsSOw7Rae98+Jer/a3fWs99dsm+0IiB0BsSMgdgTEjsAXq4tn7FqB/Nr+zXNd0XbnbHuz0shsR0DsCIgdAbEjIHYErvZkZ5wbZ0Zb7c58nnYf8Ro9WZ4gdgTEjoDYERA7Att6sjOvubne+Nw5SKNzZ2S1e4TP/V5mOwJiR0DsCIgdAbEj8EUle+6k4l3jzFRP527Y2eXm+U5rn+fcu8x2BMSOgNgREDsCYkdg6haem2ZutNlVc7XnMt10rmZfG8dsR0DsCIgdAbEjIHYEplYXtzeWnttheu7cql2d03at9bn/MTDbERA7AmJHQOwIiB2Bg/tkR+3a3XMjt2dSrdXRa3at0DbbERA7AmJHQOwIiB2BxUq21e4n3XVS067zlHZVlzefbrYjIHYExI6A2BEQOwLfspJtTz06d3dt+5pdFbGeLI8SOwJiR0DsCIgdgW33ya65uVL3Zn9zzbka+eaNtzPMdgTEjoDYERA7AmJHYKqSvenmGUfndqruqnZv/hY3K32zHQGxIyB2BMSOgNgR+KKShdPMdgTEjoDYERA7AmJH4G8zEPyW2hWWcwAAAABJRU5ErkJggg==" alt="QR"><div class="t"><span class="lang ">Tagalog</span><b>Scan to watch the cooking video</b>Bukhari Rice with Lamb (Tagalog) - Rebecca Cooking Channel</div></div></div>
+  </div>
+</section>
+
+<section class="page">
+  <div class="rhead">
+    <img class="photo" src="https://images.pexels.com/photos/35267285/pexels-photo-35267285.jpeg?auto=compress&amp;cs=tinysrgb&amp;h=627&amp;fit=crop&amp;w=1200" alt="" loading="lazy">
+    <div class="title">
+      <div>
+        <div class="num">RECIPE 10 / 23</div>
+        <h1>Chicken Curry with Boiled Eggs</h1>
+        <span class="ar">كاري دجاج مع بيض مسلوق</span>
+        <p class="intro">Home-style mild curry with chicken, potato and halved boiled eggs. Served with white rice.</p>
+      </div>
+      <div class="chips"><span class="chip">⏱ 50 min</span><span class="chip">Level: Easy</span></div>
+    </div>
+  </div>
+  <div class="cols">
+    <div>
+      <h3>Ingredients</h3>
+      <table class="ing"><thead><tr><th>Ingredient</th><th class="q">1 person</th><th class="q">2 persons</th></tr></thead><tbody><tr><td>Chicken pieces (boneless or bone-in)</td><td class="q">300 g</td><td class="q p2">600 g</td></tr><tr><td>Eggs, hard boiled (9 min), peeled</td><td class="q">2</td><td class="q p2">4</td></tr><tr><td>Potato, cubed</td><td class="q">1 small</td><td class="q p2">1 large</td></tr><tr><td>Onion, finely chopped</td><td class="q">1</td><td class="q p2">2</td></tr><tr><td>Tomato, chopped</td><td class="q">1</td><td class="q p2">2</td></tr><tr><td>Ginger-garlic paste</td><td class="q">1 tsp</td><td class="q p2">2 tsp</td></tr><tr><td>Curry powder (mild)</td><td class="q">1 tbsp</td><td class="q p2">2 tbsp</td></tr><tr><td>Turmeric</td><td class="q">1/4 tsp</td><td class="q p2">1/2 tsp</td></tr><tr><td>Coconut milk (optional, for creamy)</td><td class="q">1/2 cup</td><td class="q p2">1 cup</td></tr><tr><td>Oil</td><td class="q">2 tbsp</td><td class="q p2">3 tbsp</td></tr><tr><td>Water</td><td class="q">1 cup</td><td class="q p2">2 cups</td></tr><tr><td>Fresh coriander</td><td class="q">1 tbsp</td><td class="q p2">2 tbsp</td></tr><tr><td>Salt</td><td class="q">to taste</td><td class="q p2">to taste</td></tr><tr><td>White rice (cooked) to serve</td><td class="q">1 cup</td><td class="q p2">2 cups</td></tr></tbody></table>
+    </div>
+    <div>
+      <h3>Method</h3>
+      <ol class="steps"><li>Fry onion in oil until soft and golden (6-8 min). Add ginger-garlic 1 min.</li><li>Add curry powder, turmeric, stir 30 seconds. Add tomato, cook until soft (5 min).</li><li>Add chicken, coat in masala, cook 5 min. Add potato, water, salt. Cover, simmer 20 min until potato is soft.</li><li>Add coconut milk if using. Simmer 5 min. Sauce should be thick enough to coat a spoon.</li><li>Cut boiled eggs in half, place gently on top, spoon sauce over. 2 min more. Top with coriander. Serve with white rice.</li></ol>
+      <div class="tl"><b>Mahalagang paalala (Tagalog)</b><ul><li>Mild lang ang curry. Walang extra chili (si Einas ay hindi kumakain ng maanghang).</li><li>Eggs: 9 minuto kumukulo, tapos malamig na tubig para madaling balatan.</li></ul></div>
+    </div>
+  </div>
+  <div class="foot">
+    <div class="brand">Al Maysari Family Cookbook · Mohamed &amp; Einas · 2026</div>
+    <div style="display:flex"><div class="qr"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAANIAAADSCAIAAACw+wkVAAAEz0lEQVR4nO3dPY5bNxiG0TjIBlymyv6X5Sqll6B0KcwpCILkcyWfUw6kS0p6QeAb/n17vV5/wF1/1h3gdyR2BMSOgNgREDsCf41/+ufv7/f78b8f//785S9jf8bXjNY+xbnWZ9414+a3scvYQ6MdAbEjIHYExI6A2BH4opId7arCRjMV1q7qcq0/T3vyrv60v6nRjoDYERA7AmJHQOwITFWyo10znmtmnrNW/46vuTmbudbDc7X2jLXWjXYExI6A2BEQOwJiR2Cxkr1prb5bs2ul7tNmcp/GaEdA7AiIHQGxIyB2BN6gkh3drCV3+dSadI3RjoDYERA7AmJHQOwILFayv08VtmtGeNc88rkq/uZvarQjIHYExI6A2BEQOwJTlWx78u1orSrctQv13G7WXW3NaH9Tox0BsSMgdgTEjoDYEfiikn3H+dabJyPtqqNnXvP8k4rXGO0IiB0BsSMgdgTEjsDUfbJrddDNk5p2zZOem10d7ap/z32rM22NZr4xox0BsSMgdgTEjoDYEfj2er1++dO5nZjn1u7O2NXnNbtq25knn/tfxFp/RkY7AmJHQOwIiB0BsSPwRSU7etrM4EzrM85VajdvfT3Xn3M7go12BMSOgNgREDsCYkfg4C085+Zt1961a6551yrlmdbP1ZIzdq2jHhntCIgdAbEjIHYExI7Atkr25m01Tzu/aMa5Odldz7n5zRvtCIgdAbEjIHYExI7A1IlPM55ft7bzrTNm2ho9f+33yGhHQOwIiB0BsSMgdgSm9snOOFfN3TwD6lxVePNdM24+eWS0IyB2BMSOgNgREDsCi3Oy5+6vOWdX7dbWkufOQF5ra43RjoDYERA7AmJHQOwIHNwnu/aa9iTeNbs++6533VxL7Oxi3obYERA7AmJHQOwILN7Cc/M+2dHN+d/2zOGbN+eOzs3tGu0IiB0BsSMgdgTEjsDi6uKn7Ut92pzszftt16z12X2yvDGxIyB2BMSOgNgR2La6eK12O7dXdMa5enxXbbtWod9sfY3RjoDYERA7AmJHQOwILJ5d3J5N9PxTj26uCj63SnnkPlnemNgREDsCYkdA7AhsO7t4bU1yu5t17TntiuiZttbc/E2NdgTEjoDYERA7AmJH4ItKdtee05v7bT/1fp/2PwZWF/NRxI6A2BEQOwJiR2BxdfHo5jrhp50BdfOkpnc839jZxTyC2BEQOwJiR0DsCHxRyd689fVmLXnzltWbO3nPOfffAKMdAbEjIHYExI6A2BHYNid7zrlbaGfaWtPO7d48OWqtLaMdAbEjIHYExI6A2BFYPPHpnJvnILUroteePNPWrv6cO6HLaEdA7AiIHQGxIyB2BKbukz138s+5s3l31ZJrt7U+bSfvzXfN9NloR0DsCIgdAbEjIHYEpirZUXtf6k03d9fusquH5mT5KGJHQOwIiB0BsSOwWMnedPNu1rX+rLXVzu3OcOITH0XsCIgdAbEjIHYE3qCSXXPuNONdK3V3rVsetbcCzTDaERA7AmJHQOwIiB2BqVt4bu6Tfdqe3HYm92n7bXcx2hEQOwJiR0DsCIgdgcX7ZM9Zq93OzaXO2NXDc3Z99l21ttGOgNgREDsCYkdA7Ai8wX2yfB6jHQGxIyB2BMSOgNgR+A+G+N3nyzWHvwAAAABJRU5ErkJggg==" alt="QR"><div class="t"><span class="lang en">English</span><b>Scan to watch the cooking video</b>How to Cook Chicken Curry with Boiled Eggs - Enjoy Cooking with AL</div></div></div>
+  </div>
+</section>
+
+<section class="page">
+  <div class="rhead">
+    <img class="photo" src="https://images.pexels.com/photos/6210933/pexels-photo-6210933.jpeg?auto=compress&amp;cs=tinysrgb&amp;h=627&amp;fit=crop&amp;w=1200" alt="" loading="lazy">
+    <div class="title">
+      <div>
+        <div class="num">RECIPE 11 / 23</div>
+        <h1>Chicken with Vegetables in the Oven</h1>
+        <span class="ar">دجاج بالخضار في الفرن</span>
+        <p class="intro">One-tray roast: chicken pieces with potato, carrot, onion and bell pepper. Simple and healthy.</p>
+      </div>
+      <div class="chips"><span class="chip">⏱ 1 h 20 min</span><span class="chip">Level: Easy</span></div>
+    </div>
+  </div>
+  <div class="cols">
+    <div>
+      <h3>Ingredients</h3>
+      <table class="ing"><thead><tr><th>Ingredient</th><th class="q">1 person</th><th class="q">2 persons</th></tr></thead><tbody><tr><td>Chicken pieces, bone-in (or half chicken)</td><td class="q">400 g</td><td class="q p2">800 g</td></tr><tr><td>Potato, large chunks</td><td class="q">1</td><td class="q p2">2</td></tr><tr><td>Carrot, chunks</td><td class="q">1</td><td class="q p2">2</td></tr><tr><td>Onion, wedges</td><td class="q">1</td><td class="q p2">2</td></tr><tr><td>Bell pepper, chunks</td><td class="q">1/2</td><td class="q p2">1</td></tr><tr><td>Zucchini (optional)</td><td class="q">1/2</td><td class="q p2">1</td></tr><tr><td>Garlic, minced</td><td class="q">3 cloves</td><td class="q p2">5 cloves</td></tr><tr><td>Lemon juice</td><td class="q">1 tbsp</td><td class="q p2">2 tbsp</td></tr><tr><td>Olive oil</td><td class="q">2 tbsp</td><td class="q p2">4 tbsp</td></tr><tr><td>Paprika, dried oregano/thyme, black pepper</td><td class="q">1/2 tsp each</td><td class="q p2">1 tsp each</td></tr><tr><td>Salt</td><td class="q">to taste</td><td class="q p2">to taste</td></tr></tbody></table>
+    </div>
+    <div>
+      <h3>Method</h3>
+      <ol class="steps"><li>Oven 200 C. Mix oil, lemon, garlic, paprika, herbs, salt, pepper.</li><li>Rub half of the mix on the chicken (under the skin too). Toss the vegetables with the rest.</li><li>Spread vegetables in a tray in one layer, chicken on top skin side up. Cover with foil.</li><li>Bake 40 min covered. Remove foil, bake 20-25 min more until chicken is golden and juices run clear.</li><li>Rest 5 min. Serve with the tray juices.</li></ol>
+      <div class="tl"><b>Mahalagang paalala (Tagalog)</b><ul><li>Isang layer lang ang gulay para ma-roast, hindi ma-steam.</li><li>Foil muna 40 min, tapos alisin para gumintong ang balat.</li></ul></div>
+    </div>
+  </div>
+  <div class="foot">
+    <div class="brand">Al Maysari Family Cookbook · Mohamed &amp; Einas · 2026</div>
+    <div style="display:flex"><div class="qr"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAANIAAADSCAIAAACw+wkVAAAExklEQVR4nO3dO44rNxRFUbfhCTh05PkPy5FDD0HOHDwKMEGQ3KV+a4UNqVQqHRC4ffn5er1ev8Bdv9Y3wM9I7AiIHQGxIyB2BH4b//TnH7/fv4///PX3P//7mvEOx3fNfIuZd83cz2jXM9x1h0/7TY12BMSOgNgREDsCYkfgTSU7WqvmZqxVWGt1664rrz2NXfe867dof1OjHQGxIyB2BMSOgNgRmKpkRzersHNV6s3PWusjr73r5nNe+yyjHQGxIyB2BMSOgNgRWKxkW+f6ibuu/LRO7tMY7QiIHQGxIyB2BMSOwEdWsqNdK2d3Obfa91wVf5PRjoDYERA7AmJHQOwILFayn1hP7doVajRznZtzgHf1f88x2hEQOwJiR0DsCIgdgalK9nvMaN3Vt93VS12rbXf1mtvf1GhHQOwIiB0BsSMgdgTeVLKf2G8dPe3cmbUaeeY1a/Vvy2hHQOwIiB0BsSMgdgSmzpO9ueZ0/KxzZ8WeOwNoV3W56znf/L1mGO0IiB0BsSMgdgTEjkDckz23M9K5erztrp5z7vmMVzbaERA7AmJHQOwIiB2Br9fr9cOfvscZpk+bXbym/S3O7ZFltCMgdgTEjoDYERA7AgdP4ZmpjG6eO3OzBtxVod/cS2p0bp9kox0BsSMgdgTEjoDYEXjTkx2d2613xs05tz9zj3jX6mM9WR5K7AiIHQGxIyB2BBZnF89Yu87NOa43K/Rd97PrXbusfXejHQGxIyB2BMSOgNgR2FbJPq0K23U/Mz5xjXD7nI12BMSOgNgREDsCYkdgcXbx6Gn91plPX3Ou47lrfu+Mdu630Y6A2BEQOwJiR0DsCBw8T/YTT6JZs6v6Pndu77kzeUdO4eGhxI6A2BEQOwJiR2DbKTyj5++pe+5b3Oyu7nKzjjbaERA7AmJHQOwIiB2B+BSem3OJ18642VV9P38e9c3zfYx2BMSOgNgREDsCYkfgA9bJ3nzNmuev273Z7bXjEw8ldgTEjoDYERA7Aos92V3dupv15qg9T+fm7Oub/w2wTpaHEjsCYkdA7AiIHYGpHZ9m3Jxzu3bl0a5ZuOc+vT3bd+06M9/LaEdA7AiIHQGxIyB2BKZ6srt6l20XcnSuszzzml1VfLu7lPNk+RhiR0DsCIgdAbEjsG3v4punrN5ck3vufmZ8j52TzS7mEcSOgNgREDsCYkfg4DrZXe8anTu/dc2ujvDaldtnuHZlox0BsSMgdgTEjoDYEXhTye5a8brrXef2HWqd6+2eq0B39W2NdgTEjoDYERA7AmJHYNuOT7usra6dcXNW8Kito8/V9c6T5WOIHQGxIyB2BMSOwOKOT7vs6gOu1aTn9ok6N//55s7S5/5jYLQjIHYExI6A2BEQOwKL62Rv1lNr1znXWT633/KMXXX0ml27ZhntCIgdAbEjIHYExI7AYiX7NDfPeN21tnfXvsTPP0tIT5ZHEDsCYkdA7AiIHYGPrGTblbw3q+abr9lVEevJ8lBiR0DsCIgdAbEjsO0UnnPOzSVuT849twa27cnOMNoREDsCYkdA7AiIHYGv1+v1w5+etnfxuTW5beU449x5sqObs6+NdgTEjoDYERA7AmJH4E0lC6cZ7QiIHQGxIyB2BMSOwL/Gvv/rEC5YEwAAAABJRU5ErkJggg==" alt="QR"><div class="t"><span class="lang ">Tagalog</span><b>Scan to watch the cooking video</b>Filipino Style Roasted Chicken with Vegetables - Food Bae PH</div></div></div>
+  </div>
+</section>
+
+<section class="page">
+  <div class="rhead">
+    <img class="photo" src="https://images.pexels.com/photos/37505669/pexels-photo-37505669.jpeg?auto=compress&amp;cs=tinysrgb&amp;h=627&amp;fit=crop&amp;w=1200" alt="" loading="lazy">
+    <div class="title">
+      <div>
+        <div class="num">RECIPE 12 / 23</div>
+        <h1>Chicken Salona</h1>
+        <span class="ar">صالونة دجاج</span>
+        <p class="intro">Emirati everyday chicken and vegetable stew with tomato, loomi and bzar spice. Served with white rice.</p>
+      </div>
+      <div class="chips"><span class="chip">⏱ 50 min</span><span class="chip">Level: Easy</span></div>
+    </div>
+  </div>
+  <div class="cols">
+    <div>
+      <h3>Ingredients</h3>
+      <table class="ing"><thead><tr><th>Ingredient</th><th class="q">1 person</th><th class="q">2 persons</th></tr></thead><tbody><tr><td>Chicken pieces</td><td class="q">350 g</td><td class="q p2">700 g</td></tr><tr><td>Onion, chopped</td><td class="q">1</td><td class="q p2">2</td></tr><tr><td>Tomato, chopped</td><td class="q">2</td><td class="q p2">4</td></tr><tr><td>Tomato paste</td><td class="q">1 tbsp</td><td class="q p2">2 tbsp</td></tr><tr><td>Potato, cubed</td><td class="q">1</td><td class="q p2">2</td></tr><tr><td>Carrot, cubed</td><td class="q">1</td><td class="q p2">2</td></tr><tr><td>Zucchini or green beans</td><td class="q">1/2 cup</td><td class="q p2">1 cup</td></tr><tr><td>Garlic</td><td class="q">2 cloves</td><td class="q p2">4 cloves</td></tr><tr><td>Bzar / Emirati spice (or curry + cumin + coriander)</td><td class="q">1 tbsp</td><td class="q p2">2 tbsp</td></tr><tr><td>Turmeric</td><td class="q">1/4 tsp</td><td class="q p2">1/2 tsp</td></tr><tr><td>Dried lime (loomi)</td><td class="q">1</td><td class="q p2">2</td></tr><tr><td>Oil</td><td class="q">2 tbsp</td><td class="q p2">3 tbsp</td></tr><tr><td>Water</td><td class="q">2 cups</td><td class="q p2">4 cups</td></tr><tr><td>Salt</td><td class="q">to taste</td><td class="q p2">to taste</td></tr><tr><td>White rice to serve</td><td class="q">1 cup</td><td class="q p2">2 cups</td></tr></tbody></table>
+    </div>
+    <div>
+      <h3>Method</h3>
+      <ol class="steps"><li>Fry onion in oil until golden. Add garlic, chicken, brown 5 min.</li><li>Add bzar, turmeric, tomato paste. Stir 2 min. Add tomato, cook 5 min.</li><li>Add water, loomi, salt. Cover, simmer 15 min.</li><li>Add potato and carrot, simmer 15 min. Add zucchini / beans last 7 min. Sauce should be medium-thick.</li><li>Serve hot with white rice.</li></ol>
+      <div class="tl"><b>Mahalagang paalala (Tagalog)</b><ul><li>Potato at carrot sa gitna ng pagluluto; zucchini sa huli para hindi malambot masyado.</li><li>Hindi dapat lata (watery) ang sabaw; pakuluan ng walang takip kung sobra ang tubig.</li></ul></div>
+    </div>
+  </div>
+  <div class="foot">
+    <div class="brand">Al Maysari Family Cookbook · Mohamed &amp; Einas · 2026</div>
+    <div style="display:flex"><div class="qr"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAANIAAADSCAIAAACw+wkVAAAE1UlEQVR4nO3dPa4kRRCFUQaxAUws9r8sLEyW0HgY1EikUpH51WPOMUdd1fWqr1KKifz59vl8foK7fq4fgB+R2BEQOwJiR0DsCPzy/Kfff/v1/nP8448///rPzzyf8HnVyl+xctXK8zxNvcOpJ3zbb2q0IyB2BMSOgNgREDsC36lkn/aquRV7FdZe3Tp15723MfXMU79F+5sa7QiIHQGxIyB2BMSOwFIl+3SzCjtXpd78rr0+8t5VN9/z3ncZ7QiIHQGxIyB2BMSOwGYl25qqE5+fmepUvq2T+zZGOwJiR0DsCIgdAbEj8CUr2aep2vbc8zzd7Le+jdGOgNgREDsCYkdA7AhsVrJvq6fO1a1Tc5JvzgGe6v+eY7QjIHYExI6A2BEQOwJLlez/Y0br0161O9VL3attpyr09jc12hEQOwJiR0DsCIgdge9Usm/rt+5p5+VO1cgrn9mrf1tGOwJiR0DsCIgdAbEjsHSebLvC9NxZsXvOdVefpp65XRH8ZLQjIHYExI6A2BEQOwIHd3yaqvimZs/enJd7c+XslHPv53lnox0BsSMgdgTEjoDYERirZG+u8dxzcz3puZp0qkP9dO7E2yejHQGxIyB2BMSOgNgR+Pb5fDYum+qunjt3pv2uPe07vDkD2WhHQOwIiB0BsSMgdgQ2K9kVN9elrly1oj2p55ypJ5zqNRvtCIgdAbEjIHYExI7A2I5P5/Y4Ojd7duU+U+ttp/qte1e1tb+eLK8gdgTEjoDYERA7AmPrZN8/3/jp3HmyK85917m9naf+v8JoR0DsCIgdAbEjIHYEls6Tvbl2dcrUDsNPbR3dmvoFjXYExI6A2BEQOwJiR+A762S/4j5IK36cdbsr335zrrXZxbyC2BEQOwJiR0DsCGxWsufqoBX/15Wzb9sV6lyFbrQjIHYExI6A2BEQOwJL62TPVVjn1ma+bUb0zTrxaWpNrvNk+cLEjoDYERA7AmJHYHOd7MpVK9q+5NReys/73KxAz3WNz/0WRjsCYkdA7AiIHQGxI7B0Cs/TXvV0c1/ic6b2ZP6Kb2OqS2u0IyB2BMSOgNgREDsCY6fwTPVkb7p5xs3efc51RdsdmI12BMSOgNgREDsCYkdgqZKd6kKuXLX3PFN76p77K96/T9S5E4GfjHYExI6A2BEQOwJiR2DsFJ5zM2PfduevWLOv3HnF1F9htCMgdgTEjoDYERA7Apuzi891IW/O720r4qmqea+6nKpJ9+5stCMgdgTEjoDYERA7Akt7F+99ZsW5dbLv3z2preL3nmdqJrPRjoDYERA7AmJHQOwIbO5dfM7UHr9TJ59OvY2vuLfVir37GO0IiB0BsSMgdgTEjsDYjk97bs5SXqltV0zdea/3fW5W8NPUvGXrZHkFsSMgdgTEjoDYETi4Tvbp3LrUvc/s9WSn+pttHb1naqWz0Y6A2BEQOwJiR0DsCIydJ3tTO1N3aqemH+csIT1ZXkHsCIgdAbEjIHYEvmQle27tatvtbT9zcyaz0Y6A2BEQOwJiR0DsCGxWsje7oudOqznX31xxrnI8d06uvYv5wsSOgNgREDsCYkfg2+fz+dc/vW3v4rYDu3efmyuCp9ycyWy0IyB2BMSOgNgREDsC36lk4TSjHQGxIyB2BMSOgNgR+BsrJu/ZOBpRVgAAAABJRU5ErkJggg==" alt="QR"><div class="t"><span class="lang ">Tagalog</span><b>Scan to watch the cooking video</b>How to cook Chicken Salona - Marilou Recipes</div></div></div>
+  </div>
+</section>
+
+<section class="page">
+  <div class="rhead">
+    <img class="photo" src="https://images.pexels.com/photos/20350170/pexels-photo-20350170.jpeg?auto=compress&amp;cs=tinysrgb&amp;h=627&amp;fit=crop&amp;w=1200" alt="" loading="lazy">
+    <div class="title">
+      <div>
+        <div class="num">RECIPE 13 / 23</div>
+        <h1>Lamb Salona</h1>
+        <span class="ar">صالونة لحم</span>
+        <p class="intro">Same stew with lamb. The lamb simmers first so it becomes tender before the vegetables go in.</p>
+      </div>
+      <div class="chips"><span class="chip">⏱ 1 h 40 min</span><span class="chip">Level: Easy</span></div>
+    </div>
+  </div>
+  <div class="cols">
+    <div>
+      <h3>Ingredients</h3>
+      <table class="ing"><thead><tr><th>Ingredient</th><th class="q">1 person</th><th class="q">2 persons</th></tr></thead><tbody><tr><td>Lamb with bone, pieces</td><td class="q">350 g</td><td class="q p2">700 g</td></tr><tr><td>Onion</td><td class="q">1</td><td class="q p2">2</td></tr><tr><td>Tomato</td><td class="q">2</td><td class="q p2">4</td></tr><tr><td>Tomato paste</td><td class="q">1 tbsp</td><td class="q p2">2 tbsp</td></tr><tr><td>Potato, carrot, zucchini</td><td class="q">1 each</td><td class="q p2">2 each</td></tr><tr><td>Garlic</td><td class="q">2 cloves</td><td class="q p2">4 cloves</td></tr><tr><td>Bzar spice + turmeric</td><td class="q">1 tbsp + 1/4 tsp</td><td class="q p2">2 tbsp + 1/2 tsp</td></tr><tr><td>Loomi</td><td class="q">1</td><td class="q p2">2</td></tr><tr><td>Oil</td><td class="q">2 tbsp</td><td class="q p2">3 tbsp</td></tr><tr><td>Water</td><td class="q">3 cups</td><td class="q p2">5 cups</td></tr><tr><td>Salt</td><td class="q">to taste</td><td class="q p2">to taste</td></tr></tbody></table>
+    </div>
+    <div>
+      <h3>Method</h3>
+      <ol class="steps"><li>Fry onion golden, add garlic and lamb, brown 5 min.</li><li>Add spices and tomato paste, stir 2 min, add tomato 5 min.</li><li>Add water, loomi, salt. Cover, simmer 60-70 min until lamb is tender. Skim foam at the start.</li><li>Add potato, carrot 15 min, zucchini last 7 min.</li><li>Serve with white rice.</li></ol>
+      <div class="tl"><b>Mahalagang paalala (Tagalog)</b><ul><li>Lamb malambot muna (60-70 min) bago ilagay ang gulay.</li></ul></div>
+    </div>
+  </div>
+  <div class="foot">
+    <div class="brand">Al Maysari Family Cookbook · Mohamed &amp; Einas · 2026</div>
+    <div style="display:flex"><div class="qr"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAANIAAADSCAIAAACw+wkVAAAEyElEQVR4nO3dMY5cNxBFUcvwBhQ68v6XpcihljDOHLg7IAgW72/5nFDQkB+aBwIlFslvX19fv8Fdv9cfwP+R2BEQOwJiR0DsCPzx+kd//fn9/nf868ffP//zJ6/fc+rvrMz+au/f59TIK+PsjTzn9ZutdgTEjoDYERA7AmJH4E0l+2qvelpxqsLaq1tfrVTEezXpqZFPaX+nVjsCYkdA7AiIHQGxI7BUyb6a25fcs7ebufJTeyOf2jndq5pv7tvuzWW1IyB2BMSOgNgREDsCm5XsTXu9xKdG3nOzI/oTWe0IiB0BsSMgdgTEjsAHVLLtOdm5ncpTO9Q3e5JPsdoREDsCYkdA7AiIHYHNSrY90bm3J7syztwe6Kl6fG/kFTd/p1Y7AmJHQOwIiB0BsSOwVMm2Pa5ze7Jze7s3v2dP+zu12hEQOwJiR0DsCIgdgW+f+J7sXBU293bPnnb2OVY7AmJHQOwIiB0BsSPwppI91eN609yp2OfXtje7lE+dGrbaERA7AmJHQOwIiB2BYzc+3az4TtVTcz3Ac3X0irYDeWV2qx0BsSMgdgTEjoDYERi8u/jUTm67n7g316lxTp3JnbNXj1vtCIgdAbEjIHYExI7AZiXb9u6uzLX3PafsjdzW9Td7yK12BMSOgNgREDsCYkfgTSV7s6P15n3Cp8x1BbfnW1fGObXba7UjIHYExI6A2BEQOwJvKtmndeGe+qmbr97M7Sy3s5+qdq12BMSOgNgREDsCYkdg8JzsiuffxHuqdps78XqzK9ieLB9M7AiIHQGxIyB2BJbek23Pt658z8rIN0+hrri5/ztX7brxiY8hdgTEjoDYERA7AkvdxTffr3na3URzO8Jzs6+Ms2LufwOsdgTEjoDYERA7AmJH4NiNT3tO3Tl8apy5O4fnOof3nNpV36ttrXYExI6A2BEQOwJiR2DznOzcDcNzdeuKuWp3RduhPff7emW1IyB2BMSOgNgREDsCm3cX37yF+NWpiu9p3c43XxdqXzKy2hEQOwJiR0DsCIgdgWN3Fz/tBt2bncM3f6rtN3Z3MR9M7AiIHQGxIyB2BN7cXfy024HmPO1epjk339JdYbUjIHYExI6A2BEQOwJLe7Jz77fefBlnrlK7uR+9Mvvcvc173PjEI4gdAbEjIHYExI7AYHfxqZOhc/VU+07Q3BeeMjeX1Y6A2BEQOwJiR0DsCBzrLn51qg66WYGuzH5K+07uHO/J8lBiR0DsCIgdAbEj8KaSfZqnVdZ7c624eSPWyuxzu89WOwJiR0DsCIgdAbEjsPkKz5xTb8W2Xcor37PyKtDKOCvmzgjvjWy1IyB2BMSOgNgREDsCS93FbYftzVuhVvwa/b2vTvV+r7DaERA7AmJHQOwIiB2BzRufblY9K07teK6MvKKtkdt3e1fGsdoREDsCYkdA7AiIHYFjdxe35vZk53qJ9+Z62ptEe/8+VjsCYkdA7AiIHQGxI/ABlezN91LnKr65udov3GO1IyB2BMSOgNgREDsCm5XsXJ/wnqedpV3RnhFeMXci2GpHQOwIiB0BsSMgdgSWKtn2jqO9aq49c3rqBuZT1fepGtkrPHwwsSMgdgTEjoDYEfiA92T59VjtCIgdAbEjIHYExI7AP/Hh9GYo5gWqAAAAAElFTkSuQmCC" alt="QR"><div class="t"><span class="lang ">Tagalog</span><b>Scan to watch the cooking video</b>How to cook Salona Laham - Marilou Recipes</div></div></div>
+  </div>
+</section>
+
+<section class="page">
+  <div class="rhead">
+    <img class="photo" src="https://images.pexels.com/photos/32604524/pexels-photo-32604524.jpeg?auto=compress&amp;cs=tinysrgb&amp;h=627&amp;fit=crop&amp;w=1200" alt="" loading="lazy">
+    <div class="title">
+      <div>
+        <div class="num">RECIPE 14 / 23</div>
+        <h1>Mahshi Malfouf (Stuffed Cabbage Rolls)</h1>
+        <span class="ar">محشي ملفوف</span>
+        <p class="intro">Cabbage leaves rolled thin like a finger around rice and minced meat, cooked slowly in lemon-garlic broth.</p>
+      </div>
+      <div class="chips"><span class="chip">⏱ 1 h 45 min</span><span class="chip">Level: Medium</span></div>
+    </div>
+  </div>
+  <div class="cols">
+    <div>
+      <h3>Ingredients</h3>
+      <table class="ing"><thead><tr><th>Ingredient</th><th class="q">1 person</th><th class="q">2 persons</th></tr></thead><tbody><tr><td>White cabbage</td><td class="q">1/2 small head</td><td class="q p2">1 small head</td></tr><tr><td>Short-grain rice (Egyptian rice), washed</td><td class="q">1/2 cup</td><td class="q p2">1 cup</td></tr><tr><td>Minced lamb or beef</td><td class="q">150 g</td><td class="q p2">300 g</td></tr><tr><td>Tomato, finely chopped</td><td class="q">1</td><td class="q p2">2</td></tr><tr><td>Tomato paste</td><td class="q">1 tbsp</td><td class="q p2">2 tbsp</td></tr><tr><td>Garlic, crushed</td><td class="q">4 cloves</td><td class="q p2">8 cloves</td></tr><tr><td>Dried mint</td><td class="q">1 tsp</td><td class="q p2">2 tsp</td></tr><tr><td>7-spice + black pepper</td><td class="q">1 tsp + 1/4 tsp</td><td class="q p2">2 tsp + 1/2 tsp</td></tr><tr><td>Lemon juice</td><td class="q">2 tbsp</td><td class="q p2">4 tbsp</td></tr><tr><td>Olive oil</td><td class="q">1 tbsp</td><td class="q p2">2 tbsp</td></tr><tr><td>Water or stock</td><td class="q">2 cups</td><td class="q p2">3.5 cups</td></tr><tr><td>Salt</td><td class="q">to taste</td><td class="q p2">to taste</td></tr></tbody></table>
+    </div>
+    <div>
+      <h3>Method</h3>
+      <ol class="steps"><li>Cut the core from the cabbage. Boil whole cabbage in salted water 5-7 min, removing leaves as they soften. Cut out the thick vein of each leaf.</li><li>Filling: mix raw rice, minced meat, tomato, half the garlic, 7-spice, pepper, salt, olive oil.</li><li>Put 1 tablespoon filling along a leaf, fold sides, roll tightly into a thin cigar.</li><li>Line the pot with leftover leaves. Pack rolls tightly in layers. Put a plate on top to hold them down.</li><li>Mix water, tomato paste, remaining garlic, lemon, dried mint, salt. Pour until it just covers the rolls.</li><li>Boil, then cover and simmer LOW 50-60 min. Rest 10 min. Serve with yogurt and lemon.</li></ol>
+      <div class="tl"><b>Mahalagang paalala (Tagalog)</b><ul><li>Manipis at masikip ang pag-roll, 1 kutsara lang ang laman (lalaki ang rice).</li><li>Plato sa ibabaw habang niluluto para hindi lumutang at bumukas.</li></ul></div>
+    </div>
+  </div>
+  <div class="foot">
+    <div class="brand">Al Maysari Family Cookbook · Mohamed &amp; Einas · 2026</div>
+    <div style="display:flex"><div class="qr"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAANIAAADSCAIAAACw+wkVAAAEvElEQVR4nO3dO65kNRSGURoxgQ6JmP+wiAgZQnVG4gosy/Z3qlgrvLrH9fplaWv78eP1ev0Gd/1evwH+j8SOgNgREDsCYkfgj/FPf/358/77+M/f//y7ZZyZTzG+1vjU2vvZ9R3ueodP+03NdgTEjoDYERA7AmJH4E0lO9pVXY52VVhPqxzXRl4bZ037m5rtCIgdAbEjIHYExI7AVCU7ulmF3eyuthXx+D9rT93sI6+9ltmOgNgREDsCYkdA7AgsVrKtXXXi+D/n1ja3ndynMdsREDsCYkdA7AiIHYGPrGRH7W7W0Vr/91y/9WnMdgTEjoDYERA7AmJHYLGSfVo9da7i27Um+eYa4F3933PMdgTEjoDYERA7AmJHYKqS/Y4VraO1tbu7eqlrte2u9cbtb2q2IyB2BMSOgNgREDsCbyrZp/Vb17TrcnfVyDP/s1b/tsx2BMSOgNgREDsCYkdg6j7Zm+cOzZzCtOs04zXnuqujp91SNHJ2MR9D7AiIHQGxIyB2BA6e+NTejHOuHm+7q+ec+37Gkc12BMSOgNgREDsCYkdgWyV7c4/nubW7u546V5Pu6lCPzt14OzLbERA7AmJHQOwIiB2BH6/Xa+Gxcycaneulnrvj5ty65ZnXetq3OsNsR0DsCIgdAbEjIHYE4lt4blZPbTXXdo3bO4msLuYRxI6A2BEQOwJiR2DqxKcZu+4wnVm/ujbyubtybq7vnXlqxq7PtfbqZjsCYkdA7AiIHQGxI/BmdfG5lcOjm6cePW2Fbdv/bWt2sx0BsSMgdgTEjoDYEZjaJ9vWrTc7lTNu1toz2nO07JPlY4gdAbEjIHYExI7AYk92Rnvq781K9lzFd65P2t6ua7YjIHYExI6A2BEQOwLbVhevOVcjf+Iq3HPV94ybv7LZjoDYERA7AmJHQOwITJ1dfLN/N/PUuTXJ53YE3+zkjtbObjr3bZjtCIgdAbEjIHYExI7AR94nO/PU6Nzu2qfdQnuzqz7zfkZmOwJiR0DsCIgdAbEjMHULz64bbdZe62nnJO/6XOc+6ZpdFbF9sjyU2BEQOwJiR0DsCEztk53xHf3Wm/fytD3ZGef2EZvtCIgdAbEjIHYExI7A1D7ZXZ3Bc3tF13qga+PMPLU28tN2zp77xsx2BMSOgNgREDsCYkdg29nFN29ZPVfNPe1+25snJ4+cXcxXETsCYkdA7AiIHYGpnuzo3L0zN6vCtiI+t494RnsDkdmOgNgREDsCYkdA7Ai8qWTPnYO066ld2hOW2l3DayPvespsR0DsCIgdAbEjIHYEps4uvmlX53TtTN2ZcdZ8a83uPlk+htgREDsCYkdA7Ags7pPd5Tt2fT7tFtqbPVlnF/MxxI6A2BEQOwJiR2Bxn+zN2m3GzT7yzTtuRms3uu6ya6ez2Y6A2BEQOwJiR0DsCCxWsq1zJwzvGmftVqBdp0bfPJNZT5aPIXYExI6A2BEQOwIfWcm2K2xvrna++T837+012xEQOwJiR0DsCIgdgW238Jxzbg9se3Puzf22527zWWO2IyB2BMSOgNgREDsCUyc+3dTWd2sjn6t2P7G21ZPlocSOgNgREDsCYkfgTSULp5ntCIgdAbEjIHYExI7AL2bsDj/BNJXbAAAAAElFTkSuQmCC" alt="QR"><div class="t"><span class="lang ">Tagalog</span><b>Scan to watch the cooking video</b>How to make Cabbage Rolls / Malfouf - Kitchen with Sorayda</div></div></div>
+  </div>
+</section>
+
+<section class="page">
+  <div class="rhead">
+    <img class="photo" src="https://images.pexels.com/photos/39414658/pexels-photo-39414658.jpeg?auto=compress&amp;cs=tinysrgb&amp;h=627&amp;fit=crop&amp;w=1200" alt="" loading="lazy">
+    <div class="title">
+      <div>
+        <div class="num">RECIPE 15 / 23</div>
+        <h1>Cajun Chicken with Lobia (Black-eyed Peas) and White Rice</h1>
+        <span class="ar">دجاج كاجن مع لوبيا ورز أبيض</span>
+        <p class="intro">Cajun-spiced grilled chicken breast, served with black-eyed peas in tomato sauce and plain white rice. For Mohamed only when lobia is served (Einas avoids beans; give her the chicken with rice and salad).</p>
+      </div>
+      <div class="chips"><span class="chip">⏱ 1 h 15 min</span><span class="chip">Level: Easy</span></div>
+    </div>
+  </div>
+  <div class="cols">
+    <div>
+      <h3>Ingredients</h3>
+      <table class="ing"><thead><tr><th>Ingredient</th><th class="q">1 person</th><th class="q">2 persons</th></tr></thead><tbody><tr><td>Chicken breast or thighs</td><td class="q">250 g</td><td class="q p2">500 g</td></tr><tr><td>Cajun spice (mild)</td><td class="q">1 tbsp</td><td class="q p2">2 tbsp</td></tr><tr><td>Olive oil + lemon</td><td class="q">1 tbsp + 1 tbsp</td><td class="q p2">2 tbsp + 2 tbsp</td></tr><tr><td>Black-eyed peas, soaked overnight (or 1 can)</td><td class="q">1/2 cup dry</td><td class="q p2">1 cup dry</td></tr><tr><td>Onion, chopped</td><td class="q">1</td><td class="q p2">2</td></tr><tr><td>Tomato, chopped + tomato paste</td><td class="q">2 + 1 tbsp</td><td class="q p2">4 + 2 tbsp</td></tr><tr><td>Garlic</td><td class="q">3 cloves</td><td class="q p2">5 cloves</td></tr><tr><td>Cumin + coriander powder</td><td class="q">1/2 tsp each</td><td class="q p2">1 tsp each</td></tr><tr><td>Water</td><td class="q">2 cups</td><td class="q p2">3.5 cups</td></tr><tr><td>White rice, cooked</td><td class="q">1 cup</td><td class="q p2">2 cups</td></tr><tr><td>Salt</td><td class="q">to taste</td><td class="q p2">to taste</td></tr></tbody></table>
+    </div>
+    <div>
+      <h3>Method</h3>
+      <ol class="steps"><li>Lobia: boil soaked beans in water 40-50 min until soft (canned: rinse, no boiling).</li><li>Fry onion in oil golden, add garlic, tomato paste, cumin, coriander. Add tomato, cook 5 min.</li><li>Add beans and 1 cup water, salt. Simmer 20 min until thick like a stew.</li><li>Chicken: coat with cajun, oil, lemon, salt. Grill pan on high, 5-6 min each side (breast) until cooked. Rest 3 min, slice.</li><li>Serve chicken slices with rice and lobia on the side.</li></ol>
+      <div class="tl"><b>Mahalagang paalala (Tagalog)</b><ul><li>Si Einas: WALANG lobia (beans). Chicken + rice + salad lang.</li><li>Cajun spice: mild lang.</li></ul></div>
+    </div>
+  </div>
+  <div class="foot">
+    <div class="brand">Al Maysari Family Cookbook · Mohamed &amp; Einas · 2026</div>
+    <div style="display:flex"><div class="qr"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAANIAAADSCAIAAACw+wkVAAAEtUlEQVR4nO3dMZLkNABAUZbiAoRE3P9YRIQcYcgIcAcqIenLw3vh1rTdu/NLVVrL0o+vr6+f4Kyf6y/A/5HsCMiOgOwIyI7AL88/+v23X89/j3/88edf//qTue8zd53np55WfZ+5K49cZ+7K+zy/s9GOgOwIyI6A7AjIjsCHmezT3OxpRDsrHPnU815zd1915VXa36nRjoDsCMiOgOwIyI7A0Ez2ad8MdO7uI1eee0o795x01ZPTuVnzyee2c/cy2hGQHQHZEZAdAdkRmJzJnjQyAx2Zzc39zJzbvs9tjHYEZEdAdgRkR0B2BF4wk131zHHuyvueVK76W5xck7yK0Y6A7AjIjoDsCMiOwORMtn2jc98MdN8z0FVPaeeuPOLk79RoR0B2BGRHQHYEZEdgaCbbrnHdt1J33xz55PeZ0/5OjXYEZEdAdgRkR0B2BH688TzZfefy7Du7Z057932MdgRkR0B2BGRHQHYEPsxkV61xPWnVDPSNc9uTq5RX/R+C0Y6A7AjIjoDsCMiOwNFnsvvWys7dq91h+LuuNx75PkY7ArIjIDsCsiMgOwIf3pPddz7pvuebt52ws+o6J9/JXWXkXkY7ArIjIDsCsiMgOwIbd3y67QTVk/fat3PyqpXe+9aQeybLpWRHQHYEZEdAdgQ+zGTbGd+qE2TaGfG+p7Rzn1r1M6v+nY12BGRHQHYEZEdAdgQmVxfPPfV72veO58m55Mh1Ruxb8Xvb2bVGOwKyIyA7ArIjIDsCQ3sXr3L/ObAj3ji3Pblv1QijHQHZEZAdAdkRkB2BZauLRz5125z0ad9zyfasnJNnztrxiUvJjoDsCMiOgOwIbFxd/HTy3Jl2p+L79zcesW+vaaMdAdkRkB0B2RGQHYGhZ7Jz5p5Uzv3MiH3z3317Bbdvzo6Ym9sa7QjIjoDsCMiOgOwITL4nu28F8r7ngHPuPxXotuuMXNloR0B2BGRHQHYEZEcgPoVn1Zk7T/vmyCdPYv2u82ijHQHZEZAdAdkRkB2Byfdkn07u6Htyr6R9a27nPrVvf6eTO0cZ7QjIjoDsCMiOgOwILDuF5/5Vwftmaif3Cm73dn5yCg+vITsCsiMgOwKyIzA0k71tP+HbZs0jTs4uV9m3atpoR0B2BGRHQHYEZEfgw+riEe1blret3b1tfe++839XMdoRkB0B2RGQHQHZEVi2uvipPYV2xP3rn+eus8q+k3ONdgRkR0B2BGRHQHYEPsxkb3PbzHruXiP2/U3n7r7v/xCMdgRkR0B2BGRHQHYEhvYuPmnfutyT5/I8jdx937vG+/ak8kyW15AdAdkRkB0B2RGY3PFplXaH4RHtzsBz2n+fEUY7ArIjIDsCsiMgOwKTOz6dnPWMWPXEc+TKI9rVxSdXKdu7mNeQHQHZEZAdAdkRmJzJtlbtb7xqp+KRu4/MCvftXdxe+cloR0B2BGRHQHYEZEfgBTPZk+uN33ivk99w1Vprox0B2RGQHQHZEZAdgWXnybZWzRO9I/zfPzXCaEdAdgRkR0B2BGRHYGgm2+5xtG+d8Kq7j3yfVT+zam1ze5au0Y6A7AjIjoDsCMiOwAvOk+X7MdoRkB0B2RGQHQHZEfgb2vUDz3QiEQgAAAAASUVORK5CYII=" alt="QR"><div class="t"><span class="lang en">English</span><b>Scan to watch the cooking video</b>Easy Cajun Grilled Chicken - Simple Living with Ms Tania</div></div><div class="qr" style="margin-left:10px"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAANIAAADSCAIAAACw+wkVAAAEyUlEQVR4nO3dO44rNxRFUbfhCTh05PkPy5FDD0HOHJgCHkGQ3KXXa4UNqaokHRC4ffn5er1ev8Bdv9YPwHckdgTEjoDYERA7Ar+Nf/rzj9/vP8d//vr7ny3XmfkU473Gd609z67vcNcTPu03NdoREDsCYkdA7AiIHYE3lexoV3U5WquwztVl52rbmSuvXWdN+5sa7QiIHQGxIyB2BMSOwFQlO7pZhd3srra91PE1a++62Udeu5fRjoDYERA7AmJHQOwILFayrZnqaVfndM3TOrlPY7QjIHYExI6A2BEQOwIfWcmOnlbfrfV/z/Vbn8ZoR0DsCIgdAbEjIHYEFivZ59dTN9elzlz55hzgth89w2hHQOwIiB0BsSMgdgSmKtmndTx3Wat2d/VS12rbXRV6+5sa7QiIHQGxIyB2BMSOwJtK9vn91hlPO3dmrUaeec25VcPnGO0IiB0BsSMgdgTEjsDUebI39x0a73Xu7rvmG5+rLttPOsPexXwMsSMgdgTEjoDYEYh7sk87GWdG210959z3M17ZaEdA7AiIHQGxIyB2BL5er9cPX3Rul6GnVam73DzNZ9evc/NeRjsCYkdA7AiIHQGxIzA1u3jNWtVzbm7zuTNuxuvsesJd38/aJz33HwyjHQGxIyB2BMSOgNgReNOT3VX13Jw5PLrZI24/6Yxzdevau4x2BMSOgNgREDsCYkdg8TzZ0Vr38Fy9ebNve3N+78y7ZrT7ehntCIgdAbEjIHYExI7AYk/23Lzcc7se3Zy3vPY8u+51s9O99gsa7QiIHQGxIyB2BMSOwNUdn77zvOUZ5+b3zlxn1/PMMNoREDsCYkdA7AiIHYFt62RHN/ubM9p9kj9xb+ddc62tk+URxI6A2BEQOwJiR2CqJzs6Vwedu/valW+unH3arlB6svxUxI6A2BEQOwJiR2DbOtlzbp7Cs3ad0c19otbc3Kl4ZLQjIHYExI6A2BEQOwJv9i6+ORN11NbIo7WzWXdVoM+vdtcY7QiIHQGxIyB2BMSOwOIpPLv6m584U3dXT/ZpO0LvmkdtnSwPJXYExI6A2BEQOwIHd3xa87SZw087K6fdc9iOT3wwsSMgdgTEjoDYEVjsyY7OzSU+ty715ozoc6uPz32HM9dxniwfQ+wIiB0BsSMgdgQO7vjU7kvc7uZ07nl+jvnYRjsCYkdA7AiIHQGxI3Bwnezzu5C77FqXunblp32HM1c22hEQOwJiR0DsCIgdgam9i2ece9e5fYda7XzstSvv6tsa7QiIHQGxIyB2BMSOwJtK9uY5OKNde/zO1LY3tXX0ubp+7TpGOwJiR0DsCIgdAbEjMDW7uD2x9NyZMmvv2lU1n/sUa/canTtZyWhHQOwIiB0BsSMgdgQW18nerKfWnOtCnjv1dUbbfbZ3MR9M7AiIHQGxIyB2BLadwvN97Frbe+6coF0rcM/d3WhHQOwIiB0BsSMgdgQ+spI913PctevRuVNoz71m137LerI8lNgREDsCYkdA7AhsO4XnnJun1ezqb864eQ5sewLvyGhHQOwIiB0BsSMgdgS+Xq/X//70tD1+z1VY51aqnluTu+bcDOSZe42MdgTEjoDYERA7AmJH4E0lC6cZ7QiIHQGxIyB2BMSOwL8kueRTIJsDagAAAABJRU5ErkJggg==" alt="QR"><div class="t"><span class="lang">Extra</span><b>Second video</b>Black-eyed beans (Lobia) Egyptian way</div></div></div>
+  </div>
+</section>
+
+<section class="page">
+  <div class="rhead">
+    <img class="photo" src="https://images.pexels.com/photos/20004982/pexels-photo-20004982.jpeg?auto=compress&amp;cs=tinysrgb&amp;h=627&amp;fit=crop&amp;w=1200" alt="" loading="lazy">
+    <div class="title">
+      <div>
+        <div class="num">RECIPE 16 / 23</div>
+        <h1>Grilled Chicken with Molokhia and White Rice</h1>
+        <span class="ar">دجاج مشوي مع ملوخية ورز</span>
+        <p class="intro">Egyptian green jute-leaf soup (saluyot) in chicken stock with fried garlic and coriander. Served with grilled chicken and white rice. Molokhia must not boil after the leaves go in.</p>
+      </div>
+      <div class="chips"><span class="chip">⏱ 1 h</span><span class="chip">Level: Medium</span></div>
+    </div>
+  </div>
+  <div class="cols">
+    <div>
+      <h3>Ingredients</h3>
+      <table class="ing"><thead><tr><th>Ingredient</th><th class="q">1 person</th><th class="q">2 persons</th></tr></thead><tbody><tr><td>Chicken pieces</td><td class="q">350 g</td><td class="q p2">700 g</td></tr><tr><td>Frozen chopped molokhia (or 2 cups fresh, finely minced)</td><td class="q">200 g</td><td class="q p2">400 g</td></tr><tr><td>Chicken stock (from boiling the chicken)</td><td class="q">2 cups</td><td class="q p2">4 cups</td></tr><tr><td>Garlic, crushed</td><td class="q">4 cloves</td><td class="q p2">8 cloves</td></tr><tr><td>Ground coriander</td><td class="q">1 tsp</td><td class="q p2">2 tsp</td></tr><tr><td>Ghee or butter</td><td class="q">1.5 tbsp</td><td class="q p2">3 tbsp</td></tr><tr><td>Onion, cardamom, bay leaf for the stock</td><td class="q">1 set</td><td class="q p2">1 set</td></tr><tr><td>Lemon</td><td class="q">1/2</td><td class="q p2">1</td></tr><tr><td>White rice, cooked</td><td class="q">1 cup</td><td class="q p2">2 cups</td></tr><tr><td>Salt</td><td class="q">to taste</td><td class="q p2">to taste</td></tr></tbody></table>
+    </div>
+    <div>
+      <h3>Method</h3>
+      <ol class="steps"><li>Boil chicken with onion, cardamom, bay leaf, salt 30 min. Keep the stock. Grill the chicken in the oven 200 C 15 min for colour.</li><li>Bring 2 cups stock to a simmer. Add frozen molokhia, stir until melted and combined. Keep on LOW, do NOT boil hard (it separates).</li><li>Ta&#x27;leya: fry garlic in ghee until golden, add coriander 20 seconds. Pour immediately into the molokhia. Stir, cook 2 min, off.</li><li>Serve molokhia in a bowl with lemon, rice and chicken on the plate.</li></ol>
+      <div class="tl"><b>Mahalagang paalala (Tagalog)</b><ul><li>HUWAG pakuluan nang malakas pagkalagay ng molokhia. Mahina lang. Kung kumulo nang malakas, maghihiwalay ang tubig at dahon.</li><li>Bawang dapat golden, hindi sunog.</li></ul></div>
+    </div>
+  </div>
+  <div class="foot">
+    <div class="brand">Al Maysari Family Cookbook · Mohamed &amp; Einas · 2026</div>
+    <div style="display:flex"><div class="qr"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAANIAAADSCAIAAACw+wkVAAAEyklEQVR4nO3dTY4jNxaF0a6GN+Bhj7z/ZXnkoZcgz4yGmYAJguTHqjpnmJBCkYoLAk+PP98+n89/4K7/1jfAz0jsCIgdAbEjIHYEfhn/9Nv/fr1/H3/7/Y8///U14x2O75r5L2beNXM/o13f4a47fO2ZGu0IiB0BsSMgdgTEjsAXlexorZqbsVZhrdWtu6689m3suuddz6J9pkY7AmJHQOwIiB0BsSMwVcmOblZhM7Xka73LtfsZX7P2rpt95LXPMtoREDsCYkdA7AiIHYHFSvZ9axXfrk7la53c1xjtCIgdAbEjIHYExI7AD1LJvrZ69Nxq33Ozgm8y2hEQOwJiR0DsCIgdgcVK9v166tw84bXPujkHeFf/9xyjHQGxIyB2BMSOgNgRmKpkv8cZrbtWqo529VLXattd843bZ2q0IyB2BMSOgNgREDsCX1Sy7/dbZ7TzcnfVyDOvWat/W0Y7AmJHQOwIiB0BsSMwdZ7szX2H1vYlnrnOayf13FzJ264IHhntCIgdAbEjIHYExI5A3JM9V82dq8fb7uo5576f8cpGOwJiR0DsCIgdAbEj8O3z+fzjT7vOFT1XS7b7Es+4eZrPub2kdnXDR0Y7AmJHQOwIiB0BsSPwRSU72lW/3Nwrqa0B1+z6Dtfc/AXDaEdA7AiIHQGxIyB2BKZ6sm2ttEaP+P/d7NLqyfIosSMgdgTEjoDYEdg2u3jGub7tzc9q72fXu2ac6zUb7QiIHQGxIyB2BMSOwGJP9rVacubKo5s92VHb/22fjtGOgNgREDsCYkdA7AhsWyc7eq2/ucu5HYbb04XWOIWH74bYERA7AmJHQOwIbDtPdq3C2lW3zrzrXMW3679oz8Bdu87Ijk88SuwIiB0BsSMgdgQOzi6ecW5e7s0ZyLs6y691V62T5YcidgTEjoDYERA7AgdnF+/y2gk7r+1bteZcrW2dLI8SOwJiR0DsCIgdganZxTPavuSud+2qUm/uHnyul3ruFwyjHQGxIyB2BMSOgNgRmOrJznitd3lzl6pRe57Oa7s9m13ME8SOgNgREDsCYkdgcZ3smpuV2s3VvqNzuyu/9izWrmy0IyB2BMSOgNgREDsCX8wuXrM25/bmTOa16+yqSW9W1jefxcg6WR4ldgTEjoDYERA7AouV7K6OXjvr9bU5wKOb62130ZPlUWJHQOwIiB0BsSNwsCc7urm/09r5rWvWattzM5B3OVehG+0IiB0BsSMgdgTEjsAXlezNGvBcNXfzpJ415z79XAW6q7I22hEQOwJiR0DsCIgdgW2n8OxybkXnzUptdLNGHr1WNRvtCIgdAbEjIHYExI7A1Ozic1XYuery5nk642vOzX++uePxuW640Y6A2BEQOwJiR0DsCGzb8WnGuT7gTC15rrd7s07cVUev2fX7gNGOgNgREDsCYkdA7Ahs2/HpNedOmN3Vyd11h++fJaQnyxPEjoDYERA7AmJH4LusZNsVr+eq3fY1N1fOGu0IiB0BsSMgdgTEjsBiJXtz/6IfdX/jmx3hXZ++dj8jox0BsSMgdgTEjoDYEZiqZNvdjHd9+rkVpruq3bXqcteeVLtW++rJ8iixIyB2BMSOgNgR+Pb5fOp74KdjtCMgdgTEjoDYERA7An8B3RDvCfbPbdIAAAAASUVORK5CYII=" alt="QR"><div class="t"><span class="lang ">Tagalog</span><b>Scan to watch the cooking video</b>Molokhia with Chicken (Saluyot sa Tagalog) - Mohd &amp; Ley Omari</div></div></div>
+  </div>
+</section>
+
+<section class="page">
+  <div class="rhead">
+    <img class="photo" src="https://images.pexels.com/photos/6063320/pexels-photo-6063320.jpeg?auto=compress&amp;cs=tinysrgb&amp;h=627&amp;fit=crop&amp;w=1200" alt="" loading="lazy">
+    <div class="title">
+      <div>
+        <div class="num">RECIPE 17 / 23</div>
+        <h1>Okra (Bamia) with Lamb and White Rice</h1>
+        <span class="ar">بامية باللحم مع رز</span>
+        <p class="intro">Lamb stew with baby okra in garlic-tomato sauce. Okra stays whole and is added late so it does not become slimy.</p>
+      </div>
+      <div class="chips"><span class="chip">⏱ 1 h 40 min</span><span class="chip">Level: Easy</span></div>
+    </div>
+  </div>
+  <div class="cols">
+    <div>
+      <h3>Ingredients</h3>
+      <table class="ing"><thead><tr><th>Ingredient</th><th class="q">1 person</th><th class="q">2 persons</th></tr></thead><tbody><tr><td>Lamb with bone</td><td class="q">350 g</td><td class="q p2">700 g</td></tr><tr><td>Baby okra (fresh or frozen), whole</td><td class="q">250 g</td><td class="q p2">500 g</td></tr><tr><td>Onion</td><td class="q">1</td><td class="q p2">2</td></tr><tr><td>Tomato, grated</td><td class="q">2</td><td class="q p2">4</td></tr><tr><td>Tomato paste</td><td class="q">1 tbsp</td><td class="q p2">2 tbsp</td></tr><tr><td>Garlic, crushed</td><td class="q">4 cloves</td><td class="q p2">8 cloves</td></tr><tr><td>Ground coriander + 7-spice</td><td class="q">1 tsp + 1/2 tsp</td><td class="q p2">2 tsp + 1 tsp</td></tr><tr><td>Lemon juice</td><td class="q">1 tbsp</td><td class="q p2">2 tbsp</td></tr><tr><td>Oil / ghee</td><td class="q">2 tbsp</td><td class="q p2">3 tbsp</td></tr><tr><td>Water</td><td class="q">3 cups</td><td class="q p2">5 cups</td></tr><tr><td>Salt</td><td class="q">to taste</td><td class="q p2">to taste</td></tr><tr><td>White rice, cooked</td><td class="q">1 cup</td><td class="q p2">2 cups</td></tr></tbody></table>
+    </div>
+    <div>
+      <h3>Method</h3>
+      <ol class="steps"><li>Fry onion golden, add lamb, brown 5 min. Add tomato paste, spices, tomato. Cook 5 min.</li><li>Add water, salt. Cover, simmer 60-70 min until lamb is tender.</li><li>Fry okra quickly in a little oil 3 min (keeps it firm). Add okra to the stew.</li><li>Fry garlic in ghee golden with coriander, add to the pot with lemon juice. Simmer 15-20 min uncovered until sauce is thick.</li><li>Serve with white rice.</li></ol>
+      <div class="tl"><b>Mahalagang paalala (Tagalog)</b><ul><li>HUWAG hiwain ang okra; buo lang. Huwag haluin nang madalas para hindi maging malapot (slimy).</li><li>Okra sa huli lang (20 min), hindi kasabay ng lamb mula umpisa.</li></ul></div>
+    </div>
+  </div>
+  <div class="foot">
+    <div class="brand">Al Maysari Family Cookbook · Mohamed &amp; Einas · 2026</div>
+    <div style="display:flex"><div class="qr"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAANIAAADSCAIAAACw+wkVAAAE1ElEQVR4nO3dPY4jNxSFUbcxG3DoyPtfliOHswQ5czAUMARB8iuNzwkbUlWpdUHg6fHn6/V6/QZ3/V4/AP9HYkdA7AiIHQGxI/Bt/NNff/5x/zn+8/c/33/6mvEJx3fNfIqZd808z2jX/3DXEz7tOzXaERA7AmJHQOwIiB2BN5XsaK2am9FWWKNzte1arT1znTXtd2q0IyB2BMSOgNgREDsCU5Xs6GYVdq4DO3OvNWsV8fiatXfd7COv3ctoR0DsCIgdAbEjIHYEFivZ51ur+HZ1Kp/WyX0aox0BsSMgdgTEjoDYEfhlK9mZiu9cVXhute+5WcE3Ge0IiB0BsSMgdgTEjsBiJfuJ9VQ7J/nmHOBd/d9zjHYExI6A2BEQOwJiR2Cqkv3EGa27VqqOdvVS12rbXfON2+/UaEdA7AiIHQGxIyB2BN5Usp/Yb32aXTXyzGvW6t+W0Y6A2BEQOwJiR0DsCHy9Xq8f/rSrd7nmaaejtiten7Yn89rdR0Y7AmJHQOwIiB0BsSNwsCd7s5rb9Twz2u7qOef6yOOVjXYExI6A2BEQOwJiR2CqJzujPcP0aSt5b57mc+5/eG6PLKMdAbEjIHYExI6A2BG4egrPzb2Sbp5xM15nV3XZ9rXP/T5gtCMgdgTEjoDYERA7AlOV7M35xruc6znO3Gt07nzbtT7pzbW9ZhfzCGJHQOwIiB0BsSOw2JO9ORP1XLV7rrc72lUD7nrXrtesfTtGOwJiR0DsCIgdAbEjcHB2cVuFnZuFe25O8q57tb8hWCfLQ4kdAbEjIHYExI7A1N7Fu7qiN89CPfcpPnGu9TlO4eFjiB0BsSMgdgTEjsCbSrbtOY5u7oq8ZtenuFl931wRbJ0sjyB2BMSOgNgREDsCb07hmdH2N2/WvzdXzrY92Zt1tNGOgNgREDsCYkdA7AhcPYVnV8V3bp3sueuc2ydqtFZrO0+WX5zYERA7AmJHQOwIbJtdfLNWulmlrn2KXWtpd1X6zpMFsaMgdgTEjoDYEVicXTy6eapp62nn6Zy7+2hXl9ZoR0DsCIgdAbEjIHYE3lSyT9vjd3Tz/NabOyPtcvM/v/brhNGOgNgREDsCYkdA7AhMrZNdq1ZmnJvJPGPX59o1I3pXV3TXtzNj7V5GOwJiR0DsCIgdAbEjMNWTvTkzdteV21Nmzj3P087lWbuX0Y6A2BEQOwJiR0DsCCzuXXyuC3luRec5uzrLa1c+t5vTuTOSjHYExI6A2BEQOwJiR+BNJburCptx7kSbmzNs1zytil/7dWKN0Y6A2BEQOwJiR0DsCEydwnPT2pkya7XtTW0dfa6uX7uO0Y6A2BEQOwJiR0DsCCzu+LTLrj7gzf2UdlXN7d5WM3bNW7ZOlkcQOwJiR0DsCIgdgYPrZEft2tXRzf2WZ64zo+0+71rpbLQjIHYExI6A2BEQOwKLlWzrZuW4dveZ+m5X//fcPlrn7m60IyB2BMSOgNgREDsCH1nJrvVbz50MO3P3c/c698znOu9GOwJiR0DsCIgdAbEjsFjJ3pwn3FagN/dKas/APXfiz8hoR0DsCIgdAbEjIHYEvl6v1w9/etoevzfru7Urn6t2b34XN1cNG+0IiB0BsSMgdgTEjsCbShZOM9oREDsCYkdA7AiIHYF/AcXh4RxY2CudAAAAAElFTkSuQmCC" alt="QR"><div class="t"><span class="lang ">Tagalog</span><b>Scan to watch the cooking video</b>Marag Bamya with Lamb - Angeline Canja</div></div></div>
+  </div>
+</section>
+
+<section class="page">
+  <div class="rhead">
+    <img class="photo" src="https://images.pexels.com/photos/6063320/pexels-photo-6063320.jpeg?auto=compress&amp;cs=tinysrgb&amp;h=627&amp;fit=crop&amp;w=1200" alt="" loading="lazy">
+    <div class="title">
+      <div>
+        <div class="num">RECIPE 18 / 23</div>
+        <h1>Fried Chicken with Okra Stew and White Rice</h1>
+        <span class="ar">دجاج مقلي مع بامية ورز</span>
+        <p class="intro">Okra in tomato-garlic sauce (no meat inside) served next to crispy fried chicken and white rice.</p>
+      </div>
+      <div class="chips"><span class="chip">⏱ 1 h</span><span class="chip">Level: Easy</span></div>
+    </div>
+  </div>
+  <div class="cols">
+    <div>
+      <h3>Ingredients</h3>
+      <table class="ing"><thead><tr><th>Ingredient</th><th class="q">1 person</th><th class="q">2 persons</th></tr></thead><tbody><tr><td>Chicken pieces (leg, thigh)</td><td class="q">350 g</td><td class="q p2">700 g</td></tr><tr><td>Marinade: yogurt 2 tbsp, garlic, paprika, salt</td><td class="q">1 set</td><td class="q p2">2 sets</td></tr><tr><td>Flour for coating</td><td class="q">1/2 cup</td><td class="q p2">1 cup</td></tr><tr><td>Oil for frying</td><td class="q">as needed</td><td class="q p2">as needed</td></tr><tr><td>Baby okra, whole</td><td class="q">250 g</td><td class="q p2">500 g</td></tr><tr><td>Onion</td><td class="q">1</td><td class="q p2">2</td></tr><tr><td>Tomato, grated + paste</td><td class="q">2 + 1 tbsp</td><td class="q p2">4 + 2 tbsp</td></tr><tr><td>Garlic</td><td class="q">4 cloves</td><td class="q p2">8 cloves</td></tr><tr><td>Coriander powder</td><td class="q">1 tsp</td><td class="q p2">2 tsp</td></tr><tr><td>Lemon juice</td><td class="q">1 tbsp</td><td class="q p2">2 tbsp</td></tr><tr><td>Water</td><td class="q">1 cup</td><td class="q p2">2 cups</td></tr><tr><td>White rice, cooked</td><td class="q">1 cup</td><td class="q p2">2 cups</td></tr><tr><td>Salt</td><td class="q">to taste</td><td class="q p2">to taste</td></tr></tbody></table>
+    </div>
+    <div>
+      <h3>Method</h3>
+      <ol class="steps"><li>Marinate chicken 30 min. Coat in flour with salt and paprika. Fry in medium-hot oil 7-8 min each side until golden and cooked through (no pink at the bone). Drain on paper.</li><li>Okra stew: fry onion golden, add garlic, coriander, tomato paste, tomato. Cook 5 min.</li><li>Add okra and water, salt. Simmer 20 min uncovered until sauce thick. Finish with lemon.</li><li>Serve chicken, okra and rice together.</li></ol>
+      <div class="tl"><b>Mahalagang paalala (Tagalog)</b><ul><li>Chicken: katamtamang init ng mantika. Kung sobrang init, sunog sa labas, hilaw sa loob.</li><li>Okra buo, huwag haluin nang madalas.</li></ul></div>
+    </div>
+  </div>
+  <div class="foot">
+    <div class="brand">Al Maysari Family Cookbook · Mohamed &amp; Einas · 2026</div>
+    <div style="display:flex"><div class="qr"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAANIAAADSCAIAAACw+wkVAAAEvElEQVR4nO3dMY4jNxRAQY/hCzh05Psfy5FDH0HOHJgKCILka81UhQuNpN15IPC3u8mv1+v1C9z1a/0F+IlkR0B2BGRHQHYEfhv/6M8/fr//Pf7z19//bHmfmb/F+FnjT619n13/hru+4dN+p1Y7ArIjIDsCsiMgOwJvJtnRrulytGvCetrkuPbOa++zpv2dWu0IyI6A7AjIjoDsCExNsqObU9i5WXLms9asTcTja9Z+6uZ15LXPstoRkB0B2RGQHQHZEVicZFu7ZrfRuXub2yu5T2O1IyA7ArIjIDsCsiPwkZPsriue56xd/z13vfVprHYEZEdAdgRkR0B2BBYn2U+cp9Zm2133JN+8B/jc3de7WO0IyI6A7AjIjoDsCExNst/jjtZd1213XUtdm213XWtuf6dWOwKyIyA7ArIjIDsCbybZT7zeOmrvy901I8+8Zm3+bVntCMiOgOwIyI6A7AhMnSd785nT8bN23RX8tJN6bu6lfPP3NcNqR0B2BGRHQHYEZEfg4I5Puya+m+fXzGivrp5z7t9nfGerHQHZEZAdAdkRkB2Br9fr9b8/Ovcc6DlPO63m5mk+5/atOvdZVjsCsiMgOwKyIyA7Am8m2Rnnpp5d123Pfdbap89o582bdyBb7QjIjoDsCMiOgOwITE2y53biXZuenjaT3nzidc25/w1YY7UjIDsCsiMgOwKyIzB1d/Fo19XDNefm1nP3UZ/7F7s5ge6a9K12BGRHQHYEZEdAdgQOPic7o53Cdt1h217/vXkdeVcJVjsCsiMgOwKyIyA7AlPnyd68Bnrup9ZeM9o1WT9tl6qb/4NhtSMgOwKyIyA7ArIjsHhNdsbNfZBm3DxPduanZrTfeeZ9Rk7h4aFkR0B2BGRHQHYEtu1dPHr+Pcnn/hZP2z14xrnvY5LlEWRHQHYEZEdAdgQWd3xac/Oknnb3pJv7RK05N2t7TpaHkh0B2RGQHQHZEfgm58mOzu3vNPoedw7vYpLloWRHQHYEZEdAdgQOnsIzev55MTNu7lJ185rszfuorXYEZEdAdgRkR0B2BN7sXbxmZuq5OaXuupe4/fR2Hh/tmm2tdgRkR0B2BGRHQHYEDu5dPKPdu2nmfW6eu3rz2VXPyfLjyI6A7AjIjoDsCCxOsjen3TXtKTPnvs8n7pzs7mIeQXYEZEdAdgRkR+Dg3cWjc3PZjPaZ09HNPZBn3nmNu4v5GLIjIDsCsiMgOwJvJtldU9iM9kpue2W5PSdo7fuMr1mbiK12BGRHQHYEZEdAdgTeTLJPO8Nl15XcT9xhaZdzM/va+1jtCMiOgOwIyI6A7AhM3V3c7vi09pqb59uuTc1r177PPf872nXfsudkeQTZEZAdAdkRkB2Bxedkb85Ta+9z8wnTm3PiuTt+d326vYt5KNkRkB0B2RGQHYFtOz612nNw1r7Prm+4a7q8+elWOwKyIyA7ArIjIDsCHznJtk+83jwD9+Zrbt7JbLUjIDsCsiMgOwKyI7A4yd7cv+jc9cT25NynnTd0c6cvqx0B2RGQHQHZEZAdgalJtt3N+ObJp+2Ts+dm2/bsnpHVjoDsCMiOgOwIyI7A1+v1qr8DP47VjoDsCMiOgOwIyI7Av6LU7I/94PumAAAAAElFTkSuQmCC" alt="QR"><div class="t"><span class="lang ">Tagalog</span><b>Scan to watch the cooking video</b>Okra / Bamia with Chicken Salona - Marilou Recipes</div></div></div>
+  </div>
+</section>
+
+<section class="page">
+  <div class="rhead">
+    <img class="photo" src="https://images.pexels.com/photos/19615781/pexels-photo-19615781.jpeg?auto=compress&amp;cs=tinysrgb&amp;h=627&amp;fit=crop&amp;w=1200" alt="" loading="lazy">
+    <div class="title">
+      <div>
+        <div class="num">RECIPE 19 / 23</div>
+        <h1>Musakhan Chicken with White Rice (Oven)</h1>
+        <span class="ar">مسخن دجاج بالرز</span>
+        <p class="intro">Palestinian roasted chicken with lots of sumac and onion cooked soft in olive oil, served on flatbread with pine nuts, plus white rice on the side.</p>
+      </div>
+      <div class="chips"><span class="chip">⏱ 1 h 15 min</span><span class="chip">Level: Easy</span></div>
+    </div>
+  </div>
+  <div class="cols">
+    <div>
+      <h3>Ingredients</h3>
+      <table class="ing"><thead><tr><th>Ingredient</th><th class="q">1 person</th><th class="q">2 persons</th></tr></thead><tbody><tr><td>Chicken pieces (thigh, leg)</td><td class="q">400 g</td><td class="q p2">800 g</td></tr><tr><td>Onion, thinly sliced</td><td class="q">2 large</td><td class="q p2">4 large</td></tr><tr><td>Sumac</td><td class="q">2 tbsp</td><td class="q p2">4 tbsp</td></tr><tr><td>Olive oil</td><td class="q">4 tbsp</td><td class="q p2">8 tbsp</td></tr><tr><td>7-spice + black pepper</td><td class="q">1 tsp + 1/4 tsp</td><td class="q p2">2 tsp + 1/2 tsp</td></tr><tr><td>Lemon juice</td><td class="q">1 tbsp</td><td class="q p2">2 tbsp</td></tr><tr><td>Taboon / Arabic bread</td><td class="q">1</td><td class="q p2">2</td></tr><tr><td>Pine nuts or almonds, toasted</td><td class="q">1 tbsp</td><td class="q p2">2 tbsp</td></tr><tr><td>White rice, cooked</td><td class="q">1 cup</td><td class="q p2">2 cups</td></tr><tr><td>Salt</td><td class="q">to taste</td><td class="q p2">to taste</td></tr></tbody></table>
+    </div>
+    <div>
+      <h3>Method</h3>
+      <ol class="steps"><li>Rub chicken with half the sumac, 7-spice, pepper, lemon, 1 tbsp oil, salt. Bake 200 C 35-40 min until golden.</li><li>Cook onion in the remaining olive oil on LOW 20-25 min until very soft and sweet (not brown). Add the rest of the sumac and salt. Cook 3 min.</li><li>Put bread on a tray, spread the sumac onion over it, chicken on top, spoon some chicken juices. Oven 5 min to warm.</li><li>Top with toasted nuts. Serve with white rice and yogurt.</li></ol>
+      <div class="tl"><b>Mahalagang paalala (Tagalog)</b><ul><li>Sibuyas: MAHINA ang apoy, 20-25 min, malambot at matamis, hindi brown.</li><li>Maraming sumac: ito ang lasa ng musakhan.</li></ul></div>
+    </div>
+  </div>
+  <div class="foot">
+    <div class="brand">Al Maysari Family Cookbook · Mohamed &amp; Einas · 2026</div>
+    <div style="display:flex"><div class="qr"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAANIAAADSCAIAAACw+wkVAAAEpElEQVR4nO3dPY5bNxhA0TjIBlK68v6X5cpllqB0aZ4AEwTJS03OKY3Rz4wuCHzmE9+31+v1B5z1Z/0G+D+SHQHZEZAdAdkR+Ov5Tz++/33+ffzn569/ljzPyG/xfK3no+bez6q/4ap3eNtnarUjIDsCsiMgOwKyI/Bmkn1aNV0+rZqwbpsc55557nnmtJ+p1Y6A7AjIjoDsCMiOwNAk+3RyCts3pZ58rZGJ+Pkzc486+Xeeey2rHQHZEZAdAdkRkB2ByUn2fqt2TufctpN7G6sdAdkRkB0B2RGQHYGPnGTndjNPmtv/3bffehurHQHZEZAdAdkRkB2ByUn2/nnq5PdSR5755DXA7X70CKsdAdkRkB0B2RGQHYGhSfZrXNH6NDftrtpLnZttV03o7WdqtSMgOwKyIyA7ArIj8GaSvX+/dUR7Xe6qGXnkZ+bm35bVjoDsCMiOgOwIyI7A0P1kT5479Hyt23Yh9+2uPt12l6InZxfzMWRHQHYEZEdAdgQ27smumvhOTqAj2t3VfU7+f4XVjoDsCMiOgOwIyI7At9fr9dsfWnXK0Ff9vu3Tybv5tD/zNPK7W+0IyI6A7AjIjoDsCGy8unhu6tl3bfO+e9ysugfQ3JXV+3ZyV+1ZP9+h1Y6A7AjIjoDsCMiOwOSe7Mkrh09Oc+2devbZ91nMsdoRkB0B2RGQHQHZEXgzybZ3mWlnyfaa25P/G7DK3Ktb7QjIjoDsCMiOgOwITE6yTycfNWLV3Dpi1TXJq15r39XXc8/zZLUjIDsCsiMgOwKyI3D06uJ9O7lPt913ZsTJK5DbT8dqR0B2BGRHQHYEZEfg6NXFI+6fE/ddXfy079rmkzvCri7mCrIjIDsCsiMgOwLLJtk5J+9WM/Kop5PfnL3tVKh9fx+rHQHZEZAdAdkRkB2BoUm2ddt5U6v2JT/xpCb3k+WDyY6A7AjIjoDsCLy5n+zTvjmxne/m3s/Ioz7x3Kq5V59jtSMgOwKyIyA7ArIjMHTi0z7t+U7330/n5DXSI1b9xax2BGRHQHYEZEdAdgQ2nvj0dP/5xu3JSHPun5FNslxBdgRkR0B2BGRHYNn9ZOecnEn3Pc/J056/xj6y1Y6A7AjIjoDsCMiOQDzJ7tPuLI88akR7/6N9u8ZWOwKyIyA7ArIjIDsCQyc+jfga952ZMzfbrpp/953vtG+OttoRkB0B2RGQHQHZEXgzyc7Nd/setW8Xst193vfqJ0/NmnuU1Y6A7AjIjoDsCMiOwJtJ9rZ90rn9zbm75zydPJdpn9umZqsdAdkRkB0B2RGQHYEPOPFp34lGc06eb/y07367J7/Ja7UjIDsCsiMgOwKyIzD5PdmTs9ucfd/6vP8euPt21VedmmW1IyA7ArIjIDsCsiOw7MSnk9o79az6bu++e+nef7qy1Y6A7AjIjoDsCMiOwEdOsvt2hFedFXzytU6+5xH2ZLmU7AjIjoDsCMiOwOQke/I64ZPnG6/a3xxx8h2evAvtCKsdAdkRkB0B2RGQHYGhE59OOjlhnbyeds7Jz+LklcxWOwKyIyA7ArIjIDsCbyZZ2M1qR0B2BGRHQHYEZEfgX+sAB2+//MJVAAAAAElFTkSuQmCC" alt="QR"><div class="t"><span class="lang ">Tagalog</span><b>Scan to watch the cooking video</b>Easy way to cook Chicken Musakhan - Els Kusinera</div></div></div>
+  </div>
+</section>
+
+<section class="page">
+  <div class="rhead">
+    <img class="photo" src="https://images.pexels.com/photos/12214723/pexels-photo-12214723.jpeg?auto=compress&amp;cs=tinysrgb&amp;h=627&amp;fit=crop&amp;w=1200" alt="" loading="lazy">
+    <div class="title">
+      <div>
+        <div class="num">RECIPE 20 / 23</div>
+        <h1>Spaghetti with Meatballs</h1>
+        <span class="ar">سباغيتي بكرات اللحم</span>
+        <p class="intro">Italian-style, NOT sweet Filipino style: beef meatballs simmered in garlic tomato sauce over spaghetti with parmesan.</p>
+      </div>
+      <div class="chips"><span class="chip">⏱ 50 min</span><span class="chip">Level: Easy</span></div>
+    </div>
+  </div>
+  <div class="cols">
+    <div>
+      <h3>Ingredients</h3>
+      <table class="ing"><thead><tr><th>Ingredient</th><th class="q">1 person</th><th class="q">2 persons</th></tr></thead><tbody><tr><td>Spaghetti</td><td class="q">100 g</td><td class="q p2">200 g</td></tr><tr><td>Minced beef</td><td class="q">200 g</td><td class="q p2">400 g</td></tr><tr><td>Breadcrumbs</td><td class="q">2 tbsp</td><td class="q p2">4 tbsp</td></tr><tr><td>Egg</td><td class="q">1 small</td><td class="q p2">1</td></tr><tr><td>Garlic, minced</td><td class="q">3 cloves</td><td class="q p2">5 cloves</td></tr><tr><td>Onion, finely chopped</td><td class="q">1/2</td><td class="q p2">1</td></tr><tr><td>Dried oregano + parsley</td><td class="q">1/2 tsp each</td><td class="q p2">1 tsp each</td></tr><tr><td>Canned crushed tomatoes</td><td class="q">1 cup (250 g)</td><td class="q p2">2 cups (500 g)</td></tr><tr><td>Tomato paste</td><td class="q">1 tbsp</td><td class="q p2">2 tbsp</td></tr><tr><td>Olive oil</td><td class="q">2 tbsp</td><td class="q p2">3 tbsp</td></tr><tr><td>Parmesan, grated</td><td class="q">2 tbsp</td><td class="q p2">4 tbsp</td></tr><tr><td>Salt, pepper, pinch of sugar</td><td class="q">to taste</td><td class="q p2">to taste</td></tr></tbody></table>
+    </div>
+    <div>
+      <h3>Method</h3>
+      <ol class="steps"><li>Mix minced beef, breadcrumbs, egg, half the garlic, oregano, salt, pepper. Roll into balls the size of a walnut. Do not over-mix.</li><li>Brown meatballs in olive oil 2 min each side. Remove.</li><li>Same pan: fry onion and remaining garlic 3 min. Add tomato paste 1 min, crushed tomatoes, pinch sugar, salt, pepper. Simmer 10 min.</li><li>Return meatballs, cover, simmer 15 min.</li><li>Boil spaghetti in salted water 1 min less than packet. Drain, toss in the sauce with a little pasta water. Serve with parmesan.</li></ol>
+      <div class="tl"><b>Mahalagang paalala (Tagalog)</b><ul><li>HINDI matamis: walang banana ketchup, walang sugar maliban sa isang kurot.</li><li>Spaghetti &#x27;al dente&#x27;: may kaunting tigas pa, hindi malambot.</li></ul></div>
+    </div>
+  </div>
+  <div class="foot">
+    <div class="brand">Al Maysari Family Cookbook · Mohamed &amp; Einas · 2026</div>
+    <div style="display:flex"><div class="qr"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAANIAAADSCAIAAACw+wkVAAAEvUlEQVR4nO3dPY4jNxSFUbfhDTicaPa/LEcOvQQ5m2BKAUGQ/KiZc8KGVFWSLgi8fvz5er1ef8BZf9YPwO9I7AiIHQGxIyB2BP56/un7t7/PP8cP//z735LrjHyK572e75p7nlXf4aonvO03NdoREDsCYkdA7AiIHYE3lezTquryaVWFdVvlOHfluevMaX9Tox0BsSMgdgTEjoDYERiqZJ9OVmEnu6ttRfx8zdy7TvaR5+5ltCMgdgTEjoDYERA7ApOVbGtVnfh8zb65zW0n9zZGOwJiR0DsCIgdAbEj8JGV7NOq2nbf8zyd7LfexmhHQOwIiB0BsSMgdgQmK9nb6ql9Fd+qOckn5wCv6v/uY7QjIHYExI6A2BEQOwJDleyvMaN1VZd2VS91rrZd1Vluf1OjHQGxIyB2BMSOgNgReFPJ3tZv/USrauSR18zVvy2jHQGxIyB2BMSOgNgR+Hq9Xj/96RNXmO7TrnhdNZe4/b2ejHYExI6A2BEQOwJiR2Djjk+feDLOiLa7us/J/1cY7QiIHQGxIyB2BMSOwJue7NO+XYZuq1JXOXmaz76+7b57Ge0IiB0BsSMgdgTEjsDGnuxc1TNXT+2714i553kaOd92VV+7nZNstCMgdgTEjoDYERA7AkM92REn14He1iO+bW3v022/hdGOgNgREDsCYkdA7Ai86cnuOx1mruc4Yt85OLfN7x1515yT9zLaERA7AmJHQOwIiB2BZXsXr+qB7lth+rSvjh7R9n/31a3WyXIpsSMgdgTEjoDYERg6T7btb66qbdu6deQ6J2cgr/qencLDxxA7AmJHQOwIiB2ByZ7siLZOPHmC6m3rdkfufnI/LutkuYLYERA7AmJHQOwITO5dfNtewSN3n7vyvt2VT/Zkb5trbbQjIHYExI6A2BEQOwLLzpN9um1F58mVvCf3iZrT7hpttCMgdgTEjoDYERA7ApN7F++r1Nq1onPvGtmTec791e4cox0BsSMgdgTEjoDYERiaXXyybv3E03yeVj1z248euc7cPGqjHQGxIyB2BMSOgNgR2Ljj0yonu7Qn14q2O2KN2PffCaMdAbEjIHYExI6A2BE4uuPTyHXmZuqefJ65u+/b8amdxT33jRntCIgdAbEjIHYExI7AZCX7tOo00rm6bO46+2YOjzg5K3hfhT53L6MdAbEjIHYExI6A2BFYVsmeXCe775TVOXN14r5ackR7Uq3RjoDYERA7AmJHQOwIvKlkV1VhI9oVuK1965FPnqU7VxEb7QiIHQGxIyB2BMSOwNApPCftWyd72+c66baq2WhHQOwIiB0BsSMgdgSGZhe3J5betpvTqk7lXO/75I7H1snySxE7AmJHQOwIiB2BjXsXP912gszcu07u+PR0ch3x3N3tXcylxI6A2BEQOwJiR2DZjk8n7etmrqrU5k4Xmuv/7nvmkdc4T5aPIXYExI6A2BEQOwIfWcnu6wi3s53b15w8t9doR0DsCIgdAbEjIHYEJivZk/OEb1sDu2+vpJN7UrV3N9oREDsCYkdA7AiIHYGhSrbd9ffk3fftcTRiX3W5bwaydbJ8DLEjIHYExI6A2BH4er1e9TPw2zHaERA7AmJHQOwIiB2B/wG4U9aJ68R9hgAAAABJRU5ErkJggg==" alt="QR"><div class="t"><span class="lang en">English</span><b>Scan to watch the cooking video</b>Easy Spaghetti and Meatballs - Preppy Kitchen</div></div><div class="qr" style="margin-left:10px"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAANIAAADSCAIAAACw+wkVAAAE0UlEQVR4nO3dMW7sRhBFUX/DG3DoyPtfliOHXoKcOfhU0Gh09aXkc0JhhuRoHhqoabLqx8fHxy9w16/1BfB/JHYExI6A2BEQOwK/Pf/05x+/37+O//z19z8//eV5Pades3L2p73/z6kjrxxn78hzntdstSMgdgTEjoDYERA7Ap9Usk971dOKvdrtVG2759RxTl3h3nHa79RqR0DsCIgdAbEjIHYElirZp7l9yZVznapbT+3kPt38pKfc/KRWOwJiR0DsCIgdAbEjsFnJ3nRqh/HUHujb9nbndlfnWO0IiB0BsSMgdgTEjsAXqGRXrFSpbcU3d7fzV2S1IyB2BMSOgNgREDsCm5XszSps767Xm3fqvu04e25+p1Y7AmJHQOwIiB0BsSOwVMm2FdbTzf7G3+M1T+13arUjIHYExI6A2BEQOwKfVLJvu+t1by/1bfuk7XHe9p1a7QiIHQGxIyB2BMSOwNI82bkZN6cmqN7sOXxzLu3NWTlz3Z7Nk+UVxI6A2BEQOwJiR2Cw49NcxXeqbp3bJ233kW9OKVo5+5PVjoDYERA7AmJHQOwILN1dPDe/Zq/n8M267GbP4VM7uTdnztqT5csQOwJiR0DsCIgdgR8fHx8//WluZ3DFzZ7DTzf7Mp26nptO/apgtSMgdgTEjoDYERA7Apsdn+Z2Bm/uwN6sCueenD31SU3h4ZsTOwJiR0DsCIgdgc0pPHO10s1nRfeOM+fmPdtzv0W4u5iXEjsCYkdA7AiIHYGl3sV7r9l716maa+95270jr7g5PXbuCveO82S1IyB2BMSOgNgREDsCV5+T/YrPk76tKrz5See6XVntCIgdAbEjIHYExI7AsSk87dTX7zo99tRd3HPzhlbO/mS1IyB2BMSOgNgREDsCgx2fVt51c6LN8+xv64H8NFe3zj2Tu8JqR0DsCIgdAbEjIHYENvdk5/YK5+qyt3VGmjvOU9sRWscnXkHsCIgdAbEjIHYEPnlOdsXcrt/b5rc+3ezddLPf8txvEU9WOwJiR0DsCIgdAbEjMFjJPt3cyV1xc57snJtP+55itSMgdgTEjoDYERA7AoPzZG/e0bribd2l2rk8cxOI3F3MS4kdAbEjIHYExI7A5jzZFXNzYE+d/elUH6Q97a8BN/txWe0IiB0BsSMgdgTEjsBg7+K5+m7lXKc+xakuzStu/sfanW6rHQGxIyB2BMSOgNgR2NyTvdnjd2466tOp+m5uktHNWbFzn91qR0DsCIgdAbEjIHYENjs+3XRzNs3Ns8+Z6xq98q6V67HaERA7AmJHQOwIiB2Bwedk99zcA33/jJtTR56rUvdY7QiIHQGxIyB2BMSOwFLv4rnOP6fqu1Odo252V37/hNm946xcodWOgNgREDsCYkdA7AgsVbJPb+todLPWvjl3dc+pvVS9i/lWxI6A2BEQOwJiR2Czkn2bucr6ba/Zc3Oe7AqrHQGxIyB2BMSOgNgR+AKV7M1eynNTVk+dq50De2q312pHQOwIiB0BsSMgdgQ2K9mbd9iu1G5z1e7NPsCnqtS22/MKqx0BsSMgdgTEjoDYEfhkCs/behfP1Zsr5npS7R1n5chzfaJO7Sxb7QiIHQGxIyB2BMSOwBeYJ8v3Y7UjIHYExI6A2BEQOwL/AsJm8WznwcMpAAAAAElFTkSuQmCC" alt="QR"><div class="t"><span class="lang">Extra</span><b>Second video</b>Spaghetti &amp; Meatballs Pinoy Style (Tagalog) - Mommy-Go-Round</div></div></div>
+  </div>
+</section>
+
+<section class="page">
+  <div class="rhead">
+    <img class="photo" src="https://images.pexels.com/photos/8697537/pexels-photo-8697537.jpeg?auto=compress&amp;cs=tinysrgb&amp;h=627&amp;fit=crop&amp;w=1200" alt="" loading="lazy">
+    <div class="title">
+      <div>
+        <div class="num">RECIPE 21 / 23</div>
+        <h1>Mashed Potato with Grilled Chicken</h1>
+        <span class="ar">بطاطس مهروسة مع دجاج مشوي</span>
+        <p class="intro">Smooth buttery mashed potato with a juicy grilled chicken breast and steamed vegetables. Light dinner option.</p>
+      </div>
+      <div class="chips"><span class="chip">⏱ 40 min</span><span class="chip">Level: Easy</span></div>
+    </div>
+  </div>
+  <div class="cols">
+    <div>
+      <h3>Ingredients</h3>
+      <table class="ing"><thead><tr><th>Ingredient</th><th class="q">1 person</th><th class="q">2 persons</th></tr></thead><tbody><tr><td>Chicken breast</td><td class="q">200 g (1 pc)</td><td class="q p2">400 g (2 pcs)</td></tr><tr><td>Olive oil, lemon, garlic, paprika, thyme, salt (marinade)</td><td class="q">1 set</td><td class="q p2">2 sets</td></tr><tr><td>Potato, peeled, cubed</td><td class="q">300 g (2 medium)</td><td class="q p2">600 g (4 medium)</td></tr><tr><td>Butter</td><td class="q">2 tbsp</td><td class="q p2">4 tbsp</td></tr><tr><td>Warm milk (for Einas: oat milk or lactose-free)</td><td class="q">1/4 cup</td><td class="q p2">1/2 cup</td></tr><tr><td>Broccoli / green beans / carrot</td><td class="q">1 cup</td><td class="q p2">2 cups</td></tr><tr><td>Salt, white pepper</td><td class="q">to taste</td><td class="q p2">to taste</td></tr></tbody></table>
+    </div>
+    <div>
+      <h3>Method</h3>
+      <ol class="steps"><li>Flatten chicken breast to even thickness (cover with plastic, press with a pan). Marinate 20 min.</li><li>Boil potatoes in salted water 15-18 min until a knife goes in easily. Drain well, let steam dry 2 min.</li><li>Mash with butter and warm milk until smooth. Season. Keep warm.</li><li>Grill pan on high: chicken 5-6 min each side until cooked (cut: no pink). Rest 3 min, slice.</li><li>Steam vegetables 5 min. Plate: mash, chicken, vegetables, a little olive oil or gravy.</li></ol>
+      <div class="tl"><b>Mahalagang paalala (Tagalog)</b><ul><li>Mashed potato kay Einas: oat milk o lactose-free milk lang, walang regular milk.</li><li>Patagin (flatten) ang chicken breast para pantay ang luto at hindi matuyo.</li></ul></div>
+    </div>
+  </div>
+  <div class="foot">
+    <div class="brand">Al Maysari Family Cookbook · Mohamed &amp; Einas · 2026</div>
+    <div style="display:flex"><div class="qr"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAANIAAADSCAIAAACw+wkVAAAEzklEQVR4nO3dMY4kNxKG0Z2FLiBTlu5/LFkydYSWt8ZkGwQR5Jc1+57ZqMnM7vpBIIaRwR9fX1//gbv+Wz8A/4/EjoDYERA7AmJH4Lfnj/784/f7z/E/f/39z08/eT7P1GdW7v609/eZuvLKdfaufM7zma12BMSOgNgREDsCYkfgm0r2aa96WjFVYe3VrU8rFfFeTTp15Sntd2q1IyB2BMSOgNgREDsCS5Xs07l9yZt3X7nO3j7p1M7pXtV8c992715WOwJiR0DsCIgdAbEjsFnJ3jTVJzzVgbziZkf0J7LaERA7AmJHQOwIiB2BD6hkp/Yc9658bqdy6re42ZM8xWpHQOwIiB0BsSMgdgQ2K9n2jc6bte2UqV3avSuvuPmdWu0IiB0BsSMgdgTEjsBSJdv2uJ6rAc91/J7rLn5/zb7CakdA7AiIHQGxIyB2BH584nmy5yY+nTu7Z09793OsdgTEjoDYERA7AmJH4JtKdqrH9aapLtxPrG1vdilP/R+C1Y6A2BEQOwJiR0DsCIxNfLpZ8b2tv3fl9Ninc73ENzuQ9753qx0BsSMgdgTEjoDYEVjqLn7/iaXn9lJv1uM3JyevPM8Ue7K8gtgREDsCYkdA7Ags7cmeO+d0ap7SuXvt2bvyzb7lcz3kK9ex2hEQOwJiR0DsCIgdgW8q2Xae0lQ/7bmpv+fudfP91r3PTD2P1Y6A2BEQOwJiR0DsCGxOfLrZJ7x3nT3ttKtzXcFvOwPIakdA7AiIHQGxIyB2BJYq2adzb6Gemyc85W3vCO/dvZ3JbLUjIHYExI6A2BEQOwIHJz7drG33rrzyr55+jV7ilSuv2Lu71Y6A2BEQOwJiR0DsCCy9J9u+Ydp2/J6rN/fufu4zK1Z+CxOfeCmxIyB2BMSOgNgR2DxP9ubJp1O17bn6d+p826e37aVOfe9WOwJiR0DsCIgdAbEjsFnJTr2p+rYzVVfu/raze952mq3uYl5K7AiIHQGxIyB2BL6pZG/ugb5/CvHNbudzk6zeNjXLakdA7AiIHQGxIyB2BA6eJ/v+K9/cl5z6V+fOgV1hdjEfTOwIiB0BsSMgdgSWuovbCcPnJlA9tfOdzu0a7zlXNVvtCIgdAbEjIHYExI7A5nuyT3sV1s2O1pszmVfuPuXm33Dv7t6T5RXEjoDYERA7AmJHYKySfTp3fuvNk2FvTvR9/8m5U6x2BMSOgNgREDsCYkfgx9fX108/Ove25vsr0L3n2dOek7tnqoq32hEQOwJiR0DsCIgdgW8q2be5+dbnlKmTcdq7O0+WX4rYERA7AmJHQOwIjM0unnLzHNib3bxTs5LOTWneY0+WjyF2BMSOgNgREDsCm7OLp5w7l2dqB3aqbt37zJRze8T2ZPkYYkdA7AiIHQGxI7A58elcBbpnb8fzXL3Zdhff7FI2u5iPIXYExI6A2BEQOwIHZxefc7Ob99zdn6beS33/vGWrHQGxIyB2BMSOgNgR+IBK9lwVdrPiO3ev9gn3WO0IiB0BsSMgdgTEjsBmJXuuT3jP206GXXGzcpyaEzXFakdA7AiIHQGxIyB2BJYq2Xaa8bnzbafuvvI8U5+5OUvqXBVvtSMgdgTEjoDYERA7Ah9wniy/HqsdAbEjIHYExI6A2BH4F6rAA0k6lM+mAAAAAElFTkSuQmCC" alt="QR"><div class="t"><span class="lang en">English</span><b>Scan to watch the cooking video</b>Grilled Chicken Breast with Creamy Mashed Potato - Priyanka Banerjee</div></div><div class="qr" style="margin-left:10px"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAANIAAADSCAIAAACw+wkVAAAE00lEQVR4nO3dPY4cNxSFUY/hDThUpP0vy5FDL6GdKVB1QBAkP7Z0TjiY+pmqCwJvHov8er1ef8BZf9Y3wO9I7AiIHQGxIyB2BP56/uj7t7/P38cP//z735LzjPwVz2s9j5q7n1XPcNUd3vZOjXYExI6A2BEQOwJiR+BNJfu0qrp8WlVh3VY5zp157jxz2ndqtCMgdgTEjoDYERA7AkOV7NPJKmxflXryWiMV8fN35o46+ZznrmW0IyB2BMSOgNgREDsCk5Xs/VZ1Tufc1sm9jdGOgNgREDsCYkdA7Ah8ZCW7r5u5ylz/d1+/9TZGOwJiR0DsCIgdAbEjMFnJ/hr11IhVc5JPzgFu+9EjjHYExI6A2BEQOwJiR2Cokv3EGa2rvlR9WtVLnattV3WW23dqtCMgdgTEjoDYERA7Am8q2V+j33rbvjNzNfLI78zVvy2jHQGxIyB2BMSOgNgRGNpPtv3CdN/VV63Wu6+6vG2XoidrF/MxxI6A2BEQOwJiR2Djik+rKr6TO+OMaLur++x7Ps8zG+0IiB0BsSMgdgTEjsCySnbffNr2Wid3WZ0786o1oPbtePtktCMgdgTEjoDYERA7Al+v1+unH52sLvftO3Nyj5t9XeORa+3bA3fE3FM12hEQOwJiR0DsCIgdgTeV7EltP3HVfNqTc6Tn7PtvwNxRRjsCYkdA7AiIHQGxIzC04tOIucrxZA903145J+vxkaNWnXnE3Lsw2hEQOwJiR0DsCIgdgaHZxfu++lxVA85d62RPduR+5q7Vzm2eO4/RjoDYERA7AmJHQOwIDM0uvm0O8Ijb6tYR+57znH1vx2hHQOwIiB0BsSMgdgQ27ie7bz3hESf3wF1Vge57zqvO7DtZPpjYERA7AmJHQOwITK74dHJG64h9X5ie/HL2tlWh9vWsjXYExI6A2BEQOwJiR2DZLjwj9q2V9HRylvLcUSe/EX7aV2urZLmU2BEQOwJiR0DsCLyZXbyvUjs5b3nEvir15MrAbbU7x2hHQOwIiB0BsSMgdgSOrl38iXNun07up9P2kZ9WdWmNdgTEjoDYERA7AmJHYHJ28b69WUfsq9RW+cT7GbHqLRvtCIgdAbEjIHYExI7Am9nFT/vWAtp3nlVrBa+qSU9+OTv3VOdmTc89MaMdAbEjIHYExI6A2BFYNru47bfOnefkX3py79r752Mb7QiIHQGxIyB2BMSOwFBP9mlfF/Lkd7LtHkC3zUB+2ve+jHYExI6A2BEQOwJiR2By7eJVNeDcee5fFWrEvpW1TnZy544y2hEQOwJiR0DsCIgdgTeV7G19wFVfvN72d510W9VstCMgdgTEjoDYERA7ApMrPq2yavfYVWsTrVq3edXaTfvWyBqxb+Uoox0BsSMgdgTEjoDYEdj4nezTyT7gqhp55KiTdWLbfbZ2MR9M7AiIHQGxIyB2BCYr2dus6oGOnHnV+sb79uS9bS8hPVmuIHYExI6A2BEQOwIfWcnu66Xum+08d56Tv7PqnvVkuZTYERA7AmJHQOwITFayJ9cv2ldh7etvjlj1le4qJ1fEMtoREDsCYkdA7AiIHYGhSrZd9ffk1dsvZ0/2iPd97asny6XEjoDYERA7AmJH4Ov1etX3wG/HaEdA7AiIHQGxIyB2BP4HgLvMfJG/rvUAAAAASUVORK5CYII=" alt="QR"><div class="t"><span class="lang">Extra</span><b>Second video</b>Mashed Potato Recipe (Tagalog) - Juniors Tagalog Cooking Channel</div></div></div>
+  </div>
+</section>
+
+<section class="page">
+  <div class="rhead">
+    <img class="photo" src="https://images.pexels.com/photos/13513758/pexels-photo-13513758.jpeg?auto=compress&amp;cs=tinysrgb&amp;h=627&amp;fit=crop&amp;w=1200" alt="" loading="lazy">
+    <div class="title">
+      <div>
+        <div class="num">RECIPE 22 / 23</div>
+        <h1>Chicken with Spinach and White Rice</h1>
+        <span class="ar">دجاج بالسبانخ مع رز</span>
+        <p class="intro">Chicken cooked in a mild spinach sauce (palak style, no cream for Einas). Healthy and filling with white rice.</p>
+      </div>
+      <div class="chips"><span class="chip">⏱ 45 min</span><span class="chip">Level: Easy</span></div>
+    </div>
+  </div>
+  <div class="cols">
+    <div>
+      <h3>Ingredients</h3>
+      <table class="ing"><thead><tr><th>Ingredient</th><th class="q">1 person</th><th class="q">2 persons</th></tr></thead><tbody><tr><td>Chicken, boneless cubes</td><td class="q">300 g</td><td class="q p2">600 g</td></tr><tr><td>Fresh spinach, washed (or 250 g frozen)</td><td class="q">300 g</td><td class="q p2">600 g</td></tr><tr><td>Onion, chopped</td><td class="q">1</td><td class="q p2">2</td></tr><tr><td>Tomato, chopped</td><td class="q">1</td><td class="q p2">2</td></tr><tr><td>Ginger-garlic paste</td><td class="q">1 tsp</td><td class="q p2">2 tsp</td></tr><tr><td>Cumin seeds</td><td class="q">1/2 tsp</td><td class="q p2">1 tsp</td></tr><tr><td>Coriander powder + turmeric + garam masala</td><td class="q">1 tsp + 1/4 tsp + 1/2 tsp</td><td class="q p2">2 tsp + 1/2 tsp + 1 tsp</td></tr><tr><td>Oil / ghee</td><td class="q">2 tbsp</td><td class="q p2">3 tbsp</td></tr><tr><td>Lemon juice</td><td class="q">1 tsp</td><td class="q p2">2 tsp</td></tr><tr><td>Salt</td><td class="q">to taste</td><td class="q p2">to taste</td></tr><tr><td>White rice, cooked</td><td class="q">1 cup</td><td class="q p2">2 cups</td></tr></tbody></table>
+    </div>
+    <div>
+      <h3>Method</h3>
+      <ol class="steps"><li>Blanch spinach in boiling water 1 min, drain, cool in cold water, squeeze and blend to a coarse puree.</li><li>Fry cumin seeds in oil 20 seconds, add onion, cook golden. Add ginger-garlic 1 min, tomato and powdered spices, cook 5 min.</li><li>Add chicken, coat, cook 8 min. Add 1/2 cup water, cover, 10 min.</li><li>Add spinach puree, salt. Simmer 5-7 min only (keeps the green colour). Finish with lemon.</li><li>Serve with white rice.</li></ol>
+      <div class="tl"><b>Mahalagang paalala (Tagalog)</b><ul><li>Spinach: 1 minuto lang sa kumukulong tubig, tapos malamig na tubig agad para manatiling berde.</li><li>Walang cream, walang chili (para kay Einas).</li></ul></div>
+    </div>
+  </div>
+  <div class="foot">
+    <div class="brand">Al Maysari Family Cookbook · Mohamed &amp; Einas · 2026</div>
+    <div style="display:flex"><div class="qr"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAANIAAADSCAIAAACw+wkVAAAEyUlEQVR4nO3dMW6mNRSGUQaxAUoq9r8sKkqWMHQUOIVl2X78z5xTRkm+L8krSzf32v72/fv3X+CuX+sX4GckdgTEjoDYERA7Ar+NH/rzj9/vv8d//vr7n/99ZHyf8XNGMz/FrmetPX3Gzd/GOeMbWu0IiB0BsSMgdgTEjsAXlexorZqbsavC2lWB/jxPb/+mVjsCYkdA7AiIHQGxIzBVyY7WKtC16mmtL3muC7n29F2V42v/VVh7H6sdAbEjIHYExI6A2BFYrGRv2tVz3FVd3qwl1yr0mx3hNVY7AmJHQOwIiB0BsSPwAZXszd2sa3tOX+uTvs9qR0DsCIgdAbEjIHYEFivZ97t+u0582vWsNT/G3PLIakdA7AiIHQGxIyB2BKYq2bYzuGtf6q59oLuede7nev80Y6sdAbEjIHYExI6A2BH49v59sjc7nu8//WaX9hyrHQGxIyB2BMSOgNgRmLpPdte5QzdPx32tU3mubp1xbkfwWhKsdgTEjoDYERA7AmJH4ItKdldHb9cpuzfv0xnd3Et786Titra12hEQOwJiR0DsCIgdgcWe7M0u7c1Z2fbG29f2I4921fVWOwJiR0DsCIgdAbEjsHh28a6q52b/d7SrI9zuVD13T+65/zNY7QiIHQGxIyB2BMSOwMETn9r9trtmbme8f1bwrjfcNYFstSMgdgTEjoDYERA7AouV7K66rD1lt51tPrdT9dzTd30fqx0BsSMgdgTEjoDYEVi8T/bmDTJtN3NNewby6NyJx6aL+RhiR0DsCIgdAbEjMNWTvTl3usu5GvnmO888vZ2IVsnyMcSOgNgREDsCYkdgqid7ruo5t5d216lH55yb0D53T9AuVjsCYkdA7AiIHQGxIzB1C8+M9+eN104hHu2qds/tSz03ob3rZ7faERA7AmJHQOwIiB2BbdPFo3aat50uPtdrntF2e534xKPEjoDYERA7AmJH4ItKdtf5TjNudg/P7fZde58ZN+vxc393t/DwBLEjIHYExI6A2BH4Yrp4V40z49wZR6/NCd887artGs98ldWOgNgREDsCYkdA7AhM7ZM9V+PMfM77U7g3967ePJfpXMfcakdA7AiIHQGxIyB2BKb2yY5uTiCvOdc1fm3W+ua88RrTxTxB7AiIHQGxIyB2BKZu4dnVPbw59XpzunjGuTpx7VntPmKrHQGxIyB2BMSOgNgRWJwunvmqGbtq0hm7bpg9N1l97n1G7U9htSMgdgTEjoDYERA7AovTxTedu4W2nct9rUa++XSrHQGxIyB2BMSOgNgRmOrJ3rSr/7tWYbUnR43OdWDP/TZmWO0IiB0BsSMgdgTEjsDUPtlzFc3NyeG24znjte987jdmtSMgdgTEjoDYERA7AlOV7GjXFO7aV52bAb45gTyjvaln1x1JI6sdAbEjIHYExI6A2BFYrGRven+edteZzLucOyN6V11vtSMgdgTEjoDYERA7Ah9Qyc5ob1Cdqfhu3sJz8zs7u5iPIXYExI6A2BEQOwKLlez7N7HenApem1KeedbNCv3cGcj2yfIEsSMgdgTEjoDYEfjiFp7Xzi4+d7/tzXnac09v7wBaY7UjIHYExI6A2BEQOwIfcJ8sPx6rHQGxIyB2BMSOgNgR+Bc8j9bGxAoNYgAAAABJRU5ErkJggg==" alt="QR"><div class="t"><span class="lang en">English</span><b>Scan to watch the cooking video</b>Spinach Chicken Curry (Palak Chicken) - Curries With Bumbi</div></div></div>
+  </div>
+</section>
+
+<section class="page">
+  <div class="rhead">
+    <img class="photo" src="https://images.pexels.com/photos/18698231/pexels-photo-18698231.jpeg?auto=compress&amp;cs=tinysrgb&amp;h=627&amp;fit=crop&amp;w=1200" alt="" loading="lazy">
+    <div class="title">
+      <div>
+        <div class="num">RECIPE 23 / 23</div>
+        <h1>Madhbi Chicken with Rice</h1>
+        <span class="ar">دجاج مظبي مع رز</span>
+        <p class="intro">Yemeni-style flattened chicken, marinated in madhbi spices and grilled (traditionally on hot stone; at home: very hot grill pan then oven). Served on spiced rice with sahawiq sauce.</p>
+      </div>
+      <div class="chips"><span class="chip">⏱ 1 h 15 min (plus marinating)</span><span class="chip">Level: Medium</span></div>
+    </div>
+  </div>
+  <div class="cols">
+    <div>
+      <h3>Ingredients</h3>
+      <table class="ing"><thead><tr><th>Ingredient</th><th class="q">1 person</th><th class="q">2 persons</th></tr></thead><tbody><tr><td>Half chicken, flattened (butterflied)</td><td class="q">1/2 chicken (~600 g)</td><td class="q p2">1 chicken (~1.2 kg)</td></tr><tr><td>Yogurt</td><td class="q">3 tbsp</td><td class="q p2">6 tbsp</td></tr><tr><td>Garlic, crushed</td><td class="q">3 cloves</td><td class="q p2">6 cloves</td></tr><tr><td>Madhbi / hawaij spice (cumin, coriander, turmeric, cardamom, black pepper)</td><td class="q">1.5 tbsp</td><td class="q p2">3 tbsp</td></tr><tr><td>Lemon juice</td><td class="q">2 tbsp</td><td class="q p2">4 tbsp</td></tr><tr><td>Oil</td><td class="q">2 tbsp</td><td class="q p2">3 tbsp</td></tr><tr><td>Basmati rice, washed, soaked</td><td class="q">1 cup</td><td class="q p2">2 cups</td></tr><tr><td>Onion, chopped</td><td class="q">1</td><td class="q p2">2</td></tr><tr><td>Whole spices: cardamom, cinnamon, cloves</td><td class="q">1 set</td><td class="q p2">1 set</td></tr><tr><td>Turmeric for rice</td><td class="q">1/4 tsp</td><td class="q p2">1/2 tsp</td></tr><tr><td>Chicken stock / water</td><td class="q">1.5 cups</td><td class="q p2">3 cups</td></tr><tr><td>Sahawiq sauce: tomato, coriander, garlic, lemon (chili only for Mohamed)</td><td class="q">1 set</td><td class="q p2">1 set</td></tr><tr><td>Salt</td><td class="q">to taste</td><td class="q p2">to taste</td></tr></tbody></table>
+    </div>
+    <div>
+      <h3>Method</h3>
+      <ol class="steps"><li>Cut chicken along the backbone and press flat. Make deep cuts in thick parts. Marinate with yogurt, garlic, spices, lemon, oil, salt. Minimum 2 hours, overnight best.</li><li>Heat a grill pan or heavy pan very hot. Sear chicken skin side down 6-8 min until charred, flip 5 min.</li><li>Move to oven 190 C for 25-30 min until cooked through (juices clear).</li><li>Rice: fry onion golden in ghee, add whole spices and turmeric, rice 1 min, stock, salt. Boil, cover LOW 18 min, rest 5 min.</li><li>Sahawiq: blend tomato, coriander, garlic, lemon, salt (add green chili only in Mohamed&#x27;s portion). Serve chicken on rice with sauce.</li></ol>
+      <div class="tl"><b>Mahalagang paalala (Tagalog)</b><ul><li>Napakainit na pan sa umpisa para sa &#x27;char&#x27; (sunog-sunog na balat), tapos oven para maluto sa loob.</li><li>Sahawiq para kay Einas: walang sili. Hiwalay na mangkok.</li></ul></div>
+    </div>
+  </div>
+  <div class="foot">
+    <div class="brand">Al Maysari Family Cookbook · Mohamed &amp; Einas · 2026</div>
+    <div style="display:flex"><div class="qr"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAANIAAADSCAIAAACw+wkVAAAEtElEQVR4nO3dMY7kNhRAQa+xF3DoyPc/liOHPkI7c6IJCILko2arQmNa6p15EPBNifrx+Xx+g7N+r78AvyLZEZAdAdkRkB2Bn8//9Neff5z/Hv/7+59/lxxn5F/xPNfzU3PfZ9XvcNU3vO1v6mpHQHYEZEdAdgRkR+CLSfZp1XT5NDdhrZo3n/bNtiNHnjvOnPZv6mpHQHYEZEdAdgRkR2Bokn06OYXtmyVHzjVnbiJ+/szcp06uI8+dy9WOgOwIyI6A7AjIjsDkJNsamd32TbsjblvJvY2rHQHZEZAdAdkRkB2BV06y9893c+u/+9Zbb+NqR0B2BGRHQHYEZEdgcpK9f55adS/xquOcvAe4XY8e4WpHQHYEZEdAdgRkR2Bokr1txXPO3BroquOsWm9dtR7d/k1d7QjIjoDsCMiOgOwIfDHJ3r/eOuK2987MzcgjPzM3/7Zc7QjIjoDsCMiOgOwIDL1P9uRzqSN7N606+6rdevdNl+2/dIS9i3kN2RGQHQHZEZAdgY1rsqsmvlWT9cn7ck8+ObvKvnutn1ztCMiOgOwIyI6A7Aj8+Hw+Ex9bNZN+Vyff5rNvL6lV/8fgydWOgOwIyI6A7AjIjsDQJLtqxXPVCuyIdgacc/L3M3LkVZ7f0NWOgOwIyI6A7AjIjsDkJNs+ObvPqidnVx15zm3v93lytSMgOwKyIyA7ArIj8MUku+8tqydXD/c9S7vvntuT92yfXH22JssVZEdAdgRkR0B2BIYm2TdOYbd9n5PnOrk+bscnXkN2BGRHQHYEZEdg43OyI8c5ub65yr67nfe9FWgfb+HhNWRHQHYEZEdAdgSWrck+nVzfHLFvX6Z9T5i2byBada+1u4u5guwIyI6A7AjIjsDkJHtyN+Onk+u2J5+cbd9StO/7mGS5guwIyI6A7AjIjsDkjk9zblsZHLHvqeHvsZLr7mJeQ3YEZEdAdgRkR+Do+2TnPnVykr1/x6fbzv5kxycuJTsCsiMgOwKyI/BNnpNt1ze/66f2re262hGQHQHZEZAdAdkR+DnyQ+3dvPvMnevkU7onV8PnzJ3d1Y6A7AjIjoDsCMiOwNAke9t+wm+8J/mNuxDvWxF2tSMgOwKyIyA7ArIjMDTJPq1agb1th+F9s9vIcZ5W7SfcfsrdxVxBdgRkR0B2BGRHYHKSfbp/LntatdY8N9ue3AN5xMkJ3dWOgOwIyI6A7AjIjsAXk+yqKWzEbdPcSfvuZN43ga76PbvaEZAdAdkRkB0B2RH4YpJtp8KRpzXnZtuT7+V52ves8YhV661P3ifLa8iOgOwIyI6A7Ai8YMenVffuntwreNXK6arV55P7SHtOlkvJjoDsCMiOgOwILNvxacTJ51L3zb+3vW93bo6es+r37GpHQHYEZEdAdgRkR2DZjk8nnXySd+7Ic++4+a7vErImyxVkR0B2BGRHQHYEXjnJnnwvz6qzzx3n5M+cfHLW1Y6A7AjIjoDsCMiOwOQke3L/oje+c3bEvmdgT+5tZccnXkN2BGRHQHYEZEdgaJJtdzM+efZ9exyNWLVGfPLdRp6T5TVkR0B2BGRHQHYEfnw+n/o78MtxtSMgOwKyIyA7ArIj8B8WmvEo/P5a0QAAAABJRU5ErkJggg==" alt="QR"><div class="t"><span class="lang en">English</span><b>Scan to watch the cooking video</b>Arabic Style Chicken Madhbi - Cook with Alma</div></div></div>
+  </div>
+</section>
+<section class="page"><h2 class="section">Salads</h2><div class="section-sub">Fresh, cut right before serving. Dressing always separate for lunch boxes. · <span class="ar">السلطات</span></div><div class="rule"></div>
+
+<div class="salad">
+  <div><img class="photo" src="https://images.pexels.com/photos/36879177/pexels-photo-36879177.jpeg?auto=compress&amp;cs=tinysrgb&amp;h=627&amp;fit=crop&amp;w=1200" alt="" loading="lazy"></div>
+  <div>
+    <h2>Fattoush Salad <span class="ar">سلطة فتوش</span></h2>
+    <div class="chips" style="margin:4px 0 4px"><span class="chip">⏱ 20 min</span></div>
+    <table class="ing"><thead><tr><th>Ingredient</th><th class="q">1 person</th><th class="q">2 persons</th></tr></thead><tbody><tr><td>Romaine lettuce, chopped</td><td class="q">2 cups</td><td class="q p2">4 cups</td></tr><tr><td>Tomato, diced</td><td class="q">1</td><td class="q p2">2</td></tr><tr><td>Cucumber, diced</td><td class="q">1/2</td><td class="q p2">1</td></tr><tr><td>Radish, sliced</td><td class="q">2</td><td class="q p2">4</td></tr><tr><td>Spring onion / onion</td><td class="q">1 tbsp</td><td class="q p2">2 tbsp</td></tr><tr><td>Fresh mint + parsley</td><td class="q">2 tbsp</td><td class="q p2">4 tbsp</td></tr><tr><td>Arabic bread, toasted or fried until crisp</td><td class="q">1/2</td><td class="q p2">1</td></tr><tr><td>Dressing: lemon juice 1.5 tbsp, olive oil 2 tbsp, sumac 1 tsp, pomegranate molasses 1 tsp, garlic, salt</td><td class="q">1 set</td><td class="q p2">2 sets</td></tr></tbody></table>
+    <ol class="steps"><li>Toast bread in oven 180 C until crisp, break into pieces.</li><li>Mix all vegetables and herbs in a bowl.</li><li>Whisk dressing. Add dressing and bread only at serving time.</li></ol>
+    <div class="tl"><b>Mahalagang paalala (Tagalog)</b><ul><li>Tinapay at dressing: ilagay bago ihain lang, para hindi malata.</li></ul></div>
+  </div>
+  <div class="qrs"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAANIAAADSCAIAAACw+wkVAAAEuklEQVR4nO3dMW4mNQCAURZxAUoq7n8sKkqOEDoKHGkty/bn7L5XRsnMJP8nS45nxt8+Pj5+gbt+rS+An5HsCMiOgOwIyI7Ab+OX/vzj9/vX8Z+//v7nf19Zu56144w/Ndp1PWtHnjnO2pHPGa/ZaEdAdgRkR0B2BGRH4JOZ7Ght9jTj5txt12+x6zi7rnDtOO1narQjIDsCsiMgOwKyIzA1kx2dW5ecOdfMeuvaGui5FeEZ565n7ewz1n5Tox0B2RGQHQHZEZAdgcWZ7E27ZnO71kBfW9s9t7p6jtGOgOwIyI6A7AjIjsAXmMmOZua25+4uXvPa9bSMdgRkR0B2BGRHQHYEFmeyN2dhr91P+/5x1tz8TI12BGRHQHYEZEdAdgSmZrLtDGu09pzsz/w9o/YzNdoRkB0B2RGQHQHZEfhkJvvaXa9rz8m+tk7aHue1z9RoR0B2BGRHQHYEZEdgaj/ZXeuAM+ca7dpT5uZ+su3usTNuvu3ZfrI8QXYEZEdAdgRkR+DqG59e2yvn3Dppu458c5eiNUY7ArIjIDsCsiMgOwKLz8neXL87tybbzuZGu1Zyz13zriMb7QjIjoDsCMiOgOwIfPv4+PjuN918NvPmfcujm+9l2nU97XHWGO0IyI6A7AjIjoDsCFx9TvbmE6avOff3uflc8y5GOwKyIyA7ArIjIDsCU2uya9q7edv3Vr32ruBddq3kGu0IyI6A7AjIjoDsCEytyc54bc1x7ewzP9XOrG++8XjX5zUy2hGQHQHZEZAdAdkR+GRN9rU36I5e2wNo5sg3j3PuPwa7GO0IyI6A7AjIjoDsCCzOZG+u+s2c/bVne99f1147+8z1zBzHaEdAdgRkR0B2BGRHYGoXnvf3J11z7s1R78+jd31eduHhy5AdAdkRkB0B2RH4ZCZ78/nNm0+G7lo5Hb12nNHN/0XMfI/RjoDsCMiOgOwIyI7A1JrsqH2W9tz7nUY3d5i9+Zve/F/EyGhHQHYEZEdAdgRkR2DqOdmb98qOzt2BvGsu2fqKf3mjHQHZEZAdAdkRkB2Bg/vJrrn5hqUZ597m1O65c+6ZZXcX8yjZEZAdAdkRkB2Bg/vJ3lzNPPf2pF1nn3FujbjdS3dktCMgOwKyIyA7ArIjMPXGpzXn1grXZlg3n0Jt7+a9ua699lNGOwKyIyA7ArIjIDsCi2uyr90rO2r3CTr37Oqu47Qr1EY7ArIjIDsCsiMgOwLPPSc7uvkM7M2zn3Pzydm1GbHRjoDsCMiOgOwIyI7Atudkd9l1n/DM9+y6S3nGzXc3zXxPO4s32hGQHQHZEZAdAdkRmNpP9uY+ODNnb3dQHZ17bvfc775m1/zXaEdAdgRkR0B2BGRHYGomO3ptf9KbT7Oe+y122bWWaj9ZfiiyIyA7ArIjIDsCizPZn8eu+43P3bc8Y9d7m+3CwxcmOwKyIyA7ArIj8AVmsuee1jy348+5c527wtG5PYKNdgRkR0B2BGRHQHYEFmeyN++wPffuprWzz7i54207+15jtCMgOwKyIyA7ArIjMDWTbd9mfG42d26XmV1z0q+4T9DMX95oR0B2BGRHQHYEZEfgC+wny4/HaEdAdgRkR0B2BGRH4F83VNBmvNBLdgAAAABJRU5ErkJggg==" alt="QR"><span class="lang en" style="font-size:8.5px;font-weight:800;color:#fff;background:#3b4a8a;border-radius:3px;padding:1px 6px">English</span><span>The best fattoush salad - Feel Good Foodie</span></div>
+</div>
+
+<div class="salad">
+  <div><div class="ph">🥗</div></div>
+  <div>
+    <h2>Walnut Salad <span class="ar">سلطة الجوز</span></h2>
+    <div class="chips" style="margin:4px 0 4px"><span class="chip">⏱ 15 min</span></div>
+    <table class="ing"><thead><tr><th>Ingredient</th><th class="q">1 person</th><th class="q">2 persons</th></tr></thead><tbody><tr><td>Mixed green leaves</td><td class="q">2 cups</td><td class="q p2">4 cups</td></tr><tr><td>Apple, sliced thin</td><td class="q">1/2</td><td class="q p2">1</td></tr><tr><td>Walnuts, toasted</td><td class="q">3 tbsp</td><td class="q p2">6 tbsp</td></tr><tr><td>Pomegranate seeds or dried cranberries</td><td class="q">2 tbsp</td><td class="q p2">4 tbsp</td></tr><tr><td>Feta (lactose-free for Einas)</td><td class="q">2 tbsp</td><td class="q p2">4 tbsp</td></tr><tr><td>Dressing: balsamic vinegar 1 tbsp, olive oil 2 tbsp, honey 1 tsp, salt</td><td class="q">1 set</td><td class="q p2">2 sets</td></tr></tbody></table>
+    <ol class="steps"><li>Toast walnuts in a dry pan 3 min.</li><li>Toss leaves, apple, pomegranate.</li><li>Add walnuts, feta, dressing just before serving.</li></ol>
+    <div class="tl"><b>Mahalagang paalala (Tagalog)</b><ul><li>Apple: hiwain bago ihain lang (umiitim).</li></ul></div>
+  </div>
+  <div class="qrs"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAANIAAADSCAIAAACw+wkVAAAEuElEQVR4nO3dMa4dJwBA0TjKBlKmyv6XlSplluB0KcIrEAIu3z6ntPxmnv+/QsIww7fv37//Anf9Wn8BfkayIyA7ArIjIDsCv41/9Ocfv9//Hv/56+9//vcna99n7Trjp0a7vs/alWeus3blc8bvbLQjIDsCsiMgOwKyI/BhJjtamz3N2DXD2jX/HT81XnltTrrryru0v1OjHQHZEZAdAdkRkB2BqZns6Ny65Np11lYzZz61duVdK6drs+ab67Zr9zLaEZAdAdkRkB0B2RFYnMnedG7eumsld7R2r3Pf5zVGOwKyIyA7ArIjIDsCX2Amu2vN8eZccuYbnluhfp/RjoDsCMiOgOwIyI7A4ky2faJz19x2dG4NdNcq7dqVZ9z8nRrtCMiOgOwIyI6A7AhMzWTbPa7nduqeW6W9+X3WtL9Tox0B2RGQHQHZEZAdgW9f8TzZc7Owc2f3rGnvfo7RjoDsCMiOgOwIyI7Ah5nsrj2uN732Vqibc9ubu5R3PTVstCMgOwKyIyA7ArIj8GF38bn3Ke2615qb+43PzaNnvL8D2WhHQHYEZEdAdgRkR+DDTPbmDPTcvdoTdnZdZ9czua8x2hGQHQHZEZAdAdkRmFqT3bXmOOPc3O3maa1rV971U31/B7LRjoDsCMiOgOwIyI7A1JrsuX2wN+dcu7Q/jbVP7fr/gV2rvUY7ArIjIDsCsiMgOwKLb3za9eafm96fNb8//zWT5QuTHQHZEZAdAdkR2Hae7PvnrrYrle0Tr+f+d2KN0Y6A7AjIjoDsCMiOwNR5sjdXac+dg3PzKdQZ564zOjdvXfsNGu0IyI6A7AjIjoDsCBx8Tvbm3znn3N7dc3efuc6Mc2cAGe0IyI6A7AjIjoDsCEztLl6z9j7hmb/z2hOvN9+3vMuuvdZr9zLaEZAdAdkRkB0B2RFYnMm+dqrL6NzdXzu7Z+1f2u7iNtoRkB0B2RGQHQHZEVg8T3bXPPHcG41Gr53EOrr5FiZvfOKnIzsCsiMgOwKyI7D4nOzo3Gpmew7Ouf3Ga5869+yqU3j4wcmOgOwIyI6A7Ahse0723LuLWzff73RzbffcvNUbn3iU7AjIjoDsCMiOwIdTeNonKGfcfJZ2l/dn6DfPNjLaEZAdAdkRkB0B2RE4+O7ic3tld825Xjsn6OYK9c1d0yOjHQHZEZAdAdkRkB2BqTXZ0a4Z38yVRzdPWT23btueFTvj3O/CaEdAdgRkR0B2BGRH4MNM9jXn9iS393r/7udWn412BGRHQHYEZEdAdgSm3l1807l9uWunAu1aa951JtGuXcHnzj+yJsujZEdAdgRkR0B2BBbf+LTLrnni6Obe5tfcXBG2JsuXITsCsiMgOwKyI7D4xqf33xU84+bblWfsuvtr+7G9u5gnyI6A7AjIjoDsCBx8d3FrbWV519xt193XrnPuncyjtU8Z7QjIjoDsCMiOgOwIfIGZ7Ln53bl7zdz95rx1xs1zeYx2BGRHQHYEZEdAdgQWZ7Kv7RN+7XyfGe25RS2jHQHZEZAdAdkRkB2BqZlsOw967dTXGbt2Mt9ca167+xqjHQHZEZAdAdkRkB2BL3CeLD8eox0B2RGQHQHZEZAdgX8BT/b2FqVNnlIAAAAASUVORK5CYII=" alt="QR"><span class="lang en" style="font-size:8.5px;font-weight:800;color:#fff;background:#3b4a8a;border-radius:3px;padding:1px 6px">English</span><span>10-Minute Apple Walnut Salad - Broke Bank Vegan</span></div>
+</div>
+</section><section class="page">
+
+<div class="salad">
+  <div><div class="ph">🌽</div></div>
+  <div>
+    <h2>Corn Salad <span class="ar">سلطة الذرة</span></h2>
+    <div class="chips" style="margin:4px 0 4px"><span class="chip">⏱ 15 min</span></div>
+    <table class="ing"><thead><tr><th>Ingredient</th><th class="q">1 person</th><th class="q">2 persons</th></tr></thead><tbody><tr><td>Sweet corn kernels (boiled or canned, drained)</td><td class="q">1 cup</td><td class="q p2">2 cups</td></tr><tr><td>Cucumber, diced</td><td class="q">1/2</td><td class="q p2">1</td></tr><tr><td>Bell pepper (red), diced</td><td class="q">1/2</td><td class="q p2">1</td></tr><tr><td>Cherry tomatoes, halved</td><td class="q">6</td><td class="q p2">12</td></tr><tr><td>Red onion, finely chopped</td><td class="q">1 tbsp</td><td class="q p2">2 tbsp</td></tr><tr><td>Fresh coriander or parsley</td><td class="q">2 tbsp</td><td class="q p2">4 tbsp</td></tr><tr><td>Dressing: lime juice 1.5 tbsp, olive oil 1.5 tbsp, salt, pepper</td><td class="q">1 set</td><td class="q p2">2 sets</td></tr></tbody></table>
+    <ol class="steps"><li>Mix all vegetables.</li><li>Add dressing, toss. Serve cold.</li></ol>
+    <div class="tl"><b>Mahalagang paalala (Tagalog)</b><ul><li>Hindi creamy, walang mayonnaise. Lime at olive oil lang.</li></ul></div>
+  </div>
+  <div class="qrs"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAANIAAADSCAIAAACw+wkVAAAEuUlEQVR4nO3dMY7dNhRA0TjIBlKmyv6X5SplluB0KaIpCIKPV985pzT8pe+ZCwI0Kerbjx8/foG7fq2/AP9HsiMgOwKyIyA7Ar89/+jPP36//z3+9f2vv//zJ3vfZ+86z089nfo+e1deuc7elec8v7PRjoDsCMiOgOwIyI7AFzPZp73Z04p2Vrjyqee99u5+6sqntL9Tox0B2RGQHQHZEZAdgaWZ7NPcDHTv7itX3lul3VsnPbVyujdrvrluu3cvox0B2RGQHQHZEZAdgc2Z7E1z+4RP7WR+Wpld7v2dn4PRjoDsCMiOgOwIyI7AB8xkb8745p7S3fs7p+71NkY7ArIjIDsCsiMgOwKbM9n2ic65ue3cGuipVdq9K6+4+Ts12hGQHQHZEZAdAdkRWJrJtntc53bqzs2Rb36fPe3v1GhHQHYEZEdAdgRkR+DbJ75Pdm4WNvdM7p727nOMdgRkR0B2BGRHQHYEvpjJntrjetOpXbin1mRvzm1v7lI+9dSw0Y6A7AjIjoDsCMiOwLETn27O+N62v3fl7bFPc3uJ378D2WhHQHYEZEdAdgRkR+CLmezbntZs1xP37nXqOqfeePvU7kk22hGQHQHZEZAdAdkRWFqTfdt666nvc/Ok4lOfmvs/hJvnJBvtCMiOgOwIyI6A7AjEZxd/4tm8c2vW7fOtK9c59X2MdgRkR0B2BGRHQHYENk98mjsZ6eZ+47lP7ZlbxZ67+x6jHQHZEZAdAdkRkB2BpZns082zglfcnIHenG+2K9Rzvy+jHQHZEZAdAdkRkB2BzROfnk7tX11xc+fwyt1XPtWeo3Xz52x3MS8lOwKyIyA7ArIj8MVM9uZMrV233fvUzZOR5s5bXjG399toR0B2BGRHQHYEZEdg832yN998+v79xnPr0Tf3SN+c6RvtCMiOgOwIyI6A7Ah88Zzs09zK6c012VN3P+XUvU7NdufO7LK7mFeQHQHZEZAdAdkROLa7eMXN853mVo3nVnvn5tE3T2BeYbQjIDsCsiMgOwKyI7B54tPem0af5s5JXtHuN9771Pvn7CuMdgRkR0B2BGRHQHYENt/Cc8rNFc89N893mtP+fJ6MdgRkR0B2BGRHQHYElk58mptvtrPmm1f+xOdtT719yXOyvILsCMiOgOwIyI7A5tnFK+aeDH3b3t12f+/N/w04xWhHQHYEZEdAdgRkR2Bwd/HNtcL2Kd09b3vn7NPczmqjHQHZEZAdAdkRkB2BpbfwtE6tS97cA9zOSd9/IrTRjoDsCMiOgOwIyI7A0lt4bprbl9uuNZ86//nUzur2zUpGOwKyIyA7ArIjIDsCmyc+nfK2J15P3X3uad89b9t9bbQjIDsCsiMgOwKyI7B54tPc+1v3rjM3K7z5Lz31r7i5S9nZxXwM2RGQHQHZEZAdgcGzi+e87Y23T3vrv3NvO5o7k3nv52O0IyA7ArIjIDsCsiPwATPZuXfT3DzjaO5e7TfcY7QjIDsCsiMgOwKyI7A5k517cnbPzdncKe08eu5TK4x2BGRHQHYEZEdAdgSWZrLtacbvP99p5fuc+jtv21ntxCc+huwIyI6A7AjIjsAHvE+Wn4/RjoDsCMiOgOwIyI7AP1Rh16eZUitRAAAAAElFTkSuQmCC" alt="QR"><span class="lang en" style="font-size:8.5px;font-weight:800;color:#fff;background:#3b4a8a;border-radius:3px;padding:1px 6px">English</span><span>The Best Corn Salad - Inspired Taste</span></div>
+</div>
+
+<div class="salad">
+  <div><div class="ph">🌿</div></div>
+  <div>
+    <h2>Burghul (Bulgur) Salad / Tabbouleh <span class="ar">سلطة برغل / تبولة</span></h2>
+    <div class="chips" style="margin:4px 0 4px"><span class="chip">⏱ 25 min</span></div>
+    <table class="ing"><thead><tr><th>Ingredient</th><th class="q">1 person</th><th class="q">2 persons</th></tr></thead><tbody><tr><td>Fine bulgur, soaked in hot water 15 min, squeezed</td><td class="q">3 tbsp</td><td class="q p2">6 tbsp</td></tr><tr><td>Parsley, very finely chopped</td><td class="q">1.5 cups</td><td class="q p2">3 cups</td></tr><tr><td>Fresh mint, chopped</td><td class="q">2 tbsp</td><td class="q p2">4 tbsp</td></tr><tr><td>Tomato, finely diced</td><td class="q">1</td><td class="q p2">2</td></tr><tr><td>Spring onion, chopped</td><td class="q">1</td><td class="q p2">2</td></tr><tr><td>Lemon juice</td><td class="q">2 tbsp</td><td class="q p2">4 tbsp</td></tr><tr><td>Olive oil</td><td class="q">2 tbsp</td><td class="q p2">4 tbsp</td></tr><tr><td>Salt</td><td class="q">to taste</td><td class="q p2">to taste</td></tr></tbody></table>
+    <ol class="steps"><li>Soak bulgur, squeeze dry.</li><li>Chop parsley very fine with a sharp knife (do not blend).</li><li>Mix everything, add lemon, oil, salt. Rest 10 min.</li></ol>
+    <div class="tl"><b>Mahalagang paalala (Tagalog)</b><ul><li>Parsley: pinong-pino sa kutsilyo, hindi sa blender (magiging lata).</li></ul></div>
+  </div>
+  <div class="qrs"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAANIAAADSCAIAAACw+wkVAAAEt0lEQVR4nO3dO440RRCFUX7EBjCx2P+ysDBZwuBhUGOkUhn5VcM55qjr0TNXKcVEPn58fX39BHf9XL8A/0diR0DsCIgdAbEj8MvzR7//9uv99/jHH3/+deQ+K9/i+aznVXvvc+p3eOoN3/Y3NdoREDsCYkdA7AiIHYFvKtmnU9Xl016FNVeXzdW2K3feu8+e9m9qtCMgdgTEjoDYERA7AkuV7NPNKmylltzrwK48a89eRfz8zN5VN/vIe88y2hEQOwJiR0DsCIgdgc1KtnVqhu3zqrm5zW0n922MdgTEjoDYERA7AmJH4CMr2b2+5M2q8FRlfaoifhujHQGxIyB2BMSOgNgR2KxkP7Gemps9u3Lnm3OAT/V/5xjtCIgdAbEjIHYExI7AUiX735jR+rTXpT3VS92rbU91ltu/qdGOgNgREDsCYkdA7Ah8U8l+Yr/16W3nzuzVyCuf2at/W0Y7AmJHQOwIiB0BsSOwdJ5su8J07umn5hvPVZftN11h72I+htgREDsCYkdA7AgM7vh0quKbO4Vnbl7uzZWzp8z1kZ93NtoREDsCYkdA7AiIHYEfX19f//rRzU5luwvTnJun+cydpTu3l7LRjoDYERA7AmJHQOwILFWybXe1/cyKU1Xzqd/h3lU3v4XRjoDYERA7AmJHQOwIbFayT3Pze2/Ouf1v9IhvdoT3GO0IiB0BsSMgdgTEjsDV2cUrVz2193nb/N6Vq1bc7D5bJ8sriB0BsSMgdgTEjsBgT/ZtazPbdbsr73PqWe23MLuYlxI7AmJHQOwIiB2BpfNkb9aSc9q6deU+p/YKPmVu7rfRjoDYERA7AmJHQOwIDO74dHMHoaebJ6jOVXztCURz+2gZ7QiIHQGxIyB2BMSOwDeV7Iq5Omju6afu87bzbU+5+b8Iox0BsSMgdgTEjoDYEViqZNsVnTdnMrdns+49a0+717TRjoDYERA7AmJHQOwIHOvJvu3kl5tzpD/xFNo5KlleSuwIiB0BsSMgdgQ2K9kV7b7ET21vd+6q9j57v3mjHQGxIyB2BMSOgNgR2DxP9hNn/O7dec/NPml7Uq0dn/gYYkdA7AiIHQGxI/DNKTxPp3qpe/e5eS7tXMX3tl2In272kY12BMSOgNgREDsCYkfg2Ck8T+9fOfvU9jf33ufUs+boyfIKYkdA7AiIHQGxI7DUk93T9kCfbu4DvNeh3rvzJ57dY7QjIHYExI6A2BEQOwLfVLKnqrAVc9Xl+71/1fBKlbpXRxvtCIgdAbEjIHYExI7AN5Xs23p8p1a8zq1CXdHW7HOnJu3dx2hHQOwIiB0BsSMgdgQ2d3w65dReSU9zJ/7MVc17z1pxc72tvYt5KbEjIHYExI6A2BHYXCfbrlQ91Sedq9Tmnj434/fU0+1dzEuJHQGxIyB2BMSOwOCOT3NuriedO5tm7pygt50lpCfLK4gdAbEjIHYExI7AR1aycyteT31mrnKc+8zNlbNGOwJiR0DsCIgdAbEjsHme7CntTN2nudW1K27WyO0KXKMdAbEjIHYExI6A2BFYqmRvurl78NxK1betCJ57Z+tk+RhiR0DsCIgdAbEj8E0lC9OMdgTEjoDYERA7AmJH4G86hwS4nRUj8QAAAABJRU5ErkJggg==" alt="QR"><span class="lang en" style="font-size:8.5px;font-weight:800;color:#fff;background:#3b4a8a;border-radius:3px;padding:1px 6px">English</span><span>Tabouli Salad Recipe - The Mediterranean Dish</span></div>
+</div>
+</section><section class="page">
+
+<div class="salad">
+  <div><div class="ph">🥬</div></div>
+  <div>
+    <h2>Green Mix Salad <span class="ar">سلطة خضراء مشكلة</span></h2>
+    <div class="chips" style="margin:4px 0 4px"><span class="chip">⏱ 10 min</span></div>
+    <table class="ing"><thead><tr><th>Ingredient</th><th class="q">1 person</th><th class="q">2 persons</th></tr></thead><tbody><tr><td>Mixed leaves (lettuce, rocket, baby spinach)</td><td class="q">2 cups</td><td class="q p2">4 cups</td></tr><tr><td>Cucumber, sliced</td><td class="q">1/2</td><td class="q p2">1</td></tr><tr><td>Cherry tomatoes</td><td class="q">6</td><td class="q p2">12</td></tr><tr><td>Avocado (optional)</td><td class="q">1/2</td><td class="q p2">1</td></tr><tr><td>Dressing: lemon 1 tbsp, olive oil 2 tbsp, salt, pepper</td><td class="q">1 set</td><td class="q p2">2 sets</td></tr></tbody></table>
+    <ol class="steps"><li>Wash and dry leaves well.</li><li>Mix, add dressing at serving.</li></ol>
+    <div class="tl"><b>Mahalagang paalala (Tagalog)</b><ul><li>Patuyuin ang dahon pagkatapos hugasan; basang dahon = lata.</li></ul></div>
+  </div>
+  <div class="qrs"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAANIAAADSCAIAAACw+wkVAAAExElEQVR4nO3dMY4lNRRAUQaxAUIi9r8sIkKW0GQEuAPLsn394Zxw1NP1u+fK0htXlX98fX39BHf9XH8A/o9kR0B2BGRHQHYEfhn/6Pfffr3/Of7xx59//etPxs8zfs1o5qfYda21q8+4+ds4Z/yEVjsCsiMgOwKyIyA7At9MsqO1aW7G2oS1NqWes2v+vXn19t/UakdAdgRkR0B2BGRHYGqSHa1NoGvT08y+5OjcLuTM5Hhutn3tfxXWPo/VjoDsCMiOgOwIyI7A4iR7064Ja9d0eXOWXJvib+4Ir7HaEZAdAdkRkB0B2RH4gEl2157suWdOX9snfZ/VjoDsCMiOgOwIyI7A4iT72q7frgn03HO7a/4b9y2PrHYEZEdAdgRkR0B2BKYm2XZn8LXnUndNxLt+rk98m7HVjoDsCMiOgOwIyI7Aj/fPk7254/n+1W9O8edY7QjIjoDsCMiOgOwITJ0nu+u9QzffjrvmE+fWGeeeCF4rwWpHQHYEZEdAdgRkR2BxT3bXxNfOUzfn8Rnn3lTc/n5MsjxBdgRkR0B2BGRHYGpPdtTOkmtfM+PcibczX/Pa88ijXXO91Y6A7AjIjoDsCMiOwAfsybZXP3dH9Pt7u+fuSbbaEZAdAdkRkB0B2RFYfE521wT62p7sJ86tM9p7pEdWOwKyIyA7ArIjIDsC295dvGsG3DXbjl5739TNtzCdO0toZJLlUbIjIDsCsiMgOwKL58nefJ505vPMXOum9s7hc+fb7mK1IyA7ArIjIDsCsiMwtSd77g26505Hbe+eXfPau5RnrP02rHYEZEdAdgRkR0B2BK7eXXxuCts17b5/dm175s7a5xlZ7QjIjoDsCMiOgOwILN5dPGqf8Zxx7lzaNeem7/Z/DLy7mEfJjoDsCMiOgOwIfLMn+9oZN5+4C9lOzeeuvuszW+0IyI6A7AjIjoDsCExNsjfPXW3nu7XvM+PmTHrua2Y+4cieLE+QHQHZEZAdAdkR+Obu4rUZZ9f7ctfs2mHc9U7m0blncs+dt3tu39ZqR0B2BGRHQHYEZEdgcU/2tVNfX3NzF3vmO++amnft7VrtCMiOgOwIyI6A7AgcfHfxuedSb+7AfuK91jffW+XuYj6G7AjIjoDsCMiOwMF3F7dn3Ixeu/rNE2/Ha+2atd1dzMeQHQHZEZAdAdkR+GaSXdtd3XUyzmvaHeFdn2fNuZ/CakdAdgRkR0B2BGRHYOqNT2tfM+PmiTav3f88unn+0czVz73x2GpHQHYEZEdAdgRkR2BqT/amc7PtuR3Gdld0xtpPeu5+bKsdAdkRkB0B2RGQHYGp52TPTTTnTuE5dyrQud/Ga9/53H3UVjsCsiMgOwKyIyA7AlOT7OjcCTIzf+vcDuPNO5BnvHaX8q7no612BGRHQHYEZEdAdgQWJ9mbdj0Du+tvjdozXkftzD7DakdAdgRkR0B2BGRH4AMm2TUzk9rNp1Bvzok3n3T27mI+huwIyI6A7AjIjsDiJHvzbNZzM+Cup2LX3vo7c62b71I+9/4rz8nyBNkRkB0B2RGQHYEfX19f//qj195dvOvO4V3XuvkU6rlP2D7/a7UjIDsCsiMgOwKyI/DNJAunWe0IyI6A7AjIjoDsCPwNu+bu4LNKZ4AAAAAASUVORK5CYII=" alt="QR"><span class="lang " style="font-size:8.5px;font-weight:800;color:#fff;background:#2f6b4a;border-radius:3px;padding:1px 6px">Tagalog</span><span>Pinaka Madaling Vegetable Salad - Friend-Cheap Menu</span></div>
+</div>
+
+<div class="salad">
+  <div><div class="ph">🫒</div></div>
+  <div>
+    <h2>Greek Salad <span class="ar">سلطة يونانية</span></h2>
+    <div class="chips" style="margin:4px 0 4px"><span class="chip">⏱ 10 min</span></div>
+    <table class="ing"><thead><tr><th>Ingredient</th><th class="q">1 person</th><th class="q">2 persons</th></tr></thead><tbody><tr><td>Tomato, chunks</td><td class="q">1 large</td><td class="q p2">2 large</td></tr><tr><td>Cucumber, chunks</td><td class="q">1/2</td><td class="q p2">1</td></tr><tr><td>Red onion, thin slices</td><td class="q">2 tbsp</td><td class="q p2">4 tbsp</td></tr><tr><td>Kalamata olives</td><td class="q">6</td><td class="q p2">12</td></tr><tr><td>Feta block (lactose-free for Einas)</td><td class="q">50 g</td><td class="q p2">100 g</td></tr><tr><td>Dried oregano</td><td class="q">1/2 tsp</td><td class="q p2">1 tsp</td></tr><tr><td>Olive oil + red wine vinegar or lemon</td><td class="q">2 tbsp + 1 tbsp</td><td class="q p2">4 tbsp + 2 tbsp</td></tr><tr><td>Salt, pepper</td><td class="q">to taste</td><td class="q p2">to taste</td></tr></tbody></table>
+    <ol class="steps"><li>Cut vegetables in big chunks.</li><li>Mix with olives, oil, vinegar, salt.</li><li>Put feta on top, sprinkle oregano.</li></ol>
+    <div class="tl"><b>Mahalagang paalala (Tagalog)</b><ul><li>Malalaking hiwa; feta sa ibabaw, hindi hinahalo.</li></ul></div>
+  </div>
+  <div class="qrs"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAANIAAADSCAIAAACw+wkVAAAE3ElEQVR4nO3dPY4suRGFUT1BGxhTlva/LFkytYQaT4ayDYJg8Mt6c47Z6CpmdV8QiAr+/Pp8Pn+Du/5ePwB/RWJHQOwIiB0BsSPwj+eP/vXPP+4/x//8+z//PfI+K5/iOdbzVXvPc+pveOoJ3/Y/NdsREDsCYkdA7AiIHYEfKtmnU9Xl016FNVeXzdW2K++89z572v+p2Y6A2BEQOwJiR0DsCCxVsk83q7BTXcibvcu9ivj5O3uvutlH3hvLbEdA7AiIHQGxIyB2BDYr2dbeyuEVc2ub207u25jtCIgdAbEjIHYExI7AV1ayp+q7m6uUV0af67e+jdmOgNgREDsCYkdA7AhsVrLfWE/NrZ5deeeba4DbfvQKsx0BsSMgdgTEjoDYEViqZH+PFa1Pe73dU73Uvdr2/f3oFWY7AmJHQOwIiB0BsSPwQyX7jf3Wp7fdO7NXI6/8zl792zLbERA7AmJHQOwIiB2Bpftkb5479BxrbvRT643nqsv2k65wdjFfQ+wIiB0BsSMgdgQGT3w6VfHdvBlnRdtdnXPz+wqzHQGxIyB2BMSOgNgR+PX5fP7vR+3JSG8ba8/N23zmzpLaq21XRjfbERA7AmJHQOwIiB2BwZ7sqQ7szbOSTtWAp74NmOtrn/o2YO8JzXYExI6A2BEQOwJiR2CzJ9vunL1ZI6/4XXvEc98qmO0IiB0BsSMgdgTEjsBgT3bF3N7VU/3Nm2tu233Ep+jJ8lJiR0DsCIgdAbEjsNSTfVvttuJmVXiq43lqrLlVwfbJ8sXEjoDYERA7AmJHYOk+2bm7YOZqpb3nWXFq9JtnKe+Z+1+Y7QiIHQGxIyB2BMSOwLGe7Fz9e7PjueJm9d3eQDS3u9ZsR0DsCIgdAbEjIHYEju2TvXlfzN7op95n73du1v5Pc6d46cnyNcSOgNgREDsCYkfgh57sipunDM2dMDxXfbfrqN/fyTXbERA7AmJHQOwIiB2BH3qyc3XiqVfNWRl975zkuec5Ndbe6HvMdgTEjoDYERA7AmJHYHN18V71dKrjefMU4rme7NxYTzdvILJPlpcSOwJiR0DsCIgdgaUTn57m+oArbu76bO/K2XvnlbFudnJVsryC2BEQOwJiR0DsCCz1ZOduht2rLk91Blee59SnmDvxqb09dmWsJ7MdAbEjIHYExI6A2BHYvIVnzqmO8M1e6ttWO7d/w5WxzHYExI6A2BEQOwJiR2Bzn+zNU6H2Rm+r77ndvr9HJ9dsR0DsCIgdAbEjIHYEfqhkT1VhK+aqufZ+2xU312PvPc/cq8x2BMSOgNgREDsCYkfg2C08p+ztil1xc1Xw09vOyLr5XcST2Y6A2BEQOwJiR0DsCBw78WnP3llJT3PnMq2MtdIRXnmfvbFWtF1a+2R5BbEjIHYExI6A2BGI98numTvjaMWp/ubcXuO5rvqpFdpmOwJiR0DsCIgdAbEjsFnJvt/crthTe3tPnad06pPO3SWkJ8sriB0BsSMgdgTEjsBXVrJtR/htq51vrtBeoSfLS4kdAbEjIHYExI7AZiV78/yivaqw7W+uuLlGeu42Hyc+8TXEjoDYERA7AmJHYKmSbU8zvjn6zVORn+b2wM5V6PbJ8jXEjoDYERA7AmJH4Nfn86mfgb8csx0BsSMgdgTEjoDYEfgTKDLaG8yogsoAAAAASUVORK5CYII=" alt="QR"><span class="lang en" style="font-size:8.5px;font-weight:800;color:#fff;background:#3b4a8a;border-radius:3px;padding:1px 6px">English</span><span>Greek Salad Recipe - Natasha&#x27;s Kitchen</span></div>
+</div>
+</section><section class="page">
+
+<div class="salad">
+  <div><div class="ph">🥗</div></div>
+  <div>
+    <h2>Caesar Salad with Grilled Chicken <span class="ar">سلطة سيزر بالدجاج</span></h2>
+    <div class="chips" style="margin:4px 0 4px"><span class="chip">⏱ 25 min</span></div>
+    <table class="ing"><thead><tr><th>Ingredient</th><th class="q">1 person</th><th class="q">2 persons</th></tr></thead><tbody><tr><td>Romaine lettuce, chopped</td><td class="q">2 cups</td><td class="q p2">4 cups</td></tr><tr><td>Chicken breast, grilled, sliced</td><td class="q">120 g</td><td class="q p2">250 g</td></tr><tr><td>Croutons (toasted bread cubes)</td><td class="q">1/2 cup</td><td class="q p2">1 cup</td></tr><tr><td>Parmesan, shaved</td><td class="q">2 tbsp</td><td class="q p2">4 tbsp</td></tr><tr><td>Caesar dressing (bottle)</td><td class="q">2 tbsp</td><td class="q p2">4 tbsp</td></tr></tbody></table>
+    <ol class="steps"><li>Season chicken with salt, pepper, garlic, oil. Grill 5-6 min each side. Rest, slice.</li><li>Toss lettuce with dressing.</li><li>Top with chicken, croutons, parmesan.</li></ol>
+    <div class="tl"><b>Mahalagang paalala (Tagalog)</b><ul><li>Dressing sa hiwalay na lalagyan kapag lunch box.</li></ul></div>
+  </div>
+  <div class="qrs"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAANIAAADSCAIAAACw+wkVAAAE00lEQVR4nO3dO44rNxRFUbfhCbzQkec/LEcO3xDkzIEpwARBclfLa4WNkqrUOrjAFX9fr9frF7jr1/oB+D8SOwJiR0DsCIgdgd/GP/3x+4/7z/GPP//6ueV9Zj7FeK/xVWvPs+t/uOsJn/adqnYExI6A2BEQOwJiR+BNJzva1V2O1jqsXf3m6FxvO/POa++zpv1OVTsCYkdA7AiIHQGxIzDVyY5udmEz91obgV17nxlrHfF4zdqrbo4jr91LtSMgdgTEjoDYERA7Aoud7NM8baTyaSO5T6PaERA7AmJHQOwIiB2Bb9nJro2u3uwKzz3huVnBN6l2BMSOgNgREDsCYkdgsZN9Wj91rm/dNSf55hzgXeO/56h2BMSOgNgREDsCYkdgqpP9jBmto7Vud9dY6lpvu6tDb79T1Y6A2BEQOwJiR0DsCLzpZJ823rrLzc+1q0eeuWat/22pdgTEjoDYERA7AmJHYOo82XaF6bmucM250dXRrk/RrggeqXYExI6A2BEQOwJiR+Dgjk+7Or5dnfXNebk3V87ucvP3CtWOgNgREDsCYkdA7Ahs62R3rRWd8fxXnetJd3Xxo3Mn3o5UOwJiR0DsCIgdAbEjcHVMduaaXeO25+41c/dd/e/N3wdGxmT5KGJHQOwIiB0BsSPw9Xq9/vOic/Ngz80KPnfGzdq9bu4VfO55dn3vqh0BsSMgdgTEjoDYEZja8WnGrs7oZod17jyd0a75vTOvOtfpz9x95l6qHQGxIyB2BMSOgNgReDMme3MnoqetQm376F33ev6vCqodAbEjIHYExI6A2BFYnF08Oren0Gf0rTNuzkDexSk8fBtiR0DsCIgdAbEjsHie7Iz21NebXeGuTv/m3Oaba43NLuYRxI6A2BEQOwJiR2BxdnG7V/DoaTse3zzfdhezi/lwYkdA7AiIHQGxI3Cwk93lZofVzqNeu9eadiRXtSMgdgTEjoDYERA7Am9mF7c919N2K5rZGXjmHNg1z+9216h2BMSOgNgREDsCYkfg4DrZGTfHf3d9rl1jsudmX6+9z6551NbJ8lBiR0DsCIgdAbEjMDW7eE17Ns3Ns2Jnnmd08//8tF8nVDsCYkdA7AiIHQGxI/BmTHZ0ri+72W+eOwPo3N1HN/tWOz7xUcSOgNgREDsCYkdgccen0c1Rvxk3x1LPdfo399o6dy9jsjyC2BEQOwJiR0DsCEyNyY5ujoGe60l32bUude2dz60jHu3q2VU7AmJHQOwIiB0BsSMwtXfx2jUz2tWarZtn4O56nl1ds2pHQOwIiB0BsSMgdgSm9i6+aW2P3xntOblPm2vd/hah2hEQOwJiR0DsCIgdgW07Pq1Zm6U8Y9d5MbtOopl5wplrbs61PveLgWpHQOwIiB0BsSMgdgQOrpMdtWtXR+f2QJ5xs0PfZdduz6odAbEjIHYExI6A2BFY7GRb5zrHc+fyrM2aPnfN6ObdVTsCYkdA7AiIHQGxI/AtO9lzY467ZjufO4X23DU3V86qdgTEjoDYERA7AmJHYLGTvTlP+NxprefGN2c87byhmzt9qXYExI6A2BEQOwJiR+Dr9Xr9609P27v4XH93bqXqd+wub/7nVTsCYkdA7AiIHQGxI/Cmk4XTVDsCYkdA7AiIHQGxI/A3GYbCXsj+agYAAAAASUVORK5CYII=" alt="QR"><span class="lang en" style="font-size:8.5px;font-weight:800;color:#fff;background:#3b4a8a;border-radius:3px;padding:1px 6px">English</span><span>Perfect Chicken Caesar Salad - Inspired Taste</span></div>
+</div>
+
+<div class="salad">
+  <div><div class="ph">🧀</div></div>
+  <div>
+    <h2>Halloumi Salad <span class="ar">سلطة حلوم</span></h2>
+    <div class="chips" style="margin:4px 0 4px"><span class="chip">⏱ 15 min</span></div>
+    <table class="ing"><thead><tr><th>Ingredient</th><th class="q">1 person</th><th class="q">2 persons</th></tr></thead><tbody><tr><td>Halloumi, sliced 1 cm</td><td class="q">80 g</td><td class="q p2">160 g</td></tr><tr><td>Mixed leaves / rocket</td><td class="q">2 cups</td><td class="q p2">4 cups</td></tr><tr><td>Cherry tomatoes</td><td class="q">6</td><td class="q p2">12</td></tr><tr><td>Cucumber</td><td class="q">1/2</td><td class="q p2">1</td></tr><tr><td>Pomegranate seeds (optional)</td><td class="q">2 tbsp</td><td class="q p2">4 tbsp</td></tr><tr><td>Dressing: lemon, olive oil, honey, mint</td><td class="q">1 set</td><td class="q p2">2 sets</td></tr></tbody></table>
+    <ol class="steps"><li>Grill halloumi in a dry hot pan 2 min each side until golden. No oil needed.</li><li>Toss leaves, tomato, cucumber with dressing.</li><li>Put warm halloumi on top.</li></ol>
+    <div class="tl"><b>Mahalagang paalala (Tagalog)</b><ul><li>Halloumi: tuyong pan, mainit, 2 min bawat side. Ihain agad habang mainit.</li></ul></div>
+  </div>
+  <div class="qrs"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAANIAAADSCAIAAACw+wkVAAAExUlEQVR4nO3dMY7cNgBA0TjIBVymyv2P5SqljzDpUphbEATJrxm/Vy7WksbzQYArifz2er3+gLv+rC+A35HsCMiOgOwIyI7AX+OP/vn7+/3r+N+Pf3/+8pO161k7zvivRruuZ+3IM8dZO/I54zUb7QjIjoDsCMiOgOwIfDGTHa3Nnmacm12OP9n1KXYdZ9cVrh2n/U6NdgRkR0B2BGRHQHYEpmayo3P3JWfOtWumNnPkp33Sc3dXb35Sox0B2RGQHQHZEZAdgcWZ7E27ZnO77oE+7d7uubur5xjtCMiOgOwIyI6A7Ai8wUx2NDO3bd8MHZ172vkdGe0IyI6A7AjIjoDsCCzOZG/OwtoVlmY87Thrbn6nRjsCsiMgOwKyIyA7AlMz2afd31x73njtLdTP+J1R+50a7QjIjoDsCMiOgOwIfDGTfdpTr7vmrWs+4zhP+06NdgRkR0B2BGRHQHYEpvaT3XUfcOZco3MrFX/GcdbsupO71obRjoDsCMiOgOwIyI7AwRWfzs34zq1mvGbXFe66nnNPIO+aWRvtCMiOgOwIyI6A7Agsvie7a/+amSPf3D12179as+tO7s09Z+0ny9uQHQHZEZAdAdkRmJrJrt1hvLnG0Zpzz0i3x1k714xdf1Uw2hGQHQHZEZAdAdkRmFrxadezu+289dyR184+uvn3gRnn5uNGOwKyIyA7ArIjIDsC296TnZk93VxLavT8VX93PbN97uy75v5GOwKyIyA7ArIjIDsCU2sXj97xvu25XWhntLvHnluBau3IRjsCsiMgOwKyIyA7At9er9cvP3r+Crq7znVuH5z2zdlzM1BrF/PGZEdAdgRkR0B2BLbNZM/tJztzrnN3M2/eob55t3fm7Oc+hdGOgOwIyI6A7AjIjsDUik+jc8+mzri5y8ya58+jz+2jZMUnHkp2BGRHQHYEZEfg4Huyu3Zrvfmc8Ln3SWecm0fPnOvc9zUy2hGQHQHZEZAdAdkRmHq6+OZzp+3ePe0V3tyBaHTzLxhGOwKyIyA7ArIjIDsCV3fhGZ2bb958Rvrm78w4t+Lx2u+MjHYEZEdAdgRkR0B2BL64Jztq94Gd0T4RPePmfdubzwmvXY/RjoDsCMiOgOwIyI7A4nuyo3b93nPP5a6dfU27AvPNp52NdgRkR0B2BGRHQHYEFtcuHt3cQfXmvdSb/+rcjHjmXGurEK99UqMdAdkRkB0B2RGQHYFt+8mOzq0wfG7WvHY9a27Ox2+y4hMPJTsCsiMgOwKyIzD1nmzraSsVP9/Nu+prfw0w2hGQHQHZEZAdAdkR2Pae7C4390I9t6LvzNlvHvlp93+NdgRkR0B2BGRHQHYEpnbhufmE7czZ1+akT3va+Wn75O46zswVGu0IyI6A7AjIjoDsCCzuJ9vOp9bsWrup/RQzzr3pvIvRjoDsCMiOgOwIyI7A4kz2He3a36f9nTVr93bPzeKNdgRkR0B2BGRHQHYE3mAme/MN0107/pw717krHNlPlo8iOwKyIyA7ArIjMLULz++zE825HV2ftp7wGvdkeWOyIyA7ArIjIDsCB/eTXbNrXaan7Tnbrl18ztr/vNGOgOwIyI6A7AjIjsAb7CfL5zHaEZAdAdkRkB0B2RH4DwgY6DqhxsHDAAAAAElFTkSuQmCC" alt="QR"><span class="lang en" style="font-size:8.5px;font-weight:800;color:#fff;background:#3b4a8a;border-radius:3px;padding:1px 6px">English</span><span>Grilled Halloumi Salad - The Cooking Foodie</span></div>
+</div>
+</section><section class="page">
+
+<div class="salad">
+  <div><div class="ph">🌱</div></div>
+  <div>
+    <h2>Jarjeer (Rocket) Salad <span class="ar">سلطة جرجير</span></h2>
+    <div class="chips" style="margin:4px 0 4px"><span class="chip">⏱ 10 min</span></div>
+    <table class="ing"><thead><tr><th>Ingredient</th><th class="q">1 person</th><th class="q">2 persons</th></tr></thead><tbody><tr><td>Rocket (jarjeer) leaves</td><td class="q">2 cups</td><td class="q p2">4 cups</td></tr><tr><td>Onion, thin slices</td><td class="q">2 tbsp</td><td class="q p2">4 tbsp</td></tr><tr><td>Cherry tomatoes or tomato</td><td class="q">6</td><td class="q p2">12</td></tr><tr><td>Sumac</td><td class="q">1/2 tsp</td><td class="q p2">1 tsp</td></tr><tr><td>Lemon juice + olive oil</td><td class="q">1 tbsp + 2 tbsp</td><td class="q p2">2 tbsp + 4 tbsp</td></tr><tr><td>Salt</td><td class="q">pinch</td><td class="q p2">pinch</td></tr></tbody></table>
+    <ol class="steps"><li>Wash and dry rocket.</li><li>Mix with onion, tomato.</li><li>Dress with lemon, oil, sumac, salt right before serving.</li></ol>
+    <div class="tl"><b>Mahalagang paalala (Tagalog)</b><ul><li>Sumac ang nagbibigay ng maasim na lasa; huwag kalimutan.</li></ul></div>
+  </div>
+  <div class="qrs"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAANIAAADSCAIAAACw+wkVAAAEu0lEQVR4nO3dMa4dNRiAUYLYACUV+19WKkqWEDoK/ArLsv35hnPK6DF3kvfJ0o/njr/9+PHjF7jr1/oG+D+SHQHZEZAdAdkR+G38oz//+P3+ffzr+19//+dP1u5n7TrjfzXadT9rV565ztqVzxnv2WpHQHYEZEdAdgRkR+CLSXa0Nj3NuDm77fpb7LrOrjtcu077O7XaEZAdAdkRkB0B2RGYmmRH5/Yl1z5rvPLaHui5HeEZ5+5n7dNnrP1NrXYEZEdAdgRkR0B2BBYn2ZvOzaRrU9hre7vndlfPsdoRkB0B2RGQHQHZEfiASfbncO5p509ktSMgOwKyIyA7ArIjsDjJ3pzCdj1Pe+5J3deus+bm79RqR0B2BGRHQHYEZEdgapJtJ6zR2ky66wnkT/yZUfs7tdoRkB0B2RGQHQHZEfj2iefJtufgzFz5teu8xmpHQHYEZEdAdgRkR+CLSfbm25PW3ku86x2/7fk+7Tdnd+3krv12rHYEZEdAdgRkR0B2BBb3ZG/Oku3ZNGvaOzz3BPKu37LVjoDsCMiOgOwIyI7AF9+T3TWBzkw9M7PS2meNzk1zu7z//dZds63VjoDsCMiOgOwIyI7AF5PsrnlqbSa9+dzya88J35yaz32Td+aerXYEZEdAdgRkR0B2BBb3ZEfvz26tc/9/YGane82u3fCR1Y6A7AjIjoDsCMiOwLZ3F7dvWGqfHH5tHn//3c5WOwKyIyA7ArIjIDsCB/dk1/YKX9uTvTnt7vqZXTPpuZNqrXYEZEdAdgRkR0B2BKZO4Rmdm8LePwNo7crn7nDNzXOLRlY7ArIjIDsCsiMgOwKLk+zo/Z3KczuMu87cuflvuPbpu65jtSMgOwKyIyA7ArIj8MXTxaO1yejmaT67nHtX0mtzdHsCkdWOgOwIyI6A7AjIjsDUJLtr12/XldfmqV07uaNd82/7LPGu2XbmZ6x2BGRHQHYEZEdAdgQO7snOXGd0bu9y5n5ee9r53By9ayfXebJ8DNkRkB0B2RGQHYFt35Md3ZxA15zbA22139udYbUjIDsCsiMgOwKyIzB1nuz737t87a1HM1c+98z2zeeE165stSMgOwKyIyA7ArIjsHie7Lnvyc581trPnNPO4+3cusZqR0B2BGRHQHYEZEdgak92dPPs0ZlPb7+p+trTvO+fQmu1IyA7ArIjIDsCsiNwdU/25nx37mzWXZ/+/huP13jjE4+SHQHZEZAdAdkRWNyTvem175O+7+YUb0+WjyE7ArIjIDsCsiOwuCd7zq4nbGem3Zt7xOeex17bDW+neKsdAdkRkB0B2RGQHYHF82R3uXmG6bl3HN28n/YbuLvmX6sdAdkRkB0B2RGQHYGpSXb0/jy1y803+u5y80TgNVY7ArIjIDsCsiMgOwKLk2zr3KS2a3f13M+sOXdq0to9W+0IyI6A7AjIjoDsCHzAJHvuCeSbp6zu+qyb58Cee9rZakdAdgRkR0B2BGRHYHGSvfmE7bl3N619+oyb35y9uZO79jMjqx0B2RGQHQHZEZAdgS9O4Xnt3cXn3vo7Y9en33x38a6d09Ha39QpPDxBdgRkR0B2BGRH4APOk+XnY7UjIDsCsiMgOwKyI/APSx3vBlh5LEoAAAAASUVORK5CYII=" alt="QR"><span class="lang " style="font-size:8.5px;font-weight:800;color:#fff;background:#2f6b4a;border-radius:3px;padding:1px 6px">Tagalog</span><span>Arugula / Jarjeer Salad - Els Kusinera</span></div>
+</div>
+</section>
+<section class="page"><h2 class="section">Night Fruit Preparation</h2><div class="section-sub">Every night, prepare 3 kinds of fruit for the next day. Rotate the combinations below. · <span class="ar">تحضير الفواكه ليلاً</span></div><div class="rule"></div>
+    <div class="fruit"><div class="n">1</div><div><h4>Banana + Apple + Watermelon</h4><div class="tlname">Saging + Mansanas + Pakwan</div><div style="font-size:11px;margin-top:3px">Peel and slice banana; slice apple with skin, drizzle lemon; watermelon in cubes, remove seeds.</div></div></div><div class="fruit"><div class="n">2</div><div><h4>Kiwi + Rockmelon + Orange</h4><div class="tlname">Kiwi + Melon + Orange</div><div style="font-size:11px;margin-top:3px">Peel and slice kiwi; rockmelon in cubes, no seeds; orange peeled and cut in segments, no white pith.</div></div></div><div class="fruit"><div class="n">3</div><div><h4>Pears + Mango + Banana</h4><div class="tlname">Peras + Mangga + Saging</div><div style="font-size:11px;margin-top:3px">Pear sliced with skin + lemon; mango peeled and cubed; banana sliced last.</div></div></div><div class="fruit"><div class="n">4</div><div><h4>Watermelon + Rockmelon + Kiwi</h4><div class="tlname">Pakwan + Melon + Kiwi</div><div style="font-size:11px;margin-top:3px">All in cubes, equal sizes, no seeds.</div></div></div><div class="fruit"><div class="n">5</div><div><h4>Apple + Kiwi + Mango</h4><div class="tlname">Mansanas + Kiwi + Mangga</div><div style="font-size:11px;margin-top:3px">Apple slices with lemon; kiwi peeled and sliced; mango cubed.</div></div></div>
+    <div class="tl" style="margin-top:14px"><b>Mahalagang paalala (Tagalog)</b><ul>
+      <li>Hugasan lahat ng prutas. Alisin ang buto. Pantay-pantay ang hiwa.</li>
+      <li>Mansanas, peras at saging: hiwain sa umaga o lagyan ng lemon para hindi umitim.</li>
+      <li>Ilagay sa saradong lalagyan sa ref. Hiwalay na lalagyan bawat tao.</li>
+      <li>Pakwan at melon: alisin lahat ng buto.</li></ul></div>
+    <div class="foot"><div class="brand">Al Maysari Family Cookbook · Mohamed &amp; Einas · 2026</div><div class="brand">End of book</div></div>
+    </section>
+</body></html>
