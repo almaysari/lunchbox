@@ -1,0 +1,71 @@
+name: Build cookbook PDF
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "cookbook/src/**"
+      - ".github/workflows/cookbook.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install tools
+        run: |
+          pip install -q qrcode pillow playwright
+          python -m playwright install --with-deps chromium
+          sudo apt-get install -y -q poppler-utils
+
+      - name: Download dish photos
+        run: |
+          cd cookbook/src
+          python build.py
+          mkdir -p img
+          while read -r name url; do
+            [ -s "$name" ] || curl -sSL --retry 3 -o "$name" "$url"
+          done < images.txt
+          ls -la img | head -40
+
+      - name: Build page with local images
+        run: |
+          cd cookbook/src
+          LOCAL_IMG=1 python build.py
+          cp index.html ../index.html
+          rm -rf ../img && cp -r img ../img
+
+      - name: Render PDF
+        run: |
+          cd cookbook
+          python - <<'EOF'
+          from playwright.sync_api import sync_playwright
+          import os
+          with sync_playwright() as p:
+              b = p.chromium.launch()
+              pg = b.new_page()
+              pg.goto("file://" + os.path.abspath("index.html"), wait_until="networkidle", timeout=120000)
+              pg.wait_for_timeout(2000)
+              pg.pdf(path="Al-Maysari-Family-Cookbook.pdf", format="A4", print_background=True, prefer_css_page_size=True)
+              b.close()
+          EOF
+          mkdir -p preview && rm -f preview/*.png
+          pdftoppm -r 45 -png Al-Maysari-Family-Cookbook.pdf preview/p
+          ls -la Al-Maysari-Family-Cookbook.pdf preview | head
+
+      - name: Commit results
+        run: |
+          git config user.name "cookbook-bot"
+          git config user.email "cookbook-bot@users.noreply.github.com"
+          git add cookbook/index.html cookbook/img cookbook/Al-Maysari-Family-Cookbook.pdf cookbook/preview
+          git commit -m "Build cookbook PDF [skip ci]" || echo "nothing to commit"
+          git push
