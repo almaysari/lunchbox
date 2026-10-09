@@ -1,0 +1,42 @@
+{
+ "sayidaty_search_kabsa": {
+  "status": 200,
+  "final": "https://kitchen.sayidaty.net/recipes/search?q=%D9%83%D8%A8%D8%B3%D8%A9%20%D8%AF%D8%AC%D8%A7%D8%AC",
+  "len": 172331
+ },
+ "sayidaty_chef_4243": {
+  "status": 200,
+  "final": "https://kitchen.sayidaty.net/recipes/index/chef/4243",
+  "len": 264132
+ },
+ "manal_search_biryani": {
+  "status": 200,
+  "final": "https://www.manalonline.com/?s=%D8%A8%D8%B1%D9%8A%D8%A7%D9%86%D9%8A",
+  "len": 94558
+ },
+ "manal_recipes": {
+  "status": 200,
+  "final": "https://www.manalonline.com/recipes/",
+  "len": 50509
+ },
+ "shamlola_recipes": {
+  "status": 200,
+  "final": "https://www.shamlola.com/recipes",
+  "len": 74531
+ },
+ "shamlola_search2": {
+  "status": 200,
+  "final": "https://www.shamlola.com/failed",
+  "len": 39726
+ },
+ "shamlola_search3": {
+  "status": 200,
+  "final": "https://www.shamlola.com/recipes?search=%D9%85%D9%84%D9%88%D8%AE%D9%8A%D8%A9",
+  "len": 74575
+ },
+ "shamlola_search4": {
+  "status": 200,
+  "final": "https://www.shamlola.com",
+  "len": 62143
+ }
+}
