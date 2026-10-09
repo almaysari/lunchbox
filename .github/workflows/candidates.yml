@@ -1,0 +1,50 @@
+name: Collect photo candidates
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install
+        run: pip install -q qrcode pillow
+      - name: Collect candidates
+        run: |
+          cd cookbook/src
+          python candidates.py
+          python - <<'EOF'
+          # contact sheets: one per recipe, numbered tiles, max 16
+          import json, os
+          from PIL import Image, ImageDraw
+          base = '../candidates'
+          idx = json.load(open(os.path.join(base, 'index.json'), encoding='utf-8'))
+          os.makedirs(os.path.join(base, 'sheets'), exist_ok=True)
+          for rid, info in idx.items():
+              c = info['cands'][:16]
+              if not c: continue
+              T = 300; cols = 4; rows = (len(c)+cols-1)//cols
+              sheet = Image.new('RGB', (cols*T, rows*T), 'white'); dr = ImageDraw.Draw(sheet)
+              for i, it in enumerate(c):
+                  try:
+                      im = Image.open(os.path.join(base, rid, it['file'])).convert('RGB')
+                  except Exception: continue
+                  im.thumbnail((T-8, T-8)); x = (i%cols)*T+4; y = (i//cols)*T+4
+                  sheet.paste(im, (x, y))
+                  dr.rectangle([x, y, x+58, y+22], fill='black'); dr.text((x+6, y+5), f"{i}:{it['src'][:2]}", fill='white')
+              sheet.save(os.path.join(base, 'sheets', f'{rid}.jpg'), quality=80)
+          EOF
+      - name: Commit
+        run: |
+          git config user.name "cookbook-bot"
+          git config user.email "cookbook-bot@users.noreply.github.com"
+          git add cookbook/candidates
+          git commit -m "Photo candidates [skip ci]" || echo nothing
+          git push
