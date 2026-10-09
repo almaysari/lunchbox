@@ -38,6 +38,7 @@ jobs:
           cd cookbook/src
           if [ "$MODE" = "sitemaps" ]; then python fetch_sitemaps.py; fi
           if [ "$MODE" = "raw" ]; then python fetch_raw.py || true; fi
+          if [ "$MODE" = "list" ]; then python fetch_pages.py; fi
           if [ -z "$MODE" ]; then python arabic_sources.py; fi
           ls -la ../sources | head -60
       - name: Commit
