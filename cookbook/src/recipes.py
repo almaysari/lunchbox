@@ -747,7 +747,7 @@ SALADS = [
  "tl":["Apple: hiwain bago ihain lang (umiitim)."]},
 {"id":"S3","name":"Corn Salad","ar":"سلطة الذرة","emoji":"🌽","time":"15 min",
  "video":"https://www.youtube.com/watch?v=TXT9LxDGGKE","video_lang":"English","video_title":"The Best Corn Salad - Inspired Taste",
- "img":"https://images.pexels.com/photos/23645805/pexels-photo-23645805.jpeg?auto=compress&cs=tinysrgb&h=627&fit=crop&w=1200",
+ "img":"https://images.pexels.com/photos/4519056/pexels-photo-4519056.jpeg?auto=compress&cs=tinysrgb&h=627&fit=crop&w=1200",
  "ingredients":[("Sweet corn kernels (boiled or canned, drained)","1 cup","2 cups"),("Cucumber, diced","1/2","1"),("Bell pepper (red), diced","1/2","1"),("Cherry tomatoes, halved","6","12"),("Red onion, finely chopped","1 tbsp","2 tbsp"),("Fresh coriander or parsley","2 tbsp","4 tbsp"),("Dressing: lime juice 1.5 tbsp, olive oil 1.5 tbsp, salt, pepper","1 set","2 sets")],
  "steps":["Mix all vegetables.","Add dressing, toss. Serve cold."],
  "tl":["Hindi creamy, walang mayonnaise. Lime at olive oil lang."]},
