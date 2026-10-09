@@ -36,8 +36,9 @@ jobs:
           MODE: ${{ github.event.inputs.mode }}
         run: |
           cd cookbook/src
-          python fetch_raw.py || true
-          if [ "$MODE" != "raw" ]; then python arabic_sources.py; fi
+          if [ "$MODE" = "sitemaps" ]; then python fetch_sitemaps.py; fi
+          if [ "$MODE" = "raw" ]; then python fetch_raw.py || true; fi
+          if [ -z "$MODE" ]; then python arabic_sources.py; fi
           ls -la ../sources | head -60
       - name: Commit
         run: |
