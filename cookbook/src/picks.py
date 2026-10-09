@@ -1,31 +1,31 @@
 # -*- coding: utf-8 -*-
 # Hand-picked photos per recipe after visual review of cookbook/candidates/sheets/*.jpg
-# Entries are candidate file names inside cookbook/candidates/<id>/ ; 'PEXELS' keeps the recipe's Pexels image.
-# Order matters: first = main (large) photo.
+# Sheet tile N (N>=1) corresponds to file c{N-1:02d}.jpg (c{N-2} for recipe 21 which has two video stills).
+# 'PEXELS' keeps the recipe's Pexels image. First entry = main (large) photo.
 PICKS = {
- 1:  ['c07.jpg', 'c05.jpg', 'yt_video.jpg'],          # chicken biryani: clay pot, copper handi, video result
- 2:  ['c02.jpg', 'c06.jpg', 'yt_video.jpg'],          # mutton biryani plated, top view, Food Fusion result
- 3:  ['c08.jpg', 'c11.jpg', 'yt_video.jpg'],          # maqluba on tray with salads, close-up with almonds
- 4:  ['c09.jpg', 'c11.jpg', 'yt_video.jpg'],          # lamb maqluba on tray, almond top, video result
- 5:  ['c09.jpg', 'c11.jpg', 'yt_video.jpg'],          # peri-peri chicken on yellow rice, butterflied chicken
- 6:  ['c10.jpg', 'c08.jpg', 'yt_video.jpg'],          # lamb kabsa plated, kabsa tray with nuts, Tagalog video
- 7:  ['c10.jpg', 'c03.jpg', 'yt_video.jpg'],          # chicken kabsa with pine nuts, with raisins/cashews
- 8:  ['c01.jpg', 'yt_video.jpg'],                     # bukhari rice tray, video result
- 9:  ['c09.jpg', 'c01.jpg', 'yt_video.jpg'],          # bukhari with carrots and raisins, tray, video result
- 10: ['c02.jpg', 'c09.jpg', 'yt_video.jpg'],          # curry with halved eggs in pan, plated with rice
- 11: ['c01.jpg', 'c04.jpg', 'yt_video.jpg'],          # tray roast with potatoes, plated portion
- 12: ['c02.jpg', 'yt_video.jpg'],                     # Gulf family meal with rice and saloona, video result
- 13: ['yt_video.jpg', 'c10.jpg'],                     # lamb saloona (video result), lamb stew bowl
- 14: ['c09.jpg', 'c03.jpg', 'c10.jpg', 'yt_video.jpg'],# cabbage rolls plated, in pot, rolling technique, video
- 15: ['yt_video.jpg', 'yt_video2.jpg', 'c14.jpg'],    # cajun chicken, lobia with rice, black-eyed peas stew
- 16: ['c05.jpg', 'c09.jpg', 'yt_video.jpg'],          # molokhia bowl, with meat, video result
- 17: ['c03.jpg', 'c02.jpg', 'yt_video.jpg'],          # bamia lamb with rice, bamia in clay bowl, video
- 18: ['yt_video.jpg', 'c02.jpg', 'c03.jpg'],          # bamia with chicken (video), clay bowl, with rice
- 19: ['c06.jpg', 'c09.jpg', 'c02.jpg'],               # musakhan on bread, large tray, with pine nuts
- 20: ['yt_video.jpg', 'yt_video2.jpg'],               # spaghetti meatballs (both video results)
- 21: ['c08.jpg', 'c06.jpg', 'c11.jpg'],               # grilled chicken + mash + salad, cutlet + mash, chicken on mash
- 22: ['c06.jpg', 'c13.jpg', 'yt_video.jpg'],          # saag chicken, chicken with spinach and rice, video
- 23: ['c12.jpg', 'c13.jpg', 'yt_video.jpg'],          # madhbi chicken on rice tray with sauce, video result
+ 1:  ['c06.jpg', 'c04.jpg', 'yt_video.jpg'],           # clay-pot biryani, copper handi with raita, video result
+ 2:  ['c01.jpg', 'c05.jpg', 'yt_video.jpg'],           # mutton biryani plate, top view with cucumber, Food Fusion
+ 3:  ['c07.jpg', 'c10.jpg', 'yt_video.jpg'],           # maqluba tray with salads, close-up almonds, video
+ 4:  ['c08.jpg', 'c10.jpg', 'yt_video.jpg'],           # lamb maqluba tray, lamb with almonds, Cooking Gorgeous
+ 5:  ['c08.jpg', 'c10.jpg', 'yt_video.jpg'],           # peri-peri on yellow rice, butterflied chicken, Chef RV
+ 6:  ['c09.jpg', 'c07.jpg', 'yt_video.jpg'],           # lamb kabsa plated red cloth, kabsa with pine nuts, Tagalog video
+ 7:  ['c09.jpg', 'c02.jpg', 'yt_video.jpg'],           # chicken kabsa with pine nuts, kabsa with raisins, Tagalog video
+ 8:  ['c00.jpg', 'yt_video.jpg'],                      # bukhari tray, video result
+ 9:  ['c08.jpg', 'c00.jpg', 'yt_video.jpg'],           # bukhari carrots raisins, tray, Tagalog video
+ 10: ['c01.jpg', 'c08.jpg', 'yt_video.jpg'],           # curry halved eggs in pan, plated with rice, video
+ 11: ['c00.jpg', 'c03.jpg', 'yt_video.jpg'],           # tray roast with potatoes, plated, Food Bae
+ 12: ['yt_video.jpg', 'c01.jpg'],                      # Gulf family meal, Marilou video result
+ 13: ['yt_video.jpg', 'c09.jpg'],                      # lamb saloona video result, lamb stew bowl
+ 14: ['c08.jpg', 'c02.jpg', 'c09.jpg', 'yt_video.jpg'],# cabbage rolls plate, in pot, rolling technique, video
+ 15: ['yt_video2.jpg', 'c12.jpg', 'yt_video.jpg'],     # cajun chicken, lobia+rice, black-eyed peas stew
+ 16: ['c04.jpg', 'c08.jpg'],           # molokhia bowl, with meat, video
+ 17: ['c02.jpg', 'c01.jpg', 'yt_video.jpg'],           # bamia lamb with rice, clay bowl, video
+ 18: ['yt_video.jpg', 'c01.jpg', 'c02.jpg'],           # bamia chicken video, clay bowl, with rice
+ 19: ['c05.jpg', 'c08.jpg', 'c01.jpg'],                # musakhan on bread, large tray, pine nuts close-up
+ 20: ['yt_video.jpg', 'yt_video2.jpg'],                # spaghetti meatballs (video results)
+ 21: ['c06.jpg', 'c04.jpg', 'c09.jpg'],                # grilled chicken+mash+salad, cutlet+mash, chicken on mash
+ 22: ['c05.jpg', 'c12.jpg', 'yt_video.jpg'],           # saag chicken, chicken + spinach + rice, video
+ 23: ['c11.jpg', 'c12.jpg', 'yt_video.jpg'],           # madhbi tray with sauce, second tray, video
  'S1': ['c01.jpg', 'c03.jpg', 'PEXELS'],
  'S2': ['PEXELS'],
  'S3': ['PEXELS'],
