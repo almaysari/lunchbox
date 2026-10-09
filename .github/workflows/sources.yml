@@ -11,6 +11,10 @@ on:
         description: "Refetch even if exists (1/0)"
         required: false
         default: "0"
+      mode:
+        description: "raw = only fetch raw listing pages"
+        required: false
+        default: ""
 
 permissions:
   contents: write
@@ -29,10 +33,11 @@ jobs:
         env:
           ONLY: ${{ github.event.inputs.only }}
           FORCE: ${{ github.event.inputs.force == '1' && '1' || '' }}
+          MODE: ${{ github.event.inputs.mode }}
         run: |
           cd cookbook/src
-          python probe.py || true
-          python arabic_sources.py
+          python fetch_raw.py || true
+          if [ "$MODE" != "raw" ]; then python arabic_sources.py; fi
           ls -la ../sources | head -60
       - name: Commit
         run: |
