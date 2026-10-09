@@ -6,6 +6,7 @@ on:
     branches: [main]
     paths:
       - "cookbook/src/**"
+      - "cookbook/candidates/index.json"
       - ".github/workflows/cookbook.yml"
 
 permissions:
@@ -41,7 +42,8 @@ jobs:
         run: |
           cd cookbook/src
           LOCAL_IMG=1 python build.py
-          cp index.html ../index.html
+          # page lives at cookbook/index.html: candidates are siblings, so ../candidates -> candidates
+          sed 's#\.\./candidates/#candidates/#g' index.html > ../index.html
           rm -rf ../img && cp -r img ../img
 
       - name: Render PDF

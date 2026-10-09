@@ -3,6 +3,29 @@ import base64, io, html, sys, os, hashlib
 import qrcode
 HERE = os.path.dirname(os.path.abspath(__file__)); sys.path.insert(0, HERE)
 from recipes import MAINS, SALADS, FRUITS
+from picks import PICKS
+import json
+CAND = os.path.join(HERE, '..', 'candidates')
+try:
+    CIDX = json.load(open(os.path.join(CAND, 'index.json'), encoding='utf-8'))
+except Exception:
+    CIDX = {}
+
+def photo_list(r):
+    """Return list of (src, credit) for a recipe, resolving picks."""
+    out = []
+    for f in PICKS.get(r['id'], ['PEXELS']):
+        if f == 'PEXELS':
+            if r.get('img'): out.append((img_src(r['img']), 'Pexels'))
+            continue
+        path = os.path.join(CAND, str(r['id']), f)
+        if not os.path.exists(path): continue
+        meta = next((c for c in CIDX.get(str(r['id']), {}).get('cands', []) if c['file'] == f), {})
+        credit = 'Video: ' + (meta.get('title') or '') if meta.get('src') == 'youtube' else f"Wikimedia Commons, {meta.get('author','')} ({meta.get('license','')})".strip()
+        out.append(('../candidates/%s/%s' % (r['id'], f), credit))
+    if not out and r.get('img'): out.append((img_src(r['img']), 'Pexels'))
+    return out
+
 
 def qr_b64(url):
     q = qrcode.QRCode(box_size=6, border=1, error_correction=qrcode.constants.ERROR_CORRECT_M)
@@ -46,6 +69,21 @@ h2.section{font-size:26px;font-weight:800;margin-bottom:4px}
 .toc .lang{font-size:9px;border-radius:3px;padding:1px 5px;background:#eef3ee;color:var(--green);font-weight:700;margin-left:6px}
 .toc .lang.en{background:#eeeff6;color:#3b4a8a}
 
+/* photo strip */
+.strip{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:3px;width:78mm;height:56mm;flex-shrink:0;border-radius:8px;overflow:hidden}
+.strip img{width:100%;height:100%;object-fit:cover;display:block;background:#eee}
+.strip.n1{grid-template-columns:1fr;grid-template-rows:1fr}
+.strip.n2{grid-template-columns:1fr;grid-template-rows:1fr 1fr}
+.strip.n3 img:first-child{grid-row:1/3}
+.strip.n4{grid-template-columns:1fr 1fr 1fr}
+.strip.n4 img:first-child{grid-column:1/3;grid-row:1/3}
+.strip.n4 img:nth-child(2){grid-column:3}
+.strip.n4 img:nth-child(3){grid-column:3}
+.strip.n4 img:nth-child(4){display:none}
+.photo-note{font-size:8.5px;color:var(--muted);margin-top:3px;width:78mm}
+.sstrip{display:grid;grid-template-columns:1fr;gap:3px;width:58mm}
+.sstrip img{width:100%;height:30mm;object-fit:cover;border-radius:6px;display:block;background:#eee}
+.sstrip.n2 img,.sstrip.n3 img{height:24mm}
 /* recipe page */
 .rhead{display:flex;gap:6mm;align-items:stretch;margin-bottom:6mm}
 .rhead .photo{width:78mm;height:52mm;object-fit:cover;border-radius:8px;flex-shrink:0;background:#eee}
@@ -121,6 +159,13 @@ def photo(url, emoji, cls="photo"):
         return f'<img class="{cls}" src="{E(img_src(url))}" alt="">'
     return f'<div class="ph">{emoji}</div>'
 
+def strip(r, cls='strip'):
+    ph = photo_list(r)[:4]
+    if not ph:
+        return f'<div class="ph">{r["emoji"]}</div>'
+    n = len(ph)
+    return f'<div class="{cls} n{n}">' + ''.join(f'<img src="{E(u)}" alt="">' for u,_ in ph) + '</div>'
+
 def ing_table(rows, small=False):
     out = ['<table class="ing"><thead><tr><th>Ingredient</th><th class="q">1 person</th><th class="q">2 persons</th></tr></thead><tbody>']
     for n,a,b in rows:
@@ -147,7 +192,7 @@ def recipe_page(r, total):
     return f'''
 <section class="page">
   <div class="rhead">
-    {photo(r["img"], r["emoji"])}
+    <div>{strip(r)}<div class="photo-note">Real photos of this dish. Yours should look like this.</div></div>
     <div class="title">
       <div>
         <div class="num">RECIPE {r["id"]:02d} / {total}</div>
@@ -180,7 +225,7 @@ def salad_block(s):
     cls = 'en' if lang.lower().startswith('en') else ''
     return f'''
 <div class="salad">
-  <div>{photo(s["img"], s["emoji"])}</div>
+  <div>{strip(s, 'sstrip')}</div>
   <div>
     <h2>{E(s["name"])} <span class="ar">{E(s["ar"])}</span></h2>
     <div class="chips" style="margin:4px 0 4px"><span class="chip">⏱ {E(s["time"])}</span></div>
@@ -193,7 +238,7 @@ def salad_block(s):
 
 def build():
     total = len(MAINS)
-    cover_imgs = [img_src(MAINS[i]["img"]) for i in (0,5,6,2,22,10)]
+    cover_imgs = [photo_list(MAINS[i])[0][0] for i in (0,5,6,2,22,13)]
     parts = []
     parts.append(f'''<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Al Maysari Family Cookbook</title><style>{CSS}</style></head><body>
 <section class="page cover">
@@ -291,6 +336,11 @@ def build():
     <div class="foot"><div class="brand">Al Maysari Family Cookbook · Mohamed &amp; Einas · 2026</div><div class="brand">End of book</div></div>
     </section>''')
 
+    cred = []
+    for r in MAINS + SALADS:
+        for u, c in photo_list(r):
+            if c and c != 'Pexels': cred.append(f'<li><b>{r["id"]}</b> {E(r["name"])}: {E(c)}</li>')
+    parts.append('<section class="page"><h2 class="section">Photo credits</h2><div class="section-sub">Photos of real home-cooked dishes from Wikimedia Commons (free licenses) and stills from the linked cooking videos. Other photos: Pexels.</div><div class="rule"></div><ul style="font-size:8.5px;columns:2;column-gap:8mm;list-style:none">' + ''.join(cred) + '</ul></section>')
     parts.append('</body></html>')
     out = '\n'.join(parts)
     with open(os.path.join(HERE,'index.html'), 'w', encoding='utf-8') as f:
