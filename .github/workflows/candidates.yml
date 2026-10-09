@@ -19,7 +19,7 @@ jobs:
       - name: Collect candidates
         run: |
           cd cookbook/src
-          python candidates.py
+          ONLY_MISSING=1 python candidates.py
           python - <<'EOF'
           # contact sheets: one per recipe, numbered tiles, max 16
           import json, os

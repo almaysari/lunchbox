@@ -38,9 +38,17 @@ def commons_search(term, limit=10):
         'prop': 'imageinfo', 'iiprop': 'url|size|mime|extmetadata', 'iiurlwidth': 900,
     })
     url = 'https://commons.wikimedia.org/w/api.php?' + q
-    req = urllib.request.Request(url, headers=UA)
-    with urllib.request.urlopen(req, timeout=60) as r:
-        data = json.load(r)
+    data = None
+    for attempt in range(4):
+        try:
+            req = urllib.request.Request(url, headers=UA)
+            with urllib.request.urlopen(req, timeout=60) as r:
+                data = json.load(r)
+            break
+        except Exception as e:
+            print('  retry', attempt, term, e); time.sleep(3 * (attempt + 1))
+    if data is None:
+        return []
     out = []
     for p in (data.get('query', {}).get('pages', {}) or {}).values():
         ii = (p.get('imageinfo') or [{}])[0]
@@ -74,8 +82,15 @@ def fetch(url, path):
 def main():
     os.makedirs(OUT, exist_ok=True)
     index = {}
+    old = {}
+    try:
+        old = json.load(open(os.path.join(OUT, 'index.json'), encoding='utf-8'))
+    except Exception:
+        pass
     for r in MAINS + SALADS:
         rid = r['id']
+        if os.environ.get('ONLY_MISSING') and len(old.get(str(rid), {}).get('cands', [])) >= 4:
+            index[str(rid)] = old[str(rid)]; continue
         d = os.path.join(OUT, str(rid)); os.makedirs(d, exist_ok=True)
         cands = []
         # 1) video thumbnails
@@ -102,7 +117,7 @@ def main():
                 if fetch(it['thumb'], p):
                     cands.append({'file': f'c{n:02d}.jpg', 'src': 'commons', **it})
                     n += 1
-            time.sleep(0.5)
+            time.sleep(2.5)
         index[str(rid)] = {'name': r['name'], 'cands': cands}
         print(rid, r['name'], len(cands), 'candidates')
     with open(os.path.join(OUT, 'index.json'), 'w', encoding='utf-8') as f:
