@@ -31,6 +31,7 @@ jobs:
           FORCE: ${{ github.event.inputs.force == '1' && '1' || '' }}
         run: |
           cd cookbook/src
+          python probe.py || true
           python arabic_sources.py
           ls -la ../sources | head -60
       - name: Commit
