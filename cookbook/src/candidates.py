@@ -29,6 +29,13 @@ TERMS = {
  'S1': ['Fattoush'], 'S2': ['Walnut salad', 'Apple walnut salad'], 'S3': ['Corn salad'],
  'S4': ['Tabbouleh'], 'S5': ['Green salad', 'Garden salad'], 'S6': ['Greek salad', 'Horiatiki'],
  'S7': ['Caesar salad chicken', 'Caesar salad'], 'S8': ['Halloumi salad'], 'S9': ['Arugula salad', 'Rocket salad', 'Jarjeer'],
+ 'B1': ['White bean stew', 'Fasolia', 'Baked beans tomato'], 'B2': ['Fried egg'], 'B3': ['Boiled eggs', 'Hard-boiled egg'],
+ 'B4': ['Chicken liver', 'Fried chicken livers'], 'B5': ['Balila', 'Chickpeas cumin', 'Chickpea dish'],
+ 'B6': ['Pizza toast', 'Toast pizza'], 'B7': ['Fried potato cubes', 'Home fries', 'Batata'],
+ 'B8': ['Feta sandwich', 'Feta cheese bread'], 'B9': ['Fried halloumi', 'Grilled halloumi'],
+ 'B10': ['Sunny side up egg', 'Fried egg'], 'B11': ['Halloumi sandwich'], 'B12': ['Omelette', 'Egg omelette'],
+ 'B13': ['Shakshuka'], 'B14': ['Chicken stir fry vegetables', 'Shredded chicken vegetables'],
+ 'B15': ['Boiled egg chicken salad', 'Chicken and egg plate'],
 }
 
 def commons_search(term, limit=10):
@@ -87,7 +94,13 @@ def main():
         old = json.load(open(os.path.join(OUT, 'index.json'), encoding='utf-8'))
     except Exception:
         pass
-    for r in MAINS + SALADS:
+    bf = []
+    try:
+        for b in json.load(open(os.path.join(HERE, '..', '..', 'homecookbook', 'recipes', 'breakfast.json'), encoding='utf-8')):
+            bf.append({'id': b['id'], 'name': b['name_en'], 'video': (b.get('video') or {}).get('url')})
+    except Exception as e:
+        print('no breakfast', e)
+    for r in MAINS + SALADS + bf:
         rid = r['id']
         if os.environ.get('ONLY_MISSING') and len(old.get(str(rid), {}).get('cands', [])) >= 4:
             index[str(rid)] = old[str(rid)]; continue
