@@ -35,4 +35,19 @@ PICKS = {
  'S7': ['c00.jpg', 'c03.jpg', 'PEXELS'],
  'S8': ['PEXELS', 'c02.jpg'],
  'S9': ['PEXELS'],
+
+ # breakfast (B5 chickpeas, B8 feta sandwich: no accurate free photo found yet)
+ 'B1': ['yt_video.jpg', 'c05.jpg', 'c08.jpg'],
+ 'B2': ['c04.jpg', 'c08.jpg'],
+ 'B3': ['yt_video.jpg', 'c01.jpg', 'c02.jpg'],
+ 'B4': ['yt_video.jpg', 'c11.jpg', 'c13.jpg'],
+ 'B6': ['c02.jpg', 'c04.jpg', 'c06.jpg'],
+ 'B7': ['c00.jpg', 'c13.jpg'],
+ 'B9': ['yt_video.jpg', 'c11.jpg', 'c05.jpg'],
+ 'B10': ['yt_video.jpg', 'c12.jpg'],
+ 'B11': ['c04.jpg'],
+ 'B12': ['yt_video.jpg', 'c06.jpg'],
+ 'B13': ['yt_video.jpg', 'c07.jpg', 'c08.jpg'],
+ 'B14': ['yt_video.jpg', 'c03.jpg', 'c00.jpg'],
+ 'B15': ['c04.jpg', 'c02.jpg'],
 }

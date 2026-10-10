@@ -87,6 +87,7 @@ h1.sec-title{font-size:24px;margin:0 0 4px;color:#1e1810}
 table.spec{border-collapse:collapse;font-size:9.5px;margin-top:4px}table.spec th{text-align:left;background:#f3ebdd;padding:2px 6px;white-space:nowrap}table.spec td{padding:2px 6px;border-bottom:1px solid #eee}
 .photos{display:grid;grid-template-columns:2fr 1fr 1fr;gap:4px;margin-top:8px}.photos img{width:100%;height:52mm;object-fit:cover;border-radius:6px}
 .photos.n1{grid-template-columns:1fr}.photos.n2{grid-template-columns:2fr 1fr}
+.srctop{margin:4px 0 6px;padding:5px 9px;background:#f3efe6;border-left:4px solid #8a6d3b;border-radius:4px;font-size:10.5px}.srctop .flag{font-size:15px}
 .nophoto{margin-top:8px;height:30mm;border:1.5px dashed #d9cfc3;border-radius:6px;display:flex;align-items:center;justify-content:center;color:#9a8c7c;font-size:10px}
 h2{font-size:13px;color:#c8522a;border-bottom:2px solid #c8522a;margin:12px 0 6px}
 h3{font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:#6f6257;margin:8px 0 4px}
@@ -139,6 +140,7 @@ def recipe_html(r):
     return f'''<section class=recipe id="{anchor}">
 <div class=head><div><h1><span class=flag>{origin(rid)[0]}</span> {E(r["name_en"])}</h1><div class=ar>{E(r["name_ar"])}</div>
 <div class=tags>Origin: <b>{origin(rid)[0]} {E(origin(rid)[1])}</b> · Cuisine: <b>{E(r["cuisine"])}</b> · Category: <b>{E(r["category"])}</b> · Recipe {E(str(rid))}</div>
+<div class=srctop>Recipe from: <span class=flag>{site_flag(s.get("site",""))}</span> <b>{E(s.get("site",""))}</b> · {E(s.get("chef",""))} · <span dir=rtl>{E(s.get("title_ar",""))}</span> · <a href="{E(s.get("url",""))}">open original</a></div>
 <div class=info><span><b>Prep</b> {E(info["prep_time"])}</span><span><b>Cook</b> {E(info["cook_time"])}</span><span><b>Total</b> {E(info["total_time"])}</span><span><b>Servings</b> {E(info["servings"])}</span><span><b>Difficulty</b> {E(info["difficulty"])}</span></div>
 <div class=note>Equipment: {E(", ".join(info.get("equipment", [])))}</div></div>
 <div><span class=badge>SPICE LEVEL: 0/5 - NO CHILI - NON-SPICY</span>{spec}</div></div>
