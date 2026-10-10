@@ -1,0 +1,1215 @@
+[
+ {
+  "id": "S1",
+  "name_en": "Fattoush",
+  "name_ar": "فتوش",
+  "cuisine": "Levantine",
+  "category": "Salad",
+  "info": {
+   "prep_time": "20 min",
+   "cook_time": "10 min",
+   "total_time": "30 min",
+   "servings": "2 Adults",
+   "difficulty": "Easy",
+   "equipment": [
+    "oven",
+    "baking tray",
+    "large salad bowl",
+    "small bowl for the dressing",
+    "whisk or fork",
+    "sharp knife",
+    "chopping board for vegetables",
+    "salad spinner or clean kitchen towel"
+   ]
+  },
+  "meat_spec": null,
+  "spice_note": "Source recipe contains no chili; the bell peppers are sweet, the tang comes from lemon, sumac and pomegranate molasses, and black pepper is reduced to 1/4 tsp.",
+  "components": [
+   {
+    "title": "Part 1 - Toasted Bread",
+    "ingredients": [
+     {
+      "item": "Arabic bread (pita), cut into 2 cm squares",
+      "qty": "1 pcs (about 60 g)",
+      "note": "the source says 'as desired'; 1 loaf is enough for 2"
+     },
+     {
+      "item": "Olive oil",
+      "qty": "1 tbsp"
+     }
+    ],
+    "prep": [
+     "Turn the oven on to 180 C.",
+     "Cut 1 Arabic bread into 2 cm squares with a knife or kitchen scissors."
+    ],
+    "steps": [
+     "Spread the bread squares on a baking tray in one layer and drizzle 1 tbsp olive oil over them. Toss with your hands so every piece is lightly coated.",
+     "Bake in the middle of the oven at 180 C for 8 to 10 minutes, turning once halfway, until golden and crisp. They are ready when a piece snaps cleanly in your fingers.",
+     "Take the tray out and leave the bread to cool on the tray for 5 minutes so it stays crisp."
+    ]
+   },
+   {
+    "title": "Part 2 - Vegetables and Pomegranate Dressing",
+    "ingredients": [
+     {
+      "item": "Lettuce (romaine), cut into 2 cm strips",
+      "qty": "250 g (1/2 head)"
+     },
+     {
+      "item": "Tomatoes, cut into 2 cm cubes",
+      "qty": "2 small (200 g)"
+     },
+     {
+      "item": "Cucumbers, cut into 1.5 cm cubes",
+      "qty": "2 small (200 g)"
+     },
+     {
+      "item": "Parsley, coarsely chopped",
+      "qty": "30 g (1 cup loosely packed)",
+      "note": "half a bunch"
+     },
+     {
+      "item": "Fresh mint leaves, coarsely chopped",
+      "qty": "15 g (1/2 cup loosely packed)"
+     },
+     {
+      "item": "Radishes, cut into small cubes",
+      "qty": "3 pcs (60 g)"
+     },
+     {
+      "item": "Green onion, chopped",
+      "qty": "1 pcs"
+     },
+     {
+      "item": "Purslane leaves, picked from the stems",
+      "qty": "40 g (1 cup)",
+      "note": "skip if not available"
+     },
+     {
+      "item": "Green bell pepper (sweet), small cubes",
+      "qty": "1/4 cup (35 g)"
+     },
+     {
+      "item": "Red bell pepper (sweet), small cubes",
+      "qty": "1/4 cup (35 g)"
+     },
+     {
+      "item": "Lemon juice, fresh",
+      "qty": "2 tbsp (30 ml)"
+     },
+     {
+      "item": "Pomegranate molasses",
+      "qty": "2 tbsp (30 ml)"
+     },
+     {
+      "item": "Olive oil",
+      "qty": "1/4 cup (60 ml)"
+     },
+     {
+      "item": "Sumac",
+      "qty": "1 1/2 tsp",
+      "note": "plus a pinch for the top"
+     },
+     {
+      "item": "Garlic clove, crushed",
+      "qty": "1 pcs"
+     },
+     {
+      "item": "Salt",
+      "qty": "1/2 tsp"
+     },
+     {
+      "item": "Black pepper, ground",
+      "qty": "1/4 tsp"
+     }
+    ],
+    "prep": [
+     "Wash the lettuce, parsley, mint, purslane, radishes and green onion under cold running water. Dry the leaves in a salad spinner or roll them in a clean kitchen towel; wet leaves make the dressing slide off and the salad watery.",
+     "Cut the lettuce into 2 cm strips, the tomatoes into 2 cm cubes, the cucumbers into 1.5 cm cubes and the radishes into small cubes. Coarsely chop the parsley and mint, chop the green onion, and cut the green and red bell pepper into small cubes.",
+     "Squeeze the lemons and measure 2 tbsp juice. Crush 1 garlic clove."
+    ],
+    "steps": [
+     "Put the lettuce, parsley, mint, radishes, cucumbers, tomatoes, green and red bell pepper, purslane and green onion in a large salad bowl and toss gently with two spoons for 30 seconds until the colours are evenly mixed.",
+     "In a small bowl whisk 1 crushed garlic clove, 1/4 cup olive oil, 2 tbsp pomegranate molasses, 2 tbsp lemon juice, 1/2 tsp salt, 1/4 tsp black pepper and 1 1/2 tsp sumac for 30 seconds until the dressing is dark, glossy and slightly thick.",
+     "Just before serving, pour the dressing over the vegetables and toss gently for 30 seconds until every leaf shines.",
+     "Transfer to a serving dish and scatter the toasted bread from Part 1 over the top. Sprinkle a pinch of sumac and serve at once while the bread is still crisp."
+    ]
+   }
+  ],
+  "timeline": [
+   "0:00 Turn the oven on to 180 C and cut the bread.",
+   "0:03 Bread into the oven (8 to 10 minutes).",
+   "0:03 Wash and dry all leaves and vegetables while the bread bakes.",
+   "0:13 Take the bread out to cool; cut and chop the vegetables.",
+   "0:25 Whisk the dressing.",
+   "0:28 Dress the salad, top with bread and serve."
+  ],
+  "mistakes": [
+   "Bread goes soft -> add it only on top at the moment of serving, never mix it in early or store it in the dressed salad.",
+   "Salad watery -> dry the leaves well after washing and cut the tomatoes just before mixing.",
+   "Dressing too sharp -> whisk it fully so the oil and molasses blend with the lemon; taste with a lettuce leaf and add 1 tsp olive oil if needed.",
+   "Bread burns -> 180 C only and check at 8 minutes; it continues to crisp as it cools.",
+   "Herbs bruised and dark -> use a sharp knife and chop coarsely, do not crush them."
+  ],
+  "serving": [
+   "Pile the salad in a wide shallow dish so the bread sits on top and stays crisp.",
+   "Finish with a pinch of sumac and a few whole mint leaves.",
+   "Serve with grilled chicken or as a side to any main course; for a lunch box, pack the bread and dressing separately."
+  ],
+  "safety": [
+   "Wash hands before handling the vegetables. Use a clean board kept only for vegetables and fruit.",
+   "Wash all leaves and vegetables under cold running water and dry them well; wash herbs bunch by bunch and shake off the water.",
+   "Do not leave the dressed salad at room temperature for more than 2 hours (1 hour on a hot day).",
+   "Undressed cut vegetables keep 1 day in a closed container in the fridge; keep the dressing in a closed jar in the fridge up to 3 days. Dressed fattoush should be eaten the same day.",
+   "Keep the cooled toasted bread in a dry closed box at room temperature up to 3 days."
+  ],
+  "source": {
+   "site": "Sayidaty Kitchen (kitchen.sayidaty.net)",
+   "chef": "Sayidaty Kitchen editorial",
+   "title_ar": "الفتوش اللبناني",
+   "url": "https://kitchen.sayidaty.net/node/24443",
+   "image_source": "to be filled by image step",
+   "verification": "Verified (page opened and read in the research step, 2026-10-10). Published 2023-01-13; the page separates the dressing from the vegetables.",
+   "adapted": "Source serves 4; all quantities halved for 2 adults and converted to grams; salt 'to taste' set at 1/2 tsp; the source only says the bread is toasted, so an oven method (180 C, 8 to 10 minutes, 1 tbsp olive oil) is added; black pepper kept at 1/4 tsp."
+  },
+  "video": {
+   "url": "https://www.youtube.com/watch?v=RO7A3Wr98IU",
+   "title": "How to make the Perfect Fattoush - Lebanese Tangy Salad",
+   "channel": "Middle Eats",
+   "language": "English",
+   "duration": "7:29",
+   "priority": "P4",
+   "spicy_warning": false,
+   "subtitles": "n/a"
+  },
+  "video_tl": null
+ },
+ {
+  "id": "S2",
+  "name_en": "Walnut Salad",
+  "name_ar": "سلطة الجوز",
+  "cuisine": "Levantine",
+  "category": "Salad",
+  "info": {
+   "prep_time": "20 min",
+   "cook_time": "5 min",
+   "total_time": "25 min",
+   "servings": "2 Adults",
+   "difficulty": "Easy",
+   "equipment": [
+    "non-stick pan 24 cm (dry, no oil)",
+    "plate for cooling the walnuts",
+    "medium salad bowl",
+    "small bowl for the dressing",
+    "sharp knife",
+    "chopping board for vegetables",
+    "lemon squeezer"
+   ]
+  },
+  "meat_spec": null,
+  "spice_note": "Source lists a small green pepper without saying sweet or hot; only a sweet green bell pepper is used, extra tang comes from lemon and pomegranate molasses, and no black pepper is added.",
+  "components": [
+   {
+    "title": "Part 1 - Walnut Salad with Pomegranate Dressing",
+    "ingredients": [
+     {
+      "item": "Walnuts, coarsely chopped",
+      "qty": "1/2 cup (50 g)"
+     },
+     {
+      "item": "Tomato, large, cut into fine 5 mm cubes",
+      "qty": "1 pcs (200 g)"
+     },
+     {
+      "item": "Cucumber, cut into fine 5 mm cubes",
+      "qty": "1 pcs (150 g)"
+     },
+     {
+      "item": "Green bell pepper (sweet), small, very finely chopped",
+      "qty": "1 pcs (80 g)"
+     },
+     {
+      "item": "Onion, small, very finely chopped",
+      "qty": "1 pcs (60 g)"
+     },
+     {
+      "item": "Parsley, finely chopped",
+      "qty": "2 tbsp"
+     },
+     {
+      "item": "Fresh mint, finely chopped",
+      "qty": "1 tbsp",
+      "note": "the number is missing on the source page; 1 tbsp is used"
+     },
+     {
+      "item": "Pomegranate molasses",
+      "qty": "2 tbsp (30 ml)"
+     },
+     {
+      "item": "Lemon juice, fresh",
+      "qty": "3 tbsp (45 ml)",
+      "note": "juice of 1 lemon"
+     },
+     {
+      "item": "Olive oil",
+      "qty": "1 tbsp (15 ml)",
+      "note": "the number is missing on the source page; 1 tbsp is used"
+     },
+     {
+      "item": "Salt",
+      "qty": "1/2 tsp"
+     }
+    ],
+    "prep": [
+     "Wash the tomato, cucumber, green bell pepper, parsley and mint and dry them well.",
+     "Cut the tomato and cucumber into fine 5 mm cubes. Remove the seeds and white ribs from the green bell pepper and chop it very finely. Peel and chop the onion very finely.",
+     "Finely chop 2 tbsp parsley and 1 tbsp mint. Squeeze 1 lemon (about 3 tbsp juice).",
+     "Coarsely chop 1/2 cup walnuts into pea-size pieces."
+    ],
+    "steps": [
+     "Put the chopped walnuts in a dry non-stick pan 24 cm over medium-low heat. Stir every 30 seconds for 3 to 4 minutes until they smell toasted and turn one shade darker. Tip them straight onto a plate and let them cool for 5 minutes so they do not keep cooking.",
+     "In a medium salad bowl combine the tomato, cucumber, green bell pepper and onion cubes. Add the 2 tbsp parsley and 1 tbsp mint.",
+     "In a small bowl stir 2 tbsp pomegranate molasses, 3 tbsp lemon juice, 1 tbsp olive oil and 1/2 tsp salt for 20 seconds until the salt dissolves.",
+     "Just before serving, add the cooled walnuts to the bowl, pour the dressing over and mix well for 30 seconds until everything is coated and glossy. Taste and add a pinch of salt only if needed."
+    ]
+   }
+  ],
+  "timeline": null,
+  "mistakes": [
+   "Walnuts burnt and bitter -> toast on medium-low, keep stirring and remove them from the hot pan at once.",
+   "Walnuts soft and soggy -> add them only at the moment of serving.",
+   "Salad swimming in juice -> cut the tomato just before mixing and use firm tomatoes.",
+   "Onion too strong -> chop it very finely; if it is very sharp, rinse the chopped onion in cold water for 1 minute and drain well.",
+   "Too salty -> the source uses 1 tsp; this version uses 1/2 tsp, taste before adding more."
+  ],
+  "serving": [
+   "Spoon the salad into a shallow bowl and scatter a few extra walnut pieces on top.",
+   "Serve with grilled meat or chicken, or with Arabic bread as a light lunch."
+  ],
+  "safety": [
+   "Wash hands before handling the vegetables. Use a clean board kept only for vegetables and fruit.",
+   "Wash all leaves and vegetables under cold running water and dry them well; wash herbs bunch by bunch and shake off the water.",
+   "Do not leave the dressed salad at room temperature for more than 2 hours (1 hour on a hot day).",
+   "Contains walnuts: check for nut allergy before serving to guests or children.",
+   "Keep leftovers in a closed container in the fridge and eat within 1 day; the walnuts soften over time."
+  ],
+  "source": {
+   "site": "Sayidaty Kitchen (kitchen.sayidaty.net)",
+   "chef": "Sayidaty Kitchen editorial",
+   "title_ar": "سلطة الجوز بالخضار",
+   "url": "https://kitchen.sayidaty.net/node/17992",
+   "image_source": "to be filled by image step",
+   "verification": "Partially verified: page opened and read in the research step (2026-10-10, published 2021-03-09); the mint and olive oil lines show the unit but no number, so 1 tbsp each is used.",
+   "adapted": "Source serves 2 and is kept at its size; green pepper specified as sweet bell pepper; salt reduced from 1 tsp to 1/2 tsp; the source mixes everything in one bowl, here the dressing is stirred separately and walnuts added last to stay crisp; dry-pan toasting time added."
+  },
+  "video": null,
+  "video_tl": null
+ },
+ {
+  "id": "S3",
+  "name_en": "Corn Salad",
+  "name_ar": "سلطة الذرة",
+  "cuisine": "Other",
+  "category": "Salad",
+  "info": {
+   "prep_time": "10 min",
+   "cook_time": "5 min",
+   "total_time": "30 min",
+   "servings": "2 Adults",
+   "difficulty": "Easy",
+   "equipment": [
+    "can opener",
+    "sieve",
+    "small pot (only if using frozen corn)",
+    "medium bowl",
+    "sharp knife",
+    "chopping board for vegetables",
+    "spoon for mixing"
+   ]
+  },
+  "meat_spec": null,
+  "spice_note": "Source recipe contains no chili and no black pepper; the tang comes from apple cider vinegar.",
+  "components": [
+   {
+    "title": "Part 1 - Light Corn Salad",
+    "ingredients": [
+     {
+      "item": "Sweet corn kernels, canned and drained (or frozen)",
+      "qty": "1 1/2 cups (250 g)",
+      "note": "one 340 g can, drained"
+     },
+     {
+      "item": "Onion, finely chopped",
+      "qty": "1/2 medium (60 g)"
+     },
+     {
+      "item": "Apple cider vinegar",
+      "qty": "1 tbsp (15 ml)"
+     },
+     {
+      "item": "Olive oil",
+      "qty": "1 tbsp (15 ml)"
+     },
+     {
+      "item": "Salt",
+      "qty": "1/4 tsp"
+     },
+     {
+      "item": "Parsley, finely chopped",
+      "qty": "1 tbsp",
+      "note": "for the top"
+     }
+    ],
+    "prep": [
+     "Canned corn: open the can, pour the corn into a sieve, rinse under cold water for 20 seconds and leave to drain for 2 minutes.",
+     "Frozen corn: boil 2 cups of water in a small pot, add 1 1/2 cups frozen corn, cook for 3 to 4 minutes after the water boils again until the kernels are bright yellow and tender, then drain in the sieve and rinse under cold water until cool.",
+     "Peel and finely chop 1/2 medium onion. Wash, dry and finely chop 1 tbsp parsley."
+    ],
+    "steps": [
+     "Put the drained corn, the chopped onion and 1 tbsp apple cider vinegar in a medium bowl and stir for 20 seconds so the onion softens in the vinegar.",
+     "Add 1 tbsp olive oil and 1/4 tsp salt and stir again for 20 seconds until every kernel is shiny.",
+     "Cover the bowl and put it in the fridge for 15 to 20 minutes until cold; the corn absorbs the dressing.",
+     "Stir once more, spoon into a serving dish and sprinkle the 1 tbsp chopped parsley on top. Serve cold."
+    ]
+   }
+  ],
+  "timeline": null,
+  "mistakes": [
+   "Salad watery -> drain the corn well in the sieve for the full 2 minutes before mixing.",
+   "Frozen corn hard or chewy -> boil 3 to 4 minutes after the water returns to the boil, then cool quickly.",
+   "Onion too strong -> chop it very finely and let it sit in the vinegar for the chilling time; this softens it.",
+   "Too salty -> canned corn often contains salt; rinse it and keep the added salt at 1/4 tsp."
+  ],
+  "serving": [
+   "Serve cold in a small bowl with the parsley on top.",
+   "It goes well beside grilled chicken, in a lunch box next to rice, or rolled in Arabic bread."
+  ],
+  "safety": [
+   "Wash hands before handling the vegetables. Use a clean board kept only for vegetables and fruit.",
+   "Wash all leaves and vegetables under cold running water and dry them well; wash herbs bunch by bunch and shake off the water.",
+   "Do not leave the dressed salad at room temperature for more than 2 hours (1 hour on a hot day).",
+   "Check the can is not dented or bulging before opening.",
+   "Keep in a closed container in the fridge for up to 2 days."
+  ],
+  "source": {
+   "site": "Sayidaty Kitchen (kitchen.sayidaty.net)",
+   "chef": "Sayidaty Kitchen editorial",
+   "title_ar": "سلطة الذرة الخفيفة",
+   "url": "https://kitchen.sayidaty.net/node/10250",
+   "image_source": "to be filled by image step",
+   "verification": "Verified (page opened and read in the research step, 2026-10-10). Published 2018-11-27; the page allows frozen or canned corn.",
+   "adapted": "Source serves 4; quantities halved for 2 adults (3 cups corn to 1 1/2 cups, 2 tbsp vinegar and oil to 1 tbsp each, 1/2 tsp salt to 1/4 tsp); parsley kept at 1 tbsp for the top; boiling time for frozen corn and a 15 to 20 minute chilling time added."
+  },
+  "video": null,
+  "video_tl": null
+ },
+ {
+  "id": "S4",
+  "name_en": "Borgol Salad (Tabbouleh)",
+  "name_ar": "تبولة",
+  "cuisine": "Levantine",
+  "category": "Salad",
+  "info": {
+   "prep_time": "30 min",
+   "cook_time": "0 min",
+   "total_time": "40 min",
+   "servings": "2 Adults",
+   "difficulty": "Medium",
+   "equipment": [
+    "large very sharp knife",
+    "chopping board for vegetables",
+    "large mixing bowl",
+    "small bowl for soaking the bulgur",
+    "fine sieve",
+    "salad spinner or clean kitchen towel",
+    "lemon squeezer",
+    "serving dish"
+   ]
+  },
+  "meat_spec": null,
+  "spice_note": "Source recipe contains no chili; its 'sweet pepper' is a sweet bell pepper, the sourness comes from lemon juice, and no black pepper is used.",
+  "components": [
+   {
+    "title": "Part 1 - Lebanese Tabbouleh",
+    "ingredients": [
+     {
+      "item": "Fine bulgur (burghul)",
+      "qty": "1/4 cup (45 g)"
+     },
+     {
+      "item": "Lemon juice, fresh",
+      "qty": "2 tbsp (30 ml)",
+      "note": "about 1 lemon; split into 1 tbsp + 1 tbsp"
+     },
+     {
+      "item": "Parsley (flat leaf), very finely chopped",
+      "qty": "1 bunch (about 80 g leaves, 2 cups chopped)"
+     },
+     {
+      "item": "Fresh mint leaves, very finely chopped",
+      "qty": "10 g (2 tbsp chopped)"
+     },
+     {
+      "item": "Tomatoes, cut into small 5 mm cubes",
+      "qty": "125 g (1 medium)"
+     },
+     {
+      "item": "Onion, cut into small cubes",
+      "qty": "1/2 large (80 g)"
+     },
+     {
+      "item": "Sweet bell pepper, cut into small cubes",
+      "qty": "1/2 pcs (60 g)"
+     },
+     {
+      "item": "Olive oil",
+      "qty": "2 tbsp (30 ml)"
+     },
+     {
+      "item": "Salt",
+      "qty": "1/2 tsp"
+     },
+     {
+      "item": "Lettuce leaves (small inner leaves)",
+      "qty": "4 pcs",
+      "note": "for garnish"
+     }
+    ],
+    "prep": [
+     "Put 1/4 cup fine bulgur in a fine sieve and rinse under cold water for 10 seconds. Shake well, tip it into a small bowl and pour 1 tbsp of the lemon juice over it. Stir and leave to soak for 20 minutes.",
+     "Wash the parsley and mint very well in a large bowl of cold water, lift them out, then dry completely in a salad spinner or by rolling in a clean towel. Wet parsley turns to paste when chopped.",
+     "Pick the mint leaves from the stems. Cut off the thick lower parsley stems and discard them.",
+     "Wash and dry the tomato, bell pepper and lettuce leaves."
+    ],
+    "steps": [
+     "Gather the parsley into a tight bundle on the board and slice it very finely across with a sharp knife, moving back about 2 mm each cut. Go over it once more to make it fine. You need about 2 cups. Chop the mint the same way (2 tbsp).",
+     "Cut the tomato into small 5 mm cubes, the onion into small cubes and the sweet bell pepper into small cubes.",
+     "After 20 minutes check the bulgur: bite a grain, it should be soft with only a slight chew. If it is still hard, add 1 tbsp of the tomato juice from the board and wait 5 more minutes.",
+     "In a large mixing bowl combine the tomatoes, onion, mint, parsley and soaked bulgur. Mix gently with your fingertips or two spoons for 30 seconds until evenly combined; do not squeeze.",
+     "Add 2 tbsp olive oil, 1/2 tsp salt, the sweet bell pepper and the remaining 1 tbsp lemon juice. Mix gently again for 30 seconds until all the green is shiny. Taste: it should be fresh and clearly lemony; add a pinch of salt if flat.",
+     "Line a serving dish with the 4 lettuce leaves, spoon the tabbouleh in the middle and serve at once."
+    ]
+   }
+  ],
+  "timeline": null,
+  "mistakes": [
+   "Parsley mushy and dark -> dry it completely before cutting, use a very sharp knife and never use a blender or food processor.",
+   "Bulgur hard and crunchy -> use fine bulgur, rinse it first and let it soak the full 20 minutes; add 1 tbsp tomato juice if it is still hard.",
+   "Salad watery -> cut the tomatoes small and add salt only at the end, just before serving.",
+   "Tabbouleh tastes flat -> it must be lemony; add 1 more tbsp lemon juice if needed.",
+   "Mixing too hard -> toss lightly with fingertips so the herbs stay fluffy, not pressed."
+  ],
+  "serving": [
+   "Serve on a flat dish lined with crisp lettuce leaves; the leaves can be used as a scoop.",
+   "Tabbouleh is mostly green: the parsley should be the main ingredient, with tomato and bulgur as small specks.",
+   "Serve with grilled meat, falafel or as a mezze dish with hummus and Arabic bread."
+  ],
+  "safety": [
+   "Wash hands before handling the vegetables. Use a clean board kept only for vegetables and fruit.",
+   "Wash all leaves and vegetables under cold running water and dry them well; wash herbs bunch by bunch and shake off the water.",
+   "Do not leave the dressed salad at room temperature for more than 2 hours (1 hour on a hot day).",
+   "Parsley grows close to the soil: wash it in 2 changes of water until no sand is left at the bottom of the bowl.",
+   "Best eaten fresh; leftovers keep 1 day in a closed container in the fridge but become soft."
+  ],
+  "source": {
+   "site": "Sayidaty Kitchen (kitchen.sayidaty.net)",
+   "chef": "Sayidaty Kitchen editorial",
+   "title_ar": "التبولة اللبنانية",
+   "url": "https://kitchen.sayidaty.net/node/28122/%D8%A7%D9%84%D8%AA%D8%A8%D9%88%D9%84%D8%A9-%D8%A7%D9%84%D9%84%D8%A8%D9%86%D8%A7%D9%86%D9%8A%D8%A9/%D8%A7%D9%84%D8%B3%D9%84%D8%B7%D8%A7%D8%AA/%D9%88%D8%B5%D9%81%D8%A7%D8%AA",
+   "image_source": "to be filled by image step",
+   "verification": "Verified (page opened and read 2026-10-10 by WebFetch). Published 2024-02-01, serves 4, 40 minutes. Re-sourced from Sayidaty because the earlier research used Fatafeat, which is not an approved source.",
+   "adapted": "Source serves 4; all quantities halved for 2 adults (2 bunches parsley to 1, 1/2 cup bulgur to 1/4 cup, 250 g tomato to 125 g, 1/4 cup lemon juice and olive oil to 2 tbsp each, 1 tsp salt to 1/2 tsp; half the lemon soaks the bulgur as in the source); the source's 'sweet pepper' is used as a diced sweet bell pepper; rinsing, soak time and chopping method added."
+  },
+  "video": {
+   "url": "https://www.youtube.com/watch?v=mUdAO_oOfVM",
+   "title": "Classic Lebanese Tabbouleh",
+   "channel": "Middle Eats",
+   "language": "English",
+   "duration": "5:06",
+   "priority": "P4",
+   "spicy_warning": false,
+   "subtitles": "n/a"
+  },
+  "video_tl": null
+ },
+ {
+  "id": "S5",
+  "name_en": "Green Mix Salad",
+  "name_ar": "سلطة خضراء مشكلة",
+  "cuisine": "Other",
+  "category": "Salad",
+  "info": {
+   "prep_time": "15 min",
+   "cook_time": "0 min",
+   "total_time": "15 min",
+   "servings": "2 Adults",
+   "difficulty": "Easy",
+   "equipment": [
+    "large salad bowl",
+    "salad spinner or clean kitchen towel",
+    "sharp knife",
+    "chopping board for vegetables",
+    "two large spoons for tossing"
+   ]
+  },
+  "meat_spec": null,
+  "spice_note": "Source recipe contains no chili; black pepper is kept at 1/4 tsp for 2 adults. The English video lists optional chili, which must be skipped.",
+  "components": [
+   {
+    "title": "Part 1 - Restaurant-Style Green Salad",
+    "ingredients": [
+     {
+      "item": "Lettuce (romaine or iceberg), cut into bite-size pieces",
+      "qty": "1 head (about 300 g)"
+     },
+     {
+      "item": "Cucumber, peeled and sliced",
+      "qty": "1 pcs (150 g)"
+     },
+     {
+      "item": "Tomatoes, cut into wedges",
+      "qty": "2 medium (250 g)"
+     },
+     {
+      "item": "Red onion, thinly sliced",
+      "qty": "1 small (80 g)"
+     },
+     {
+      "item": "Olive oil",
+      "qty": "2 tbsp (30 ml)"
+     },
+     {
+      "item": "Vinegar (white or apple cider)",
+      "qty": "1 tbsp (15 ml)"
+     },
+     {
+      "item": "Salt",
+      "qty": "1/2 tsp"
+     },
+     {
+      "item": "Black pepper, ground",
+      "qty": "1/4 tsp"
+     }
+    ],
+    "prep": [
+     "Separate the lettuce leaves and wash each one well under cold running water, checking the base of the leaves for sand.",
+     "Dry the leaves completely in a salad spinner or roll them in a clean kitchen towel for 1 minute.",
+     "Peel the cucumber and slice it into 5 mm rounds. Cut each tomato into 8 wedges. Peel the red onion and slice it into thin rings."
+    ],
+    "steps": [
+     "Tear or cut the dry lettuce into bite-size pieces (about 4 cm) and place them in a large salad bowl.",
+     "Add the cucumber slices, tomato wedges and onion rings on top of the lettuce and toss lightly with two large spoons for 20 seconds.",
+     "Just before serving, drizzle 2 tbsp olive oil and 1 tbsp vinegar over the salad and sprinkle 1/2 tsp salt and 1/4 tsp black pepper.",
+     "Toss gently for 30 seconds until the dressing is absorbed and every leaf looks lightly shiny. Serve at once."
+    ]
+   }
+  ],
+  "timeline": null,
+  "mistakes": [
+   "Leaves limp and watery -> dry them completely and dress the salad only at the moment of serving.",
+   "Sand in the salad -> wash leaf by leaf, not the whole head at once.",
+   "Too sour -> keep the 2 to 1 ratio of oil to vinegar; add more oil, not more vinegar.",
+   "Onion too strong -> slice it very thin; soak the rings in cold water for 5 minutes and drain if they are sharp."
+  ],
+  "serving": [
+   "Serve in a wide bowl with the tomato wedges and onion rings showing on top.",
+   "This is the everyday side salad for any main course, rice dish or grill.",
+   "For a lunch box, pack the dressing in a small separate container."
+  ],
+  "safety": [
+   "Wash hands before handling the vegetables. Use a clean board kept only for vegetables and fruit.",
+   "Wash all leaves and vegetables under cold running water and dry them well; wash herbs bunch by bunch and shake off the water.",
+   "Do not leave the dressed salad at room temperature for more than 2 hours (1 hour on a hot day).",
+   "Undressed salad keeps 1 day in a closed container in the fridge with a paper towel on top; dressed salad should be eaten the same day."
+  ],
+  "source": {
+   "site": "Sayidaty Kitchen (kitchen.sayidaty.net)",
+   "chef": "Sayidaty Kitchen editorial",
+   "title_ar": "السلطة الخضراء مثل المطاعم",
+   "url": "https://kitchen.sayidaty.net/node/16901",
+   "image_source": "to be filled by image step",
+   "verification": "Partially verified: page opened and read in the research step (2026-10-10, published 2020-11-22); vegetables have quantities, but olive oil, vinegar, salt and black pepper are all 'to taste' on the page.",
+   "adapted": "Source serves 2 and is kept at its size; the 'to taste' dressing is set at 2 tbsp olive oil, 1 tbsp vinegar, 1/2 tsp salt and 1/4 tsp black pepper; gram weights and cutting sizes added."
+  },
+  "video": {
+   "url": "https://www.youtube.com/watch?v=u_s7gxHw0vw",
+   "title": "How to make The Middle East's FAVOURITE Salad",
+   "channel": "Middle Eats",
+   "language": "English",
+   "duration": "6:48",
+   "priority": "P4",
+   "spicy_warning": true,
+   "subtitles": "n/a"
+  },
+  "video_tl": {
+   "url": "https://www.youtube.com/watch?v=shaMtIC4RbI",
+   "title": "Pinaka Madaling Vegetable Salad - Friend-Cheap Menu",
+   "channel": "Friend-Cheap Menu",
+   "language": "Tagalog"
+  }
+ },
+ {
+  "id": "S6",
+  "name_en": "Greek Salad",
+  "name_ar": "سلطة يونانية",
+  "cuisine": "Other",
+  "category": "Salad",
+  "info": {
+   "prep_time": "15 min",
+   "cook_time": "0 min",
+   "total_time": "15 min",
+   "servings": "2 Adults",
+   "difficulty": "Easy",
+   "equipment": [
+    "serving dish",
+    "small bowl for the dressing",
+    "whisk or fork",
+    "sharp knife",
+    "chopping board for vegetables",
+    "salad spinner or clean kitchen towel"
+   ]
+  },
+  "meat_spec": null,
+  "spice_note": "Source recipe contains no chili or black pepper; the red pepper is a sweet bell pepper and the flavour comes from lemon and cumin.",
+  "components": [
+   {
+    "title": "Part 1 - Greek Salad with Lemon and Cumin Dressing",
+    "ingredients": [
+     {
+      "item": "Lettuce, chopped",
+      "qty": "1/2 cup (25 g)"
+     },
+     {
+      "item": "Cucumber, cut into 2 cm cubes",
+      "qty": "1 pcs (150 g)"
+     },
+     {
+      "item": "Tomato, cut into 2 cm cubes",
+      "qty": "1 large (180 g)"
+     },
+     {
+      "item": "Red bell pepper (sweet), cut into 2 cm cubes",
+      "qty": "1/2 cup (70 g)",
+      "note": "the number is missing on the source page; 1 cup for 4 is assumed"
+     },
+     {
+      "item": "Onion, cut into cubes",
+      "qty": "1/2 medium (60 g)"
+     },
+     {
+      "item": "White cheese (feta), cut into 2 cm cubes",
+      "qty": "1/2 cup (75 g)",
+      "note": "the number is missing on the source page; 1 cup for 4 is assumed"
+     },
+     {
+      "item": "Olives, sliced",
+      "qty": "1/2 cup (60 g)",
+      "note": "the number is missing on the source page; 1 cup for 4 is assumed"
+     },
+     {
+      "item": "Lemon juice, fresh",
+      "qty": "1 1/2 tbsp (22 ml)"
+     },
+     {
+      "item": "Olive oil",
+      "qty": "1 1/2 tbsp (22 ml)"
+     },
+     {
+      "item": "Ground cumin",
+      "qty": "1/2 tsp"
+     },
+     {
+      "item": "Vinegar",
+      "qty": "1 tsp"
+     },
+     {
+      "item": "Salt",
+      "qty": "1/4 tsp",
+      "note": "feta and olives are already salty"
+     }
+    ],
+    "prep": [
+     "Wash and dry the lettuce, cucumber, tomato and red bell pepper.",
+     "Chop the lettuce. Cut the cucumber, tomato and red bell pepper into 2 cm cubes. Peel the onion and cut into cubes.",
+     "Drain the olives and slice them. Cut the white cheese into 2 cm cubes and keep it aside."
+    ],
+    "steps": [
+     "Place the lettuce, tomato, red bell pepper, olives, cucumber and onion in a serving dish and toss lightly with two spoons for 20 seconds.",
+     "In a small bowl whisk 1 1/2 tbsp lemon juice, 1 1/2 tbsp olive oil, 1/2 tsp cumin, 1/4 tsp salt and 1 tsp vinegar for 30 seconds until slightly cloudy and well mixed.",
+     "Pour the dressing over the vegetables and toss gently for 20 seconds until coated.",
+     "Scatter the white cheese cubes on top without mixing them in, so they stay whole. Serve at once."
+    ]
+   }
+  ],
+  "timeline": null,
+  "mistakes": [
+   "Cheese breaks into crumbs -> add it last on top and do not toss after adding it.",
+   "Too salty -> taste a cheese cube and an olive first; reduce or skip the salt if they are very salty.",
+   "Watery salad -> cut the vegetables in large 2 cm cubes and dress only at serving time.",
+   "Cumin tastes raw or gritty -> whisk the dressing well so the cumin is fully mixed in before pouring."
+  ],
+  "serving": [
+   "Serve in a wide dish with the white cheese cubes and olives visible on top.",
+   "Pairs well with grilled chicken or fish and warm Arabic bread."
+  ],
+  "safety": [
+   "Wash hands before handling the vegetables. Use a clean board kept only for vegetables and fruit.",
+   "Wash all leaves and vegetables under cold running water and dry them well; wash herbs bunch by bunch and shake off the water.",
+   "Do not leave the dressed salad at room temperature for more than 2 hours (1 hour on a hot day).",
+   "Keep the cheese in the fridge until the moment you add it.",
+   "Leftovers keep 1 day in a closed container in the fridge."
+  ],
+  "source": {
+   "site": "Sayidaty Kitchen (kitchen.sayidaty.net)",
+   "chef": "Sayidaty Kitchen editorial",
+   "title_ar": "طريقة عمل السلطة اليونانية",
+   "url": "https://kitchen.sayidaty.net/node/29919",
+   "image_source": "to be filled by image step",
+   "verification": "Partially verified: page opened and read in the research step (2026-10-10, published 2024-06-23); red pepper, white cheese and olives show the unit 'cup' with no number, so 1 cup each for 4 is assumed.",
+   "adapted": "Source serves 4; all quantities halved for 2 adults (1 cup lettuce to 1/2 cup, 2 cucumbers and 2 tomatoes to 1 each, 3 tbsp lemon and olive oil to 1 1/2 tbsp, 1 tsp cumin to 1/2 tsp, 2 tsp vinegar to 1 tsp); salt 'a pinch' set at 1/4 tsp; gram weights added."
+  },
+  "video": {
+   "url": "https://www.youtube.com/watch?v=FUR6oujbCCs",
+   "title": "Easy Traditional Greek Salad Recipe",
+   "channel": "The Mediterranean Dish",
+   "language": "English",
+   "duration": "5:20",
+   "priority": "P4",
+   "spicy_warning": false,
+   "subtitles": "manual English"
+  },
+  "video_tl": null
+ },
+ {
+  "id": "S7",
+  "name_en": "Caesar Salad",
+  "name_ar": "سلطة سيزر بالدجاج",
+  "cuisine": "Other",
+  "category": "Salad",
+  "info": {
+   "prep_time": "20 min",
+   "cook_time": "20 min",
+   "total_time": "45 min",
+   "servings": "2 Adults",
+   "difficulty": "Medium",
+   "equipment": [
+    "grill pan or non-stick pan 26 cm",
+    "food thermometer",
+    "non-stick pan 24 cm for the bread",
+    "large salad bowl",
+    "small bowl for the dressing",
+    "whisk",
+    "cheese grater",
+    "separate chopping board for raw chicken",
+    "chopping board for vegetables",
+    "plastic wrap or baking paper",
+    "rolling pin or flat pan bottom"
+   ]
+  },
+  "meat_spec": {
+   "type": "Boneless",
+   "cut": "Breast",
+   "skin": "Skinless",
+   "weight": "300 g (2 small breasts, about 150 g each)",
+   "preparation": "Whole breasts flattened to an even 1.5 cm, sliced into 1 cm strips after cooking",
+   "cooking_method": "Grilled",
+   "source_specified": true,
+   "note": "The source specifies 2 grilled chicken breasts, sliced, but gives no weight, seasoning or grilling method; weight, a simple non-spicy seasoning and grill-pan times are added."
+  },
+  "spice_note": "Source recipe contains no chili; black pepper is used only in the dressing at 1/8 tsp, and the chicken is seasoned with sweet paprika, garlic powder and lemon.",
+  "components": [
+   {
+    "title": "Part 1 - Grilled Chicken Breast",
+    "ingredients": [
+     {
+      "item": "Chicken breast, boneless, skinless",
+      "qty": "300 g (2 small pcs)"
+     },
+     {
+      "item": "Olive oil",
+      "qty": "1 tbsp"
+     },
+     {
+      "item": "Lemon juice, fresh",
+      "qty": "1 tsp"
+     },
+     {
+      "item": "Garlic powder",
+      "qty": "1/4 tsp"
+     },
+     {
+      "item": "Sweet paprika",
+      "qty": "1/4 tsp"
+     },
+     {
+      "item": "Salt",
+      "qty": "1/4 tsp"
+     }
+    ],
+    "prep": [
+     "Take the chicken out of the fridge 15 minutes before cooking. Do not wash raw chicken; pat it dry with paper towel and throw the towel away.",
+     "On the separate raw-chicken board, place each breast between two sheets of plastic wrap or baking paper and gently beat the thick end with a rolling pin until the whole breast is an even 1.5 cm thick.",
+     "In a bowl mix 1 tbsp olive oil, 1 tsp lemon juice, 1/4 tsp garlic powder, 1/4 tsp sweet paprika and 1/4 tsp salt. Rub this over both sides of the chicken and leave for 10 minutes.",
+     "Wash the raw-chicken board, knife and your hands with hot soapy water."
+    ],
+    "steps": [
+     "Heat the grill pan over medium-high heat for 3 minutes until a drop of water sizzles on it at once.",
+     "Lay the 2 chicken breasts in the pan and cook without moving for 5 to 6 minutes until the underside has clear golden-brown grill marks and releases easily.",
+     "Turn them with tongs and cook the second side over medium heat for 5 to 6 minutes. Check the thickest part with a food thermometer: it must read 74 C. If there is no thermometer, cut the thickest part: the meat must be white all through with clear juices and no pink.",
+     "Move the chicken to a clean plate (not the raw-chicken plate) and rest for 5 minutes, then slice into 1 cm strips on the vegetable board after washing it."
+    ]
+   },
+   {
+    "title": "Part 2 - Toasted Bread Cubes",
+    "ingredients": [
+     {
+      "item": "Toast bread slice, cut into 1.5 cm cubes",
+      "qty": "1 pcs (about 1/2 cup cubes)"
+     },
+     {
+      "item": "Olive oil",
+      "qty": "1 tsp"
+     }
+    ],
+    "prep": [
+     "Cut 1 slice of toast bread into 1.5 cm cubes."
+    ],
+    "steps": [
+     "Heat 1 tsp olive oil in a non-stick pan 24 cm over medium heat for 30 seconds.",
+     "Add the bread cubes and stir every 30 seconds for 4 to 5 minutes until golden on all sides and crisp. Tip onto a plate to cool."
+    ]
+   },
+   {
+    "title": "Part 3 - Caesar Dressing and Assembly",
+    "ingredients": [
+     {
+      "item": "Lettuce (romaine), large, coarsely chopped",
+      "qty": "1 head (about 400 g)"
+     },
+     {
+      "item": "Parmesan, finely grated",
+      "qty": "2 tbsp (12 g)"
+     },
+     {
+      "item": "Olive oil",
+      "qty": "6 tbsp (90 ml)"
+     },
+     {
+      "item": "Mayonnaise",
+      "qty": "1 1/2 tbsp"
+     },
+     {
+      "item": "Lemon juice, fresh",
+      "qty": "2 tbsp (30 ml)"
+     },
+     {
+      "item": "Garlic clove, crushed",
+      "qty": "1 pcs"
+     },
+     {
+      "item": "Salt",
+      "qty": "1/4 tsp"
+     },
+     {
+      "item": "Black pepper, ground",
+      "qty": "1/8 tsp"
+     }
+    ],
+    "prep": [
+     "Wash the lettuce leaf by leaf, dry well in a salad spinner or towel and chop coarsely into 3 to 4 cm pieces.",
+     "Grate 2 tbsp parmesan finely. Crush 1 garlic clove. Squeeze 2 tbsp lemon juice."
+    ],
+    "steps": [
+     "In a small bowl whisk 1 1/2 tbsp mayonnaise, 2 tbsp lemon juice, the crushed garlic, 1/4 tsp salt and 1/8 tsp black pepper until smooth.",
+     "Pour in the 6 tbsp olive oil slowly, about 1 tbsp at a time, whisking for 15 seconds after each addition, until the dressing is creamy and thick. Stir in the 2 tbsp parmesan.",
+     "Put the chopped lettuce and the sliced chicken in a large salad bowl. Pour about two thirds of the dressing over and toss for 30 seconds until every leaf is coated. Add the rest only if the salad looks dry.",
+     "Scatter the toasted bread cubes over the top and serve at once."
+    ]
+   }
+  ],
+  "timeline": [
+   "0:00 Flatten and season the chicken; wash the raw-chicken board and hands.",
+   "0:10 Wash, dry and chop the lettuce while the chicken rests in the seasoning.",
+   "0:15 Heat the grill pan and grill the chicken (10 to 12 minutes, check 74 C).",
+   "0:28 Rest the chicken 5 minutes; toast the bread cubes meanwhile.",
+   "0:33 Whisk the dressing and slice the chicken.",
+   "0:40 Toss lettuce, chicken and dressing, top with bread cubes and serve."
+  ],
+  "mistakes": [
+   "Chicken dry outside and raw inside -> flatten it to an even 1.5 cm first and check 74 C in the thickest part.",
+   "Chicken sticks to the pan -> preheat the grill pan fully and do not move the chicken for the first 5 minutes.",
+   "Dressing oily and thin -> add the oil slowly while whisking; if it separates, whisk in 1 tsp more mayonnaise.",
+   "Bread cubes soft -> add them only on top at serving time.",
+   "Salad soggy -> dry the lettuce well and dress it just before serving.",
+   "Cross-contamination -> never cut the cooked chicken on the raw-chicken board or put it back on the raw plate."
+  ],
+  "serving": [
+   "Pile the dressed lettuce in two wide bowls, fan the chicken strips on top and scatter the bread cubes.",
+   "Finish with a little extra grated parmesan if available and a lemon wedge on the side.",
+   "For a lunch box, pack the dressing and bread cubes separately and mix at eating time."
+  ],
+  "safety": [
+   "Chicken must reach 74 C in the thickest part; check with a food thermometer.",
+   "Do not wash raw chicken; it spreads germs around the sink. Pat it dry with paper towel instead.",
+   "Use a separate board and knife for raw chicken and wash them, and your hands, with hot soapy water straight after use.",
+   "Cool leftover chicken within 1 hour and keep it in a closed container in the fridge for 2 to 3 days.",
+   "The dressing contains mayonnaise and raw garlic: keep it in the fridge in a closed jar and use within 2 days.",
+   "Do not leave the dressed salad out for more than 2 hours (1 hour on a hot day)."
+  ],
+  "source": {
+   "site": "Sayidaty Kitchen (kitchen.sayidaty.net)",
+   "chef": "Sayidaty Kitchen editorial",
+   "title_ar": "سلطة سيزر بالدجاج",
+   "url": "https://kitchen.sayidaty.net/node/7356",
+   "image_source": "to be filled by image step",
+   "verification": "Verified (page opened and read in the research step, 2026-10-10). Published 2017-12-14; the page gives no grilling method or time for the chicken.",
+   "adapted": "Source serves 2; salad, chicken and bread quantities kept, but the dressing is halved (3/4 cup olive oil to 6 tbsp, 1/4 cup lemon to 2 tbsp, 3 tbsp mayonnaise to 1 1/2 tbsp, 2 garlic cloves to 1, black pepper 1/4 to 1/8 tsp, parmesan 1/4 cup to 2 tbsp) because the full amount is too much for one bowl; chicken weight, non-spicy seasoning and grilling to 74 C added; bread toasting method added."
+  },
+  "video": null,
+  "video_tl": null
+ },
+ {
+  "id": "S8",
+  "name_en": "Halloumi Salad",
+  "name_ar": "سلطة الحلوم",
+  "cuisine": "Levantine",
+  "category": "Salad",
+  "info": {
+   "prep_time": "10 min",
+   "cook_time": "6 min",
+   "total_time": "16 min",
+   "servings": "2 Adults",
+   "difficulty": "Easy",
+   "equipment": [
+    "non-stick pan 26 cm",
+    "thin spatula or tongs",
+    "plate with paper towel",
+    "large salad bowl",
+    "sharp knife",
+    "chopping board for vegetables",
+    "salad spinner or clean kitchen towel"
+   ]
+  },
+  "meat_spec": null,
+  "spice_note": "Source recipe contains no chili or black pepper; the tang comes from sumac, pomegranate molasses and lemon.",
+  "components": [
+   {
+    "title": "Part 1 - Fried Halloumi on Arugula with Pomegranate",
+    "ingredients": [
+     {
+      "item": "Halloumi cheese, cut into 1 cm slices",
+      "qty": "125 g (about 6 slices)",
+      "note": "half a 250 g pack"
+     },
+     {
+      "item": "Olive oil",
+      "qty": "2 tbsp (30 ml)",
+      "note": "for frying"
+     },
+     {
+      "item": "Arugula (rocket) leaves",
+      "qty": "50 g (2 cups loosely packed)"
+     },
+     {
+      "item": "Cherry tomatoes, halved",
+      "qty": "10 pcs (150 g)"
+     },
+     {
+      "item": "Pomegranate seeds",
+      "qty": "2 tbsp (30 g)"
+     },
+     {
+      "item": "Pomegranate molasses",
+      "qty": "1 tbsp (15 ml)"
+     },
+     {
+      "item": "Lemon juice, fresh",
+      "qty": "1 tbsp (15 ml)"
+     },
+     {
+      "item": "Sumac",
+      "qty": "1/2 tsp"
+     }
+    ],
+    "prep": [
+     "Wash the arugula well in a bowl of cold water, lift it out and dry it completely in a salad spinner or towel. Wash and halve the cherry tomatoes.",
+     "Drain the halloumi, pat it dry with paper towel and cut into 1 cm slices; dry slices fry golden instead of spitting.",
+     "Remove the seeds from part of a pomegranate until you have 2 tbsp."
+    ],
+    "steps": [
+     "Heat 2 tbsp olive oil in a non-stick pan 26 cm over medium heat for 1 minute.",
+     "Lay the halloumi slices in the pan in one layer, not touching. Fry without moving for 2 to 3 minutes until the underside is deep golden.",
+     "Turn each slice with a thin spatula and fry the second side for 2 minutes until golden. Lift onto a plate lined with paper towel.",
+     "In a large bowl put the arugula and cherry tomatoes. Add 1 tbsp pomegranate molasses, 1 tbsp lemon juice, 1/2 tsp sumac and the 2 tbsp pomegranate seeds and toss gently for 20 seconds until the leaves are glossy.",
+     "Spread the salad on a serving plate, arrange the warm halloumi slices on top and serve immediately while the cheese is soft."
+    ]
+   }
+  ],
+  "timeline": null,
+  "mistakes": [
+   "Halloumi rubbery and squeaky -> serve it straight from the pan; it hardens as it cools.",
+   "Halloumi pale and soft -> do not move it in the pan; give each side the full time on medium heat.",
+   "Oil spits -> dry the slices well with paper towel before they go in.",
+   "Arugula wilted -> toss with the dressing only at the end and put the hot cheese on top, not mixed in.",
+   "Too salty -> halloumi is already salty; do not add salt to this salad."
+  ],
+  "serving": [
+   "Spread the arugula salad on a flat plate and lay the golden halloumi slices across the top.",
+   "Sprinkle a pinch of sumac and a few extra pomegranate seeds over the cheese for colour.",
+   "Serve with warm Arabic bread as a light lunch or beside grilled chicken."
+  ],
+  "safety": [
+   "Wash hands before handling the vegetables. Use a clean board kept only for vegetables and fruit.",
+   "Wash all leaves and vegetables under cold running water and dry them well; wash herbs bunch by bunch and shake off the water.",
+   "Do not leave the dressed salad at room temperature for more than 2 hours (1 hour on a hot day).",
+   "Hot oil can spit: keep children away from the pan and turn the cheese with a spatula, not fingers.",
+   "Fried halloumi is best eaten at once; unused raw halloumi keeps in its brine or wrapped in the fridge for up to 5 days after opening."
+  ],
+  "source": {
+   "site": "Sayidaty Kitchen (kitchen.sayidaty.net)",
+   "chef": "Chef Rami Al-Maqt (on Sayidaty Kitchen)",
+   "title_ar": "سلطة الحلوم المشوية",
+   "url": "https://kitchen.sayidaty.net/node/28808",
+   "image_source": "to be filled by image step",
+   "verification": "Partially verified: page opened and read in the research step (2026-10-10, published 2024-04-07); the page prints cherry tomatoes as 10 g and pomegranate seeds as 5 g, which look like typos, and lists lemon juice without using it in the method.",
+   "adapted": "Source serves 4; halloumi halved to 125 g; arugula kept at 50 g because the printed salad amounts are very small; cherry tomatoes read as 10 pcs and pomegranate seeds set at 2 tbsp; frying oil reduced from 100 ml to 2 tbsp for a non-stick pan; the listed lemon juice is added to the dressing; frying times added."
+  },
+  "video": {
+   "url": "https://www.youtube.com/watch?v=9-yvf75qtr8",
+   "title": "How to Grill Non-Melting Halloumi Cheese | Two Easy Ways to Serve!",
+   "channel": "Feelgoodfoodie",
+   "language": "English",
+   "duration": "3:46",
+   "priority": "P4",
+   "spicy_warning": false,
+   "subtitles": "n/a"
+  },
+  "video_tl": null
+ },
+ {
+  "id": "S9",
+  "name_en": "Jer-Jer (Arugula) Salad",
+  "name_ar": "سلطة الجرجير",
+  "cuisine": "Levantine",
+  "category": "Salad",
+  "info": {
+   "prep_time": "15 min",
+   "cook_time": "0 min",
+   "total_time": "1 hr 15 min (includes 1 hr crisping in the fridge)",
+   "servings": "2 Adults",
+   "difficulty": "Easy",
+   "equipment": [
+    "clean damp kitchen towel",
+    "serving dish",
+    "deep bowl for the dressing",
+    "whisk or fork",
+    "sharp knife",
+    "chopping board for vegetables",
+    "salad spinner (optional)"
+   ]
+  },
+  "meat_spec": null,
+  "spice_note": "Source dressing has 1/4 tsp crushed chili flakes, which is removed; sumac is raised to 1/2 tsp for extra tang, and black pepper is 1/8 tsp.",
+  "components": [
+   {
+    "title": "Part 1 - Arugula Salad with Pomegranate and Sumac Dressing",
+    "ingredients": [
+     {
+      "item": "Arugula (jarjeer)",
+      "qty": "1 bunch (about 100 g)"
+     },
+     {
+      "item": "Tomato, medium, sliced",
+      "qty": "1 pcs (125 g)"
+     },
+     {
+      "item": "Onion, small, thinly sliced",
+      "qty": "1/2 pcs (35 g)"
+     },
+     {
+      "item": "Cucumber, medium, sliced",
+      "qty": "1 pcs (150 g)"
+     },
+     {
+      "item": "Walnuts, broken into pieces",
+      "qty": "1/4 cup (25 g)"
+     },
+     {
+      "item": "Olive oil",
+      "qty": "2 tbsp (30 ml)"
+     },
+     {
+      "item": "White or balsamic vinegar",
+      "qty": "1 1/2 tbsp (22 ml)"
+     },
+     {
+      "item": "Lemon juice, fresh",
+      "qty": "1 1/2 tbsp (22 ml)"
+     },
+     {
+      "item": "Pomegranate molasses",
+      "qty": "1 1/2 tsp"
+     },
+     {
+      "item": "Sumac",
+      "qty": "1/2 tsp"
+     },
+     {
+      "item": "Salt",
+      "qty": "1/4 tsp"
+     },
+     {
+      "item": "Black pepper, ground",
+      "qty": "1/8 tsp"
+     }
+    ],
+    "prep": [
+     "Cut off the thick lower stems of the arugula. Wash the leaves in a large bowl of cold water, change the water and wash again until no sand is left.",
+     "Shake the arugula dry, wrap it loosely in a clean damp kitchen towel and put it in the fridge for 1 hour so the leaves become crisp.",
+     "Wash the tomato and cucumber. Slice the tomato and cucumber into 5 mm rounds and the onion into thin half rings. Break the walnuts into pieces."
+    ],
+    "steps": [
+     "After 1 hour, unwrap the arugula and spread it on a serving dish.",
+     "Arrange the tomato, cucumber and onion slices over the arugula, then scatter the 1/4 cup walnuts on top.",
+     "In a deep bowl whisk 2 tbsp olive oil, 1 1/2 tbsp vinegar, 1 1/2 tbsp lemon juice, 1 1/2 tsp pomegranate molasses, 1/4 tsp salt, 1/8 tsp black pepper and 1/2 tsp sumac for 30 seconds until fully blended and slightly thick.",
+     "Pour the dressing evenly over the salad just before serving and serve immediately."
+    ]
+   }
+  ],
+  "timeline": null,
+  "mistakes": [
+   "Arugula limp -> do not skip the 1 hour in the damp towel in the fridge; it makes the leaves crisp.",
+   "Sand in the leaves -> wash in 2 changes of water and lift the leaves out instead of pouring them into a sieve.",
+   "Salad too bitter -> use young arugula with thin stems and cut off the thick stems.",
+   "Leaves wilt on the plate -> pour the dressing only at the moment of serving.",
+   "Dressing separates -> whisk it well right before pouring."
+  ],
+  "serving": [
+   "Serve on a flat dish so the tomato, cucumber and walnuts sit on top of the green leaves.",
+   "It goes well with grilled fish, chicken or any rice dish."
+  ],
+  "safety": [
+   "Wash hands before handling the vegetables. Use a clean board kept only for vegetables and fruit.",
+   "Wash all leaves and vegetables under cold running water and dry them well; wash herbs bunch by bunch and shake off the water.",
+   "Do not leave the dressed salad at room temperature for more than 2 hours (1 hour on a hot day).",
+   "Contains walnuts: check for nut allergy before serving to guests or children.",
+   "Washed undressed arugula keeps 2 days in the fridge wrapped in a damp towel inside a closed box; dressed salad should be eaten at once."
+  ],
+  "source": {
+   "site": "Manal Alalem (manalonline.com)",
+   "chef": "Manal Alalem",
+   "title_ar": "سلطة الجرجير",
+   "url": "https://www.manalonline.com/%D8%B3%D9%84%D8%B7%D8%A9-%D8%A7%D9%84%D8%AC%D8%B1%D8%AC%D9%8A%D8%B1/",
+   "image_source": "to be filled by image step",
+   "verification": "Verified (page opened and read in the research step, 2026-10-10). The page does not state servings.",
+   "adapted": "Source does not state servings; with 2 bunches of arugula it is treated as 4, so all quantities are halved for 2 adults; the hot pepper flakes are removed and sumac raised from the halved 1/4 tsp to 1/2 tsp; black pepper halved to 1/8 tsp."
+  },
+  "video": null,
+  "video_tl": {
+   "url": "https://www.youtube.com/watch?v=MzWj-JF9AIo",
+   "title": "Arugula / Jarjeer Salad - Els Kusinera",
+   "channel": "Els Kusinera",
+   "language": "Tagalog"
+  }
+ }
+]
