@@ -31,3 +31,10 @@ Spec: the 15-section brief (47 recipes: 15 breakfast, 9 salads, 23 mains; 4 deli
 1. Salads: one agent, input research/breakfast_salads.json (S1-S9) -> recipes/salads.json.
 2. Breakfast photos: run candidates collector for B1-B15 via GitHub Actions (no tokens), pick by eye.
 3. Renderer: one deterministic Python script reads recipes/*.json and emits all 4 files. No agents.
+
+## Home Kitchen app (2026-10-10)
+- Published as a private Claude artifact: https://claude.ai/artifact/HimBYAhxEubUnZhky52K7j
+  (capabilities: db, assets, user, sample). Source is recovered with Artifact read on that URL.
+- Uses the 47 recipes (homecookbook/recipes/*.json, salads now written) + 2 photos each, Today / Week / Recipes / Shopping / Photos tabs, cooking mode with timers, dish photo upload, AR/EN/TL.
+- Shopping catalog comes from the owner's Amazon.ae purchases; kept only inside the artifact (not in this repo).
+- Pending: Carrefour history (Safari), product photos, salad photo picks for the PDF (picks.py S1 tile mapping is off by one).
