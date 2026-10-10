@@ -1,1273 +1,1808 @@
 [
-  {
-    "id": "B1",
-    "name_en": "Pasolla",
-    "name_ar": "فاصوليا بيضاء بالصلصة",
-    "cuisine": "Gulf",
-    "category": "Breakfast",
-    "info": {
-      "prep_time": "10 min",
-      "cook_time": "18 min",
-      "total_time": "28 min",
-      "servings": "2 Adults",
-      "difficulty": "Easy",
-      "equipment": ["blender", "medium pot 20 cm with lid", "can opener", "sieve", "wooden spoon", "chopping board for vegetables"]
-    },
-    "meat_spec": null,
-    "spice_note": "Source recipe has 1 fresh hot pepper, which is removed; colour and aroma come from the sweet paprika and tomato paste already in the source, and black pepper is kept at 1/4 tsp.",
-    "components": [
-      {
-        "title": "Part 1 - White Beans in Tomato Sauce",
-        "ingredients": [
-          {"item": "Canned white beans (cannellini or butter beans)", "qty": "1 can (400 g, about 240 g drained)", "note": "drained and rinsed"},
-          {"item": "Onion, roughly chopped", "qty": "1 small (80 g)"},
-          {"item": "Garlic cloves", "qty": "2 pcs"},
-          {"item": "Tomatoes, ripe, roughly chopped", "qty": "2 medium (250 g)"},
-          {"item": "Tomato paste", "qty": "1 tbsp"},
-          {"item": "Vegetable oil", "qty": "1 1/2 tbsp"},
-          {"item": "Ground cumin", "qty": "1/2 tsp"},
-          {"item": "Sweet paprika", "qty": "1/2 tsp"},
-          {"item": "Onion powder", "qty": "1/2 tsp", "note": "optional, as in the source"},
-          {"item": "Salt", "qty": "1/2 tsp"},
-          {"item": "Black pepper, ground", "qty": "1/4 tsp"},
-          {"item": "Hot water", "qty": "1/2 cup (120 ml)"},
-          {"item": "Fresh coriander, chopped", "qty": "2 tbsp"}
-        ],
-        "prep": [
-          "Open the can of beans, pour the beans into a sieve, rinse under cold water for 20 seconds and leave to drain.",
-          "Peel and roughly chop 1 small onion and 2 garlic cloves. Roughly chop 2 tomatoes.",
-          "Put the onion, garlic and tomatoes in the blender and blend for 20 to 30 seconds until smooth.",
-          "Measure 1/2 cup hot water from the kettle. Chop 2 tbsp fresh coriander and keep it for the end."
-        ],
-        "steps": [
-          "Heat 1 1/2 tbsp vegetable oil in a medium pot 20 cm over medium heat for 1 minute until it shimmers.",
-          "Pour in the blended onion, garlic and tomato mixture and stir on medium heat for 6 to 8 minutes until it thickens, darkens slightly and the raw onion smell is gone.",
-          "Add 1 tbsp tomato paste, 1/2 tsp cumin, 1/2 tsp sweet paprika, 1/2 tsp onion powder, 1/2 tsp salt and 1/4 tsp black pepper. Stir for 1 minute until the paste is blended in and smells toasted.",
-          "Add the drained beans and 1/2 cup hot water. Stir gently so the beans do not break, bring to a gentle bubble on medium heat, then cover and simmer on low heat for 8 to 10 minutes until the sauce is thick enough to coat the beans and does not run across the pot when you drag the spoon through it.",
-          "Turn off the heat, stir in the 2 tbsp chopped coriander and leave covered for 2 minutes before serving."
-        ]
-      }
-    ],
-    "timeline": null,
-    "mistakes": [
-      "Sauce watery -> simmer uncovered for the last 3 minutes until it thickens; add water only 1/2 cup at the start.",
-      "Beans broken and mushy -> stir gently with a wooden spoon and simmer on low; never boil hard once the beans are in.",
-      "Sauce tastes raw and sharp -> cook the blended onion and tomato the full 6 to 8 minutes before adding the paste and spices.",
-      "Too salty -> canned beans already contain salt; rinse them and keep the added salt at 1/2 tsp, then taste at the end.",
-      "Coriander turns dark and loses aroma -> add it only after the heat is off."
-    ],
-    "serving": [
-      "Spoon the beans into a shallow bowl and smooth the top.",
-      "Drizzle 1 tsp olive oil over the top and add a few whole coriander leaves.",
-      "Serve warm with Arabic bread, sliced cucumber and a wedge of lemon; it also pairs with B3 Boiled Egg."
-    ],
-    "safety": [
-      "Check the can is not dented or bulging before opening.",
-      "Cool leftovers within 1 hour; keep in a closed container in the fridge for 2 to 3 days.",
-      "Reheat in a pot with 2 tbsp water until steaming hot throughout."
-    ],
-    "source": {
-      "site": "Cookpad (cookpad.com)",
-      "chef": "w (@alshareef), home cook, Makkah",
-      "title_ar": "ايدام فاصوليه بيضا معلبه",
-      "url": "https://cookpad.com/sa/%D9%88%D8%B5%D9%81%D8%A7%D8%AA/13743910",
-      "image_source": "to be filled by image step",
-      "verification": "Verified (page opened and read)",
-      "adapted": "Scaled from 1 can beans with 2 onions, 3 garlic cloves and 4 tomatoes (about 5 servings) to 1 can beans with 1 small onion, 2 garlic cloves and 2 tomatoes for 2 adults; the 1 fresh hot pepper is removed; no sugar is used; the source gives no oil, water, heat level, minutes or servings, so 1 1/2 tbsp oil, 1/2 cup hot water, medium then low heat and 8 to 10 minutes simmer are set as the professional standard."
-    },
-    "video": {
-      "url": "https://www.youtube.com/watch?v=Pq7UU-VHgKA",
-      "title": "Lebanese Fasolia Recipe - White Bean Stew with Meat",
-      "channel": "Zaatar and Zaytoun",
-      "language": "English",
-      "duration": "3:43",
-      "priority": "P4",
-      "spicy_warning": false,
-      "subtitles": "n/a"
-    },
-    "video_tl": null
+ {
+  "id": "B1",
+  "name_en": "Pasolla",
+  "name_ar": "فاصوليا بيضاء بالصلصة",
+  "cuisine": "Gulf",
+  "category": "Breakfast",
+  "info": {
+   "prep_time": "10 min",
+   "cook_time": "18 min",
+   "total_time": "28 min",
+   "servings": "2 Adults",
+   "difficulty": "Easy",
+   "equipment": [
+    "blender",
+    "medium pot 20 cm with lid",
+    "can opener",
+    "sieve",
+    "wooden spoon",
+    "chopping board for vegetables"
+   ]
   },
-  {
-    "id": "B2",
-    "name_en": "Fried Egg",
-    "name_ar": "بيض مقلي",
-    "cuisine": "Egyptian",
-    "category": "Breakfast",
-    "info": {
-      "prep_time": "5 min",
-      "cook_time": "8 min",
-      "total_time": "13 min",
-      "servings": "2 Adults",
-      "difficulty": "Easy",
-      "equipment": ["non-stick pan 26 cm", "thin spatula", "small bowl for cracking eggs", "chopping board for vegetables"]
-    },
-    "meat_spec": null,
-    "spice_note": "Source recipe contains no chili.",
-    "components": [
-      {
-        "title": "Part 1 - Fried Eggs with Onion, Both Sides Firm",
-        "ingredients": [
-          {"item": "Eggs", "qty": "4 pcs", "note": "2 per adult"},
-          {"item": "Onion, finely chopped", "qty": "1/2 medium (60 g)"},
-          {"item": "Olive oil", "qty": "1 1/2 tbsp"},
-          {"item": "Salt", "qty": "1/4 tsp"}
-        ],
-        "prep": [
-          "Peel and finely chop 1/2 onion on the vegetable board.",
-          "Keep the 4 eggs whole; do not beat them. Have a small bowl ready to crack each egg into first so a broken shell can be removed."
-        ],
-        "steps": [
-          "Heat 1 1/2 tbsp olive oil in a non-stick pan 26 cm over medium heat for 1 minute. Add the 1/2 chopped onion and stir for 3 to 4 minutes until soft and just turning golden. Spread the onion evenly across the pan.",
-          "Crack each of the 4 eggs into the small bowl one at a time and slide them onto the onion, spaced apart. Sprinkle 1/4 tsp salt over the eggs. Fry on medium heat for 2 minutes without moving them until the whites are opaque and the edges are lightly crisp.",
-          "Slide the thin spatula under each egg and flip it over. Fry the second side on medium heat for 1 1/2 to 2 minutes until the yolk is firm when pressed with the spatula and no runny yolk shows at the edge.",
-          "Lift the eggs out with the spatula, bringing the onion with them, and serve at once."
-        ]
-      }
+  "meat_spec": null,
+  "spice_note": "Source recipe has 1 fresh hot pepper, which is removed; colour and aroma come from the sweet paprika and tomato paste already in the source, and black pepper is kept at 1/4 tsp.",
+  "components": [
+   {
+    "title": "Part 1 - White Beans in Tomato Sauce",
+    "ingredients": [
+     {
+      "item": "Canned white beans (cannellini or butter beans)",
+      "qty": "1 can (400 g, about 240 g drained)",
+      "note": "drained and rinsed"
+     },
+     {
+      "item": "Onion, roughly chopped",
+      "qty": "1 small (80 g)"
+     },
+     {
+      "item": "Garlic cloves",
+      "qty": "2 pcs"
+     },
+     {
+      "item": "Tomatoes, ripe, roughly chopped",
+      "qty": "2 medium (250 g)"
+     },
+     {
+      "item": "Tomato paste",
+      "qty": "1 tbsp"
+     },
+     {
+      "item": "Vegetable oil",
+      "qty": "1 1/2 tbsp"
+     },
+     {
+      "item": "Ground cumin",
+      "qty": "1/2 tsp"
+     },
+     {
+      "item": "Sweet paprika",
+      "qty": "1/2 tsp"
+     },
+     {
+      "item": "Onion powder",
+      "qty": "1/2 tsp",
+      "note": "optional, as in the source"
+     },
+     {
+      "item": "Salt",
+      "qty": "1/2 tsp"
+     },
+     {
+      "item": "Black pepper, ground",
+      "qty": "1/4 tsp"
+     },
+     {
+      "item": "Hot water",
+      "qty": "1/2 cup (120 ml)"
+     },
+     {
+      "item": "Fresh coriander, chopped",
+      "qty": "2 tbsp"
+     }
     ],
-    "timeline": null,
-    "mistakes": [
-      "Eggs stick and tear when flipped -> use a non-stick pan, let the first side cook the full 2 minutes, and slide a thin spatula fully under the egg before turning.",
-      "Yolk still runny -> this recipe wants a firm yolk; give the second side 2 minutes and press gently to check it is set.",
-      "Onion burns before the eggs go in -> keep the heat at medium and stop at light golden, 3 to 4 minutes.",
-      "Edges burnt and brown -> the heat is too high; medium only, and 1 1/2 tbsp oil is enough.",
-      "Shell in the pan -> always crack into a small bowl first."
+    "prep": [
+     "Open the can of beans, pour the beans into a sieve, rinse under cold water for 20 seconds and leave to drain.",
+     "Peel and roughly chop 1 small onion and 2 garlic cloves. Roughly chop 2 tomatoes.",
+     "Put the onion, garlic and tomatoes in the blender and blend for 20 to 30 seconds until smooth.",
+     "Measure 1/2 cup hot water from the kettle. Chop 2 tbsp fresh coriander and keep it for the end."
     ],
-    "serving": [
-      "Place 2 eggs on each plate with the onion on top.",
-      "Serve with warm Arabic bread, sliced tomato and cucumber, and olives.",
-      "A pinch of sumac on the eggs adds colour and a lemony note without heat."
-    ],
-    "safety": [
-      "Cook until the yolk is firm; this is the fully cooked version, safe for everyone.",
-      "Wash hands after handling raw egg and keep eggs in the fridge until needed.",
-      "Best eaten at once; fried eggs do not keep well."
-    ],
-    "source": {
-      "site": "Shamlola (shamlola.com)",
-      "chef": "Shamlola editorial",
-      "title_ar": "طريقة عمل البيض المقلي بالبصل",
-      "url": "https://www.shamlola.com/recipes/%D8%B7%D8%B1%D9%8A%D9%82%D8%A9-%D8%B9%D9%85%D9%84-%D8%A7%D9%84%D8%A8%D9%8A%D8%B6-%D8%A7%D9%84%D9%85%D9%82%D9%84%D9%8A-%D8%A8%D8%A7%D9%84%D8%A8%D8%B5%D9%84",
-      "image_source": "to be filled by image step",
-      "verification": "Verified (page opened and read)",
-      "adapted": "Source serves 2 with 2 eggs, 1/2 onion and 1 tbsp olive oil; raised to 4 eggs and 1 1/2 tbsp oil for 2 adults; the source whisks the eggs with salt, but the household version keeps the eggs whole and fries them on both sides until the yolk is firm; the source gives no heat level or per-side minutes, so medium heat, 2 minutes first side and 1 1/2 to 2 minutes second side are set as the professional standard."
-    },
-    "video": {
-      "url": "https://www.youtube.com/watch?v=-W1dpRkthrI",
-      "title": "The Best Fried Eggs You'll Ever Make | Epicurious 101",
-      "channel": "Epicurious",
-      "language": "English",
-      "duration": "3:14",
-      "priority": "P4",
-      "spicy_warning": false,
-      "subtitles": "manual English"
-    },
-    "video_tl": null
+    "steps": [
+     "Heat 1 1/2 tbsp vegetable oil in a medium pot 20 cm over medium heat for 1 minute until it shimmers.",
+     "Pour in the blended onion, garlic and tomato mixture and stir on medium heat for 6 to 8 minutes until it thickens, darkens slightly and the raw onion smell is gone.",
+     "Add 1 tbsp tomato paste, 1/2 tsp cumin, 1/2 tsp sweet paprika, 1/2 tsp onion powder, 1/2 tsp salt and 1/4 tsp black pepper. Stir for 1 minute until the paste is blended in and smells toasted.",
+     "Add the drained beans and 1/2 cup hot water. Stir gently so the beans do not break, bring to a gentle bubble on medium heat, then cover and simmer on low heat for 8 to 10 minutes until the sauce is thick enough to coat the beans and does not run across the pot when you drag the spoon through it.",
+     "Turn off the heat, stir in the 2 tbsp chopped coriander and leave covered for 2 minutes before serving."
+    ]
+   }
+  ],
+  "timeline": null,
+  "mistakes": [
+   "Sauce watery -> simmer uncovered for the last 3 minutes until it thickens; add water only 1/2 cup at the start.",
+   "Beans broken and mushy -> stir gently with a wooden spoon and simmer on low; never boil hard once the beans are in.",
+   "Sauce tastes raw and sharp -> cook the blended onion and tomato the full 6 to 8 minutes before adding the paste and spices.",
+   "Too salty -> canned beans already contain salt; rinse them and keep the added salt at 1/2 tsp, then taste at the end.",
+   "Coriander turns dark and loses aroma -> add it only after the heat is off."
+  ],
+  "serving": [
+   "Spoon the beans into a shallow bowl and smooth the top.",
+   "Drizzle 1 tsp olive oil over the top and add a few whole coriander leaves.",
+   "Serve warm with Arabic bread, sliced cucumber and a wedge of lemon; it also pairs with B3 Boiled Egg."
+  ],
+  "safety": [
+   "Check the can is not dented or bulging before opening.",
+   "Cool leftovers within 1 hour; keep in a closed container in the fridge for 2 to 3 days.",
+   "Reheat in a pot with 2 tbsp water until steaming hot throughout."
+  ],
+  "source": {
+   "site": "Shamlola",
+   "chef": "Shamlola editorial",
+   "title_ar": "طريقة عمل الفاصوليا البيضاء",
+   "url": "https://www.shamlola.com/recipes/طريقة-عمل-الفاصوليا-البيضاء",
+   "image_source": "to be filled by image step",
+   "verification": "Verified (page opened and read). Source is the Egyptian white-bean tomato stew.",
+   "adapted": "Household breakfast version: canned white beans replace soaked dried beans, meat stock removed, no chili, scaled to 2 adults, quick 15-minute simmer. Red tomato sauce as required."
   },
-  {
-    "id": "B3",
-    "name_en": "Boiled Egg",
-    "name_ar": "بيض مسلوق",
-    "cuisine": "Other",
-    "category": "Breakfast",
-    "info": {
-      "prep_time": "2 min",
-      "cook_time": "15 min",
-      "total_time": "17 min",
-      "servings": "2 Adults",
-      "difficulty": "Easy",
-      "equipment": ["small pot 16 cm with lid", "slotted spoon", "bowl of cold water", "kitchen timer"]
-    },
-    "meat_spec": null,
-    "spice_note": "Source recipe contains no chili.",
-    "components": [
-      {
-        "title": "Part 1 - Boiled Eggs, Soft, Medium or Hard",
-        "ingredients": [
-          {"item": "Eggs, large", "qty": "4 pcs", "note": "2 per adult; straight from the fridge"},
-          {"item": "Water", "qty": "4 cups (1 L)", "note": "enough to cover the eggs by 2 cm"},
-          {"item": "Salt", "qty": "1/2 tsp", "note": "in the water, helps seal any crack"}
-        ],
-        "prep": [
-          "Fill a bowl with cold water and keep it next to the stove for cooling the eggs.",
-          "Set the kitchen timer ready. Decide the doneness: soft (6 minutes, runny yolk), medium (8 minutes, jammy yolk) or hard (10 minutes, fully firm yolk)."
-        ],
-        "steps": [
-          "Place the 4 eggs in a small pot 16 cm in one layer, add 4 cups cold water so the eggs are covered by 2 cm, and add 1/2 tsp salt.",
-          "Set the pot on high heat uncovered and bring to a full boil; this takes about 5 to 6 minutes. Watch for large bubbles rising all over the surface.",
-          "As soon as the water boils, lower the heat to medium-low so it bubbles gently, and start the timer: 6 minutes for soft, 8 minutes for medium, 10 minutes for hard.",
-          "When the timer rings, lift the eggs out with the slotted spoon straight into the bowl of cold water and leave them for 3 to 5 minutes until cool enough to handle; this stops the cooking and makes peeling easier.",
-          "Tap each egg all around on the counter, roll it gently and peel under a thin stream of cold water. Soft eggs: cut the top off and eat from the shell with a spoon. Medium and hard: peel fully and cut in half; a hard egg shows a pale yellow yolk with no grey ring."
-        ]
-      }
-    ],
-    "timeline": null,
-    "mistakes": [
-      "Grey ring around the yolk and rubbery white -> the egg was boiled too long or not cooled; stop at 10 minutes maximum and cool at once in cold water.",
-      "Eggs crack in the pot -> start them in cold water, not boiling water, and keep the boil gentle once timing starts.",
-      "Hard to peel -> cool in cold water for at least 3 minutes and peel under running water; eggs a week old peel better than very fresh ones.",
-      "Soft egg too runny or too set -> time from the moment the water boils, not from when the pot goes on the stove.",
-      "Timing off with many eggs -> this timing is for 4 large eggs in a small pot; more eggs need a bigger pot so the water returns to the boil quickly."
-    ],
-    "serving": [
-      "Soft eggs: stand in egg cups, slice the top off, add a pinch of salt and serve with toast fingers.",
-      "Medium or hard eggs: peel, halve lengthwise and arrange cut side up on a plate with a pinch of salt and a little sumac or cumin.",
-      "Serve with Arabic bread, olives, cucumber and tomato; hard eggs are the ones to pair with B14 Chicken Mix (see B15)."
-    ],
-    "safety": [
-      "Hard-boiled eggs (10 minutes) are fully cooked and safe for everyone; soft and medium eggs have a runny or jammy yolk and are best for healthy adults only.",
-      "Cool within 1 hour; keep peeled or unpeeled hard eggs in a closed container in the fridge for up to 3 days.",
-      "Do not reheat soft eggs; eat them at once."
-    ],
-    "source": {
-      "site": "Sayidaty Kitchen (kitchen.sayidaty.net)",
-      "chef": "Sayidaty Kitchen editorial",
-      "title_ar": "مدة سلق البيض بالماء",
-      "url": "https://kitchen.sayidaty.net/node/25365",
-      "image_source": "to be filled by image step",
-      "verification": "Verified (page opened and read)",
-      "adapted": "Scaled from 8 eggs for 4 people to 4 eggs for 2 adults keeping the cold-water start and 1/2 tsp salt from the source; the source gives one standard timing (10 minutes after the boil) and inconsistent size-based timings, so the household timings of 6 minutes soft, 8 minutes medium and 10 minutes hard from the boil, followed by cold water, are used as the professional standard."
-    },
-    "video": {
-      "url": "https://www.youtube.com/watch?v=3CnAQzEiuvQ",
-      "title": "PERFECT BOILED EGGS (EVERY TIME) | hard boiled eggs + soft boiled eggs",
-      "channel": "Downshiftology",
-      "language": "English",
-      "duration": "5:48",
-      "priority": "P4",
-      "spicy_warning": false,
-      "subtitles": "manual English"
-    },
-    "video_tl": null
+  "video": {
+   "url": "https://www.youtube.com/watch?v=Pq7UU-VHgKA",
+   "title": "Lebanese Fasolia Recipe - White Bean Stew with Meat",
+   "channel": "Zaatar and Zaytoun",
+   "language": "English",
+   "duration": "3:43",
+   "priority": "P4",
+   "spicy_warning": false,
+   "subtitles": "n/a"
   },
-  {
-    "id": "B4",
-    "name_en": "Chicken Liver",
-    "name_ar": "كبدة دجاج بدبس الرمان",
-    "cuisine": "Levantine",
-    "category": "Breakfast",
-    "info": {
-      "prep_time": "15 min",
-      "cook_time": "12 min",
-      "total_time": "27 min",
-      "servings": "2 Adults",
-      "difficulty": "Medium",
-      "equipment": ["wide non-stick skillet 28 cm", "chopping board for raw chicken", "second board for vegetables", "small sharp knife", "kitchen paper", "meat thermometer", "wooden spoon"]
-    },
-    "meat_spec": {
-      "type": "Boneless",
-      "cut": "Cubes",
-      "skin": "n/a",
-      "weight": "300 g",
-      "preparation": "Whole lobes trimmed and cut in half (pieces of 3 to 4 cm)",
-      "cooking_method": "Fried",
-      "source_specified": true,
-      "note": "Source specifies chicken liver (1 kg); scaled to 300 g for 2 adults. Pieces are cut no smaller than 3 cm so they stay moist while reaching a safe 74 C."
-    },
-    "spice_note": "Source recipe has 2 minced chili peppers, which are removed; the tang comes from the pomegranate molasses and lemon juice, with black pepper kept at 1/4 tsp.",
-    "components": [
-      {
-        "title": "Part 1 - Chicken Liver with Pomegranate Molasses, Garlic and Lemon",
-        "ingredients": [
-          {"item": "Chicken liver", "qty": "300 g", "note": "cleaned, green spots and membrane removed"},
-          {"item": "Olive oil", "qty": "2 tbsp"},
-          {"item": "Garlic, finely chopped", "qty": "2 cloves"},
-          {"item": "Pomegranate molasses", "qty": "2 1/2 tbsp"},
-          {"item": "Lemon juice, fresh", "qty": "1 tbsp"},
-          {"item": "Salt", "qty": "1/2 tsp"},
-          {"item": "Black pepper, ground", "qty": "1/4 tsp"},
-          {"item": "Fresh parsley, chopped", "qty": "2 tbsp", "note": "for serving"}
-        ],
-        "prep": [
-          "On the raw-chicken board, look over the 300 g liver. With the small knife cut away any green or yellow-green spots (bile) and any white stringy membrane or fat, and separate the lobes. Cut large lobes in half so all pieces are 3 to 4 cm.",
-          "Rinse the pieces gently in a bowl of cold water (not under a hard tap, to avoid splashing), drain, and pat very dry with kitchen paper; dry liver browns instead of boiling.",
-          "Peel and finely chop 2 garlic cloves and chop 2 tbsp parsley on the vegetable board. Squeeze 1 tbsp lemon juice. Measure 2 1/2 tbsp pomegranate molasses."
-        ],
-        "steps": [
-          "Heat 2 tbsp olive oil in a wide non-stick skillet 28 cm over medium-high heat for 1 to 2 minutes until it shimmers.",
-          "Add half of the liver pieces in one layer with space between them. Leave them for 2 minutes without stirring until the underside is brown, then turn and cook 2 minutes more. Lift onto a plate. Repeat with the second half of the liver; frying in two batches keeps the pan hot so the liquid evaporates instead of pooling.",
-          "Return all the liver to the skillet on medium-high heat and stir for 2 to 3 minutes until any liquid in the pan has evaporated and the pieces are brown all over.",
-          "Lower the heat to medium, add the 2 chopped garlic cloves, 1/2 tsp salt and 1/4 tsp black pepper, and stir for 1 minute until the garlic smells fragrant but is not brown.",
-          "Pour in 2 1/2 tbsp pomegranate molasses and 1 tbsp lemon juice, lower the heat to low and stir for 1 to 2 minutes until the sauce is glossy and clings to the liver.",
-          "Cut the thickest piece in half: it must be brown or grey all the way through with no pink, and the thermometer must read 74 C. If still pink, cook 1 to 2 minutes more. Turn off the heat."
-        ]
-      }
-    ],
-    "timeline": null,
-    "mistakes": [
-      "Liver tastes bitter -> green bile spots were left on; trim every green mark before cooking.",
-      "Liver boils in its own juice and goes grey -> pat it very dry and fry in two batches on medium-high heat so the pan stays hot.",
-      "Liver tough and dry -> once it is brown and reads 74 C stop at once; it needs only 8 to 10 minutes total.",
-      "Molasses burns and turns black -> add it on low heat at the end for 1 to 2 minutes only.",
-      "Garlic burnt and sharp -> add it after the liver is browned, on medium heat, for 1 minute only."
-    ],
-    "serving": [
-      "Pile the liver on a warm plate and spoon the pan sauce over it.",
-      "Scatter the 2 tbsp chopped parsley on top and add a wedge of lemon on the side.",
-      "Serve with warm Arabic bread, sliced onion rings and B7 Potato, as the source suggests fried potatoes alongside."
-    ],
-    "safety": [
-      "Chicken liver is safe only when cooked to 74 C with no pink inside; check the thickest piece.",
-      "Keep raw liver in the fridge and cook it on the day of purchase or the next day; use a separate board and knife and wash hands and board with hot soapy water afterwards.",
-      "Cool leftovers within 1 hour; keep in a closed container in the fridge for 2 days and reheat until steaming hot."
-    ],
-    "source": {
-      "site": "Manal Alalem (manalonline.com)",
-      "chef": "Manal Alalem",
-      "title_ar": "كبدة الدجاج بدبس الرمان",
-      "url": "https://www.manalonline.com/%D9%83%D8%A8%D8%AF%D8%A9-%D8%A7%D9%84%D8%AF%D8%AC%D8%A7%D8%AC-%D8%A8%D8%AF%D8%A8%D8%B3-%D8%A7%D9%84%D8%B1%D9%85%D8%A7%D9%86/",
-      "image_source": "to be filled by image step",
-      "verification": "Verified (page opened and read)",
-      "adapted": "Scaled from 1 kg liver, 1/2 cup olive oil and 1/2 cup pomegranate molasses to 300 g liver, 2 tbsp oil and 2 1/2 tbsp molasses for 2 adults; the 2 minced chili peppers are removed; 2 garlic cloves and 1 tbsp lemon juice are a household addition in the Lebanese style (they are not in the source); the source gives no servings, minutes, parsley quantity or cleaning step, so 2 tbsp parsley, batch frying, 74 C check and the trimming of bile spots are set as the professional standard."
-    },
-    "video": {
-      "url": "https://www.youtube.com/watch?v=lU9LQxL-XKQ",
-      "title": "Best Lebanese recipe - Sawdeh (Chicken livers) healthy, quick and easy recipe!",
-      "channel": "Zaatar and Zaytoun",
-      "language": "English",
-      "duration": "2:13",
-      "priority": "P4",
-      "spicy_warning": false,
-      "subtitles": "n/a"
-    },
-    "video_tl": null
+  "video_tl": null
+ },
+ {
+  "id": "B2",
+  "name_en": "Fried Egg",
+  "name_ar": "بيض مقلي",
+  "cuisine": "Egyptian",
+  "category": "Breakfast",
+  "info": {
+   "prep_time": "5 min",
+   "cook_time": "8 min",
+   "total_time": "13 min",
+   "servings": "2 Adults",
+   "difficulty": "Easy",
+   "equipment": [
+    "non-stick pan 26 cm",
+    "thin spatula",
+    "small bowl for cracking eggs",
+    "chopping board for vegetables"
+   ]
   },
-  {
-    "id": "B5",
-    "name_en": "Chickpeas",
-    "name_ar": "حمص بالكمون (بليلة)",
-    "cuisine": "Levantine",
-    "category": "Breakfast",
-    "info": {
-      "prep_time": "10 min",
-      "cook_time": "4 min",
-      "total_time": "14 min",
-      "servings": "2 Adults",
-      "difficulty": "Easy",
-      "equipment": ["small pot 16 cm", "can opener", "sieve", "medium mixing bowl", "lemon squeezer", "chopping board for vegetables"]
-    },
-    "meat_spec": null,
-    "spice_note": "Source recipe has 1/8 tsp shatta (chili), which is removed; the zing comes from the lemon juice and the cumin.",
-    "components": [
-      {
-        "title": "Part 1 - Warm Chickpeas with Cumin and Lemon",
-        "ingredients": [
-          {"item": "Canned chickpeas", "qty": "1 can (400 g, about 240 g drained)", "note": "keep 1/2 cup of the can liquid for warming"},
-          {"item": "Onion, very finely chopped", "qty": "2 tbsp (about 1/4 small onion)"},
-          {"item": "Fresh coriander, chopped", "qty": "2 tbsp"},
-          {"item": "Garlic, crushed", "qty": "1 clove"},
-          {"item": "Lemon juice, fresh", "qty": "1 1/2 tbsp (about 1/2 lemon)"},
-          {"item": "Olive oil", "qty": "1 tbsp, plus 1 tsp for serving"},
-          {"item": "Ground cumin", "qty": "1/2 tsp"},
-          {"item": "Salt", "qty": "1/4 tsp", "note": "canned chickpeas already contain salt"}
-        ],
-        "prep": [
-          "Open the can of chickpeas. Pour 1/2 cup of the can liquid into a small pot 16 cm, then drain the rest of the chickpeas in a sieve and rinse for 10 seconds.",
-          "Finely chop 2 tbsp onion and 2 tbsp fresh coriander and crush 1 garlic clove on the vegetable board.",
-          "Squeeze 1 1/2 tbsp lemon juice.",
-          "In a medium bowl mix the chopped onion, coriander, crushed garlic, 1 tbsp olive oil, 1/2 tsp cumin and 1/4 tsp salt."
-        ],
-        "steps": [
-          "Put the drained chickpeas into the small pot with the 1/2 cup can liquid and set over medium heat. Stir and heat for 3 to 4 minutes until the liquid is steaming and the chickpeas are warm through; do not let it boil hard.",
-          "Lift the chickpeas out with a slotted spoon (leave most of the liquid behind) and tip them into the bowl with the onion, coriander, garlic, oil, cumin and salt. Stir for 30 seconds until every chickpea is coated and the cumin smells fragrant from the warmth.",
-          "Pour the 1 1/2 tbsp lemon juice over the chickpeas and stir again. Taste one chickpea and add a pinch more salt only if needed. Serve at once while warm."
-        ]
-      }
+  "meat_spec": null,
+  "spice_note": "Source recipe contains no chili.",
+  "components": [
+   {
+    "title": "Part 1 - Fried Eggs with Onion, Both Sides Firm",
+    "ingredients": [
+     {
+      "item": "Eggs",
+      "qty": "4 pcs",
+      "note": "2 per adult"
+     },
+     {
+      "item": "Onion, finely chopped",
+      "qty": "1/2 medium (60 g)"
+     },
+     {
+      "item": "Olive oil",
+      "qty": "1 1/2 tbsp"
+     },
+     {
+      "item": "Salt",
+      "qty": "1/4 tsp"
+     }
     ],
-    "timeline": null,
-    "mistakes": [
-      "Dish is dry and dull -> keep the chickpeas moist with 1 to 2 tbsp of the warm can liquid and the full 1 1/2 tbsp lemon.",
-      "Raw onion too sharp -> chop it very fine and use only 2 tbsp; it softens in the warm chickpeas.",
-      "Too salty -> rinse the chickpeas and add only 1/4 tsp salt, then taste.",
-      "Chickpeas mushy -> warm them gently for 3 to 4 minutes; do not boil.",
-      "Garlic harsh -> crush it to a paste with the salt so it blends in instead of sitting in chunks."
+    "prep": [
+     "Peel and finely chop 1/2 onion on the vegetable board.",
+     "Keep the 4 eggs whole; do not beat them. Have a small bowl ready to crack each egg into first so a broken shell can be removed."
     ],
-    "serving": [
-      "Spoon the warm chickpeas into two small bowls.",
-      "Drizzle 1 tsp olive oil over the top and add a few coriander leaves and a pinch of cumin.",
-      "Serve with warm Arabic bread, pickles and lemon wedges; it pairs well with B3 Boiled Egg."
-    ],
-    "safety": [
-      "Check the can is not dented or bulging before opening.",
-      "Cool leftovers within 1 hour; keep in a closed container in the fridge for 2 to 3 days.",
-      "Can be eaten cold from the fridge or rewarmed in a pot with 2 tbsp water until steaming."
-    ],
-    "source": {
-      "site": "Shamlola (shamlola.com)",
-      "chef": "Shamlola editorial",
-      "title_ar": "طريقة عمل الحمص بالكمون و الليمون",
-      "url": "https://www.shamlola.com/recipes/%D8%B7%D8%B1%D9%8A%D9%82%D8%A9-%D8%B9%D9%85%D9%84-%D8%A7%D9%84%D8%AD%D9%85%D8%B5-%D8%A8%D8%A7%D9%84%D9%83%D9%85%D9%88%D9%86-%D9%88-%D8%A7%D9%84%D9%84%D9%8A%D9%85%D9%88%D9%86",
-      "image_source": "to be filled by image step",
-      "verification": "Verified (page opened and read)",
-      "adapted": "Scaled from 1 kg boiled chickpeas, 1/2 onion, 2 garlic cloves, 1 lemon, 2 tbsp oil and 1 tsp cumin for 5 people to 1 can (400 g) chickpeas, 2 tbsp onion, 1 garlic clove, 1/2 lemon, 1 tbsp oil and 1/2 tsp cumin for 2 adults; the 1/8 tsp shatta is removed; the source serves the dish cold with no heating step, so the 3 to 4 minute warming in the can liquid for a breakfast balila is a household addition; the source does not say canned or dried, so canned is used."
-    },
-    "video": null,
-    "video_tl": null
+    "steps": [
+     "Heat 1 1/2 tbsp olive oil in a non-stick pan 26 cm over medium heat for 1 minute. Add the 1/2 chopped onion and stir for 3 to 4 minutes until soft and just turning golden. Spread the onion evenly across the pan.",
+     "Crack each of the 4 eggs into the small bowl one at a time and slide them onto the onion, spaced apart. Sprinkle 1/4 tsp salt over the eggs. Fry on medium heat for 2 minutes without moving them until the whites are opaque and the edges are lightly crisp.",
+     "Slide the thin spatula under each egg and flip it over. Fry the second side on medium heat for 1 1/2 to 2 minutes until the yolk is firm when pressed with the spatula and no runny yolk shows at the edge.",
+     "Lift the eggs out with the spatula, bringing the onion with them, and serve at once."
+    ]
+   }
+  ],
+  "timeline": null,
+  "mistakes": [
+   "Eggs stick and tear when flipped -> use a non-stick pan, let the first side cook the full 2 minutes, and slide a thin spatula fully under the egg before turning.",
+   "Yolk still runny -> this recipe wants a firm yolk; give the second side 2 minutes and press gently to check it is set.",
+   "Onion burns before the eggs go in -> keep the heat at medium and stop at light golden, 3 to 4 minutes.",
+   "Edges burnt and brown -> the heat is too high; medium only, and 1 1/2 tbsp oil is enough.",
+   "Shell in the pan -> always crack into a small bowl first."
+  ],
+  "serving": [
+   "Place 2 eggs on each plate with the onion on top.",
+   "Serve with warm Arabic bread, sliced tomato and cucumber, and olives.",
+   "A pinch of sumac on the eggs adds colour and a lemony note without heat."
+  ],
+  "safety": [
+   "Cook until the yolk is firm; this is the fully cooked version, safe for everyone.",
+   "Wash hands after handling raw egg and keep eggs in the fridge until needed.",
+   "Best eaten at once; fried eggs do not keep well."
+  ],
+  "source": {
+   "site": "Shamlola (shamlola.com)",
+   "chef": "Shamlola editorial",
+   "title_ar": "طريقة عمل البيض المقلي بالبصل",
+   "url": "https://www.shamlola.com/recipes/%D8%B7%D8%B1%D9%8A%D9%82%D8%A9-%D8%B9%D9%85%D9%84-%D8%A7%D9%84%D8%A8%D9%8A%D8%B6-%D8%A7%D9%84%D9%85%D9%82%D9%84%D9%8A-%D8%A8%D8%A7%D9%84%D8%A8%D8%B5%D9%84",
+   "image_source": "to be filled by image step",
+   "verification": "Verified (page opened and read)",
+   "adapted": "Source serves 2 with 2 eggs, 1/2 onion and 1 tbsp olive oil; raised to 4 eggs and 1 1/2 tbsp oil for 2 adults; the source whisks the eggs with salt, but the household version keeps the eggs whole and fries them on both sides until the yolk is firm; the source gives no heat level or per-side minutes, so medium heat, 2 minutes first side and 1 1/2 to 2 minutes second side are set as the professional standard."
   },
-  {
-    "id": "B6",
-    "name_en": "Sandwich Pizza",
-    "name_ar": "بيتزا التوست",
-    "cuisine": "Other",
-    "category": "Breakfast",
-    "info": {
-      "prep_time": "15 min",
-      "cook_time": "22 min",
-      "total_time": "37 min",
-      "servings": "2 Adults",
-      "difficulty": "Easy",
-      "equipment": ["oven", "baking tray with baking paper", "non-stick pan 26 cm", "pastry brush", "small bowl for melted butter", "chopping board for vegetables"]
-    },
-    "meat_spec": null,
-    "spice_note": "Source recipe contains no chili; black pepper is kept at 1/8 tsp for 2 adults.",
-    "components": [
-      {
-        "title": "Part 1 - Toast Pizza with Vegetable Sauce and Cheese",
-        "ingredients": [
-          {"item": "Toast bread slices", "qty": "4 pcs"},
-          {"item": "Butter, melted", "qty": "1 tbsp"},
-          {"item": "Olive oil", "qty": "1 tsp"},
-          {"item": "Onion, finely chopped", "qty": "1/2 small (40 g)"},
-          {"item": "Garlic, crushed", "qty": "1 clove"},
-          {"item": "Dried oregano", "qty": "1/2 tsp"},
-          {"item": "Green bell pepper, small dice", "qty": "1/4 pcs (30 g)"},
-          {"item": "Red bell pepper, small dice", "qty": "1/4 pcs (30 g)"},
-          {"item": "Sweet corn, canned, drained", "qty": "1/4 cup (40 g)", "note": "optional, as in the source"},
-          {"item": "Ready pizza sauce", "qty": "1/2 cup (120 ml)", "note": "check the label says no chili"},
-          {"item": "Mozzarella, grated", "qty": "1/2 cup (50 g)"},
-          {"item": "Parmesan, grated", "qty": "2 tbsp"},
-          {"item": "Salt", "qty": "1/4 tsp"},
-          {"item": "Black pepper, ground", "qty": "1/8 tsp"}
-        ],
-        "prep": [
-          "Turn the oven on to 200 C and line a baking tray with baking paper.",
-          "Melt 1 tbsp butter in a small bowl (20 seconds in the microwave). Brush both sides of the 4 toast slices with it.",
-          "Finely chop 1/2 small onion, crush 1 garlic clove and dice 1/4 green and 1/4 red bell pepper into 5 mm pieces on the vegetable board. Drain 1/4 cup corn.",
-          "Grate 1/2 cup mozzarella and 2 tbsp parmesan and mix them in a bowl. Measure 1/2 cup pizza sauce."
-        ],
-        "steps": [
-          "Heat a non-stick pan 26 cm over medium heat for 1 minute. Lay 2 buttered toast slices in the pan and toast 1 1/2 minutes per side until golden. Repeat with the other 2 slices and set all 4 on the baking tray.",
-          "In the same pan add 1 tsp olive oil, the 1/2 chopped onion, 1 crushed garlic clove and 1/4 tsp salt and stir on medium heat for 3 minutes until the onion is soft and clear.",
-          "Add 1/2 tsp oregano, the diced green and red bell pepper and the 1/4 cup corn and stir on medium heat for 3 to 4 minutes until the pepper is soft but still bright in colour.",
-          "Add 1/2 cup pizza sauce and 1/8 tsp black pepper, stir for 1 minute until hot and thick, then turn off the heat.",
-          "Spread the vegetable sauce evenly over the 4 toast slices right to the edges (about 2 tbsp each). Sprinkle the mozzarella and parmesan mix over the top.",
-          "Bake in the middle of the oven at 200 C for 8 to 10 minutes until the cheese is melted and bubbling and the edges of the bread are crisp and golden. Rest 1 minute before cutting each slice in half diagonally."
-        ]
-      }
-    ],
-    "timeline": null,
-    "mistakes": [
-      "Bread soggy -> toast it in the pan first and let the sauce thicken for 1 minute before spreading.",
-      "Cheese burnt before the bread crisps -> bake in the middle of the oven at 200 C and check at 8 minutes.",
-      "Pizza tastes hot -> some ready pizza sauces contain chili; read the label and choose a plain tomato and herb sauce.",
-      "Vegetables watery on top -> dice them small and cook them 3 to 4 minutes so their water cooks off.",
-      "Too little cheese to hold the topping -> use the full 1/2 cup mozzarella; the parmesan gives flavour, the mozzarella binds."
-    ],
-    "serving": [
-      "Place 2 slices (4 halves) on each plate while hot.",
-      "Sprinkle a pinch of dried oregano on top and add a few leaves of fresh basil if available.",
-      "Serve with a small cucumber and tomato salad or S5 Green Mix Salad."
-    ],
-    "safety": [
-      "Use oven gloves; the tray and the melted cheese are very hot.",
-      "Best eaten at once; leftovers can be kept in a closed container in the fridge for 1 day and reheated in the oven at 180 C for 5 minutes until the cheese is hot again.",
-      "Keep cheese refrigerated until use."
-    ],
-    "source": {
-      "site": "Sayidaty Kitchen (kitchen.sayidaty.net)",
-      "chef": "Sayidaty Kitchen editorial",
-      "title_ar": "بيتزا التوست السهلة",
-      "url": "https://kitchen.sayidaty.net/node/6450",
-      "image_source": "to be filled by image step",
-      "verification": "Verified (page opened and read)",
-      "adapted": "Scaled from 12 toast slices, 2 onions, 1 of each bell pepper and 2 cups sauce for 5 people to 4 slices, 1/2 small onion, 1/4 of each pepper and 1/2 cup sauce for 2 adults; the source's 1/4 cup mozzarella for 12 slices is very little, so cheese is raised to 1/2 cup mozzarella and 2 tbsp parmesan for 4 slices; oven unit not stated in the source so 200 C is used; baking time reduced from 15 to 8 to 10 minutes for 4 slices; the source gives no minutes for the vegetables, so 3 minutes onion and 3 to 4 minutes peppers are set as the professional standard."
-    },
-    "video": null,
-    "video_tl": null
+  "video": {
+   "url": "https://www.youtube.com/watch?v=-W1dpRkthrI",
+   "title": "The Best Fried Eggs You'll Ever Make | Epicurious 101",
+   "channel": "Epicurious",
+   "language": "English",
+   "duration": "3:14",
+   "priority": "P4",
+   "spicy_warning": false,
+   "subtitles": "manual English"
   },
-  {
-    "id": "B7",
-    "name_en": "Potato",
-    "name_ar": "بطاطس مقلية بالكمون والثوم",
-    "cuisine": "Egyptian",
-    "category": "Breakfast",
-    "info": {
-      "prep_time": "15 min (includes 10 min soaking the cubes)",
-      "cook_time": "16 min",
-      "total_time": "31 min",
-      "servings": "2 Adults",
-      "difficulty": "Easy",
-      "equipment": ["non-stick pan 26 cm", "bowl of cold water", "clean kitchen towel", "spatula", "chopping board for vegetables", "kitchen paper"]
-    },
-    "meat_spec": null,
-    "spice_note": "Source recipe has 1/2 tsp shatta (hot chili), which is removed; 1/2 tsp ground cumin is added for the Egyptian cumin flavour and the garlic and coriander give the aroma.",
-    "components": [
-      {
-        "title": "Part 1 - Pan-Fried Potato Cubes with Cumin and Garlic",
-        "ingredients": [
-          {"item": "Potatoes, peeled", "qty": "2 medium (400 g)", "note": "cut in 1.5 cm cubes"},
-          {"item": "Vegetable oil", "qty": "3 tbsp"},
-          {"item": "Ground cumin", "qty": "1/2 tsp", "note": "household addition, not in the source"},
-          {"item": "Dried ground coriander", "qty": "1/2 tsp"},
-          {"item": "Garlic, crushed", "qty": "1 clove"},
-          {"item": "Fresh coriander, chopped", "qty": "1 tbsp"},
-          {"item": "Salt", "qty": "1/2 tsp"}
-        ],
-        "prep": [
-          "Peel 2 potatoes and cut them into even 1.5 cm cubes on the vegetable board.",
-          "Put the cubes in a bowl of cold water for 10 minutes to wash off surface starch, then drain and dry them completely on a clean kitchen towel; wet potatoes spit in the oil and do not crisp.",
-          "Crush 1 garlic clove and chop 1 tbsp fresh coriander. Mix 1/2 tsp cumin, 1/2 tsp dried coriander and 1/2 tsp salt in a small cup."
-        ],
-        "steps": [
-          "Heat 3 tbsp vegetable oil in a non-stick pan 26 cm over medium-high heat for 1 to 2 minutes until a cube of potato sizzles at once when it touches the oil.",
-          "Add the dried potato cubes in one layer and leave them for 3 minutes without stirring so the underside turns golden.",
-          "Turn the cubes with the spatula and continue frying on medium-high heat for 9 to 11 minutes more, turning every 3 minutes, until all sides are golden and crisp and a cube is soft inside when pressed with the spatula.",
-          "Lower the heat to low. Sprinkle the cumin, dried coriander and salt mix over the potatoes and stir for 30 seconds so the spices toast lightly in the oil.",
-          "Add the 1 crushed garlic clove and 1 tbsp fresh coriander and stir for 30 to 60 seconds until the garlic smells fragrant but is not brown. Turn off the heat and lift the potatoes onto kitchen paper for 30 seconds to drain."
-        ]
-      }
-    ],
-    "timeline": null,
-    "mistakes": [
-      "Potatoes soft and pale, not crisp -> dry the cubes fully after soaking, use medium-high heat and do not crowd the pan; fry in 2 batches if the cubes are more than one layer.",
-      "Outside brown but inside hard -> cubes too big or heat too high; keep to 1.5 cm cubes and turn the heat down to medium after the first 3 minutes if they brown too fast.",
-      "Garlic burnt and bitter -> add it on low heat for the last minute only.",
-      "Spices taste raw -> stir them in the hot oil for 30 seconds before the garlic goes in.",
-      "Oil spits -> the potatoes were wet; towel-dry them before they go in."
-    ],
-    "serving": [
-      "Pile the potatoes in a shallow bowl and sprinkle a pinch of cumin and a few coriander leaves on top.",
-      "Add a lemon wedge on the side to squeeze over.",
-      "Serve hot with Arabic bread; it is the classic partner for B4 Chicken Liver and B10 Sunny-Side-Up Egg."
-    ],
-    "safety": [
-      "Keep the pan handle turned inwards and never leave hot oil unattended; have the lid nearby to cover the pan if the oil flares.",
-      "Best eaten at once; leftovers lose their crispness but keep 2 days in a closed container in the fridge and can be reheated in a dry pan on medium heat for 4 to 5 minutes.",
-      "Let the used oil cool fully before discarding it."
-    ],
-    "source": {
-      "site": "Sayidaty Kitchen (kitchen.sayidaty.net)",
-      "chef": "Sayidaty Kitchen editorial",
-      "title_ar": "البطاطا بالثوم والكزبرة الخضراء",
-      "url": "https://kitchen.sayidaty.net/node/2577",
-      "image_source": "to be filled by image step",
-      "verification": "Verified (page opened and read)",
-      "adapted": "Scaled from 5 potatoes, 2 garlic cloves, 2 tbsp fresh coriander and 1 tsp dried coriander for 5 people to 2 potatoes (400 g), 1 garlic clove, 1 tbsp fresh coriander and 1/2 tsp dried coriander for 2 adults; oil kept at 3 tbsp for pan frying; the 1/2 tsp shatta is removed and 1/2 tsp ground cumin is added as a household choice for the Egyptian cumin style; the source gives no heat level, minutes or cube size, so 1.5 cm cubes, a 10 minute cold-water soak, medium-high heat and 12 to 14 minutes frying are set as the professional standard."
-    },
-    "video": {
-      "url": "https://www.youtube.com/watch?v=MA8vbHO6_rY",
-      "title": "Spicy Coriander Potatoes - Batata Harra Recipe",
-      "channel": "Middle Eats",
-      "language": "English",
-      "duration": "2:47",
-      "priority": "P4",
-      "spicy_warning": true,
-      "subtitles": "n/a"
-    },
-    "video_tl": null
+  "video_tl": null
+ },
+ {
+  "id": "B3",
+  "name_en": "Boiled Egg",
+  "name_ar": "بيض مسلوق",
+  "cuisine": "Other",
+  "category": "Breakfast",
+  "info": {
+   "prep_time": "2 min",
+   "cook_time": "15 min",
+   "total_time": "17 min",
+   "servings": "2 Adults",
+   "difficulty": "Easy",
+   "equipment": [
+    "small pot 16 cm with lid",
+    "slotted spoon",
+    "bowl of cold water",
+    "kitchen timer"
+   ]
   },
-  {
-    "id": "B8",
-    "name_en": "Feta Cheese Sandwich",
-    "name_ar": "ساندويش الجبنة البيضاء",
-    "cuisine": "Levantine",
-    "category": "Breakfast",
-    "info": {
-      "prep_time": "10 min",
-      "cook_time": "5 min",
-      "total_time": "15 min",
-      "servings": "2 Adults",
-      "difficulty": "Easy",
-      "equipment": ["oven grill (or toaster oven)", "baking tray", "pastry brush", "bread knife", "chopping board for vegetables"]
-    },
-    "meat_spec": null,
-    "spice_note": "Source recipe contains no chili.",
-    "components": [
-      {
-        "title": "Part 1 - Grilled Feta, Tomato and Olive Sandwich",
-        "ingredients": [
-          {"item": "Feta or Arabic white cheese, cut in 1 cm slices", "qty": "150 g"},
-          {"item": "French bread (small baguette pieces, 20 cm each)", "qty": "2 pcs", "note": "or 2 Arabic bread loaves"},
-          {"item": "Olive oil", "qty": "2 tbsp"},
-          {"item": "Tomato, sliced 5 mm", "qty": "1 medium (120 g)"},
-          {"item": "Arugula (rocket) leaves", "qty": "6 leaves (about 1/2 cup)", "note": "washed and dried"},
-          {"item": "Olives, pitted, sliced", "qty": "3 tbsp"}
-        ],
-        "prep": [
-          "Turn the oven grill on to high and let it heat for 5 minutes with the rack 15 cm below the element.",
-          "Cut each of the 2 bread pieces open lengthwise without separating the halves. Brush the inside of both halves with the 2 tbsp olive oil.",
-          "Slice the 150 g cheese into 1 cm slices and the tomato into 5 mm rounds on the vegetable board. Slice 3 tbsp olives. Wash and dry 6 arugula leaves."
-        ],
-        "steps": [
-          "Lay the 2 opened breads on the baking tray oiled side up. On the bottom half of each, layer 3 arugula leaves, half of the cheese slices, half of the sliced olives and half of the tomato slices. Fold the top half over and press gently.",
-          "Place the tray under the hot grill and grill for 4 to 5 minutes until the bread is crisp and golden on top and the cheese is soft and warm at the edges when you open the sandwich a little. Turn the sandwiches over halfway if the top browns faster than the bottom.",
-          "Remove, rest 1 minute, and cut each sandwich in half across."
-        ]
-      }
+  "meat_spec": null,
+  "spice_note": "Source recipe contains no chili.",
+  "components": [
+   {
+    "title": "Part 1 - Boiled Eggs, Soft, Medium or Hard",
+    "ingredients": [
+     {
+      "item": "Eggs, large",
+      "qty": "4 pcs",
+      "note": "2 per adult; straight from the fridge"
+     },
+     {
+      "item": "Water",
+      "qty": "4 cups (1 L)",
+      "note": "enough to cover the eggs by 2 cm"
+     },
+     {
+      "item": "Salt",
+      "qty": "1/2 tsp",
+      "note": "in the water, helps seal any crack"
+     }
     ],
-    "timeline": null,
-    "mistakes": [
-      "Bread burnt before the cheese warms -> keep the rack 15 cm below the grill element and check at 3 minutes.",
-      "Sandwich too salty -> feta and olives are both salty; add no salt at all and choose a milder white cheese if the family prefers.",
-      "Tomato makes the bread wet -> slice it 5 mm, not thinner, and put the cheese between the tomato and the bread.",
-      "Arugula wilted and bitter -> use only 3 leaves per sandwich and keep them in the middle, away from the hot bread.",
-      "Cheese slices fall apart -> cut the block cold straight from the fridge with a wet knife."
+    "prep": [
+     "Fill a bowl with cold water and keep it next to the stove for cooling the eggs.",
+     "Set the kitchen timer ready. Decide the doneness: soft (6 minutes, runny yolk), medium (8 minutes, jammy yolk) or hard (10 minutes, fully firm yolk)."
     ],
-    "serving": [
-      "Place one sandwich, cut in two halves, on each plate.",
-      "Add a few extra olives, cucumber sticks and a sprig of fresh mint on the side.",
-      "Serve warm with sweet tea; the source notes it can also be served cold without grilling."
-    ],
-    "safety": [
-      "Use oven gloves and watch the grill the whole time; grilling is fast.",
-      "Keep cheese refrigerated until the sandwich is assembled.",
-      "Best eaten at once; an ungrilled sandwich can be wrapped and kept in the fridge for up to 4 hours."
-    ],
-    "source": {
-      "site": "Sayidaty Kitchen (kitchen.sayidaty.net)",
-      "chef": "Sayidaty Kitchen editorial",
-      "title_ar": "ساندويش الجبن الأبيض بالزيتون",
-      "url": "https://kitchen.sayidaty.net/node/26475",
-      "image_source": "to be filled by image step",
-      "verification": "Verified (page opened and read)",
-      "adapted": "Source already serves 2 with 2 French breads, 6 arugula leaves, 1 tomato, 3 tbsp olives and 2 tbsp olive oil; the cheese quantity is given only as '1 block', so 150 g is set as the professional standard; the source gives 'about 5 minutes under the grill' with no rack position, so 15 cm below a high grill with a check at 3 minutes is added."
-    },
-    "video": null,
-    "video_tl": null
+    "steps": [
+     "Place the 4 eggs in a small pot 16 cm in one layer, add 4 cups cold water so the eggs are covered by 2 cm, and add 1/2 tsp salt.",
+     "Set the pot on high heat uncovered and bring to a full boil; this takes about 5 to 6 minutes. Watch for large bubbles rising all over the surface.",
+     "As soon as the water boils, lower the heat to medium-low so it bubbles gently, and start the timer: 6 minutes for soft, 8 minutes for medium, 10 minutes for hard.",
+     "When the timer rings, lift the eggs out with the slotted spoon straight into the bowl of cold water and leave them for 3 to 5 minutes until cool enough to handle; this stops the cooking and makes peeling easier.",
+     "Tap each egg all around on the counter, roll it gently and peel under a thin stream of cold water. Soft eggs: cut the top off and eat from the shell with a spoon. Medium and hard: peel fully and cut in half; a hard egg shows a pale yellow yolk with no grey ring."
+    ]
+   }
+  ],
+  "timeline": null,
+  "mistakes": [
+   "Grey ring around the yolk and rubbery white -> the egg was boiled too long or not cooled; stop at 10 minutes maximum and cool at once in cold water.",
+   "Eggs crack in the pot -> start them in cold water, not boiling water, and keep the boil gentle once timing starts.",
+   "Hard to peel -> cool in cold water for at least 3 minutes and peel under running water; eggs a week old peel better than very fresh ones.",
+   "Soft egg too runny or too set -> time from the moment the water boils, not from when the pot goes on the stove.",
+   "Timing off with many eggs -> this timing is for 4 large eggs in a small pot; more eggs need a bigger pot so the water returns to the boil quickly."
+  ],
+  "serving": [
+   "Soft eggs: stand in egg cups, slice the top off, add a pinch of salt and serve with toast fingers.",
+   "Medium or hard eggs: peel, halve lengthwise and arrange cut side up on a plate with a pinch of salt and a little sumac or cumin.",
+   "Serve with Arabic bread, olives, cucumber and tomato; hard eggs are the ones to pair with B14 Chicken Mix (see B15)."
+  ],
+  "safety": [
+   "Hard-boiled eggs (10 minutes) are fully cooked and safe for everyone; soft and medium eggs have a runny or jammy yolk and are best for healthy adults only.",
+   "Cool within 1 hour; keep peeled or unpeeled hard eggs in a closed container in the fridge for up to 3 days.",
+   "Do not reheat soft eggs; eat them at once."
+  ],
+  "source": {
+   "site": "Sayidaty Kitchen (kitchen.sayidaty.net)",
+   "chef": "Sayidaty Kitchen editorial",
+   "title_ar": "مدة سلق البيض بالماء",
+   "url": "https://kitchen.sayidaty.net/node/25365",
+   "image_source": "to be filled by image step",
+   "verification": "Verified (page opened and read)",
+   "adapted": "Scaled from 8 eggs for 4 people to 4 eggs for 2 adults keeping the cold-water start and 1/2 tsp salt from the source; the source gives one standard timing (10 minutes after the boil) and inconsistent size-based timings, so the household timings of 6 minutes soft, 8 minutes medium and 10 minutes hard from the boil, followed by cold water, are used as the professional standard."
   },
-  {
-    "id": "B9",
-    "name_en": "Fried Halloumi",
-    "name_ar": "حلوم مقلي",
-    "cuisine": "Levantine",
-    "category": "Breakfast",
-    "info": {
-      "prep_time": "8 min",
-      "cook_time": "8 min",
-      "total_time": "16 min",
-      "servings": "2 Adults",
-      "difficulty": "Easy",
-      "equipment": ["non-stick pan 26 cm", "shallow bowl for flour", "tongs or spatula", "kitchen paper", "chopping board for vegetables"]
-    },
-    "meat_spec": null,
-    "spice_note": "Source recipe contains no chili; the video garnish uses Aleppo pepper flakes, which are not used here.",
-    "components": [
-      {
-        "title": "Part 1 - Flour-Dusted Fried Halloumi with Mint and Lemon",
-        "ingredients": [
-          {"item": "Halloumi cheese", "qty": "250 g (1 block)", "note": "cut in 1 cm slices, about 8 pcs"},
-          {"item": "Plain flour", "qty": "2 tbsp"},
-          {"item": "Olive oil, for frying", "qty": "4 tbsp"},
-          {"item": "Fresh mint, finely chopped", "qty": "1 tbsp"},
-          {"item": "Olive oil, for serving", "qty": "1/2 tbsp"},
-          {"item": "Lemon", "qty": "1/2 pcs", "note": "cut in wedges"}
-        ],
-        "prep": [
-          "Cut the 250 g halloumi block into 1 cm slices (about 8 slices) and pat each slice dry with kitchen paper; a dry surface fries golden instead of steaming.",
-          "Put 2 tbsp flour in a shallow bowl. Press each slice into the flour on both sides and shake off the excess so only a thin dusting stays.",
-          "Finely chop 1 tbsp fresh mint and cut 1/2 lemon into wedges. Line a plate with kitchen paper."
-        ],
-        "steps": [
-          "Heat 4 tbsp olive oil in a non-stick pan 26 cm over medium-high heat for 1 to 2 minutes until a pinch of flour sizzles at once.",
-          "Lay the floured halloumi slices in the pan in one layer with space between them (fry in 2 batches if needed). Fry for 2 to 3 minutes without moving them until the underside is deep golden and crisp.",
-          "Turn each slice with tongs and fry the second side for 1 1/2 to 2 minutes until golden; the cheese should be soft and squeaky inside, not melted.",
-          "Lift the slices onto the kitchen paper for 30 seconds to drain, then move them to a serving plate while still hot.",
-          "Drizzle 1/2 tbsp olive oil over the slices and scatter the 1 tbsp chopped mint on top. Serve at once with the lemon wedges."
-        ]
-      }
-    ],
-    "timeline": null,
-    "mistakes": [
-      "Halloumi rubbery and hard -> it was fried too long or served after cooling; fry 4 to 5 minutes total and eat within 5 minutes.",
-      "Flour coating burns -> the source says high heat, but with the flour use medium-high and turn at 2 to 3 minutes.",
-      "Cheese sticks to the pan -> let the oil heat fully and do not move the slices until the first side is golden.",
-      "Oil spits -> pat the slices dry before flouring.",
-      "Too salty -> halloumi is a salted cheese; add no salt, and soak the slices in cold water for 10 minutes before drying if the family finds it too salty."
-    ],
-    "serving": [
-      "Arrange the golden slices overlapping on a warm plate with the lemon wedges at the side.",
-      "Scatter the chopped mint and a few whole mint leaves over the top.",
-      "Serve with Arabic bread, sliced tomato, cucumber and olives, or alongside B10 Sunny-Side-Up Egg."
-    ],
-    "safety": [
-      "Keep the pan handle inwards and watch the hot oil; have the lid nearby.",
-      "Keep halloumi refrigerated until slicing.",
-      "Best eaten at once; cooked slices can be kept in a closed container in the fridge for 2 days and reheated in a dry non-stick pan on medium heat for 1 minute per side."
-    ],
-    "source": {
-      "site": "Sayidaty Kitchen (kitchen.sayidaty.net)",
-      "chef": "Sayidaty Kitchen editorial",
-      "title_ar": "جبنة حلوم مقلية",
-      "url": "https://kitchen.sayidaty.net/node/23040",
-      "image_source": "to be filled by image step",
-      "verification": "Verified (page opened and read)",
-      "adapted": "Scaled from 500 g halloumi, 1/4 cup flour, 1/2 cup frying oil, 2 tbsp mint and 1 lemon for 4 people to 250 g halloumi, 2 tbsp flour, 4 tbsp oil, 1 tbsp mint and 1/2 lemon for 2 adults; the source says 'several minutes on high heat' with no exact timing, so medium-high heat with 2 to 3 minutes first side and 1 1/2 to 2 minutes second side is set as the professional standard; slice thickness (1 cm) is not in the source."
-    },
-    "video": {
-      "url": "https://www.youtube.com/watch?v=iRtSUHzuP8s",
-      "title": "5-Minute Perfect Fried Halloumi | The Mediterranean Dish",
-      "channel": "The Mediterranean Dish",
-      "language": "English",
-      "duration": "4:14",
-      "priority": "P4",
-      "spicy_warning": true,
-      "subtitles": "manual English"
-    },
-    "video_tl": null
+  "video": {
+   "url": "https://www.youtube.com/watch?v=3CnAQzEiuvQ",
+   "title": "PERFECT BOILED EGGS (EVERY TIME) | hard boiled eggs + soft boiled eggs",
+   "channel": "Downshiftology",
+   "language": "English",
+   "duration": "5:48",
+   "priority": "P4",
+   "spicy_warning": false,
+   "subtitles": "manual English"
   },
-  {
-    "id": "B10",
-    "name_en": "Sunny-Side-Up Egg",
-    "name_ar": "بيض عيون",
-    "cuisine": "Gulf",
-    "category": "Breakfast",
-    "info": {
-      "prep_time": "3 min",
-      "cook_time": "5 min",
-      "total_time": "8 min",
-      "servings": "2 Adults",
-      "difficulty": "Easy",
-      "equipment": ["non-stick pan 26 cm with lid", "thin spatula", "small bowl for cracking eggs"]
-    },
-    "meat_spec": null,
-    "spice_note": "Source recipe contains no chili; the paprika mentioned in the source method is used as 1/8 tsp sweet paprika for colour only, and black pepper is kept at 1/8 tsp.",
-    "components": [
-      {
-        "title": "Part 1 - Sunny-Side-Up Eggs, Covered, Not Flipped",
-        "ingredients": [
-          {"item": "Eggs", "qty": "4 pcs", "note": "2 per adult"},
-          {"item": "Ghee or butter", "qty": "1 1/2 tbsp"},
-          {"item": "Salt", "qty": "1/4 tsp"},
-          {"item": "Black pepper, ground", "qty": "1/8 tsp"},
-          {"item": "Sweet paprika", "qty": "1/8 tsp", "note": "optional, for colour"}
-        ],
-        "prep": [
-          "Take the 4 eggs out of the fridge 10 minutes early if possible; room-temperature eggs cook more evenly.",
-          "Have the pan lid and a small bowl for cracking ready next to the stove. Mix 1/4 tsp salt, 1/8 tsp black pepper and 1/8 tsp sweet paprika in a tiny cup."
-        ],
-        "steps": [
-          "Melt 1 1/2 tbsp ghee in a non-stick pan 26 cm over medium heat for about 1 minute until it is liquid and just starting to foam; do not let it brown.",
-          "Crack each egg into the small bowl and slide it gently into the pan, keeping the 4 eggs apart so the whites do not run together. Do not stir and do not break the yolks.",
-          "Sprinkle the salt, pepper and paprika mix over the whites (avoid the yolks so they stay bright). Cover the pan with the lid at once and lower the heat to low.",
-          "Cook covered on low heat for 3 minutes without lifting the lid; the steam trapped under the lid sets the top of the white while the yolk stays soft and liquid. Lift the lid: the whites must be fully white and set with no clear jelly left around the yolk, and the yolk still bright yellow and wobbly. If clear white remains, cover for 30 to 60 seconds more.",
-          "Turn off the heat. Slide the thin spatula under each egg and lift it onto the plate without flipping, yolk side up."
-        ]
-      }
-    ],
-    "timeline": null,
-    "mistakes": [
-      "Yolk cooked hard -> the heat was too high or the lid stayed on too long; low heat and 3 minutes only, then check.",
-      "Clear raw white around the yolk -> the pan must be covered so the steam cooks the top; without a lid the top never sets.",
-      "Bottom brown and crisp -> lower the heat as soon as the eggs go in; the ghee must not be smoking.",
-      "Yolk broken -> crack into a small bowl first and slide the egg in close to the pan surface.",
-      "Eggs stuck together -> use a 26 cm pan and place the eggs in four separate corners."
-    ],
-    "serving": [
-      "Slide 2 eggs onto each plate, yolks up and unbroken.",
-      "Sprinkle a few parsley leaves or a pinch of sumac on the whites.",
-      "Serve at once with warm Arabic bread for dipping in the soft yolk, plus B7 Potato or B9 Fried Halloumi on the side."
-    ],
-    "safety": [
-      "The yolk stays soft in this recipe, so it is for healthy adults; for a fully cooked egg use B2 Fried Egg instead.",
-      "Use fresh, refrigerated eggs with clean, uncracked shells.",
-      "Eat at once; sunny-side-up eggs cannot be stored or reheated."
-    ],
-    "source": {
-      "site": "Sayidaty Kitchen (kitchen.sayidaty.net)",
-      "chef": "Sayidaty Kitchen editorial",
-      "title_ar": "بيض العيون السادة",
-      "url": "https://kitchen.sayidaty.net/node/30032",
-      "image_source": "to be filled by image step",
-      "verification": "Verified (page opened and read)",
-      "adapted": "Scaled from 2 eggs and 1 tbsp ghee for 1 person to 4 eggs and 1 1/2 tbsp ghee for 2 adults, keeping the source's method of medium heat to melt the ghee, then covered on low heat for 3 minutes without flipping; the source gives salt, pepper and paprika as 'a pinch', so 1/4 tsp, 1/8 tsp and 1/8 tsp are set; the doneness cue (whites set, yolk wobbly) is added as the professional standard."
-    },
-    "video": {
-      "url": "https://www.youtube.com/watch?v=Qn1I7ZD5PHc",
-      "title": "The Perfect Sunny Side Up Egg - Kitchen Conundrums with Thomas Joseph",
-      "channel": "Everyday Food",
-      "language": "English",
-      "duration": "2:38",
-      "priority": "P4",
-      "spicy_warning": false,
-      "subtitles": "n/a"
-    },
-    "video_tl": null
+  "video_tl": null
+ },
+ {
+  "id": "B4",
+  "name_en": "Chicken Liver",
+  "name_ar": "كبدة دجاج بدبس الرمان",
+  "cuisine": "Levantine",
+  "category": "Breakfast",
+  "info": {
+   "prep_time": "15 min",
+   "cook_time": "12 min",
+   "total_time": "27 min",
+   "servings": "2 Adults",
+   "difficulty": "Medium",
+   "equipment": [
+    "wide non-stick skillet 28 cm",
+    "chopping board for raw chicken",
+    "second board for vegetables",
+    "small sharp knife",
+    "kitchen paper",
+    "meat thermometer",
+    "wooden spoon"
+   ]
   },
-  {
-    "id": "B11",
-    "name_en": "Halloumi Sandwich",
-    "name_ar": "ساندويش حلوم",
-    "cuisine": "Levantine",
-    "category": "Breakfast",
-    "info": {
-      "prep_time": "10 min",
-      "cook_time": "8 min",
-      "total_time": "18 min",
-      "servings": "2 Adults",
-      "difficulty": "Easy",
-      "equipment": ["non-stick pan or grill pan 26 cm", "tongs", "bread knife", "chopping board for vegetables", "kitchen paper"]
-    },
-    "meat_spec": null,
-    "spice_note": "Source recipe contains no chili.",
-    "components": [
-      {
-        "title": "Part 1 - Grilled Halloumi Burger-Bun Sandwich",
-        "ingredients": [
-          {"item": "Halloumi cheese, cut in 1 cm slices", "qty": "200 g (about 6 slices)"},
-          {"item": "Burger buns", "qty": "2 pcs"},
-          {"item": "Lettuce, shredded", "qty": "1 cup (50 g)"},
-          {"item": "Cucumber, sliced 3 mm", "qty": "1 small (100 g)"},
-          {"item": "Tomato, sliced 5 mm", "qty": "1 medium (120 g)"},
-          {"item": "Olive oil", "qty": "1 tsp", "note": "for the pan"},
-          {"item": "Plain yogurt mixed with 1 tsp dried mint", "qty": "2 tbsp", "note": "optional sauce; not in the source"}
-        ],
-        "prep": [
-          "Cut the 200 g halloumi into 1 cm slices and pat them dry with kitchen paper.",
-          "Shred 1 cup lettuce, slice 1 cucumber 3 mm and 1 tomato 5 mm on the vegetable board.",
-          "Cut the 2 burger buns in half. Scoop out a little of the soft centre from the top halves with your fingers, as the source does, so the filling sits inside.",
-          "If using the sauce, stir 2 tbsp yogurt with 1 tsp dried mint in a cup."
-        ],
-        "steps": [
-          "Heat a non-stick pan or grill pan 26 cm over medium-high heat for 1 to 2 minutes until a drop of water sizzles. Brush with 1 tsp olive oil.",
-          "Lay the halloumi slices in the pan in one layer and grill for 2 minutes without moving them until golden with dark grill marks underneath. Turn with tongs and grill the second side for 1 1/2 to 2 minutes until golden and soft. Lift onto a plate.",
-          "Place the 4 bun halves cut side down in the same hot pan for 1 minute until lightly toasted and warm.",
-          "Build each sandwich on the bottom bun: half the shredded lettuce, half the cucumber slices, 3 warm halloumi slices, then half the tomato slices. Spread the top bun with 1 tbsp of the mint yogurt if using, and close the sandwich. Serve at once."
-        ]
-      }
-    ],
-    "timeline": null,
-    "mistakes": [
-      "Halloumi cold and rubbery by the time it is eaten -> grill it last, after all the vegetables are ready, and build the sandwich at once.",
-      "Halloumi sticks to the grill pan -> let the pan heat fully, brush with oil and do not move the slices for the first 2 minutes.",
-      "Bun soggy -> toast the cut sides for 1 minute and keep the tomato on top of the cheese, not against the bread.",
-      "Sandwich too salty -> halloumi is salty; add no salt to the vegetables.",
-      "Filling slides out -> scoop the top bun as the source says and cut the vegetables thin."
-    ],
-    "serving": [
-      "Cut each sandwich in half and stand the halves on the plate so the golden cheese shows.",
-      "Add a small pile of B7 Potato or a few olives and cucumber sticks beside it, as the source suggests roasted potatoes.",
-      "Serve warm with fresh mint leaves tucked into the sandwich."
-    ],
-    "safety": [
-      "Keep halloumi and yogurt refrigerated until used.",
-      "Eat at once; a built sandwich does not keep, but grilled halloumi can be stored 2 days in a closed container in the fridge and rewarmed 1 minute per side in a dry pan.",
-      "Use tongs, not fingers, on the hot grill pan."
-    ],
-    "source": {
-      "site": "Sayidaty Kitchen (kitchen.sayidaty.net)",
-      "chef": "Sayidaty Kitchen editorial",
-      "title_ar": "طريقة عمل ساندويش حلوم",
-      "url": "https://kitchen.sayidaty.net/node/30428",
-      "image_source": "to be filled by image step",
-      "verification": "Verified (page opened and read)",
-      "adapted": "Source already serves 2 with 2 burger buns, 1 cup lettuce, 1 cucumber and 1 tomato; the halloumi quantity is not stated, so 200 g (6 slices) is set; the source says only 'grill the halloumi' with no pan, heat or time, so a grill pan on medium-high for 2 minutes then 1 1/2 to 2 minutes is set as the professional standard; the optional mint yogurt sauce and the bun toasting are not in the source."
-    },
-    "video": null,
-    "video_tl": null
+  "meat_spec": {
+   "type": "Boneless",
+   "cut": "Cubes",
+   "skin": "n/a",
+   "weight": "300 g",
+   "preparation": "Whole lobes trimmed and cut in half (pieces of 3 to 4 cm)",
+   "cooking_method": "Fried",
+   "source_specified": true,
+   "note": "Source specifies chicken liver (1 kg); scaled to 300 g for 2 adults. Pieces are cut no smaller than 3 cm so they stay moist while reaching a safe 74 C."
   },
-  {
-    "id": "B12",
-    "name_en": "Egg Omelette",
-    "name_ar": "أومليت البيض بالخضار",
-    "cuisine": "Egyptian",
-    "category": "Breakfast",
-    "info": {
-      "prep_time": "10 min",
-      "cook_time": "12 min",
-      "total_time": "22 min",
-      "servings": "2 Adults",
-      "difficulty": "Easy",
-      "equipment": ["non-stick pan 20 cm", "medium bowl", "whisk or fork", "thin spatula", "chopping board for vegetables"]
-    },
-    "meat_spec": null,
-    "spice_note": "Source recipe has 1/4 tsp ground red pepper, which is removed and replaced with 1/4 tsp sweet paprika for colour; black pepper is kept at 1/4 tsp.",
-    "components": [
-      {
-        "title": "Part 1 - Folded Vegetable Omelette (makes 2)",
-        "ingredients": [
-          {"item": "Eggs", "qty": "4 pcs", "note": "2 per omelette"},
-          {"item": "Milk", "qty": "4 tbsp"},
-          {"item": "Butter", "qty": "2 tbsp", "note": "1 tbsp per omelette"},
-          {"item": "Red bell pepper, 5 mm dice", "qty": "1/2 pcs (60 g)"},
-          {"item": "Green bell pepper, 5 mm dice", "qty": "1/2 pcs (60 g)"},
-          {"item": "Yellow bell pepper, 5 mm dice", "qty": "1/2 pcs (60 g)"},
-          {"item": "Ground cumin", "qty": "1/2 tsp"},
-          {"item": "Ground cinnamon", "qty": "1/4 tsp"},
-          {"item": "Sweet paprika", "qty": "1/4 tsp", "note": "replaces the ground red pepper"},
-          {"item": "Salt", "qty": "1/2 tsp"},
-          {"item": "Black pepper, ground", "qty": "1/4 tsp"}
-        ],
-        "prep": [
-          "Dice 1/2 red, 1/2 green and 1/2 yellow bell pepper into 5 mm pieces on the vegetable board; you should have about 1 cup in total.",
-          "Crack the 4 eggs into a medium bowl, add 4 tbsp milk, 1/2 tsp salt, 1/4 tsp black pepper, 1/2 tsp cumin, 1/4 tsp cinnamon and 1/4 tsp sweet paprika. Whisk with a fork for 30 seconds until no streaks of white remain and the mixture is pale and even.",
-          "Divide the egg mixture in your mind into two halves; each omelette uses half the eggs and half the peppers."
-        ],
-        "steps": [
-          "Melt 1 tbsp butter in a non-stick pan 20 cm over medium heat for 30 to 60 seconds until it foams. Add half of the diced peppers (about 1/2 cup) and stir for 2 minutes until they soften slightly and smell sweet.",
-          "Pour in half of the egg mixture (about 1/2 cup) over the peppers and tilt the pan so it covers the base. Cook on medium heat for 1 minute without stirring, then push the set edges towards the centre with the spatula and tilt the pan so the raw egg runs to the empty edge. Repeat for 1 to 2 minutes until the top is almost set but still slightly shiny.",
-          "Lower the heat to low. Slide the spatula under one half of the omelette and fold it over the other half. Cook 30 to 60 seconds more until the inside is set with no liquid egg running out when the omelette is pressed, and the underside is golden.",
-          "Slide the folded omelette onto a warm plate. Wipe the pan with kitchen paper and repeat steps 1 to 3 with the second 1 tbsp butter, the remaining peppers and the remaining egg mixture for the second omelette."
-        ]
-      }
+  "spice_note": "Source recipe has 2 minced chili peppers, which are removed; the tang comes from the pomegranate molasses and lemon juice, with black pepper kept at 1/4 tsp.",
+  "components": [
+   {
+    "title": "Part 1 - Chicken Liver with Pomegranate Molasses, Garlic and Lemon",
+    "ingredients": [
+     {
+      "item": "Chicken liver",
+      "qty": "300 g",
+      "note": "cleaned, green spots and membrane removed"
+     },
+     {
+      "item": "Olive oil",
+      "qty": "2 tbsp"
+     },
+     {
+      "item": "Garlic, finely chopped",
+      "qty": "2 cloves"
+     },
+     {
+      "item": "Pomegranate molasses",
+      "qty": "2 1/2 tbsp"
+     },
+     {
+      "item": "Lemon juice, fresh",
+      "qty": "1 tbsp"
+     },
+     {
+      "item": "Salt",
+      "qty": "1/2 tsp"
+     },
+     {
+      "item": "Black pepper, ground",
+      "qty": "1/4 tsp"
+     },
+     {
+      "item": "Fresh parsley, chopped",
+      "qty": "2 tbsp",
+      "note": "for serving"
+     }
     ],
-    "timeline": null,
-    "mistakes": [
-      "Omelette brown and dry -> the heat was too high; medium heat, then low to finish, and stop as soon as the inside is just set.",
-      "Raw egg in the middle after folding -> keep pushing the set edges in and tilting the pan so the raw egg cooks before folding.",
-      "Peppers crunchy and watery -> soften them 2 minutes in the butter before the egg goes in.",
-      "Omelette tears when folded -> use a 20 cm pan for 2 eggs so the omelette is thick enough, and a thin spatula.",
-      "Cinnamon tastes strong -> keep to 1/4 tsp for all 4 eggs; it should be a faint warmth only."
+    "prep": [
+     "On the raw-chicken board, look over the 300 g liver. With the small knife cut away any green or yellow-green spots (bile) and any white stringy membrane or fat, and separate the lobes. Cut large lobes in half so all pieces are 3 to 4 cm.",
+     "Rinse the pieces gently in a bowl of cold water (not under a hard tap, to avoid splashing), drain, and pat very dry with kitchen paper; dry liver browns instead of boiling.",
+     "Peel and finely chop 2 garlic cloves and chop 2 tbsp parsley on the vegetable board. Squeeze 1 tbsp lemon juice. Measure 2 1/2 tbsp pomegranate molasses."
     ],
-    "serving": [
-      "Place one folded omelette on each plate, seam side down, and brush the top with a little of the butter from the pan.",
-      "Sprinkle chopped parsley and a pinch of sweet paprika on top.",
-      "Serve with toast or Arabic bread, sliced tomato and cucumber."
-    ],
-    "safety": [
-      "Cook until no liquid egg remains in the fold; the omelette is then fully cooked and safe for everyone.",
-      "Wash hands and the whisk after handling raw egg.",
-      "Best eaten at once; leftovers keep 1 day in a closed container in the fridge and can be reheated 1 minute per side in a dry pan on medium heat."
-    ],
-    "source": {
-      "site": "Shamlola (shamlola.com)",
-      "chef": "Shamlola editorial",
-      "title_ar": "طريقة عمل أومليت البيض بالخضار",
-      "url": "https://www.shamlola.com/recipes/%D8%B7%D8%B1%D9%8A%D9%82%D8%A9-%D8%B9%D9%85%D9%84-%D8%A3%D9%88%D9%85%D9%84%D9%8A%D8%AA-%D8%A7%D9%84%D8%A8%D9%8A%D8%B6-%D8%A8%D8%A7%D9%84%D8%AE%D8%B6%D8%A7%D8%B1",
-      "image_source": "to be filled by image step",
-      "verification": "Verified (page opened and read)",
-      "adapted": "Source gives 2 eggs, 2 tbsp milk, 1 tbsp butter and 1/2 of each bell pepper with no servings; doubled to 4 eggs, 4 tbsp milk and 2 tbsp butter for 2 adults made as 2 omelettes, while the peppers (1/2 of each colour) and the spices (1/2 tsp cumin, 1/4 tsp cinnamon) are kept at the source amount rather than doubled so the taste stays mild; the 1/4 tsp ground red pepper is replaced with sweet paprika; the source adds raw peppers to the egg and flips the omelette, but here the peppers are softened 2 minutes first and the omelette is folded; the source gives no heat level or minutes, so medium heat and the timings above are set as the professional standard."
-    },
-    "video": {
-      "url": "https://www.youtube.com/watch?v=NjLuDWvgyy8",
-      "title": "HOW TO MAKE AN OMELETTE | perfect every time!",
-      "channel": "Downshiftology",
-      "language": "English",
-      "duration": "7:06",
-      "priority": "P4",
-      "spicy_warning": false,
-      "subtitles": "manual English"
-    },
-    "video_tl": null
+    "steps": [
+     "Heat 2 tbsp olive oil in a wide non-stick skillet 28 cm over medium-high heat for 1 to 2 minutes until it shimmers.",
+     "Add half of the liver pieces in one layer with space between them. Leave them for 2 minutes without stirring until the underside is brown, then turn and cook 2 minutes more. Lift onto a plate. Repeat with the second half of the liver; frying in two batches keeps the pan hot so the liquid evaporates instead of pooling.",
+     "Return all the liver to the skillet on medium-high heat and stir for 2 to 3 minutes until any liquid in the pan has evaporated and the pieces are brown all over.",
+     "Lower the heat to medium, add the 2 chopped garlic cloves, 1/2 tsp salt and 1/4 tsp black pepper, and stir for 1 minute until the garlic smells fragrant but is not brown.",
+     "Pour in 2 1/2 tbsp pomegranate molasses and 1 tbsp lemon juice, lower the heat to low and stir for 1 to 2 minutes until the sauce is glossy and clings to the liver.",
+     "Cut the thickest piece in half: it must be brown or grey all the way through with no pink, and the thermometer must read 74 C. If still pink, cook 1 to 2 minutes more. Turn off the heat."
+    ]
+   }
+  ],
+  "timeline": null,
+  "mistakes": [
+   "Liver tastes bitter -> green bile spots were left on; trim every green mark before cooking.",
+   "Liver boils in its own juice and goes grey -> pat it very dry and fry in two batches on medium-high heat so the pan stays hot.",
+   "Liver tough and dry -> once it is brown and reads 74 C stop at once; it needs only 8 to 10 minutes total.",
+   "Molasses burns and turns black -> add it on low heat at the end for 1 to 2 minutes only.",
+   "Garlic burnt and sharp -> add it after the liver is browned, on medium heat, for 1 minute only."
+  ],
+  "serving": [
+   "Pile the liver on a warm plate and spoon the pan sauce over it.",
+   "Scatter the 2 tbsp chopped parsley on top and add a wedge of lemon on the side.",
+   "Serve with warm Arabic bread, sliced onion rings and B7 Potato, as the source suggests fried potatoes alongside."
+  ],
+  "safety": [
+   "Chicken liver is safe only when cooked to 74 C with no pink inside; check the thickest piece.",
+   "Keep raw liver in the fridge and cook it on the day of purchase or the next day; use a separate board and knife and wash hands and board with hot soapy water afterwards.",
+   "Cool leftovers within 1 hour; keep in a closed container in the fridge for 2 days and reheat until steaming hot."
+  ],
+  "source": {
+   "site": "Manal Alalem (manalonline.com)",
+   "chef": "Manal Alalem",
+   "title_ar": "كبدة الدجاج بدبس الرمان",
+   "url": "https://www.manalonline.com/%D9%83%D8%A8%D8%AF%D8%A9-%D8%A7%D9%84%D8%AF%D8%AC%D8%A7%D8%AC-%D8%A8%D8%AF%D8%A8%D8%B3-%D8%A7%D9%84%D8%B1%D9%85%D8%A7%D9%86/",
+   "image_source": "to be filled by image step",
+   "verification": "Verified (page opened and read)",
+   "adapted": "Scaled from 1 kg liver, 1/2 cup olive oil and 1/2 cup pomegranate molasses to 300 g liver, 2 tbsp oil and 2 1/2 tbsp molasses for 2 adults; the 2 minced chili peppers are removed; 2 garlic cloves and 1 tbsp lemon juice are a household addition in the Lebanese style (they are not in the source); the source gives no servings, minutes, parsley quantity or cleaning step, so 2 tbsp parsley, batch frying, 74 C check and the trimming of bile spots are set as the professional standard."
   },
-  {
-    "id": "B13",
-    "name_en": "Shakshuka Egg",
-    "name_ar": "شكشوكة البيض بالطماطم",
-    "cuisine": "Egyptian",
-    "category": "Breakfast",
-    "info": {
-      "prep_time": "10 min",
-      "cook_time": "18 min",
-      "total_time": "28 min",
-      "servings": "2 Adults",
-      "difficulty": "Easy",
-      "equipment": ["non-stick pan 26 cm with lid", "wooden spoon", "small bowl for cracking eggs", "chopping board for vegetables"]
-    },
-    "meat_spec": null,
-    "spice_note": "Source recipe contains no chili; the green pepper is a mild bell pepper and black pepper is kept at 1/4 tsp.",
-    "components": [
-      {
-        "title": "Part 1 - Eggs Poached in Tomato and Onion",
-        "ingredients": [
-          {"item": "Eggs", "qty": "4 pcs", "note": "2 per adult"},
-          {"item": "Onion, finely chopped", "qty": "1 medium (120 g)"},
-          {"item": "Green bell pepper, cut in small strips", "qty": "1/2 pcs (60 g)"},
-          {"item": "Tomatoes, ripe, small dice", "qty": "2 medium (250 g)"},
-          {"item": "Vegetable oil", "qty": "2 tbsp"},
-          {"item": "Sugar", "qty": "1/2 tsp", "note": "as in the source, balances the tomato"},
-          {"item": "Salt", "qty": "1/2 tsp"},
-          {"item": "Black pepper, ground", "qty": "1/4 tsp"},
-          {"item": "Fresh parsley, chopped", "qty": "1 tbsp", "note": "for serving"}
-        ],
-        "prep": [
-          "Finely chop 1 onion, cut 1/2 green bell pepper into thin 3 cm strips and dice 2 tomatoes small on the vegetable board.",
-          "Chop 1 tbsp parsley. Have the lid and a small bowl for cracking the eggs ready."
-        ],
-        "steps": [
-          "Heat 2 tbsp vegetable oil in a non-stick pan 26 cm over medium heat for 1 minute until it shimmers.",
-          "Add the 1 chopped onion and stir for 5 to 6 minutes until soft, clear and just golden at the edges.",
-          "Add the 1/2 green pepper strips and the 2 diced tomatoes and stir for 4 to 5 minutes until the tomatoes break down into a thick, chunky sauce and the pepper is soft.",
-          "Stir in 1/2 tsp salt, 1/4 tsp black pepper and 1/2 tsp sugar and cook 1 minute more.",
-          "With the spoon make 4 wells in the sauce, spaced apart. Crack each egg into the small bowl and slide one into each well. Sprinkle a tiny pinch of salt on each egg.",
-          "Cover the pan, lower the heat to low and cook for 5 to 6 minutes until the whites are fully set and opaque and the yolks are still soft; for firm yolks cook 8 minutes. Turn off the heat and scatter the 1 tbsp parsley on top."
-        ]
-      }
-    ],
-    "timeline": null,
-    "mistakes": [
-      "Whites still clear on top -> the pan must be covered so the steam sets them; keep the lid on the full 5 minutes.",
-      "Yolks hard when soft ones were wanted -> check at 5 minutes and take the pan off the heat at once; the eggs keep cooking in the hot sauce.",
-      "Sauce watery and the eggs float -> cook the tomatoes the full 4 to 5 minutes until thick before the eggs go in.",
-      "Onion raw tasting -> give it 5 to 6 minutes on medium heat until soft and clear.",
-      "Eggs stuck together -> make 4 clear wells spaced apart in a 26 cm pan."
-    ],
-    "serving": [
-      "Bring the pan to the table or slide 2 eggs with their sauce onto each plate with a wide spatula.",
-      "Scatter the chopped parsley and, as the source allows, a little grated mozzarella or cheddar on top while hot.",
-      "Serve with warm baladi or Arabic bread for scooping."
-    ],
-    "safety": [
-      "For a fully cooked egg safe for everyone cook 8 minutes covered until the yolk is firm; the 5 to 6 minute soft-yolk version is for healthy adults.",
-      "Crack each egg into a small bowl first and wash hands after handling raw egg.",
-      "Best eaten at once; the tomato base alone can be cooled within 1 hour and kept 2 to 3 days in the fridge, then reheated and fresh eggs added."
-    ],
-    "source": {
-      "site": "Shamlola (shamlola.com)",
-      "chef": "Shamlola editorial",
-      "title_ar": "طريقة عمل شكشوكة البيض للسحور",
-      "url": "https://www.shamlola.com/recipes/%D8%B7%D8%B1%D9%8A%D9%82%D8%A9-%D8%B9%D9%85%D9%84-%D8%B4%D9%83%D8%B4%D9%88%D9%83%D8%A9-%D8%A7%D9%84%D8%A8%D9%8A%D8%B6-%D9%84%D9%84%D8%B3%D8%AD%D9%88%D8%B1",
-      "image_source": "to be filled by image step",
-      "verification": "Verified (page opened and read)",
-      "adapted": "Scaled from 2 onions, 1 green pepper, 4 tbsp oil, 1 tsp sugar and 1 tomato for 4 people to 1 onion, 1/2 pepper, 2 tbsp oil, 1/2 tsp sugar for 2 adults; eggs kept at 4 (2 per adult, the source gives 1 per person) and tomatoes raised from the source's 1 to 2 for a proper sauce base; the source gives salt and pepper as a pinch, so 1/2 tsp and 1/4 tsp are set; sugar is listed in the source but not placed in its steps, so it is added with the seasoning; onion and tomato minutes (source says 'until wilted' and 'a few seconds') are set as the professional standard; the firm-yolk 8 minute option is added."
-    },
-    "video": {
-      "url": "https://www.youtube.com/watch?v=TRuDPamWhY0",
-      "title": "Egyptian Shakshuka in One Pan (Poached Eggs in Tomato Sauce) | The Egyptian Cook",
-      "channel": "Muhammed the Egyptian Cook",
-      "language": "English",
-      "duration": "1:48",
-      "priority": "P4",
-      "spicy_warning": false,
-      "subtitles": "n/a"
-    },
-    "video_tl": null
+  "video": {
+   "url": "https://www.youtube.com/watch?v=lU9LQxL-XKQ",
+   "title": "Best Lebanese recipe - Sawdeh (Chicken livers) healthy, quick and easy recipe!",
+   "channel": "Zaatar and Zaytoun",
+   "language": "English",
+   "duration": "2:13",
+   "priority": "P4",
+   "spicy_warning": false,
+   "subtitles": "n/a"
   },
-  {
-    "id": "B14",
-    "name_en": "Chicken Mix",
-    "name_ar": "دجاج بالخضار",
-    "cuisine": "Other",
-    "category": "Breakfast",
-    "info": {
-      "prep_time": "15 min",
-      "cook_time": "22 min",
-      "total_time": "37 min",
-      "servings": "2 Adults",
-      "difficulty": "Easy",
-      "equipment": ["wide non-stick skillet 28 cm with lid", "chopping board for raw chicken", "second board for vegetables", "kitchen paper", "meat thermometer", "wooden spoon"]
-    },
-    "meat_spec": {
-      "type": "Boneless",
-      "cut": "Breast",
-      "skin": "Skinless",
-      "weight": "300 g",
-      "preparation": "Cubes 1.5 cm",
-      "cooking_method": "Fried",
-      "source_specified": true,
-      "note": "Source specifies 2 boneless chicken breasts in small cubes; set at 300 g boneless skinless breast in 1.5 cm cubes for 2 adults so the pieces brown fast and stay juicy."
-    },
-    "spice_note": "Source recipe contains no chili; the peppers are bell peppers, black pepper is kept at 1/4 tsp, and 1/2 tsp sweet paprika and 1/4 tsp cumin are added as mild household spices.",
-    "components": [
-      {
-        "title": "Part 1 - Sauteed Chicken Cubes with Onion, Bell Pepper and Zucchini",
-        "ingredients": [
-          {"item": "Chicken breast, boneless, skinless", "qty": "300 g", "note": "cut in 1.5 cm cubes; pat dry, do not wash"},
-          {"item": "Olive oil", "qty": "1 1/2 tbsp"},
-          {"item": "Onion, chopped 1 cm", "qty": "1 small (80 g)"},
-          {"item": "Garlic, crushed", "qty": "2 cloves"},
-          {"item": "Green bell pepper, 1.5 cm dice", "qty": "1/2 pcs (60 g)"},
-          {"item": "Red bell pepper, 1.5 cm dice", "qty": "1/2 pcs (60 g)"},
-          {"item": "Zucchini, 1.5 cm dice", "qty": "1 medium (150 g)"},
-          {"item": "Crushed tomatoes, canned", "qty": "1/2 cup (120 g)"},
-          {"item": "Fresh basil leaves, torn", "qty": "4 leaves", "note": "or 1/4 tsp dried oregano"},
-          {"item": "Sweet paprika", "qty": "1/2 tsp", "note": "household addition"},
-          {"item": "Ground cumin", "qty": "1/4 tsp", "note": "household addition"},
-          {"item": "Salt", "qty": "3/4 tsp"},
-          {"item": "Black pepper, ground", "qty": "1/4 tsp"}
-        ],
-        "prep": [
-          "On the raw-chicken board cut the 300 g chicken breast into even 1.5 cm cubes and pat them dry with kitchen paper. Season them with 1/4 tsp of the salt and the 1/2 tsp sweet paprika and leave on a plate.",
-          "On the vegetable board chop 1 small onion into 1 cm pieces, crush 2 garlic cloves, and dice 1/2 green pepper, 1/2 red pepper and 1 zucchini into 1.5 cm pieces. Tear 4 basil leaves.",
-          "Measure 1/2 cup crushed tomatoes."
-        ],
-        "steps": [
-          "Heat 1 1/2 tbsp olive oil in a wide non-stick skillet 28 cm over medium-high heat for 1 to 2 minutes until it shimmers.",
-          "Add the seasoned chicken cubes in one layer and leave for 2 minutes without stirring until the underside is golden, then stir and cook 3 to 4 minutes more until all sides are golden and the cubes are no longer pink outside. Lift onto a plate.",
-          "Lower the heat to medium. In the same skillet add the chopped onion and 2 crushed garlic cloves and stir for 3 minutes until soft and lightly golden, scraping up the brown bits from the chicken. Add the torn basil and stir 20 seconds.",
-          "Add the diced green pepper, red pepper and zucchini and stir on medium heat for 6 to 7 minutes until the zucchini is tender at the edges but still holds its shape and the peppers are bright and soft.",
-          "Add 1/2 cup crushed tomatoes, the remaining 1/2 tsp salt, 1/4 tsp black pepper and 1/4 tsp cumin and stir for 1 minute until the sauce bubbles.",
-          "Return the chicken and its juices to the skillet, stir to coat, cover and cook on medium-low heat for 4 to 5 minutes until the sauce clings to the pieces and the largest chicken cube is white all the way through when cut, reading 74 C. Turn off the heat."
-        ]
-      }
-    ],
-    "timeline": null,
-    "mistakes": [
-      "Chicken dry and stringy -> brown the cubes fast (5 to 6 minutes) and return them to the sauce for only 4 to 5 minutes; stop at 74 C.",
-      "Chicken grey and steamed instead of golden -> pat the cubes dry, use medium-high heat and do not crowd the pan.",
-      "Zucchini mushy -> cut it 1.5 cm and cook 6 to 7 minutes only; it should still hold its shape.",
-      "Dish watery -> use only 1/2 cup crushed tomatoes and let the sauce bubble uncovered for 1 minute before the chicken goes back.",
-      "Bland -> the browned bits from the chicken are the flavour; scrape them into the onion with the spoon."
-    ],
-    "serving": [
-      "Spoon the chicken and vegetables into a shallow dish and smooth the top.",
-      "Scatter a few fresh basil or parsley leaves over it and add lemon wedges on the side.",
-      "Serve with warm Arabic bread or toast; for a fuller breakfast pair with B3 Boiled Egg as in B15."
-    ],
-    "safety": [
-      "Chicken is safe at 74 C; cut the largest cube to check it is white all through with no pink.",
-      "Do not wash raw chicken; use a separate board and knife and wash hands and board with hot soapy water afterwards.",
-      "Cool leftovers within 1 hour; keep in a closed container in the fridge for 2 to 3 days.",
-      "Reheat in a pan with 1 tbsp water until steaming hot throughout."
-    ],
-    "source": {
-      "site": "Sayidaty Kitchen (kitchen.sayidaty.net)",
-      "chef": "Sayidaty Kitchen editorial",
-      "title_ar": "الدجاج بالخضار لرجيم مثالي",
-      "url": "https://kitchen.sayidaty.net/node/3991",
-      "image_source": "to be filled by image step",
-      "verification": "Verified (page opened and read)",
-      "adapted": "Source serves 2 with 2 chicken breasts, 1 green pepper, 1 red pepper, 1 onion, 2 zucchini and 1 can crushed tomatoes; set at 300 g breast in 1.5 cm cubes, 1/2 of each pepper, 1 small onion, 1 zucchini and 1/2 cup crushed tomatoes so the dish stays a light breakfast saute rather than a stew; salt reduced from 1 tsp to 3/4 tsp and black pepper from 1/2 to 1/4 tsp; 1/2 tsp sweet paprika and 1/4 tsp cumin are a household addition for mild flavour; the source's 10 minute stages are shortened to 5 to 6, 6 to 7 and 4 to 5 minutes for the smaller cubes and quantity; the 74 C check is added."
-    },
-    "video": {
-      "url": "https://www.youtube.com/watch?v=f4nEgnszy0A",
-      "title": "Easy and Healthy Sheet Pan Chicken and Veggies",
-      "channel": "The Mediterranean Dish",
-      "language": "English",
-      "duration": "6:35",
-      "priority": "P4",
-      "spicy_warning": false,
-      "subtitles": "manual English"
-    },
-    "video_tl": null
+  "video_tl": null
+ },
+ {
+  "id": "B5",
+  "name_en": "Chickpeas",
+  "name_ar": "حمص بالكمون (بليلة)",
+  "cuisine": "Levantine",
+  "category": "Breakfast",
+  "info": {
+   "prep_time": "10 min",
+   "cook_time": "4 min",
+   "total_time": "14 min",
+   "servings": "2 Adults",
+   "difficulty": "Easy",
+   "equipment": [
+    "small pot 16 cm",
+    "can opener",
+    "sieve",
+    "medium mixing bowl",
+    "lemon squeezer",
+    "chopping board for vegetables"
+   ]
   },
-  {
-    "id": "B15",
-    "name_en": "Boiled Egg with Chicken Mix",
-    "name_ar": "بيض مسلوق مع دجاج بالخضار",
-    "cuisine": "Other",
-    "category": "Breakfast",
-    "info": {
-      "prep_time": "15 min",
-      "cook_time": "25 min (eggs boil while the chicken cooks)",
-      "total_time": "40 min",
-      "servings": "2 Adults",
-      "difficulty": "Easy",
-      "equipment": ["wide non-stick skillet 28 cm with lid", "small pot 16 cm", "slotted spoon", "bowl of cold water", "kitchen timer", "chopping board for raw chicken", "second board for vegetables", "meat thermometer"]
-    },
-    "meat_spec": {
-      "type": "Boneless",
-      "cut": "Breast",
-      "skin": "Skinless",
-      "weight": "300 g",
-      "preparation": "Cubes 1.5 cm",
-      "cooking_method": "Fried",
-      "source_specified": true,
-      "note": "Source for the chicken part specifies boneless chicken breast in small cubes; set at 300 g boneless skinless breast in 1.5 cm cubes for 2 adults. The eggs are hard-boiled (10 minutes) so they hold their shape next to the warm chicken."
-    },
-    "spice_note": "Neither source recipe contains chili; black pepper is kept at 1/4 tsp in the chicken, and 1/2 tsp sweet paprika and 1/4 tsp cumin are added as mild household spices.",
-    "components": [
-      {
-        "title": "Part 1 - Hard-Boiled Eggs",
-        "ingredients": [
-          {"item": "Eggs, large", "qty": "4 pcs", "note": "2 per adult"},
-          {"item": "Water", "qty": "4 cups (1 L)"},
-          {"item": "Salt", "qty": "1/2 tsp", "note": "in the water"}
-        ],
-        "prep": [
-          "Fill a bowl with cold water and keep it next to the stove.",
-          "Set the kitchen timer ready for 10 minutes."
-        ],
-        "steps": [
-          "Place the 4 eggs in a small pot 16 cm in one layer, cover with 4 cups cold water so they are 2 cm under, and add 1/2 tsp salt.",
-          "Bring to a full boil on high heat uncovered, about 5 to 6 minutes, then lower to medium-low so it bubbles gently and time 10 minutes for a fully firm yolk (8 minutes if a jammy yolk is preferred, as in B3).",
-          "Lift the eggs with the slotted spoon into the cold water and leave 5 minutes. Tap, roll and peel under a thin stream of cold water, then cut each egg in half lengthwise and keep covered until plating."
-        ]
-      },
-      {
-        "title": "Part 2 - Chicken Mix (full quantities, method as B14)",
-        "ingredients": [
-          {"item": "Chicken breast, boneless, skinless", "qty": "300 g", "note": "cut in 1.5 cm cubes; pat dry, do not wash"},
-          {"item": "Olive oil", "qty": "1 1/2 tbsp"},
-          {"item": "Onion, chopped 1 cm", "qty": "1 small (80 g)"},
-          {"item": "Garlic, crushed", "qty": "2 cloves"},
-          {"item": "Green bell pepper, 1.5 cm dice", "qty": "1/2 pcs (60 g)"},
-          {"item": "Red bell pepper, 1.5 cm dice", "qty": "1/2 pcs (60 g)"},
-          {"item": "Zucchini, 1.5 cm dice", "qty": "1 medium (150 g)"},
-          {"item": "Crushed tomatoes, canned", "qty": "1/2 cup (120 g)"},
-          {"item": "Fresh basil leaves, torn", "qty": "4 leaves", "note": "or 1/4 tsp dried oregano"},
-          {"item": "Sweet paprika", "qty": "1/2 tsp"},
-          {"item": "Ground cumin", "qty": "1/4 tsp"},
-          {"item": "Salt", "qty": "3/4 tsp"},
-          {"item": "Black pepper, ground", "qty": "1/4 tsp"}
-        ],
-        "prep": [
-          "On the raw-chicken board cut the 300 g chicken breast into 1.5 cm cubes, pat dry, and season with 1/4 tsp of the salt and 1/2 tsp sweet paprika.",
-          "On the vegetable board chop 1 small onion, crush 2 garlic cloves, dice 1/2 green pepper, 1/2 red pepper and 1 zucchini into 1.5 cm pieces, and tear 4 basil leaves. Measure 1/2 cup crushed tomatoes."
-        ],
-        "steps": [
-          "Heat 1 1/2 tbsp olive oil in a wide non-stick skillet 28 cm over medium-high heat for 1 to 2 minutes. Brown the chicken cubes in one layer, 2 minutes undisturbed then 3 to 4 minutes stirring, until golden on all sides. Lift onto a plate (B14 step 2).",
-          "On medium heat soften the chopped onion and 2 crushed garlic cloves for 3 minutes, scraping the brown bits, then add the basil for 20 seconds (B14 step 3).",
-          "Add the diced peppers and zucchini and stir 6 to 7 minutes until tender but holding their shape (B14 step 4).",
-          "Add 1/2 cup crushed tomatoes, the remaining 1/2 tsp salt, 1/4 tsp black pepper and 1/4 tsp cumin; stir 1 minute until bubbling (B14 step 5).",
-          "Return the chicken, cover and cook on medium-low heat for 4 to 5 minutes until the sauce clings and the largest cube is white through, reading 74 C (B14 step 6). Keep covered off the heat until plating."
-        ]
-      },
-      {
-        "title": "Part 3 - Timeline and Plating",
-        "ingredients": [
-          {"item": "Fresh parsley, chopped", "qty": "1 tbsp"},
-          {"item": "Lemon", "qty": "1/2 pcs", "note": "cut in 2 wedges"},
-          {"item": "Arabic bread, warmed", "qty": "2 pcs"},
-          {"item": "Sumac", "qty": "1/4 tsp", "note": "optional, for the eggs"}
-        ],
-        "prep": [
-          "Warm 2 plates in a low oven (60 C) or with hot water for 2 minutes so the chicken and eggs stay hot at the table.",
-          "Chop 1 tbsp parsley and cut 1/2 lemon into 2 wedges."
-        ],
-        "steps": [
-          "Spoon half of the hot chicken mix onto one side of each warm plate.",
-          "Arrange 4 egg halves (2 whole eggs) cut side up on the other side of each plate, leaning against the chicken. Sprinkle a pinch of salt and 1/8 tsp sumac over the egg halves.",
-          "Scatter 1/2 tbsp parsley over each plate, add a lemon wedge and a warm Arabic bread, and serve within 5 minutes."
-        ]
-      }
+  "meat_spec": null,
+  "spice_note": "Source recipe has 1/8 tsp shatta (chili), which is removed; the zing comes from the lemon juice and the cumin.",
+  "components": [
+   {
+    "title": "Part 1 - Warm Chickpeas with Cumin and Lemon",
+    "ingredients": [
+     {
+      "item": "Canned chickpeas",
+      "qty": "1 can (400 g, about 240 g drained)",
+      "note": "keep 1/2 cup of the can liquid for warming"
+     },
+     {
+      "item": "Onion, very finely chopped",
+      "qty": "2 tbsp (about 1/4 small onion)"
+     },
+     {
+      "item": "Fresh coriander, chopped",
+      "qty": "2 tbsp"
+     },
+     {
+      "item": "Garlic, crushed",
+      "qty": "1 clove"
+     },
+     {
+      "item": "Lemon juice, fresh",
+      "qty": "1 1/2 tbsp (about 1/2 lemon)"
+     },
+     {
+      "item": "Olive oil",
+      "qty": "1 tbsp, plus 1 tsp for serving"
+     },
+     {
+      "item": "Ground cumin",
+      "qty": "1/2 tsp"
+     },
+     {
+      "item": "Salt",
+      "qty": "1/4 tsp",
+      "note": "canned chickpeas already contain salt"
+     }
     ],
-    "timeline": [
-      "0:00 Cut and season the chicken; chop all the vegetables.",
-      "0:12 Put the eggs in cold salted water on high heat.",
-      "0:14 Heat the oil and start browning the chicken cubes.",
-      "0:18 Eggs reach the boil: lower to medium-low and start the 10 minute timer. Lift the chicken out; soften the onion and garlic.",
-      "0:21 Add the peppers and zucchini to the skillet.",
-      "0:28 Eggs done: move them to cold water. Add the crushed tomatoes and spices to the skillet.",
-      "0:29 Return the chicken, cover, cook 4 to 5 minutes. Peel and halve the eggs meanwhile.",
-      "0:34 Check the chicken at 74 C, turn off the heat, warm the plates.",
-      "0:36 Plate and serve."
+    "prep": [
+     "Open the can of chickpeas. Pour 1/2 cup of the can liquid into a small pot 16 cm, then drain the rest of the chickpeas in a sieve and rinse for 10 seconds.",
+     "Finely chop 2 tbsp onion and 2 tbsp fresh coriander and crush 1 garlic clove on the vegetable board.",
+     "Squeeze 1 1/2 tbsp lemon juice.",
+     "In a medium bowl mix the chopped onion, coriander, crushed garlic, 1 tbsp olive oil, 1/2 tsp cumin and 1/4 tsp salt."
     ],
-    "mistakes": [
-      "Eggs cold next to hot chicken -> time the eggs so they finish 5 minutes before the chicken and keep them in warm, not iced, water once peeled if the chicken runs late.",
-      "Grey ring on the egg yolk -> 10 minutes from the boil, then cold water at once.",
-      "Chicken overcooked while waiting for the eggs -> follow the timeline; the chicken's last covered step is only 4 to 5 minutes.",
-      "Plate watery -> lift the chicken mix with a slotted spoon if the sauce is thin, and keep the eggs on the dry side of the plate.",
-      "Forgot to clean the board -> the egg peeling and parsley go on the vegetable board only, never the raw-chicken board."
+    "steps": [
+     "Put the drained chickpeas into the small pot with the 1/2 cup can liquid and set over medium heat. Stir and heat for 3 to 4 minutes until the liquid is steaming and the chickpeas are warm through; do not let it boil hard.",
+     "Lift the chickpeas out with a slotted spoon (leave most of the liquid behind) and tip them into the bowl with the onion, coriander, garlic, oil, cumin and salt. Stir for 30 seconds until every chickpea is coated and the cumin smells fragrant from the warmth.",
+     "Pour the 1 1/2 tbsp lemon juice over the chickpeas and stir again. Taste one chickpea and add a pinch more salt only if needed. Serve at once while warm."
+    ]
+   }
+  ],
+  "timeline": null,
+  "mistakes": [
+   "Dish is dry and dull -> keep the chickpeas moist with 1 to 2 tbsp of the warm can liquid and the full 1 1/2 tbsp lemon.",
+   "Raw onion too sharp -> chop it very fine and use only 2 tbsp; it softens in the warm chickpeas.",
+   "Too salty -> rinse the chickpeas and add only 1/4 tsp salt, then taste.",
+   "Chickpeas mushy -> warm them gently for 3 to 4 minutes; do not boil.",
+   "Garlic harsh -> crush it to a paste with the salt so it blends in instead of sitting in chunks."
+  ],
+  "serving": [
+   "Spoon the warm chickpeas into two small bowls.",
+   "Drizzle 1 tsp olive oil over the top and add a few coriander leaves and a pinch of cumin.",
+   "Serve with warm Arabic bread, pickles and lemon wedges; it pairs well with B3 Boiled Egg."
+  ],
+  "safety": [
+   "Check the can is not dented or bulging before opening.",
+   "Cool leftovers within 1 hour; keep in a closed container in the fridge for 2 to 3 days.",
+   "Can be eaten cold from the fridge or rewarmed in a pot with 2 tbsp water until steaming."
+  ],
+  "source": {
+   "site": "Shamlola (shamlola.com)",
+   "chef": "Shamlola editorial",
+   "title_ar": "طريقة عمل الحمص بالكمون و الليمون",
+   "url": "https://www.shamlola.com/recipes/%D8%B7%D8%B1%D9%8A%D9%82%D8%A9-%D8%B9%D9%85%D9%84-%D8%A7%D9%84%D8%AD%D9%85%D8%B5-%D8%A8%D8%A7%D9%84%D9%83%D9%85%D9%88%D9%86-%D9%88-%D8%A7%D9%84%D9%84%D9%8A%D9%85%D9%88%D9%86",
+   "image_source": "to be filled by image step",
+   "verification": "Verified (page opened and read)",
+   "adapted": "Scaled from 1 kg boiled chickpeas, 1/2 onion, 2 garlic cloves, 1 lemon, 2 tbsp oil and 1 tsp cumin for 5 people to 1 can (400 g) chickpeas, 2 tbsp onion, 1 garlic clove, 1/2 lemon, 1 tbsp oil and 1/2 tsp cumin for 2 adults; the 1/8 tsp shatta is removed; the source serves the dish cold with no heating step, so the 3 to 4 minute warming in the can liquid for a breakfast balila is a household addition; the source does not say canned or dried, so canned is used."
+  },
+  "video": null,
+  "video_tl": null
+ },
+ {
+  "id": "B6",
+  "name_en": "Sandwich Pizza",
+  "name_ar": "بيتزا التوست",
+  "cuisine": "Other",
+  "category": "Breakfast",
+  "info": {
+   "prep_time": "15 min",
+   "cook_time": "22 min",
+   "total_time": "37 min",
+   "servings": "2 Adults",
+   "difficulty": "Easy",
+   "equipment": [
+    "oven",
+    "baking tray with baking paper",
+    "non-stick pan 26 cm",
+    "pastry brush",
+    "small bowl for melted butter",
+    "chopping board for vegetables"
+   ]
+  },
+  "meat_spec": null,
+  "spice_note": "Source recipe contains no chili; black pepper is kept at 1/8 tsp for 2 adults.",
+  "components": [
+   {
+    "title": "Part 1 - Toast Pizza with Vegetable Sauce and Cheese",
+    "ingredients": [
+     {
+      "item": "Toast bread slices",
+      "qty": "4 pcs"
+     },
+     {
+      "item": "Butter, melted",
+      "qty": "1 tbsp"
+     },
+     {
+      "item": "Olive oil",
+      "qty": "1 tsp"
+     },
+     {
+      "item": "Onion, finely chopped",
+      "qty": "1/2 small (40 g)"
+     },
+     {
+      "item": "Garlic, crushed",
+      "qty": "1 clove"
+     },
+     {
+      "item": "Dried oregano",
+      "qty": "1/2 tsp"
+     },
+     {
+      "item": "Green bell pepper, small dice",
+      "qty": "1/4 pcs (30 g)"
+     },
+     {
+      "item": "Red bell pepper, small dice",
+      "qty": "1/4 pcs (30 g)"
+     },
+     {
+      "item": "Sweet corn, canned, drained",
+      "qty": "1/4 cup (40 g)",
+      "note": "optional, as in the source"
+     },
+     {
+      "item": "Ready pizza sauce",
+      "qty": "1/2 cup (120 ml)",
+      "note": "check the label says no chili"
+     },
+     {
+      "item": "Mozzarella, grated",
+      "qty": "1/2 cup (50 g)"
+     },
+     {
+      "item": "Parmesan, grated",
+      "qty": "2 tbsp"
+     },
+     {
+      "item": "Salt",
+      "qty": "1/4 tsp"
+     },
+     {
+      "item": "Black pepper, ground",
+      "qty": "1/8 tsp"
+     }
     ],
-    "serving": [
-      "Each plate carries a mound of chicken mix on one side and 4 egg halves fanned on the other, yolk side up.",
-      "A little parsley over everything, a lemon wedge and warm Arabic bread complete the plate.",
-      "Add sliced cucumber or S5 Green Mix Salad for freshness."
+    "prep": [
+     "Turn the oven on to 200 C and line a baking tray with baking paper.",
+     "Melt 1 tbsp butter in a small bowl (20 seconds in the microwave). Brush both sides of the 4 toast slices with it.",
+     "Finely chop 1/2 small onion, crush 1 garlic clove and dice 1/4 green and 1/4 red bell pepper into 5 mm pieces on the vegetable board. Drain 1/4 cup corn.",
+     "Grate 1/2 cup mozzarella and 2 tbsp parmesan and mix them in a bowl. Measure 1/2 cup pizza sauce."
     ],
-    "safety": [
-      "Chicken is safe at 74 C; check the largest cube is white through with no pink.",
-      "Do not wash raw chicken; use a separate board and knife for it and wash hands and board with hot soapy water before touching the eggs.",
-      "Hard-boiled eggs (10 minutes) are fully cooked and safe for everyone.",
-      "Cool leftovers within 1 hour; keep chicken and peeled eggs in closed containers in the fridge for 2 to 3 days; reheat the chicken until steaming hot and eat the eggs cold or warmed in the chicken for 1 minute."
+    "steps": [
+     "Heat a non-stick pan 26 cm over medium heat for 1 minute. Lay 2 buttered toast slices in the pan and toast 1 1/2 minutes per side until golden. Repeat with the other 2 slices and set all 4 on the baking tray.",
+     "In the same pan add 1 tsp olive oil, the 1/2 chopped onion, 1 crushed garlic clove and 1/4 tsp salt and stir on medium heat for 3 minutes until the onion is soft and clear.",
+     "Add 1/2 tsp oregano, the diced green and red bell pepper and the 1/4 cup corn and stir on medium heat for 3 to 4 minutes until the pepper is soft but still bright in colour.",
+     "Add 1/2 cup pizza sauce and 1/8 tsp black pepper, stir for 1 minute until hot and thick, then turn off the heat.",
+     "Spread the vegetable sauce evenly over the 4 toast slices right to the edges (about 2 tbsp each). Sprinkle the mozzarella and parmesan mix over the top.",
+     "Bake in the middle of the oven at 200 C for 8 to 10 minutes until the cheese is melted and bubbling and the edges of the bread are crisp and golden. Rest 1 minute before cutting each slice in half diagonally."
+    ]
+   }
+  ],
+  "timeline": null,
+  "mistakes": [
+   "Bread soggy -> toast it in the pan first and let the sauce thicken for 1 minute before spreading.",
+   "Cheese burnt before the bread crisps -> bake in the middle of the oven at 200 C and check at 8 minutes.",
+   "Pizza tastes hot -> some ready pizza sauces contain chili; read the label and choose a plain tomato and herb sauce.",
+   "Vegetables watery on top -> dice them small and cook them 3 to 4 minutes so their water cooks off.",
+   "Too little cheese to hold the topping -> use the full 1/2 cup mozzarella; the parmesan gives flavour, the mozzarella binds."
+  ],
+  "serving": [
+   "Place 2 slices (4 halves) on each plate while hot.",
+   "Sprinkle a pinch of dried oregano on top and add a few leaves of fresh basil if available.",
+   "Serve with a small cucumber and tomato salad or S5 Green Mix Salad."
+  ],
+  "safety": [
+   "Use oven gloves; the tray and the melted cheese are very hot.",
+   "Best eaten at once; leftovers can be kept in a closed container in the fridge for 1 day and reheated in the oven at 180 C for 5 minutes until the cheese is hot again.",
+   "Keep cheese refrigerated until use."
+  ],
+  "source": {
+   "site": "Sayidaty Kitchen (kitchen.sayidaty.net)",
+   "chef": "Sayidaty Kitchen editorial",
+   "title_ar": "بيتزا التوست السهلة",
+   "url": "https://kitchen.sayidaty.net/node/6450",
+   "image_source": "to be filled by image step",
+   "verification": "Verified (page opened and read)",
+   "adapted": "Scaled from 12 toast slices, 2 onions, 1 of each bell pepper and 2 cups sauce for 5 people to 4 slices, 1/2 small onion, 1/4 of each pepper and 1/2 cup sauce for 2 adults; the source's 1/4 cup mozzarella for 12 slices is very little, so cheese is raised to 1/2 cup mozzarella and 2 tbsp parmesan for 4 slices; oven unit not stated in the source so 200 C is used; baking time reduced from 15 to 8 to 10 minutes for 4 slices; the source gives no minutes for the vegetables, so 3 minutes onion and 3 to 4 minutes peppers are set as the professional standard."
+  },
+  "video": null,
+  "video_tl": null
+ },
+ {
+  "id": "B7",
+  "name_en": "Potato",
+  "name_ar": "بطاطس مقلية بالكمون والثوم",
+  "cuisine": "Egyptian",
+  "category": "Breakfast",
+  "info": {
+   "prep_time": "15 min (includes 10 min soaking the cubes)",
+   "cook_time": "16 min",
+   "total_time": "31 min",
+   "servings": "2 Adults",
+   "difficulty": "Easy",
+   "equipment": [
+    "non-stick pan 26 cm",
+    "bowl of cold water",
+    "clean kitchen towel",
+    "spatula",
+    "chopping board for vegetables",
+    "kitchen paper"
+   ]
+  },
+  "meat_spec": null,
+  "spice_note": "Source recipe has 1/2 tsp shatta (hot chili), which is removed; 1/2 tsp ground cumin is added for the Egyptian cumin flavour and the garlic and coriander give the aroma.",
+  "components": [
+   {
+    "title": "Part 1 - Pan-Fried Potato Cubes with Cumin and Garlic",
+    "ingredients": [
+     {
+      "item": "Potatoes, peeled",
+      "qty": "2 medium (400 g)",
+      "note": "cut in 1.5 cm cubes"
+     },
+     {
+      "item": "Vegetable oil",
+      "qty": "3 tbsp"
+     },
+     {
+      "item": "Ground cumin",
+      "qty": "1/2 tsp",
+      "note": "household addition, not in the source"
+     },
+     {
+      "item": "Dried ground coriander",
+      "qty": "1/2 tsp"
+     },
+     {
+      "item": "Garlic, crushed",
+      "qty": "1 clove"
+     },
+     {
+      "item": "Fresh coriander, chopped",
+      "qty": "1 tbsp"
+     },
+     {
+      "item": "Salt",
+      "qty": "1/2 tsp"
+     }
     ],
-    "source": {
-      "site": "Sayidaty Kitchen (kitchen.sayidaty.net)",
-      "chef": "Sayidaty Kitchen editorial",
-      "title_ar": "الدجاج بالخضار لرجيم مثالي + مدة سلق البيض بالماء",
-      "url": "https://kitchen.sayidaty.net/node/3991",
-      "image_source": "to be filled by image step",
-      "verification": "Verified (page opened and read); eggs part from https://kitchen.sayidaty.net/node/25365, also verified",
-      "adapted": "Household composite of B3 and B14: the chicken part is scaled exactly as in B14 (300 g breast in 1.5 cm cubes, half the source vegetables, 1/2 cup crushed tomatoes, mild paprika and cumin added, no chili in either source); the egg part uses 4 eggs boiled 10 minutes from the boil then cooled, in place of the source's size-based timings; the timeline, warm plates, parsley, lemon, sumac and bread are household additions for serving the two together."
-    },
-    "video": {
-      "url": "https://www.youtube.com/watch?v=f4nEgnszy0A",
-      "title": "Easy and Healthy Sheet Pan Chicken and Veggies",
-      "channel": "The Mediterranean Dish",
-      "language": "English",
-      "duration": "6:35",
-      "priority": "P4",
-      "spicy_warning": false,
-      "subtitles": "manual English"
-    },
-    "video_tl": null
-  }
+    "prep": [
+     "Peel 2 potatoes and cut them into even 1.5 cm cubes on the vegetable board.",
+     "Put the cubes in a bowl of cold water for 10 minutes to wash off surface starch, then drain and dry them completely on a clean kitchen towel; wet potatoes spit in the oil and do not crisp.",
+     "Crush 1 garlic clove and chop 1 tbsp fresh coriander. Mix 1/2 tsp cumin, 1/2 tsp dried coriander and 1/2 tsp salt in a small cup."
+    ],
+    "steps": [
+     "Heat 3 tbsp vegetable oil in a non-stick pan 26 cm over medium-high heat for 1 to 2 minutes until a cube of potato sizzles at once when it touches the oil.",
+     "Add the dried potato cubes in one layer and leave them for 3 minutes without stirring so the underside turns golden.",
+     "Turn the cubes with the spatula and continue frying on medium-high heat for 9 to 11 minutes more, turning every 3 minutes, until all sides are golden and crisp and a cube is soft inside when pressed with the spatula.",
+     "Lower the heat to low. Sprinkle the cumin, dried coriander and salt mix over the potatoes and stir for 30 seconds so the spices toast lightly in the oil.",
+     "Add the 1 crushed garlic clove and 1 tbsp fresh coriander and stir for 30 to 60 seconds until the garlic smells fragrant but is not brown. Turn off the heat and lift the potatoes onto kitchen paper for 30 seconds to drain."
+    ]
+   }
+  ],
+  "timeline": null,
+  "mistakes": [
+   "Potatoes soft and pale, not crisp -> dry the cubes fully after soaking, use medium-high heat and do not crowd the pan; fry in 2 batches if the cubes are more than one layer.",
+   "Outside brown but inside hard -> cubes too big or heat too high; keep to 1.5 cm cubes and turn the heat down to medium after the first 3 minutes if they brown too fast.",
+   "Garlic burnt and bitter -> add it on low heat for the last minute only.",
+   "Spices taste raw -> stir them in the hot oil for 30 seconds before the garlic goes in.",
+   "Oil spits -> the potatoes were wet; towel-dry them before they go in."
+  ],
+  "serving": [
+   "Pile the potatoes in a shallow bowl and sprinkle a pinch of cumin and a few coriander leaves on top.",
+   "Add a lemon wedge on the side to squeeze over.",
+   "Serve hot with Arabic bread; it is the classic partner for B4 Chicken Liver and B10 Sunny-Side-Up Egg."
+  ],
+  "safety": [
+   "Keep the pan handle turned inwards and never leave hot oil unattended; have the lid nearby to cover the pan if the oil flares.",
+   "Best eaten at once; leftovers lose their crispness but keep 2 days in a closed container in the fridge and can be reheated in a dry pan on medium heat for 4 to 5 minutes.",
+   "Let the used oil cool fully before discarding it."
+  ],
+  "source": {
+   "site": "Sayidaty Kitchen (kitchen.sayidaty.net)",
+   "chef": "Sayidaty Kitchen editorial",
+   "title_ar": "البطاطا بالثوم والكزبرة الخضراء",
+   "url": "https://kitchen.sayidaty.net/node/2577",
+   "image_source": "to be filled by image step",
+   "verification": "Verified (page opened and read)",
+   "adapted": "Scaled from 5 potatoes, 2 garlic cloves, 2 tbsp fresh coriander and 1 tsp dried coriander for 5 people to 2 potatoes (400 g), 1 garlic clove, 1 tbsp fresh coriander and 1/2 tsp dried coriander for 2 adults; oil kept at 3 tbsp for pan frying; the 1/2 tsp shatta is removed and 1/2 tsp ground cumin is added as a household choice for the Egyptian cumin style; the source gives no heat level, minutes or cube size, so 1.5 cm cubes, a 10 minute cold-water soak, medium-high heat and 12 to 14 minutes frying are set as the professional standard."
+  },
+  "video": {
+   "url": "https://www.youtube.com/watch?v=MA8vbHO6_rY",
+   "title": "Spicy Coriander Potatoes - Batata Harra Recipe",
+   "channel": "Middle Eats",
+   "language": "English",
+   "duration": "2:47",
+   "priority": "P4",
+   "spicy_warning": true,
+   "subtitles": "n/a"
+  },
+  "video_tl": null
+ },
+ {
+  "id": "B8",
+  "name_en": "Feta Cheese Sandwich",
+  "name_ar": "ساندويش الجبنة البيضاء",
+  "cuisine": "Levantine",
+  "category": "Breakfast",
+  "info": {
+   "prep_time": "10 min",
+   "cook_time": "5 min",
+   "total_time": "15 min",
+   "servings": "2 Adults",
+   "difficulty": "Easy",
+   "equipment": [
+    "oven grill (or toaster oven)",
+    "baking tray",
+    "pastry brush",
+    "bread knife",
+    "chopping board for vegetables"
+   ]
+  },
+  "meat_spec": null,
+  "spice_note": "Source recipe contains no chili.",
+  "components": [
+   {
+    "title": "Part 1 - Grilled Feta, Tomato and Olive Sandwich",
+    "ingredients": [
+     {
+      "item": "Feta or Arabic white cheese, cut in 1 cm slices",
+      "qty": "150 g"
+     },
+     {
+      "item": "French bread (small baguette pieces, 20 cm each)",
+      "qty": "2 pcs",
+      "note": "or 2 Arabic bread loaves"
+     },
+     {
+      "item": "Olive oil",
+      "qty": "2 tbsp"
+     },
+     {
+      "item": "Tomato, sliced 5 mm",
+      "qty": "1 medium (120 g)"
+     },
+     {
+      "item": "Arugula (rocket) leaves",
+      "qty": "6 leaves (about 1/2 cup)",
+      "note": "washed and dried"
+     },
+     {
+      "item": "Olives, pitted, sliced",
+      "qty": "3 tbsp"
+     }
+    ],
+    "prep": [
+     "Turn the oven grill on to high and let it heat for 5 minutes with the rack 15 cm below the element.",
+     "Cut each of the 2 bread pieces open lengthwise without separating the halves. Brush the inside of both halves with the 2 tbsp olive oil.",
+     "Slice the 150 g cheese into 1 cm slices and the tomato into 5 mm rounds on the vegetable board. Slice 3 tbsp olives. Wash and dry 6 arugula leaves."
+    ],
+    "steps": [
+     "Lay the 2 opened breads on the baking tray oiled side up. On the bottom half of each, layer 3 arugula leaves, half of the cheese slices, half of the sliced olives and half of the tomato slices. Fold the top half over and press gently.",
+     "Place the tray under the hot grill and grill for 4 to 5 minutes until the bread is crisp and golden on top and the cheese is soft and warm at the edges when you open the sandwich a little. Turn the sandwiches over halfway if the top browns faster than the bottom.",
+     "Remove, rest 1 minute, and cut each sandwich in half across."
+    ]
+   }
+  ],
+  "timeline": null,
+  "mistakes": [
+   "Bread burnt before the cheese warms -> keep the rack 15 cm below the grill element and check at 3 minutes.",
+   "Sandwich too salty -> feta and olives are both salty; add no salt at all and choose a milder white cheese if the family prefers.",
+   "Tomato makes the bread wet -> slice it 5 mm, not thinner, and put the cheese between the tomato and the bread.",
+   "Arugula wilted and bitter -> use only 3 leaves per sandwich and keep them in the middle, away from the hot bread.",
+   "Cheese slices fall apart -> cut the block cold straight from the fridge with a wet knife."
+  ],
+  "serving": [
+   "Place one sandwich, cut in two halves, on each plate.",
+   "Add a few extra olives, cucumber sticks and a sprig of fresh mint on the side.",
+   "Serve warm with sweet tea; the source notes it can also be served cold without grilling."
+  ],
+  "safety": [
+   "Use oven gloves and watch the grill the whole time; grilling is fast.",
+   "Keep cheese refrigerated until the sandwich is assembled.",
+   "Best eaten at once; an ungrilled sandwich can be wrapped and kept in the fridge for up to 4 hours."
+  ],
+  "source": {
+   "site": "Sayidaty Kitchen (kitchen.sayidaty.net)",
+   "chef": "Sayidaty Kitchen editorial",
+   "title_ar": "ساندويش الجبن الأبيض بالزيتون",
+   "url": "https://kitchen.sayidaty.net/node/26475",
+   "image_source": "to be filled by image step",
+   "verification": "Verified (page opened and read)",
+   "adapted": "Source already serves 2 with 2 French breads, 6 arugula leaves, 1 tomato, 3 tbsp olives and 2 tbsp olive oil; the cheese quantity is given only as '1 block', so 150 g is set as the professional standard; the source gives 'about 5 minutes under the grill' with no rack position, so 15 cm below a high grill with a check at 3 minutes is added."
+  },
+  "video": null,
+  "video_tl": null
+ },
+ {
+  "id": "B9",
+  "name_en": "Fried Halloumi",
+  "name_ar": "حلوم مقلي",
+  "cuisine": "Levantine",
+  "category": "Breakfast",
+  "info": {
+   "prep_time": "8 min",
+   "cook_time": "8 min",
+   "total_time": "16 min",
+   "servings": "2 Adults",
+   "difficulty": "Easy",
+   "equipment": [
+    "non-stick pan 26 cm",
+    "shallow bowl for flour",
+    "tongs or spatula",
+    "kitchen paper",
+    "chopping board for vegetables"
+   ]
+  },
+  "meat_spec": null,
+  "spice_note": "Source recipe contains no chili; the video garnish uses Aleppo pepper flakes, which are not used here.",
+  "components": [
+   {
+    "title": "Part 1 - Flour-Dusted Fried Halloumi with Mint and Lemon",
+    "ingredients": [
+     {
+      "item": "Halloumi cheese",
+      "qty": "250 g (1 block)",
+      "note": "cut in 1 cm slices, about 8 pcs"
+     },
+     {
+      "item": "Plain flour",
+      "qty": "2 tbsp"
+     },
+     {
+      "item": "Olive oil, for frying",
+      "qty": "4 tbsp"
+     },
+     {
+      "item": "Fresh mint, finely chopped",
+      "qty": "1 tbsp"
+     },
+     {
+      "item": "Olive oil, for serving",
+      "qty": "1/2 tbsp"
+     },
+     {
+      "item": "Lemon",
+      "qty": "1/2 pcs",
+      "note": "cut in wedges"
+     }
+    ],
+    "prep": [
+     "Cut the 250 g halloumi block into 1 cm slices (about 8 slices) and pat each slice dry with kitchen paper; a dry surface fries golden instead of steaming.",
+     "Put 2 tbsp flour in a shallow bowl. Press each slice into the flour on both sides and shake off the excess so only a thin dusting stays.",
+     "Finely chop 1 tbsp fresh mint and cut 1/2 lemon into wedges. Line a plate with kitchen paper."
+    ],
+    "steps": [
+     "Heat 4 tbsp olive oil in a non-stick pan 26 cm over medium-high heat for 1 to 2 minutes until a pinch of flour sizzles at once.",
+     "Lay the floured halloumi slices in the pan in one layer with space between them (fry in 2 batches if needed). Fry for 2 to 3 minutes without moving them until the underside is deep golden and crisp.",
+     "Turn each slice with tongs and fry the second side for 1 1/2 to 2 minutes until golden; the cheese should be soft and squeaky inside, not melted.",
+     "Lift the slices onto the kitchen paper for 30 seconds to drain, then move them to a serving plate while still hot.",
+     "Drizzle 1/2 tbsp olive oil over the slices and scatter the 1 tbsp chopped mint on top. Serve at once with the lemon wedges."
+    ]
+   }
+  ],
+  "timeline": null,
+  "mistakes": [
+   "Halloumi rubbery and hard -> it was fried too long or served after cooling; fry 4 to 5 minutes total and eat within 5 minutes.",
+   "Flour coating burns -> the source says high heat, but with the flour use medium-high and turn at 2 to 3 minutes.",
+   "Cheese sticks to the pan -> let the oil heat fully and do not move the slices until the first side is golden.",
+   "Oil spits -> pat the slices dry before flouring.",
+   "Too salty -> halloumi is a salted cheese; add no salt, and soak the slices in cold water for 10 minutes before drying if the family finds it too salty."
+  ],
+  "serving": [
+   "Arrange the golden slices overlapping on a warm plate with the lemon wedges at the side.",
+   "Scatter the chopped mint and a few whole mint leaves over the top.",
+   "Serve with Arabic bread, sliced tomato, cucumber and olives, or alongside B10 Sunny-Side-Up Egg."
+  ],
+  "safety": [
+   "Keep the pan handle inwards and watch the hot oil; have the lid nearby.",
+   "Keep halloumi refrigerated until slicing.",
+   "Best eaten at once; cooked slices can be kept in a closed container in the fridge for 2 days and reheated in a dry non-stick pan on medium heat for 1 minute per side."
+  ],
+  "source": {
+   "site": "Sayidaty Kitchen (kitchen.sayidaty.net)",
+   "chef": "Sayidaty Kitchen editorial",
+   "title_ar": "جبنة حلوم مقلية",
+   "url": "https://kitchen.sayidaty.net/node/23040",
+   "image_source": "to be filled by image step",
+   "verification": "Verified (page opened and read)",
+   "adapted": "Scaled from 500 g halloumi, 1/4 cup flour, 1/2 cup frying oil, 2 tbsp mint and 1 lemon for 4 people to 250 g halloumi, 2 tbsp flour, 4 tbsp oil, 1 tbsp mint and 1/2 lemon for 2 adults; the source says 'several minutes on high heat' with no exact timing, so medium-high heat with 2 to 3 minutes first side and 1 1/2 to 2 minutes second side is set as the professional standard; slice thickness (1 cm) is not in the source."
+  },
+  "video": {
+   "url": "https://www.youtube.com/watch?v=iRtSUHzuP8s",
+   "title": "5-Minute Perfect Fried Halloumi | The Mediterranean Dish",
+   "channel": "The Mediterranean Dish",
+   "language": "English",
+   "duration": "4:14",
+   "priority": "P4",
+   "spicy_warning": true,
+   "subtitles": "manual English"
+  },
+  "video_tl": null
+ },
+ {
+  "id": "B10",
+  "name_en": "Sunny-Side-Up Egg",
+  "name_ar": "بيض عيون",
+  "cuisine": "Gulf",
+  "category": "Breakfast",
+  "info": {
+   "prep_time": "3 min",
+   "cook_time": "5 min",
+   "total_time": "8 min",
+   "servings": "2 Adults",
+   "difficulty": "Easy",
+   "equipment": [
+    "non-stick pan 26 cm with lid",
+    "thin spatula",
+    "small bowl for cracking eggs"
+   ]
+  },
+  "meat_spec": null,
+  "spice_note": "Source recipe contains no chili; the paprika mentioned in the source method is used as 1/8 tsp sweet paprika for colour only, and black pepper is kept at 1/8 tsp.",
+  "components": [
+   {
+    "title": "Part 1 - Sunny-Side-Up Eggs, Covered, Not Flipped",
+    "ingredients": [
+     {
+      "item": "Eggs",
+      "qty": "4 pcs",
+      "note": "2 per adult"
+     },
+     {
+      "item": "Ghee or butter",
+      "qty": "1 1/2 tbsp"
+     },
+     {
+      "item": "Salt",
+      "qty": "1/4 tsp"
+     },
+     {
+      "item": "Black pepper, ground",
+      "qty": "1/8 tsp"
+     },
+     {
+      "item": "Sweet paprika",
+      "qty": "1/8 tsp",
+      "note": "optional, for colour"
+     }
+    ],
+    "prep": [
+     "Take the 4 eggs out of the fridge 10 minutes early if possible; room-temperature eggs cook more evenly.",
+     "Have the pan lid and a small bowl for cracking ready next to the stove. Mix 1/4 tsp salt, 1/8 tsp black pepper and 1/8 tsp sweet paprika in a tiny cup."
+    ],
+    "steps": [
+     "Melt 1 1/2 tbsp ghee in a non-stick pan 26 cm over medium heat for about 1 minute until it is liquid and just starting to foam; do not let it brown.",
+     "Crack each egg into the small bowl and slide it gently into the pan, keeping the 4 eggs apart so the whites do not run together. Do not stir and do not break the yolks.",
+     "Sprinkle the salt, pepper and paprika mix over the whites (avoid the yolks so they stay bright). Cover the pan with the lid at once and lower the heat to low.",
+     "Cook covered on low heat for 3 minutes without lifting the lid; the steam trapped under the lid sets the top of the white while the yolk stays soft and liquid. Lift the lid: the whites must be fully white and set with no clear jelly left around the yolk, and the yolk still bright yellow and wobbly. If clear white remains, cover for 30 to 60 seconds more.",
+     "Turn off the heat. Slide the thin spatula under each egg and lift it onto the plate without flipping, yolk side up."
+    ]
+   }
+  ],
+  "timeline": null,
+  "mistakes": [
+   "Yolk cooked hard -> the heat was too high or the lid stayed on too long; low heat and 3 minutes only, then check.",
+   "Clear raw white around the yolk -> the pan must be covered so the steam cooks the top; without a lid the top never sets.",
+   "Bottom brown and crisp -> lower the heat as soon as the eggs go in; the ghee must not be smoking.",
+   "Yolk broken -> crack into a small bowl first and slide the egg in close to the pan surface.",
+   "Eggs stuck together -> use a 26 cm pan and place the eggs in four separate corners."
+  ],
+  "serving": [
+   "Slide 2 eggs onto each plate, yolks up and unbroken.",
+   "Sprinkle a few parsley leaves or a pinch of sumac on the whites.",
+   "Serve at once with warm Arabic bread for dipping in the soft yolk, plus B7 Potato or B9 Fried Halloumi on the side."
+  ],
+  "safety": [
+   "The yolk stays soft in this recipe, so it is for healthy adults; for a fully cooked egg use B2 Fried Egg instead.",
+   "Use fresh, refrigerated eggs with clean, uncracked shells.",
+   "Eat at once; sunny-side-up eggs cannot be stored or reheated."
+  ],
+  "source": {
+   "site": "Sayidaty Kitchen (kitchen.sayidaty.net)",
+   "chef": "Sayidaty Kitchen editorial",
+   "title_ar": "بيض العيون السادة",
+   "url": "https://kitchen.sayidaty.net/node/30032",
+   "image_source": "to be filled by image step",
+   "verification": "Verified (page opened and read)",
+   "adapted": "Scaled from 2 eggs and 1 tbsp ghee for 1 person to 4 eggs and 1 1/2 tbsp ghee for 2 adults, keeping the source's method of medium heat to melt the ghee, then covered on low heat for 3 minutes without flipping; the source gives salt, pepper and paprika as 'a pinch', so 1/4 tsp, 1/8 tsp and 1/8 tsp are set; the doneness cue (whites set, yolk wobbly) is added as the professional standard."
+  },
+  "video": {
+   "url": "https://www.youtube.com/watch?v=Qn1I7ZD5PHc",
+   "title": "The Perfect Sunny Side Up Egg - Kitchen Conundrums with Thomas Joseph",
+   "channel": "Everyday Food",
+   "language": "English",
+   "duration": "2:38",
+   "priority": "P4",
+   "spicy_warning": false,
+   "subtitles": "n/a"
+  },
+  "video_tl": null
+ },
+ {
+  "id": "B11",
+  "name_en": "Halloumi Sandwich",
+  "name_ar": "ساندويش حلوم",
+  "cuisine": "Levantine",
+  "category": "Breakfast",
+  "info": {
+   "prep_time": "10 min",
+   "cook_time": "8 min",
+   "total_time": "18 min",
+   "servings": "2 Adults",
+   "difficulty": "Easy",
+   "equipment": [
+    "non-stick pan or grill pan 26 cm",
+    "tongs",
+    "bread knife",
+    "chopping board for vegetables",
+    "kitchen paper"
+   ]
+  },
+  "meat_spec": null,
+  "spice_note": "Source recipe contains no chili.",
+  "components": [
+   {
+    "title": "Part 1 - Grilled Halloumi Burger-Bun Sandwich",
+    "ingredients": [
+     {
+      "item": "Halloumi cheese, cut in 1 cm slices",
+      "qty": "200 g (about 6 slices)"
+     },
+     {
+      "item": "Burger buns",
+      "qty": "2 pcs"
+     },
+     {
+      "item": "Lettuce, shredded",
+      "qty": "1 cup (50 g)"
+     },
+     {
+      "item": "Cucumber, sliced 3 mm",
+      "qty": "1 small (100 g)"
+     },
+     {
+      "item": "Tomato, sliced 5 mm",
+      "qty": "1 medium (120 g)"
+     },
+     {
+      "item": "Olive oil",
+      "qty": "1 tsp",
+      "note": "for the pan"
+     },
+     {
+      "item": "Plain yogurt mixed with 1 tsp dried mint",
+      "qty": "2 tbsp",
+      "note": "optional sauce; not in the source"
+     }
+    ],
+    "prep": [
+     "Cut the 200 g halloumi into 1 cm slices and pat them dry with kitchen paper.",
+     "Shred 1 cup lettuce, slice 1 cucumber 3 mm and 1 tomato 5 mm on the vegetable board.",
+     "Cut the 2 burger buns in half. Scoop out a little of the soft centre from the top halves with your fingers, as the source does, so the filling sits inside.",
+     "If using the sauce, stir 2 tbsp yogurt with 1 tsp dried mint in a cup."
+    ],
+    "steps": [
+     "Heat a non-stick pan or grill pan 26 cm over medium-high heat for 1 to 2 minutes until a drop of water sizzles. Brush with 1 tsp olive oil.",
+     "Lay the halloumi slices in the pan in one layer and grill for 2 minutes without moving them until golden with dark grill marks underneath. Turn with tongs and grill the second side for 1 1/2 to 2 minutes until golden and soft. Lift onto a plate.",
+     "Place the 4 bun halves cut side down in the same hot pan for 1 minute until lightly toasted and warm.",
+     "Build each sandwich on the bottom bun: half the shredded lettuce, half the cucumber slices, 3 warm halloumi slices, then half the tomato slices. Spread the top bun with 1 tbsp of the mint yogurt if using, and close the sandwich. Serve at once."
+    ]
+   }
+  ],
+  "timeline": null,
+  "mistakes": [
+   "Halloumi cold and rubbery by the time it is eaten -> grill it last, after all the vegetables are ready, and build the sandwich at once.",
+   "Halloumi sticks to the grill pan -> let the pan heat fully, brush with oil and do not move the slices for the first 2 minutes.",
+   "Bun soggy -> toast the cut sides for 1 minute and keep the tomato on top of the cheese, not against the bread.",
+   "Sandwich too salty -> halloumi is salty; add no salt to the vegetables.",
+   "Filling slides out -> scoop the top bun as the source says and cut the vegetables thin."
+  ],
+  "serving": [
+   "Cut each sandwich in half and stand the halves on the plate so the golden cheese shows.",
+   "Add a small pile of B7 Potato or a few olives and cucumber sticks beside it, as the source suggests roasted potatoes.",
+   "Serve warm with fresh mint leaves tucked into the sandwich."
+  ],
+  "safety": [
+   "Keep halloumi and yogurt refrigerated until used.",
+   "Eat at once; a built sandwich does not keep, but grilled halloumi can be stored 2 days in a closed container in the fridge and rewarmed 1 minute per side in a dry pan.",
+   "Use tongs, not fingers, on the hot grill pan."
+  ],
+  "source": {
+   "site": "Sayidaty Kitchen (kitchen.sayidaty.net)",
+   "chef": "Sayidaty Kitchen editorial",
+   "title_ar": "طريقة عمل ساندويش حلوم",
+   "url": "https://kitchen.sayidaty.net/node/30428",
+   "image_source": "to be filled by image step",
+   "verification": "Verified (page opened and read)",
+   "adapted": "Source already serves 2 with 2 burger buns, 1 cup lettuce, 1 cucumber and 1 tomato; the halloumi quantity is not stated, so 200 g (6 slices) is set; the source says only 'grill the halloumi' with no pan, heat or time, so a grill pan on medium-high for 2 minutes then 1 1/2 to 2 minutes is set as the professional standard; the optional mint yogurt sauce and the bun toasting are not in the source."
+  },
+  "video": null,
+  "video_tl": null
+ },
+ {
+  "id": "B12",
+  "name_en": "Egg Omelette",
+  "name_ar": "أومليت البيض بالخضار",
+  "cuisine": "Egyptian",
+  "category": "Breakfast",
+  "info": {
+   "prep_time": "10 min",
+   "cook_time": "12 min",
+   "total_time": "22 min",
+   "servings": "2 Adults",
+   "difficulty": "Easy",
+   "equipment": [
+    "non-stick pan 20 cm",
+    "medium bowl",
+    "whisk or fork",
+    "thin spatula",
+    "chopping board for vegetables"
+   ]
+  },
+  "meat_spec": null,
+  "spice_note": "Source recipe has 1/4 tsp ground red pepper, which is removed and replaced with 1/4 tsp sweet paprika for colour; black pepper is kept at 1/4 tsp.",
+  "components": [
+   {
+    "title": "Part 1 - Folded Vegetable Omelette (makes 2)",
+    "ingredients": [
+     {
+      "item": "Eggs",
+      "qty": "4 pcs",
+      "note": "2 per omelette"
+     },
+     {
+      "item": "Milk",
+      "qty": "4 tbsp"
+     },
+     {
+      "item": "Butter",
+      "qty": "2 tbsp",
+      "note": "1 tbsp per omelette"
+     },
+     {
+      "item": "Red bell pepper, 5 mm dice",
+      "qty": "1/2 pcs (60 g)"
+     },
+     {
+      "item": "Green bell pepper, 5 mm dice",
+      "qty": "1/2 pcs (60 g)"
+     },
+     {
+      "item": "Yellow bell pepper, 5 mm dice",
+      "qty": "1/2 pcs (60 g)"
+     },
+     {
+      "item": "Ground cumin",
+      "qty": "1/2 tsp"
+     },
+     {
+      "item": "Ground cinnamon",
+      "qty": "1/4 tsp"
+     },
+     {
+      "item": "Sweet paprika",
+      "qty": "1/4 tsp",
+      "note": "replaces the ground red pepper"
+     },
+     {
+      "item": "Salt",
+      "qty": "1/2 tsp"
+     },
+     {
+      "item": "Black pepper, ground",
+      "qty": "1/4 tsp"
+     }
+    ],
+    "prep": [
+     "Dice 1/2 red, 1/2 green and 1/2 yellow bell pepper into 5 mm pieces on the vegetable board; you should have about 1 cup in total.",
+     "Crack the 4 eggs into a medium bowl, add 4 tbsp milk, 1/2 tsp salt, 1/4 tsp black pepper, 1/2 tsp cumin, 1/4 tsp cinnamon and 1/4 tsp sweet paprika. Whisk with a fork for 30 seconds until no streaks of white remain and the mixture is pale and even.",
+     "Divide the egg mixture in your mind into two halves; each omelette uses half the eggs and half the peppers."
+    ],
+    "steps": [
+     "Melt 1 tbsp butter in a non-stick pan 20 cm over medium heat for 30 to 60 seconds until it foams. Add half of the diced peppers (about 1/2 cup) and stir for 2 minutes until they soften slightly and smell sweet.",
+     "Pour in half of the egg mixture (about 1/2 cup) over the peppers and tilt the pan so it covers the base. Cook on medium heat for 1 minute without stirring, then push the set edges towards the centre with the spatula and tilt the pan so the raw egg runs to the empty edge. Repeat for 1 to 2 minutes until the top is almost set but still slightly shiny.",
+     "Lower the heat to low. Slide the spatula under one half of the omelette and fold it over the other half. Cook 30 to 60 seconds more until the inside is set with no liquid egg running out when the omelette is pressed, and the underside is golden.",
+     "Slide the folded omelette onto a warm plate. Wipe the pan with kitchen paper and repeat steps 1 to 3 with the second 1 tbsp butter, the remaining peppers and the remaining egg mixture for the second omelette."
+    ]
+   }
+  ],
+  "timeline": null,
+  "mistakes": [
+   "Omelette brown and dry -> the heat was too high; medium heat, then low to finish, and stop as soon as the inside is just set.",
+   "Raw egg in the middle after folding -> keep pushing the set edges in and tilting the pan so the raw egg cooks before folding.",
+   "Peppers crunchy and watery -> soften them 2 minutes in the butter before the egg goes in.",
+   "Omelette tears when folded -> use a 20 cm pan for 2 eggs so the omelette is thick enough, and a thin spatula.",
+   "Cinnamon tastes strong -> keep to 1/4 tsp for all 4 eggs; it should be a faint warmth only."
+  ],
+  "serving": [
+   "Place one folded omelette on each plate, seam side down, and brush the top with a little of the butter from the pan.",
+   "Sprinkle chopped parsley and a pinch of sweet paprika on top.",
+   "Serve with toast or Arabic bread, sliced tomato and cucumber."
+  ],
+  "safety": [
+   "Cook until no liquid egg remains in the fold; the omelette is then fully cooked and safe for everyone.",
+   "Wash hands and the whisk after handling raw egg.",
+   "Best eaten at once; leftovers keep 1 day in a closed container in the fridge and can be reheated 1 minute per side in a dry pan on medium heat."
+  ],
+  "source": {
+   "site": "Shamlola (shamlola.com)",
+   "chef": "Shamlola editorial",
+   "title_ar": "طريقة عمل أومليت البيض بالخضار",
+   "url": "https://www.shamlola.com/recipes/%D8%B7%D8%B1%D9%8A%D9%82%D8%A9-%D8%B9%D9%85%D9%84-%D8%A3%D9%88%D9%85%D9%84%D9%8A%D8%AA-%D8%A7%D9%84%D8%A8%D9%8A%D8%B6-%D8%A8%D8%A7%D9%84%D8%AE%D8%B6%D8%A7%D8%B1",
+   "image_source": "to be filled by image step",
+   "verification": "Verified (page opened and read)",
+   "adapted": "Source gives 2 eggs, 2 tbsp milk, 1 tbsp butter and 1/2 of each bell pepper with no servings; doubled to 4 eggs, 4 tbsp milk and 2 tbsp butter for 2 adults made as 2 omelettes, while the peppers (1/2 of each colour) and the spices (1/2 tsp cumin, 1/4 tsp cinnamon) are kept at the source amount rather than doubled so the taste stays mild; the 1/4 tsp ground red pepper is replaced with sweet paprika; the source adds raw peppers to the egg and flips the omelette, but here the peppers are softened 2 minutes first and the omelette is folded; the source gives no heat level or minutes, so medium heat and the timings above are set as the professional standard."
+  },
+  "video": {
+   "url": "https://www.youtube.com/watch?v=NjLuDWvgyy8",
+   "title": "HOW TO MAKE AN OMELETTE | perfect every time!",
+   "channel": "Downshiftology",
+   "language": "English",
+   "duration": "7:06",
+   "priority": "P4",
+   "spicy_warning": false,
+   "subtitles": "manual English"
+  },
+  "video_tl": null
+ },
+ {
+  "id": "B13",
+  "name_en": "Shakshuka Egg",
+  "name_ar": "شكشوكة البيض بالطماطم",
+  "cuisine": "Egyptian",
+  "category": "Breakfast",
+  "info": {
+   "prep_time": "10 min",
+   "cook_time": "18 min",
+   "total_time": "28 min",
+   "servings": "2 Adults",
+   "difficulty": "Easy",
+   "equipment": [
+    "non-stick pan 26 cm with lid",
+    "wooden spoon",
+    "small bowl for cracking eggs",
+    "chopping board for vegetables"
+   ]
+  },
+  "meat_spec": null,
+  "spice_note": "Source recipe contains no chili; the green pepper is a mild bell pepper and black pepper is kept at 1/4 tsp.",
+  "components": [
+   {
+    "title": "Part 1 - Eggs Poached in Tomato and Onion",
+    "ingredients": [
+     {
+      "item": "Eggs",
+      "qty": "4 pcs",
+      "note": "2 per adult"
+     },
+     {
+      "item": "Onion, finely chopped",
+      "qty": "1 medium (120 g)"
+     },
+     {
+      "item": "Green bell pepper, cut in small strips",
+      "qty": "1/2 pcs (60 g)"
+     },
+     {
+      "item": "Tomatoes, ripe, small dice",
+      "qty": "2 medium (250 g)"
+     },
+     {
+      "item": "Vegetable oil",
+      "qty": "2 tbsp"
+     },
+     {
+      "item": "Sugar",
+      "qty": "1/2 tsp",
+      "note": "as in the source, balances the tomato"
+     },
+     {
+      "item": "Salt",
+      "qty": "1/2 tsp"
+     },
+     {
+      "item": "Black pepper, ground",
+      "qty": "1/4 tsp"
+     },
+     {
+      "item": "Fresh parsley, chopped",
+      "qty": "1 tbsp",
+      "note": "for serving"
+     }
+    ],
+    "prep": [
+     "Finely chop 1 onion, cut 1/2 green bell pepper into thin 3 cm strips and dice 2 tomatoes small on the vegetable board.",
+     "Chop 1 tbsp parsley. Have the lid and a small bowl for cracking the eggs ready."
+    ],
+    "steps": [
+     "Heat 2 tbsp vegetable oil in a non-stick pan 26 cm over medium heat for 1 minute until it shimmers.",
+     "Add the 1 chopped onion and stir for 5 to 6 minutes until soft, clear and just golden at the edges.",
+     "Add the 1/2 green pepper strips and the 2 diced tomatoes and stir for 4 to 5 minutes until the tomatoes break down into a thick, chunky sauce and the pepper is soft.",
+     "Stir in 1/2 tsp salt, 1/4 tsp black pepper and 1/2 tsp sugar and cook 1 minute more.",
+     "With the spoon make 4 wells in the sauce, spaced apart. Crack each egg into the small bowl and slide one into each well. Sprinkle a tiny pinch of salt on each egg.",
+     "Cover the pan, lower the heat to low and cook for 5 to 6 minutes until the whites are fully set and opaque and the yolks are still soft; for firm yolks cook 8 minutes. Turn off the heat and scatter the 1 tbsp parsley on top."
+    ]
+   }
+  ],
+  "timeline": null,
+  "mistakes": [
+   "Whites still clear on top -> the pan must be covered so the steam sets them; keep the lid on the full 5 minutes.",
+   "Yolks hard when soft ones were wanted -> check at 5 minutes and take the pan off the heat at once; the eggs keep cooking in the hot sauce.",
+   "Sauce watery and the eggs float -> cook the tomatoes the full 4 to 5 minutes until thick before the eggs go in.",
+   "Onion raw tasting -> give it 5 to 6 minutes on medium heat until soft and clear.",
+   "Eggs stuck together -> make 4 clear wells spaced apart in a 26 cm pan."
+  ],
+  "serving": [
+   "Bring the pan to the table or slide 2 eggs with their sauce onto each plate with a wide spatula.",
+   "Scatter the chopped parsley and, as the source allows, a little grated mozzarella or cheddar on top while hot.",
+   "Serve with warm baladi or Arabic bread for scooping."
+  ],
+  "safety": [
+   "For a fully cooked egg safe for everyone cook 8 minutes covered until the yolk is firm; the 5 to 6 minute soft-yolk version is for healthy adults.",
+   "Crack each egg into a small bowl first and wash hands after handling raw egg.",
+   "Best eaten at once; the tomato base alone can be cooled within 1 hour and kept 2 to 3 days in the fridge, then reheated and fresh eggs added."
+  ],
+  "source": {
+   "site": "Shamlola (shamlola.com)",
+   "chef": "Shamlola editorial",
+   "title_ar": "طريقة عمل شكشوكة البيض للسحور",
+   "url": "https://www.shamlola.com/recipes/%D8%B7%D8%B1%D9%8A%D9%82%D8%A9-%D8%B9%D9%85%D9%84-%D8%B4%D9%83%D8%B4%D9%88%D9%83%D8%A9-%D8%A7%D9%84%D8%A8%D9%8A%D8%B6-%D9%84%D9%84%D8%B3%D8%AD%D9%88%D8%B1",
+   "image_source": "to be filled by image step",
+   "verification": "Verified (page opened and read)",
+   "adapted": "Scaled from 2 onions, 1 green pepper, 4 tbsp oil, 1 tsp sugar and 1 tomato for 4 people to 1 onion, 1/2 pepper, 2 tbsp oil, 1/2 tsp sugar for 2 adults; eggs kept at 4 (2 per adult, the source gives 1 per person) and tomatoes raised from the source's 1 to 2 for a proper sauce base; the source gives salt and pepper as a pinch, so 1/2 tsp and 1/4 tsp are set; sugar is listed in the source but not placed in its steps, so it is added with the seasoning; onion and tomato minutes (source says 'until wilted' and 'a few seconds') are set as the professional standard; the firm-yolk 8 minute option is added."
+  },
+  "video": {
+   "url": "https://www.youtube.com/watch?v=TRuDPamWhY0",
+   "title": "Egyptian Shakshuka in One Pan (Poached Eggs in Tomato Sauce) | The Egyptian Cook",
+   "channel": "Muhammed the Egyptian Cook",
+   "language": "English",
+   "duration": "1:48",
+   "priority": "P4",
+   "spicy_warning": false,
+   "subtitles": "n/a"
+  },
+  "video_tl": null
+ },
+ {
+  "id": "B14",
+  "name_en": "Chicken Mix",
+  "name_ar": "دجاج بالخضار",
+  "cuisine": "Other",
+  "category": "Breakfast",
+  "info": {
+   "prep_time": "15 min",
+   "cook_time": "22 min",
+   "total_time": "37 min",
+   "servings": "2 Adults",
+   "difficulty": "Easy",
+   "equipment": [
+    "wide non-stick skillet 28 cm with lid",
+    "chopping board for raw chicken",
+    "second board for vegetables",
+    "kitchen paper",
+    "meat thermometer",
+    "wooden spoon"
+   ]
+  },
+  "meat_spec": {
+   "type": "Boneless",
+   "cut": "Breast",
+   "skin": "Skinless",
+   "weight": "300 g",
+   "preparation": "Cubes 1.5 cm",
+   "cooking_method": "Fried",
+   "source_specified": true,
+   "note": "Source specifies 2 boneless chicken breasts in small cubes; set at 300 g boneless skinless breast in 1.5 cm cubes for 2 adults so the pieces brown fast and stay juicy."
+  },
+  "spice_note": "Source recipe contains no chili; the peppers are bell peppers, black pepper is kept at 1/4 tsp, and 1/2 tsp sweet paprika and 1/4 tsp cumin are added as mild household spices.",
+  "components": [
+   {
+    "title": "Part 1 - Sauteed Chicken Cubes with Onion, Bell Pepper and Zucchini",
+    "ingredients": [
+     {
+      "item": "Chicken breast, boneless, skinless",
+      "qty": "300 g",
+      "note": "cut in 1.5 cm cubes; pat dry, do not wash"
+     },
+     {
+      "item": "Olive oil",
+      "qty": "1 1/2 tbsp"
+     },
+     {
+      "item": "Onion, chopped 1 cm",
+      "qty": "1 small (80 g)"
+     },
+     {
+      "item": "Garlic, crushed",
+      "qty": "2 cloves"
+     },
+     {
+      "item": "Green bell pepper, 1.5 cm dice",
+      "qty": "1/2 pcs (60 g)"
+     },
+     {
+      "item": "Red bell pepper, 1.5 cm dice",
+      "qty": "1/2 pcs (60 g)"
+     },
+     {
+      "item": "Zucchini, 1.5 cm dice",
+      "qty": "1 medium (150 g)"
+     },
+     {
+      "item": "Crushed tomatoes, canned",
+      "qty": "1/2 cup (120 g)"
+     },
+     {
+      "item": "Fresh basil leaves, torn",
+      "qty": "4 leaves",
+      "note": "or 1/4 tsp dried oregano"
+     },
+     {
+      "item": "Sweet paprika",
+      "qty": "1/2 tsp",
+      "note": "household addition"
+     },
+     {
+      "item": "Ground cumin",
+      "qty": "1/4 tsp",
+      "note": "household addition"
+     },
+     {
+      "item": "Salt",
+      "qty": "3/4 tsp"
+     },
+     {
+      "item": "Black pepper, ground",
+      "qty": "1/4 tsp"
+     }
+    ],
+    "prep": [
+     "On the raw-chicken board cut the 300 g chicken breast into even 1.5 cm cubes and pat them dry with kitchen paper. Season them with 1/4 tsp of the salt and the 1/2 tsp sweet paprika and leave on a plate.",
+     "On the vegetable board chop 1 small onion into 1 cm pieces, crush 2 garlic cloves, and dice 1/2 green pepper, 1/2 red pepper and 1 zucchini into 1.5 cm pieces. Tear 4 basil leaves.",
+     "Measure 1/2 cup crushed tomatoes."
+    ],
+    "steps": [
+     "Heat 1 1/2 tbsp olive oil in a wide non-stick skillet 28 cm over medium-high heat for 1 to 2 minutes until it shimmers.",
+     "Add the seasoned chicken cubes in one layer and leave for 2 minutes without stirring until the underside is golden, then stir and cook 3 to 4 minutes more until all sides are golden and the cubes are no longer pink outside. Lift onto a plate.",
+     "Lower the heat to medium. In the same skillet add the chopped onion and 2 crushed garlic cloves and stir for 3 minutes until soft and lightly golden, scraping up the brown bits from the chicken. Add the torn basil and stir 20 seconds.",
+     "Add the diced green pepper, red pepper and zucchini and stir on medium heat for 6 to 7 minutes until the zucchini is tender at the edges but still holds its shape and the peppers are bright and soft.",
+     "Add 1/2 cup crushed tomatoes, the remaining 1/2 tsp salt, 1/4 tsp black pepper and 1/4 tsp cumin and stir for 1 minute until the sauce bubbles.",
+     "Return the chicken and its juices to the skillet, stir to coat, cover and cook on medium-low heat for 4 to 5 minutes until the sauce clings to the pieces and the largest chicken cube is white all the way through when cut, reading 74 C. Turn off the heat."
+    ]
+   }
+  ],
+  "timeline": null,
+  "mistakes": [
+   "Chicken dry and stringy -> brown the cubes fast (5 to 6 minutes) and return them to the sauce for only 4 to 5 minutes; stop at 74 C.",
+   "Chicken grey and steamed instead of golden -> pat the cubes dry, use medium-high heat and do not crowd the pan.",
+   "Zucchini mushy -> cut it 1.5 cm and cook 6 to 7 minutes only; it should still hold its shape.",
+   "Dish watery -> use only 1/2 cup crushed tomatoes and let the sauce bubble uncovered for 1 minute before the chicken goes back.",
+   "Bland -> the browned bits from the chicken are the flavour; scrape them into the onion with the spoon."
+  ],
+  "serving": [
+   "Spoon the chicken and vegetables into a shallow dish and smooth the top.",
+   "Scatter a few fresh basil or parsley leaves over it and add lemon wedges on the side.",
+   "Serve with warm Arabic bread or toast; for a fuller breakfast pair with B3 Boiled Egg as in B15."
+  ],
+  "safety": [
+   "Chicken is safe at 74 C; cut the largest cube to check it is white all through with no pink.",
+   "Do not wash raw chicken; use a separate board and knife and wash hands and board with hot soapy water afterwards.",
+   "Cool leftovers within 1 hour; keep in a closed container in the fridge for 2 to 3 days.",
+   "Reheat in a pan with 1 tbsp water until steaming hot throughout."
+  ],
+  "source": {
+   "site": "Sayidaty Kitchen (kitchen.sayidaty.net)",
+   "chef": "Sayidaty Kitchen editorial",
+   "title_ar": "الدجاج بالخضار لرجيم مثالي",
+   "url": "https://kitchen.sayidaty.net/node/3991",
+   "image_source": "to be filled by image step",
+   "verification": "Verified (page opened and read)",
+   "adapted": "Source serves 2 with 2 chicken breasts, 1 green pepper, 1 red pepper, 1 onion, 2 zucchini and 1 can crushed tomatoes; set at 300 g breast in 1.5 cm cubes, 1/2 of each pepper, 1 small onion, 1 zucchini and 1/2 cup crushed tomatoes so the dish stays a light breakfast saute rather than a stew; salt reduced from 1 tsp to 3/4 tsp and black pepper from 1/2 to 1/4 tsp; 1/2 tsp sweet paprika and 1/4 tsp cumin are a household addition for mild flavour; the source's 10 minute stages are shortened to 5 to 6, 6 to 7 and 4 to 5 minutes for the smaller cubes and quantity; the 74 C check is added."
+  },
+  "video": {
+   "url": "https://www.youtube.com/watch?v=f4nEgnszy0A",
+   "title": "Easy and Healthy Sheet Pan Chicken and Veggies",
+   "channel": "The Mediterranean Dish",
+   "language": "English",
+   "duration": "6:35",
+   "priority": "P4",
+   "spicy_warning": false,
+   "subtitles": "manual English"
+  },
+  "video_tl": null
+ },
+ {
+  "id": "B15",
+  "name_en": "Boiled Egg with Chicken Mix",
+  "name_ar": "بيض مسلوق مع دجاج بالخضار",
+  "cuisine": "Other",
+  "category": "Breakfast",
+  "info": {
+   "prep_time": "15 min",
+   "cook_time": "25 min (eggs boil while the chicken cooks)",
+   "total_time": "40 min",
+   "servings": "2 Adults",
+   "difficulty": "Easy",
+   "equipment": [
+    "wide non-stick skillet 28 cm with lid",
+    "small pot 16 cm",
+    "slotted spoon",
+    "bowl of cold water",
+    "kitchen timer",
+    "chopping board for raw chicken",
+    "second board for vegetables",
+    "meat thermometer"
+   ]
+  },
+  "meat_spec": {
+   "type": "Boneless",
+   "cut": "Breast",
+   "skin": "Skinless",
+   "weight": "300 g",
+   "preparation": "Cubes 1.5 cm",
+   "cooking_method": "Fried",
+   "source_specified": true,
+   "note": "Source for the chicken part specifies boneless chicken breast in small cubes; set at 300 g boneless skinless breast in 1.5 cm cubes for 2 adults. The eggs are hard-boiled (10 minutes) so they hold their shape next to the warm chicken."
+  },
+  "spice_note": "Neither source recipe contains chili; black pepper is kept at 1/4 tsp in the chicken, and 1/2 tsp sweet paprika and 1/4 tsp cumin are added as mild household spices.",
+  "components": [
+   {
+    "title": "Part 1 - Hard-Boiled Eggs",
+    "ingredients": [
+     {
+      "item": "Eggs, large",
+      "qty": "4 pcs",
+      "note": "2 per adult"
+     },
+     {
+      "item": "Water",
+      "qty": "4 cups (1 L)"
+     },
+     {
+      "item": "Salt",
+      "qty": "1/2 tsp",
+      "note": "in the water"
+     }
+    ],
+    "prep": [
+     "Fill a bowl with cold water and keep it next to the stove.",
+     "Set the kitchen timer ready for 10 minutes."
+    ],
+    "steps": [
+     "Place the 4 eggs in a small pot 16 cm in one layer, cover with 4 cups cold water so they are 2 cm under, and add 1/2 tsp salt.",
+     "Bring to a full boil on high heat uncovered, about 5 to 6 minutes, then lower to medium-low so it bubbles gently and time 10 minutes for a fully firm yolk (8 minutes if a jammy yolk is preferred, as in B3).",
+     "Lift the eggs with the slotted spoon into the cold water and leave 5 minutes. Tap, roll and peel under a thin stream of cold water, then cut each egg in half lengthwise and keep covered until plating."
+    ]
+   },
+   {
+    "title": "Part 2 - Chicken Mix (full quantities, method as B14)",
+    "ingredients": [
+     {
+      "item": "Chicken breast, boneless, skinless",
+      "qty": "300 g",
+      "note": "cut in 1.5 cm cubes; pat dry, do not wash"
+     },
+     {
+      "item": "Olive oil",
+      "qty": "1 1/2 tbsp"
+     },
+     {
+      "item": "Onion, chopped 1 cm",
+      "qty": "1 small (80 g)"
+     },
+     {
+      "item": "Garlic, crushed",
+      "qty": "2 cloves"
+     },
+     {
+      "item": "Green bell pepper, 1.5 cm dice",
+      "qty": "1/2 pcs (60 g)"
+     },
+     {
+      "item": "Red bell pepper, 1.5 cm dice",
+      "qty": "1/2 pcs (60 g)"
+     },
+     {
+      "item": "Zucchini, 1.5 cm dice",
+      "qty": "1 medium (150 g)"
+     },
+     {
+      "item": "Crushed tomatoes, canned",
+      "qty": "1/2 cup (120 g)"
+     },
+     {
+      "item": "Fresh basil leaves, torn",
+      "qty": "4 leaves",
+      "note": "or 1/4 tsp dried oregano"
+     },
+     {
+      "item": "Sweet paprika",
+      "qty": "1/2 tsp"
+     },
+     {
+      "item": "Ground cumin",
+      "qty": "1/4 tsp"
+     },
+     {
+      "item": "Salt",
+      "qty": "3/4 tsp"
+     },
+     {
+      "item": "Black pepper, ground",
+      "qty": "1/4 tsp"
+     }
+    ],
+    "prep": [
+     "On the raw-chicken board cut the 300 g chicken breast into 1.5 cm cubes, pat dry, and season with 1/4 tsp of the salt and 1/2 tsp sweet paprika.",
+     "On the vegetable board chop 1 small onion, crush 2 garlic cloves, dice 1/2 green pepper, 1/2 red pepper and 1 zucchini into 1.5 cm pieces, and tear 4 basil leaves. Measure 1/2 cup crushed tomatoes."
+    ],
+    "steps": [
+     "Heat 1 1/2 tbsp olive oil in a wide non-stick skillet 28 cm over medium-high heat for 1 to 2 minutes. Brown the chicken cubes in one layer, 2 minutes undisturbed then 3 to 4 minutes stirring, until golden on all sides. Lift onto a plate (B14 step 2).",
+     "On medium heat soften the chopped onion and 2 crushed garlic cloves for 3 minutes, scraping the brown bits, then add the basil for 20 seconds (B14 step 3).",
+     "Add the diced peppers and zucchini and stir 6 to 7 minutes until tender but holding their shape (B14 step 4).",
+     "Add 1/2 cup crushed tomatoes, the remaining 1/2 tsp salt, 1/4 tsp black pepper and 1/4 tsp cumin; stir 1 minute until bubbling (B14 step 5).",
+     "Return the chicken, cover and cook on medium-low heat for 4 to 5 minutes until the sauce clings and the largest cube is white through, reading 74 C (B14 step 6). Keep covered off the heat until plating."
+    ]
+   },
+   {
+    "title": "Part 3 - Timeline and Plating",
+    "ingredients": [
+     {
+      "item": "Fresh parsley, chopped",
+      "qty": "1 tbsp"
+     },
+     {
+      "item": "Lemon",
+      "qty": "1/2 pcs",
+      "note": "cut in 2 wedges"
+     },
+     {
+      "item": "Arabic bread, warmed",
+      "qty": "2 pcs"
+     },
+     {
+      "item": "Sumac",
+      "qty": "1/4 tsp",
+      "note": "optional, for the eggs"
+     }
+    ],
+    "prep": [
+     "Warm 2 plates in a low oven (60 C) or with hot water for 2 minutes so the chicken and eggs stay hot at the table.",
+     "Chop 1 tbsp parsley and cut 1/2 lemon into 2 wedges."
+    ],
+    "steps": [
+     "Spoon half of the hot chicken mix onto one side of each warm plate.",
+     "Arrange 4 egg halves (2 whole eggs) cut side up on the other side of each plate, leaning against the chicken. Sprinkle a pinch of salt and 1/8 tsp sumac over the egg halves.",
+     "Scatter 1/2 tbsp parsley over each plate, add a lemon wedge and a warm Arabic bread, and serve within 5 minutes."
+    ]
+   }
+  ],
+  "timeline": [
+   "0:00 Cut and season the chicken; chop all the vegetables.",
+   "0:12 Put the eggs in cold salted water on high heat.",
+   "0:14 Heat the oil and start browning the chicken cubes.",
+   "0:18 Eggs reach the boil: lower to medium-low and start the 10 minute timer. Lift the chicken out; soften the onion and garlic.",
+   "0:21 Add the peppers and zucchini to the skillet.",
+   "0:28 Eggs done: move them to cold water. Add the crushed tomatoes and spices to the skillet.",
+   "0:29 Return the chicken, cover, cook 4 to 5 minutes. Peel and halve the eggs meanwhile.",
+   "0:34 Check the chicken at 74 C, turn off the heat, warm the plates.",
+   "0:36 Plate and serve."
+  ],
+  "mistakes": [
+   "Eggs cold next to hot chicken -> time the eggs so they finish 5 minutes before the chicken and keep them in warm, not iced, water once peeled if the chicken runs late.",
+   "Grey ring on the egg yolk -> 10 minutes from the boil, then cold water at once.",
+   "Chicken overcooked while waiting for the eggs -> follow the timeline; the chicken's last covered step is only 4 to 5 minutes.",
+   "Plate watery -> lift the chicken mix with a slotted spoon if the sauce is thin, and keep the eggs on the dry side of the plate.",
+   "Forgot to clean the board -> the egg peeling and parsley go on the vegetable board only, never the raw-chicken board."
+  ],
+  "serving": [
+   "Each plate carries a mound of chicken mix on one side and 4 egg halves fanned on the other, yolk side up.",
+   "A little parsley over everything, a lemon wedge and warm Arabic bread complete the plate.",
+   "Add sliced cucumber or S5 Green Mix Salad for freshness."
+  ],
+  "safety": [
+   "Chicken is safe at 74 C; check the largest cube is white through with no pink.",
+   "Do not wash raw chicken; use a separate board and knife for it and wash hands and board with hot soapy water before touching the eggs.",
+   "Hard-boiled eggs (10 minutes) are fully cooked and safe for everyone.",
+   "Cool leftovers within 1 hour; keep chicken and peeled eggs in closed containers in the fridge for 2 to 3 days; reheat the chicken until steaming hot and eat the eggs cold or warmed in the chicken for 1 minute."
+  ],
+  "source": {
+   "site": "Sayidaty Kitchen (kitchen.sayidaty.net)",
+   "chef": "Sayidaty Kitchen editorial",
+   "title_ar": "الدجاج بالخضار لرجيم مثالي + مدة سلق البيض بالماء",
+   "url": "https://kitchen.sayidaty.net/node/3991",
+   "image_source": "to be filled by image step",
+   "verification": "Verified (page opened and read); eggs part from https://kitchen.sayidaty.net/node/25365, also verified",
+   "adapted": "Household composite of B3 and B14: the chicken part is scaled exactly as in B14 (300 g breast in 1.5 cm cubes, half the source vegetables, 1/2 cup crushed tomatoes, mild paprika and cumin added, no chili in either source); the egg part uses 4 eggs boiled 10 minutes from the boil then cooled, in place of the source's size-based timings; the timeline, warm plates, parsley, lemon, sumac and bread are household additions for serving the two together."
+  },
+  "video": {
+   "url": "https://www.youtube.com/watch?v=f4nEgnszy0A",
+   "title": "Easy and Healthy Sheet Pan Chicken and Veggies",
+   "channel": "The Mediterranean Dish",
+   "language": "English",
+   "duration": "6:35",
+   "priority": "P4",
+   "spicy_warning": false,
+   "subtitles": "manual English"
+  },
+  "video_tl": null
+ }
 ]

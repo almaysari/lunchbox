@@ -1,998 +1,1583 @@
 [
-  {
-    "id": 9,
-    "name_en": "Lamb Bukhari",
-    "name_ar": "الرز البخاري باللحم",
-    "cuisine": "Gulf",
-    "category": "Main Course",
-    "info": {
-      "prep_time": "30 min (includes 30 min rice soak, done while the lamb simmers)",
-      "cook_time": "120 min",
-      "total_time": "2 h 15 min",
-      "servings": "2 Adults",
-      "difficulty": "Medium",
-      "equipment": ["heavy pot 22 cm with tight lid", "blender", "slotted spoon", "fine sieve", "measuring jug", "small dry frying pan (for toasting cumin)", "chopping board for raw meat", "second board for vegetables", "meat thermometer"]
-    },
-    "meat_spec": {
-      "type": "Bone-in",
-      "cut": "Shoulder",
-      "skin": "n/a",
-      "weight": "450 g",
-      "preparation": "Pieces (4 medium pieces of about 110 g each)",
-      "cooking_method": "Simmered",
-      "fat": "moderate",
-      "source_specified": false,
-      "note": "Source says only '1 kg meat in medium pieces' with no type or cut. Suggested cut: bone-in lamb shoulder because it becomes fork-tender in the long simmer and its bones give a richer broth, which is what the rice cooks in."
-    },
-    "spice_note": "Source recipe contains no chili; the only warmth is black pepper, set here at 1/4 tsp.",
-    "components": [
-      {
-        "title": "Part 1 - Lamb Bukhari Rice (one pot)",
-        "ingredients": [
-          {"item": "Lamb shoulder, bone-in, medium pieces", "qty": "450 g (4 pcs)", "note": "pat dry; do not wash"},
-          {"item": "Basmati rice", "qty": "1 cup (200 g)", "note": "soaked 30 minutes"},
-          {"item": "Vegetable oil", "qty": "1 1/2 tbsp"},
-          {"item": "Onion, sliced", "qty": "1 medium (120 g)"},
-          {"item": "Carrots, cut in thick matchsticks 5 mm", "qty": "2 medium (200 g)"},
-          {"item": "Dark raisins", "qty": "1/2 cup (70 g)"},
-          {"item": "Golden raisins", "qty": "1/4 cup (35 g)", "note": "for the top"},
-          {"item": "Tomatoes, blended smooth", "qty": "2 medium (250 g)"},
-          {"item": "Tomato paste", "qty": "1/2 tbsp"},
-          {"item": "Bay leaves", "qty": "2 pcs"},
-          {"item": "Cinnamon stick", "qty": "1 pcs (half stick, 4 cm)"},
-          {"item": "Cardamom pods", "qty": "2 pcs"},
-          {"item": "Cumin seeds, toasted and crushed", "qty": "1 tbsp"},
-          {"item": "Salt", "qty": "1 1/4 tsp"},
-          {"item": "Black pepper, ground", "qty": "1/4 tsp"},
-          {"item": "Water", "qty": "3 cups (750 ml), plus hot water to top up"}
-        ],
-        "prep": [
-          "Wash 1 cup basmati rice in 4 to 5 changes of cold water until the water runs almost clear, cover with fresh cold water and soak for 30 minutes, then drain in a sieve.",
-          "Pat the 450 g lamb pieces dry with kitchen paper on the raw-meat board.",
-          "Slice 1 onion thinly. Peel 2 carrots and cut them into thick matchsticks 5 mm wide and 5 cm long on the vegetable board.",
-          "Blend 2 tomatoes in the blender for 20 seconds until smooth.",
-          "Toast 1 tbsp cumin seeds in a small dry frying pan over medium heat for 2 minutes, shaking the pan, until they smell nutty and darken one shade; crush them lightly in a mortar or with the flat of a knife."
-        ],
-        "steps": [
-          "Heat 1 1/2 tbsp oil in a heavy pot 22 cm over medium heat for 1 minute. Add the 2 sliced carrots and stir for 4 to 5 minutes until they bend slightly but are not brown.",
-          "Add the 1/2 cup dark raisins to the carrots and stir for 1 minute until they puff up and look shiny. Lift the carrots and raisins out with a slotted spoon onto a plate and keep them for the end.",
-          "In the same pot on medium heat add the 1 sliced onion and stir for 6 to 8 minutes until soft and golden.",
-          "Add the 450 g lamb pieces, 2 bay leaves, the half cinnamon stick, 2 cardamom pods, 1 tbsp crushed toasted cumin, 1 1/4 tsp salt and 1/4 tsp black pepper. Turn the meat with tongs on medium-high heat for 5 to 6 minutes until every piece is browned on the outside.",
-          "Add the blended 2 tomatoes and 1/2 tbsp tomato paste and stir on medium heat for 8 to 10 minutes until the mixture is thick, dark red and oil shows at the edges.",
-          "Pour in 3 cups water, bring to a boil on high heat (about 5 minutes), skim any foam, then cover and simmer on low heat for 75 to 90 minutes until a fork slides into the lamb with no resistance and it reads at least 70 C.",
-          "Lift the lamb out onto a plate and cover with foil to keep warm. Pour the broth through a sieve into a measuring jug and press the solids; you need 1 1/3 cups (320 ml). Top up with hot water if short, or pour any extra off and keep it. Discard the bay leaves, cinnamon and cardamom.",
-          "Return the 1 1/3 cups broth to the pot and bring to a boil on high heat (about 2 minutes). Add the drained 1 cup rice and level it; the liquid should stand about 1 cm above the rice. Cook uncovered on medium heat for 5 to 6 minutes until the liquid drops to the surface of the rice and small holes appear.",
-          "Spread the reserved carrots and dark raisins over the rice without stirring, then scatter the 1/4 cup golden raisins on top. Cover the pot with a clean kitchen towel and then the lid and cook on the lowest heat for 20 minutes until the grains are long, dry and separate and no liquid is left at the bottom (tilt the pot to check).",
-          "Turn off the heat and rest covered for 5 minutes. Optional, as the source allows: place the lamb pieces on a tray under a hot oven grill for 4 to 5 minutes until the edges are crisp and dark. Fluff the rice gently with a fork from the sides inward."
-        ]
-      }
-    ],
-    "timeline": null,
-    "mistakes": [
-      "Rice wet and sticky -> measure the broth exactly (1 1/3 cups for 1 cup soaked rice) and boil the surface dry before covering; never add more liquid than 1 cm above the rice.",
-      "Lamb still chewy -> keep simmering, checking every 10 minutes after 70 minutes; it is done only when a fork slides in freely.",
-      "Carrots mushy and raisins burnt -> fry them only 4 to 5 minutes at the start and lift them out before the onion goes in.",
-      "Cumin tastes bitter -> toast it 2 minutes only on medium heat and take it off as soon as it smells nutty.",
-      "Bottom of the rice scorches -> use a heavy pot, the lowest flame and a towel under the lid; do not stir once the rice is covered."
-    ],
-    "serving": [
-      "Turn the rice onto a wide oval platter so the carrot and raisin layer shows on top.",
-      "Arrange the 4 lamb pieces over the rice and spoon any extra golden raisins and carrots around them.",
-      "Serve with a simple chopped cucumber, tomato and onion salad with lemon, and plain yogurt."
-    ],
-    "safety": [
-      "Lamb is safe at 70 C and must be fork-tender after the simmer; check the thickest piece.",
-      "Use a separate board and knife for raw meat and wash hands and board with hot soapy water afterwards.",
-      "Cool leftovers within 1 hour; keep in a closed container in the fridge for 2 to 3 days.",
-      "Reheat rice and meat until steaming hot throughout; reheat rice only once."
-    ],
-    "source": {
-      "site": "Sayidaty Kitchen (kitchen.sayidaty.net)",
-      "chef": "Sayidaty Kitchen editorial",
-      "title_ar": "بخاري اللحم على الطريقة الأصلية",
-      "url": "https://kitchen.sayidaty.net/node/39251/بخاري-اللحم-على-الطريقة-الأصلية/وصفات-طبخ/وصفات",
-      "image_source": "to be filled by image step",
-      "verification": "Verified (page opened and read)",
-      "adapted": "Scaled from 1 kg meat, 2 cups rice, 4 carrots and 1 1/2 cups raisins for 4 people to 450 g bone-in lamb shoulder, 1 cup rice, 2 carrots and 3/4 cup raisins for 2 adults keeping the source ratios; simmering water reduced from 6 to 3 cups; salt and black pepper ('to taste' in the source) set at 1 1/4 tsp and 1/4 tsp; the source does not say when the toasted cumin or the golden raisins go in, so the cumin is added with the whole spices and the golden raisins on top before steaming; the source gives no rice to broth ratio ('liquid slightly above the rice'), so 1 1/3 cups broth for 1 cup soaked rice is used as the professional standard."
-    },
-    "video": {
-      "url": "https://www.youtube.com/watch?v=mWB3pBPxhlY",
-      "title": "أسرار المطاعم في بيتكم طريقة الرز البخاري العربي باللحم",
-      "channel": "مطبخنا اليمني Our Yemeni Kitchen",
-      "language": "Arabic (manual English subtitle track present)",
-      "duration": "6:16",
-      "priority": "P4",
-      "spicy_warning": true,
-      "subtitles": "manual English"
-    },
-    "video_tl": {
-      "url": "https://www.youtube.com/watch?v=JjuCxo2Jwco",
-      "title": "Bukhari Rice with Lamb (Tagalog) - Rebecca Cooking Channel",
-      "channel": "Rebecca Cooking Channel",
-      "language": "Tagalog"
-    }
+ {
+  "id": 9,
+  "name_en": "Lamb Bukhari",
+  "name_ar": "الرز البخاري باللحم",
+  "cuisine": "Gulf",
+  "category": "Main Course",
+  "info": {
+   "prep_time": "30 min (includes 30 min rice soak, done while the lamb simmers)",
+   "cook_time": "120 min",
+   "total_time": "2 h 15 min",
+   "servings": "2 Adults",
+   "difficulty": "Medium",
+   "equipment": [
+    "heavy pot 22 cm with tight lid",
+    "blender",
+    "slotted spoon",
+    "fine sieve",
+    "measuring jug",
+    "small dry frying pan (for toasting cumin)",
+    "chopping board for raw meat",
+    "second board for vegetables",
+    "meat thermometer"
+   ]
   },
-  {
-    "id": 10,
-    "name_en": "Chicken Curry with Boiled Egg",
-    "name_ar": "الدجاج بالكاري مع البيض المسلوق",
-    "cuisine": "Other",
-    "category": "Main Course",
-    "info": {
-      "prep_time": "20 min",
-      "cook_time": "55 min",
-      "total_time": "1 h 15 min",
-      "servings": "2 Adults",
-      "difficulty": "Easy",
-      "equipment": ["wide non-stick skillet 28 cm with lid", "small pot for boiling eggs", "small frying pan for cashews", "small bowl for the spice mix", "chopping board for raw chicken", "second board for vegetables", "meat thermometer"]
-    },
-    "meat_spec": {
-      "type": "Bone-in",
-      "cut": "Mixed",
-      "skin": "Skinless",
-      "weight": "400 g",
-      "preparation": "Pieces (4): 2 thighs and 2 drumsticks",
-      "cooking_method": "Simmered",
-      "source_specified": false,
-      "note": "Source says '1 kg chicken cut into 8 pieces' and does not mention skin. Suggested cut: bone-in skinless thighs and drumsticks because dark meat stays juicy in the coconut sauce and removing the skin keeps the curry from turning greasy."
-    },
-    "spice_note": "Source uses 1 tsp crushed chili flakes and 2 sliced green chilies; both are removed. The chili flakes are replaced by extra sweet paprika for colour and the green chilies by 1/2 sliced green bell pepper for the green note; the curry powder must be a mild blend with no chili on the label.",
-    "components": [
-      {
-        "title": "Part 1 - Coconut Chicken Curry with Boiled Egg",
-        "ingredients": [
-          {"item": "Chicken thighs and drumsticks, bone-in, skinless", "qty": "400 g (4 pcs)", "note": "pat dry; do not wash"},
-          {"item": "Eggs", "qty": "2 pcs", "note": "hard-boiled, peeled, halved; household addition"},
-          {"item": "Mild curry powder, chili-free", "qty": "1 1/2 tsp", "note": "check the label for chili"},
-          {"item": "Ground cumin", "qty": "1/2 tsp"},
-          {"item": "Turmeric", "qty": "1/2 tsp"},
-          {"item": "Sweet paprika", "qty": "1 tsp", "note": "1/2 tsp from the source plus 1/2 tsp replacing the chili flakes"},
-          {"item": "Ground coriander", "qty": "1/2 tsp"},
-          {"item": "Salt", "qty": "1/2 tsp"},
-          {"item": "Black pepper, ground", "qty": "1/4 tsp"},
-          {"item": "Corn oil", "qty": "1 1/2 tbsp"},
-          {"item": "Onion, cut in thin wedges", "qty": "1 large (150 g)"},
-          {"item": "Garlic, sliced", "qty": "2 cloves"},
-          {"item": "Fresh ginger, minced", "qty": "1 1/2 tsp"},
-          {"item": "Green bell pepper, sliced thin", "qty": "1/2 pcs (60 g)", "note": "replaces the green chilies"},
-          {"item": "Coconut milk", "qty": "1/2 cup (120 ml)"},
-          {"item": "Water", "qty": "1/2 cup (120 ml)"},
-          {"item": "Cooking cream", "qty": "1/4 cup (60 ml)"},
-          {"item": "Fresh coriander, chopped", "qty": "1/4 cup (10 g)"},
-          {"item": "Cashews", "qty": "2 tbsp", "note": "fried in 1 tsp oil for serving"}
-        ],
-        "prep": [
-          "Put 2 eggs in a small pot, cover with cold water, bring to a boil on high heat and boil for 9 minutes. Cool them in cold water for 5 minutes, peel and cut each in half lengthwise.",
-          "Pat the 4 chicken pieces dry with kitchen paper on the raw-chicken board. Do not wash the chicken.",
-          "In a small bowl mix 1 1/2 tsp curry powder, 1/2 tsp cumin, 1/2 tsp turmeric, 1 tsp sweet paprika, 1/2 tsp ground coriander, 1/2 tsp salt and 1/4 tsp black pepper.",
-          "Cut 1 large onion into thin wedges, slice 2 garlic cloves, mince 1 1/2 tsp ginger and slice 1/2 green bell pepper thinly on the vegetable board. Chop 1/4 cup fresh coriander.",
-          "Fry 2 tbsp cashews in 1 tsp oil in a small frying pan over medium heat for 2 to 3 minutes until golden; drain on kitchen paper."
-        ],
-        "steps": [
-          "Heat 1 1/2 tbsp corn oil in a wide non-stick skillet 28 cm over medium heat for 1 minute. Add the 1 onion in wedges and stir for 8 to 10 minutes until deep golden and soft at the edges.",
-          "Add the 2 sliced garlic cloves, 1 1/2 tsp minced ginger and the 1/2 sliced green bell pepper and stir on medium heat for 1 to 2 minutes until the ginger smells fragrant and the pepper is bright green.",
-          "Rub each of the 4 chicken pieces thoroughly with the spice mix from the bowl and lay them on the onion. Sprinkle any leftover spice over them. Raise the heat to high and turn the chicken with tongs for 3 to 4 minutes until the outside is no longer pink and the spices smell toasted.",
-          "Pour in 1/2 cup coconut milk and 1/2 cup water, scrape the bottom of the skillet, cover and simmer on low heat for 35 minutes, turning the chicken once at 18 minutes, until a thermometer at the thickest part next to the bone reads 74 C and the sauce has reduced to a thick yellow gravy.",
-          "Add 1/4 cup cream, stir and let the sauce bubble gently on medium-low heat for exactly 1 minute until glossy. Stir in the 1/4 cup chopped coriander.",
-          "Lay the 4 boiled egg halves cut side up on top of the chicken, cover and keep on low heat for 2 minutes until the eggs are heated through and lightly coated in sauce. Turn off the heat."
-        ]
-      }
-    ],
-    "timeline": null,
-    "mistakes": [
-      "Curry tastes hot -> some curry powders contain chili; read the label and choose a mild blend, and use sweet paprika only.",
-      "Sauce split or grainy -> keep the simmer low once the coconut milk is in and add the cream off a hard boil for just 1 minute.",
-      "Onion pale and watery -> give it the full 8 to 10 minutes on medium heat; the deep golden colour is the base of the flavour.",
-      "Chicken dry -> stop at 74 C; 35 minutes is enough for 400 g, not the 50 minutes the source gives for 1 kg.",
-      "Eggs rubbery and grey -> boil 9 minutes only and cool at once in cold water; add them to the pan for the last 2 minutes, never earlier."
-    ],
-    "serving": [
-      "Spoon the curry into a shallow serving dish with the chicken pieces in the centre and the 4 egg halves arranged on top, yolk side up.",
-      "Scatter the 2 tbsp fried cashews and a little extra chopped coriander over everything.",
-      "Serve with plain white rice (1 cup rice cooked in 1 1/2 cups water with 1/2 tsp salt) and lemon wedges."
-    ],
-    "safety": [
-      "Chicken is safe at 74 C internal temperature at the thickest part next to the bone.",
-      "Do not wash raw chicken; use a separate board and knife for it and wash hands after handling.",
-      "Cool leftovers within 1 hour; keep in a closed container in the fridge for 2 to 3 days (eggs included).",
-      "Reheat until steaming hot all the way through."
-    ],
-    "source": {
-      "site": "Manal Alalem (manalonline.com)",
-      "chef": "Manal Alalem",
-      "title_ar": "الدجاج بالكاري",
-      "url": "https://www.manalonline.com/الدجاج-بالكاري/",
-      "image_source": "to be filled by image step",
-      "verification": "Verified (page opened and read)",
-      "adapted": "Scaled from 1 kg chicken, 2 onions, 1 cup coconut milk and 1 cup water to 400 g bone-in skinless thighs and drumsticks, 1 onion, 1/2 cup coconut milk and 1/2 cup water for 2 adults keeping the source ratios; 1 tsp chili flakes and 2 green chilies removed and replaced with extra sweet paprika and 1/2 green bell pepper; simmer shortened from 50 to 35 minutes for the smaller quantity; the source has no boiled egg, so 2 hard-boiled eggs halved and laid on top for the last 2 minutes are a household addition; cashew quantity (as needed in the source) set at 2 tbsp; the source gives no servings, so 1 kg was treated as 4 to 5 portions."
-    },
-    "video": {
-      "url": "https://www.youtube.com/watch?v=vrVMgQ_ra_g",
-      "title": "Chicken Masala Curry Recipe By Food Fusion",
-      "channel": "Food Fusion",
-      "language": "English (on-screen text, no narration)",
-      "duration": "2:57",
-      "priority": "P4",
-      "spicy_warning": true,
-      "subtitles": "n/a"
-    },
-    "video_tl": null
+  "meat_spec": {
+   "type": "Bone-in",
+   "cut": "Shoulder",
+   "skin": "n/a",
+   "weight": "450 g",
+   "preparation": "Pieces (4 medium pieces of about 110 g each)",
+   "cooking_method": "Simmered",
+   "fat": "moderate",
+   "source_specified": false,
+   "note": "Source says only '1 kg meat in medium pieces' with no type or cut. Suggested cut: bone-in lamb shoulder because it becomes fork-tender in the long simmer and its bones give a richer broth, which is what the rice cooks in."
   },
-  {
-    "id": 11,
-    "name_en": "Chicken with Vegetables in Oven",
-    "name_ar": "صينية الدجاج بالخضروات",
-    "cuisine": "Levantine",
-    "category": "Main Course",
-    "info": {
-      "prep_time": "20 min",
-      "cook_time": "55 min",
-      "total_time": "1 h 15 min",
-      "servings": "2 Adults",
-      "difficulty": "Easy",
-      "equipment": ["oven", "medium baking dish 25 x 30 cm", "deep mixing bowl", "small bowl for the spice mix", "vegetable brush", "chopping board for raw chicken", "second board for vegetables", "meat thermometer"]
-    },
-    "meat_spec": {
-      "type": "Bone-in",
-      "cut": "Mixed",
-      "skin": "Skin-on",
-      "weight": "500 g",
-      "preparation": "Pieces (4): 2 thighs and 2 drumsticks",
-      "cooking_method": "Roasted",
-      "source_specified": false,
-      "note": "Source says '1 kg chicken' with the spices rubbed under the skin, so skin-on is implied, but whole versus pieces is not stated. Suggested cut: bone-in skin-on thighs and drumsticks because they cook in the same 50 minutes as the potatoes and the skin crisps while the meat stays moist."
-    },
-    "spice_note": "Source uses 1 tsp crushed chili flakes; it is removed and replaced with extra sweet paprika for colour, and the black pepper is reduced from 1 tsp to 1/4 tsp.",
-    "components": [
-      {
-        "title": "Part 1 - Chicken and Vegetable Tray",
-        "ingredients": [
-          {"item": "Chicken thighs and drumsticks, bone-in, skin-on", "qty": "500 g (4 pcs)", "note": "pat dry; do not wash"},
-          {"item": "Olive oil", "qty": "2 tbsp"},
-          {"item": "Ground cumin", "qty": "1/2 tsp"},
-          {"item": "Turmeric", "qty": "1/2 tsp"},
-          {"item": "Sweet paprika", "qty": "1 tsp", "note": "1/2 tsp from the source plus 1/2 tsp replacing the chili flakes"},
-          {"item": "Salt", "qty": "3/4 tsp"},
-          {"item": "Black pepper, ground", "qty": "1/4 tsp"},
-          {"item": "Dried oregano", "qty": "1/2 tsp"},
-          {"item": "Dried basil", "qty": "1/2 tsp"},
-          {"item": "Potatoes, scrubbed, skin on, in 3 cm cubes", "qty": "1 large (250 g)"},
-          {"item": "Red bell pepper, in 3 cm squares", "qty": "1/2 pcs (75 g)"},
-          {"item": "Green bell pepper, in 3 cm squares", "qty": "1/2 pcs (75 g)"},
-          {"item": "Yellow bell pepper, in 3 cm squares", "qty": "1/2 pcs (75 g)"},
-          {"item": "Garlic, whole peeled cloves", "qty": "3 cloves"},
-          {"item": "Onion, in 3 cm squares", "qty": "1/2 large (80 g)"},
-          {"item": "Fresh parsley, chopped", "qty": "1 1/2 tbsp"}
-        ],
-        "prep": [
-          "Preheat the oven to 200 C (fan 180 C) for 15 minutes.",
-          "Pat the 4 chicken pieces dry on the raw-chicken board. Do not wash them.",
-          "In a small bowl mix 1/2 tsp cumin, 1/2 tsp turmeric, 1 tsp sweet paprika, 3/4 tsp salt, 1/4 tsp black pepper, 1/2 tsp oregano and 1/2 tsp basil.",
-          "Rub half of the spice mix over the chicken, pushing some under the skin with a finger, and lay the pieces skin side up in a medium baking dish 25 x 30 cm. Wash your hands.",
-          "Scrub 1 large potato under running water with a vegetable brush, do not peel, and cut it into 3 cm cubes on the vegetable board. Put the cubes in a deep bowl.",
-          "Cut the 3 half peppers and 1/2 onion into 3 cm squares and add them to the potato with the 3 whole garlic cloves.",
-          "Sprinkle the remaining spice mix and 2 tbsp olive oil over the vegetables and toss with your fingertips for 1 minute until every piece is coated and orange-yellow.",
-          "Chop 1 1/2 tbsp parsley."
-        ],
-        "steps": [
-          "Spread the oiled vegetables around and over the chicken in the baking dish in a single layer, leaving the skin of the chicken partly uncovered so it can brown.",
-          "Bake on the middle shelf of the oven at 200 C for 30 minutes uncovered until the vegetables start to colour at the edges, then turn the vegetables with a spoon (leave the chicken skin side up).",
-          "Bake for another 20 to 25 minutes until the potato cubes are soft when pierced with a knife, the chicken skin is golden and a thermometer in the thickest thigh (not touching bone) reads 74 C and the juices run clear.",
-          "Remove from the oven, rest for 5 minutes in the dish and sprinkle the 1 1/2 tbsp chopped parsley over the top."
-        ]
-      }
+  "spice_note": "Source recipe contains no chili; the only warmth is black pepper, set here at 1/4 tsp.",
+  "components": [
+   {
+    "title": "Part 1 - Lamb Bukhari Rice (one pot)",
+    "ingredients": [
+     {
+      "item": "Lamb shoulder, bone-in, medium pieces",
+      "qty": "450 g (4 pcs)",
+      "note": "pat dry; do not wash"
+     },
+     {
+      "item": "Basmati rice",
+      "qty": "1 cup (200 g)",
+      "note": "soaked 30 minutes"
+     },
+     {
+      "item": "Vegetable oil",
+      "qty": "1 1/2 tbsp"
+     },
+     {
+      "item": "Onion, sliced",
+      "qty": "1 medium (120 g)"
+     },
+     {
+      "item": "Carrots, cut in thick matchsticks 5 mm",
+      "qty": "2 medium (200 g)"
+     },
+     {
+      "item": "Dark raisins",
+      "qty": "1/2 cup (70 g)"
+     },
+     {
+      "item": "Golden raisins",
+      "qty": "1/4 cup (35 g)",
+      "note": "for the top"
+     },
+     {
+      "item": "Tomatoes, blended smooth",
+      "qty": "2 medium (250 g)"
+     },
+     {
+      "item": "Tomato paste",
+      "qty": "1/2 tbsp"
+     },
+     {
+      "item": "Bay leaves",
+      "qty": "2 pcs"
+     },
+     {
+      "item": "Cinnamon stick",
+      "qty": "1 pcs (half stick, 4 cm)"
+     },
+     {
+      "item": "Cardamom pods",
+      "qty": "2 pcs"
+     },
+     {
+      "item": "Cumin seeds, toasted and crushed",
+      "qty": "1 tbsp"
+     },
+     {
+      "item": "Salt",
+      "qty": "1 1/4 tsp"
+     },
+     {
+      "item": "Black pepper, ground",
+      "qty": "1/4 tsp"
+     },
+     {
+      "item": "Water",
+      "qty": "3 cups (750 ml), plus hot water to top up"
+     }
     ],
-    "timeline": null,
-    "mistakes": [
-      "Potatoes still hard when the chicken is done -> cut them no bigger than 3 cm and keep them in a single layer; crowding steams instead of roasting.",
-      "Chicken skin pale and soft -> keep the skin partly uncovered by the vegetables and make sure the oven is fully preheated to 200 C.",
-      "Vegetables watery -> use a dish just large enough for a single layer and do not cover with foil.",
-      "Chicken dry -> check at 50 minutes and stop at 74 C; the source's 60 minutes is for a full kilo.",
-      "Garlic burnt and bitter -> leave the cloves whole and tucked between the vegetables, not on top."
+    "prep": [
+     "Wash 1 cup basmati rice in 4 to 5 changes of cold water until the water runs almost clear, cover with fresh cold water and soak for 30 minutes, then drain in a sieve.",
+     "Pat the 450 g lamb pieces dry with kitchen paper on the raw-meat board.",
+     "Slice 1 onion thinly. Peel 2 carrots and cut them into thick matchsticks 5 mm wide and 5 cm long on the vegetable board.",
+     "Blend 2 tomatoes in the blender for 20 seconds until smooth.",
+     "Toast 1 tbsp cumin seeds in a small dry frying pan over medium heat for 2 minutes, shaking the pan, until they smell nutty and darken one shade; crush them lightly in a mortar or with the flat of a knife."
     ],
-    "serving": [
-      "Serve straight from the baking dish or lift the chicken onto a platter and spoon the vegetables around it.",
-      "Spoon the juices from the bottom of the dish over the chicken.",
-      "Serve with plain white rice (1 cup rice cooked in 1 1/2 cups water with 1/2 tsp salt) or warm Arabic bread, and a bowl of plain yogurt."
-    ],
-    "safety": [
-      "Chicken is safe at 74 C internal temperature at the thickest part next to the bone.",
-      "Do not wash raw chicken; use a separate board for it and wash hands after rubbing in the spices.",
-      "Use oven gloves for the hot dish and set it on a heat-proof mat.",
-      "Cool leftovers within 1 hour; keep in a closed container in the fridge for 2 to 3 days; reheat until steaming hot."
-    ],
-    "source": {
-      "site": "Manal Alalem (manalonline.com)",
-      "chef": "Manal Alalem",
-      "title_ar": "صينية الدجاج بالخضروات جديد",
-      "url": "https://www.manalonline.com/صينية-الدجاج-بالخضروات-جديد/",
-      "image_source": "to be filled by image step",
-      "verification": "Verified (page opened and read)",
-      "adapted": "Scaled from 1 kg chicken, 2 potatoes, 3 whole peppers and 1/4 cup olive oil to 500 g bone-in skin-on thighs and drumsticks, 1 potato, 3 half peppers and 2 tbsp olive oil for 2 adults keeping the source ratios; 1 tsp chili flakes removed and replaced with extra sweet paprika; black pepper reduced from 1 tsp to 1/4 tsp; the source gives no oven temperature and does not mention covering, so 200 C uncovered is used as the professional standard and the time shortened from 60 to 50 to 55 minutes for pieces; the source gives no servings, so 1 kg was treated as 4 portions."
-    },
-    "video": {
-      "url": "https://www.youtube.com/watch?v=DEqiJfLxLfM",
-      "title": "One Pan Chicken and Potatoes | Easy Dinner!",
-      "channel": "Feelgoodfoodie",
-      "language": "English",
-      "duration": "4:28",
-      "priority": "P4",
-      "spicy_warning": false,
-      "subtitles": "n/a"
-    },
-    "video_tl": {
-      "url": "https://www.youtube.com/watch?v=4jEgNMqNw6Q",
-      "title": "Filipino Style Roasted Chicken with Vegetables - Food Bae PH",
-      "channel": "Food Bae PH",
-      "language": "Tagalog"
-    }
+    "steps": [
+     "Heat 1 1/2 tbsp oil in a heavy pot 22 cm over medium heat for 1 minute. Add the 2 sliced carrots and stir for 4 to 5 minutes until they bend slightly but are not brown.",
+     "Add the 1/2 cup dark raisins to the carrots and stir for 1 minute until they puff up and look shiny. Lift the carrots and raisins out with a slotted spoon onto a plate and keep them for the end.",
+     "In the same pot on medium heat add the 1 sliced onion and stir for 6 to 8 minutes until soft and golden.",
+     "Add the 450 g lamb pieces, 2 bay leaves, the half cinnamon stick, 2 cardamom pods, 1 tbsp crushed toasted cumin, 1 1/4 tsp salt and 1/4 tsp black pepper. Turn the meat with tongs on medium-high heat for 5 to 6 minutes until every piece is browned on the outside.",
+     "Add the blended 2 tomatoes and 1/2 tbsp tomato paste and stir on medium heat for 8 to 10 minutes until the mixture is thick, dark red and oil shows at the edges.",
+     "Pour in 3 cups water, bring to a boil on high heat (about 5 minutes), skim any foam, then cover and simmer on low heat for 75 to 90 minutes until a fork slides into the lamb with no resistance and it reads at least 70 C.",
+     "Lift the lamb out onto a plate and cover with foil to keep warm. Pour the broth through a sieve into a measuring jug and press the solids; you need 1 1/3 cups (320 ml). Top up with hot water if short, or pour any extra off and keep it. Discard the bay leaves, cinnamon and cardamom.",
+     "Return the 1 1/3 cups broth to the pot and bring to a boil on high heat (about 2 minutes). Add the drained 1 cup rice and level it; the liquid should stand about 1 cm above the rice. Cook uncovered on medium heat for 5 to 6 minutes until the liquid drops to the surface of the rice and small holes appear.",
+     "Spread the reserved carrots and dark raisins over the rice without stirring, then scatter the 1/4 cup golden raisins on top. Cover the pot with a clean kitchen towel and then the lid and cook on the lowest heat for 20 minutes until the grains are long, dry and separate and no liquid is left at the bottom (tilt the pot to check).",
+     "Turn off the heat and rest covered for 5 minutes. Optional, as the source allows: place the lamb pieces on a tray under a hot oven grill for 4 to 5 minutes until the edges are crisp and dark. Fluff the rice gently with a fork from the sides inward."
+    ]
+   }
+  ],
+  "timeline": null,
+  "mistakes": [
+   "Rice wet and sticky -> measure the broth exactly (1 1/3 cups for 1 cup soaked rice) and boil the surface dry before covering; never add more liquid than 1 cm above the rice.",
+   "Lamb still chewy -> keep simmering, checking every 10 minutes after 70 minutes; it is done only when a fork slides in freely.",
+   "Carrots mushy and raisins burnt -> fry them only 4 to 5 minutes at the start and lift them out before the onion goes in.",
+   "Cumin tastes bitter -> toast it 2 minutes only on medium heat and take it off as soon as it smells nutty.",
+   "Bottom of the rice scorches -> use a heavy pot, the lowest flame and a towel under the lid; do not stir once the rice is covered."
+  ],
+  "serving": [
+   "Turn the rice onto a wide oval platter so the carrot and raisin layer shows on top.",
+   "Arrange the 4 lamb pieces over the rice and spoon any extra golden raisins and carrots around them.",
+   "Serve with a simple chopped cucumber, tomato and onion salad with lemon, and plain yogurt."
+  ],
+  "safety": [
+   "Lamb is safe at 70 C and must be fork-tender after the simmer; check the thickest piece.",
+   "Use a separate board and knife for raw meat and wash hands and board with hot soapy water afterwards.",
+   "Cool leftovers within 1 hour; keep in a closed container in the fridge for 2 to 3 days.",
+   "Reheat rice and meat until steaming hot throughout; reheat rice only once."
+  ],
+  "source": {
+   "site": "Sayidaty Kitchen (kitchen.sayidaty.net)",
+   "chef": "Sayidaty Kitchen editorial",
+   "title_ar": "بخاري اللحم على الطريقة الأصلية",
+   "url": "https://kitchen.sayidaty.net/node/39251/بخاري-اللحم-على-الطريقة-الأصلية/وصفات-طبخ/وصفات",
+   "image_source": "to be filled by image step",
+   "verification": "Verified (page opened and read)",
+   "adapted": "Scaled from 1 kg meat, 2 cups rice, 4 carrots and 1 1/2 cups raisins for 4 people to 450 g bone-in lamb shoulder, 1 cup rice, 2 carrots and 3/4 cup raisins for 2 adults keeping the source ratios; simmering water reduced from 6 to 3 cups; salt and black pepper ('to taste' in the source) set at 1 1/4 tsp and 1/4 tsp; the source does not say when the toasted cumin or the golden raisins go in, so the cumin is added with the whole spices and the golden raisins on top before steaming; the source gives no rice to broth ratio ('liquid slightly above the rice'), so 1 1/3 cups broth for 1 cup soaked rice is used as the professional standard."
   },
-  {
-    "id": 12,
-    "name_en": "Chicken Salona",
-    "name_ar": "صالونة الدجاج",
-    "cuisine": "Gulf",
-    "category": "Main Course",
-    "info": {
-      "prep_time": "20 min",
-      "cook_time": "60 min",
-      "total_time": "1 h 20 min",
-      "servings": "2 Adults",
-      "difficulty": "Easy",
-      "equipment": ["medium pot 22 cm with lid", "wooden spoon", "chopping board for raw chicken", "second board for vegetables", "meat thermometer"]
-    },
-    "meat_spec": {
-      "type": "Bone-in",
-      "cut": "Mixed",
-      "skin": "Skinless",
-      "weight": "400 g",
-      "preparation": "Pieces (4): 2 thighs and 2 drumsticks",
-      "cooking_method": "Simmered",
-      "source_specified": false,
-      "note": "Source says '1 kg chicken cut into pieces' with no cut, bone or skin stated. Suggested cut: bone-in skinless thighs and drumsticks because the bones enrich the stew broth over 45 minutes of simmering and the skin would make the sauce greasy."
-    },
-    "spice_note": "Source recipe contains no chili; the green pepper is the sweet bell variety and the black pepper is reduced from 1/2 tsp to 1/4 tsp.",
-    "components": [
-      {
-        "title": "Part 1 - Chicken and Vegetable Salona",
-        "ingredients": [
-          {"item": "Chicken thighs and drumsticks, bone-in, skinless", "qty": "400 g (4 pcs)", "note": "pat dry; do not wash"},
-          {"item": "Vegetable oil", "qty": "1 tbsp"},
-          {"item": "Onion, finely chopped", "qty": "1 small (80 g)"},
-          {"item": "Garlic, minced", "qty": "2 cloves"},
-          {"item": "Tomato, chopped", "qty": "1 large (150 g)"},
-          {"item": "Tomato paste", "qty": "1 tbsp"},
-          {"item": "Salt", "qty": "3/4 tsp"},
-          {"item": "Black pepper, ground", "qty": "1/4 tsp"},
-          {"item": "Turmeric", "qty": "1/4 tsp"},
-          {"item": "Ground cumin", "qty": "1/4 tsp"},
-          {"item": "Ground coriander", "qty": "1/4 tsp"},
-          {"item": "Sweet paprika", "qty": "1/2 tsp"},
-          {"item": "Chicken broth (from a cube) or water", "qty": "1 1/4 cups (300 ml)"},
-          {"item": "Dried lime (loomi), pierced twice with a knife", "qty": "1 pcs", "note": "optional in the source; recommended for the Gulf flavour"},
-          {"item": "Potato, peeled, in 3 cm cubes", "qty": "1 medium (150 g)"},
-          {"item": "Carrot, in 1 cm slices", "qty": "1 medium (100 g)"},
-          {"item": "Zucchini, in 1.5 cm slices", "qty": "1 medium (150 g)"},
-          {"item": "Green bell pepper, in 2 cm cubes", "qty": "1/2 pcs (60 g)"},
-          {"item": "Fresh coriander or parsley, chopped", "qty": "2 tbsp", "note": "garnish"}
-        ],
-        "prep": [
-          "Pat the 4 chicken pieces dry on the raw-chicken board. Do not wash them.",
-          "Chop 1 small onion finely, mince 2 garlic cloves and chop 1 large tomato on the vegetable board.",
-          "Peel 1 potato and cut it into 3 cm cubes; slice 1 carrot 1 cm thick; slice 1 zucchini 1.5 cm thick; cut 1/2 green bell pepper into 2 cm cubes. Keep the potato and carrot on one plate and the zucchini and pepper on another.",
-          "Pierce 1 dried lime twice with the tip of a knife. Chop 2 tbsp coriander or parsley."
-        ],
-        "steps": [
-          "Heat 1 tbsp oil in a medium pot 22 cm over medium heat for 1 minute. Add the 1 chopped onion and stir for 5 to 6 minutes until soft and golden.",
-          "Add the 2 minced garlic cloves and stir for 1 minute until fragrant but not brown.",
-          "Add the 4 chicken pieces and turn them with tongs on medium-high heat for 5 to 6 minutes until lightly browned on all sides.",
-          "Add the 1 chopped tomato and 1 tbsp tomato paste and stir on medium heat for 3 minutes until the tomato softens and the paste darkens slightly.",
-          "Add 3/4 tsp salt, 1/4 tsp black pepper, 1/4 tsp turmeric, 1/4 tsp cumin, 1/4 tsp ground coriander and 1/2 tsp paprika and stir for 30 seconds until the chicken is coated and the spices smell toasted.",
-          "Pour in 1 1/4 cups broth, add the pierced dried lime and bring to a boil on high heat (about 3 minutes). Lower the heat, cover and simmer on low for 20 minutes until the chicken is firm and the broth is lightly coloured.",
-          "Add the potato cubes and carrot slices, push them under the liquid, cover and simmer on low for 10 minutes until a knife goes halfway into a potato cube.",
-          "Add the zucchini slices and green pepper cubes, cover and simmer on low for 10 to 15 minutes until every vegetable is tender, the chicken reads 74 C next to the bone and the sauce has thickened enough to coat a spoon. Taste and add salt if needed.",
-          "Turn off the heat, remove the dried lime and sprinkle the 2 tbsp chopped coriander or parsley over the top."
-        ]
-      }
-    ],
-    "timeline": null,
-    "mistakes": [
-      "Vegetables fall apart -> add them in the two stages given (potato and carrot first, zucchini and pepper last) and keep the simmer gentle.",
-      "Sauce thin and watery -> use only 1 1/4 cups broth for this quantity and simmer the last 10 minutes with the lid slightly open if needed.",
-      "Dried lime makes the stew bitter -> use 1 lime only, pierced not crushed, and take it out before serving.",
-      "Chicken tough -> brown it only until lightly coloured, then keep the heat low once the broth is in.",
-      "Stew tastes flat -> the tomato paste must cook 3 minutes until it darkens, and taste for salt at the end."
-    ],
-    "serving": [
-      "Ladle the salona into a deep serving dish with the chicken pieces on top and the vegetables around them.",
-      "Serve with plain white rice (1 cup rice cooked in 1 1/2 cups water with 1/2 tsp salt) or warm Arabic bread.",
-      "Add lemon wedges and a small plate of sliced onion and fresh herbs on the side."
-    ],
-    "safety": [
-      "Chicken is safe at 74 C internal temperature next to the bone.",
-      "Do not wash raw chicken; use a separate board for it and wash hands after handling.",
-      "Cool leftovers within 1 hour; keep in a closed container in the fridge for 2 to 3 days.",
-      "Reheat until steaming hot throughout."
-    ],
-    "source": {
-      "site": "Sayidaty Kitchen (kitchen.sayidaty.net)",
-      "chef": "Sayidaty Kitchen editorial",
-      "title_ar": "صالونة الدجاج بالخضار",
-      "url": "https://kitchen.sayidaty.net/node/40276/صالونة-الدجاج-بالخضار/وصفات-طبخ/وصفات",
-      "image_source": "to be filled by image step",
-      "verification": "Verified (page opened and read)",
-      "adapted": "Scaled from 1 kg chicken, 2 potatoes, 2 carrots, 2 zucchini, 1 pepper, 2 tomatoes and 3 cups broth for 6 people to 400 g bone-in skinless thighs and drumsticks, 1 potato, 1 carrot, 1 zucchini, 1/2 pepper, 1 tomato and 1 1/4 cups broth for 2 adults keeping the source ratios; black pepper reduced to 1/4 tsp; salt ('to taste') set at 3/4 tsp; dried limes reduced from 2 to 1; first simmer shortened from 25 to 20 minutes for the smaller quantity."
-    },
-    "video": null,
-    "video_tl": {
-      "url": "https://www.youtube.com/watch?v=CkJ57o5iWv8",
-      "title": "How to cook Chicken Salona - Marilou Recipes",
-      "channel": "Marilou Recipes",
-      "language": "Tagalog"
-    }
+  "video": {
+   "url": "https://www.youtube.com/watch?v=mWB3pBPxhlY",
+   "title": "أسرار المطاعم في بيتكم طريقة الرز البخاري العربي باللحم",
+   "channel": "مطبخنا اليمني Our Yemeni Kitchen",
+   "language": "Arabic (manual English subtitle track present)",
+   "duration": "6:16",
+   "priority": "P4",
+   "spicy_warning": true,
+   "subtitles": "manual English"
   },
-  {
-    "id": 13,
-    "name_en": "Lamb Salona",
-    "name_ar": "صالونة اللحم الخليجية",
-    "cuisine": "Gulf",
-    "category": "Main Course",
-    "info": {
-      "prep_time": "20 min (vegetables cut while the lamb boils)",
-      "cook_time": "110 min",
-      "total_time": "2 h 10 min",
-      "servings": "2 Adults",
-      "difficulty": "Medium",
-      "equipment": ["medium pot 20 cm with lid (for boiling lamb)", "large pot 22 cm with lid (for the stew)", "slotted spoon", "fine sieve", "measuring jug", "chopping board for raw meat", "second board for vegetables", "meat thermometer"]
-    },
-    "meat_spec": {
-      "type": "Bone-in",
-      "cut": "Shoulder",
-      "skin": "n/a",
-      "weight": "450 g",
-      "preparation": "Cubes 4 cm",
-      "cooking_method": "Boiled",
-      "fat": "moderate",
-      "source_specified": false,
-      "note": "Source says 'about 1 kg lamb (or veal), cubed, pre-boiled' with no cut. Suggested cut: bone-in lamb shoulder because it turns tender in 60 minutes of boiling and the bones make the broth that the source asks for."
-    },
-    "spice_note": "Source recipe contains no chili; the green pepper is the sweet bell variety and the black pepper is set at 1/4 tsp.",
-    "components": [
-      {
-        "title": "Part 1 - Boiled Lamb and Broth",
-        "ingredients": [
-          {"item": "Lamb shoulder, bone-in, in 4 cm cubes", "qty": "450 g"},
-          {"item": "Water", "qty": "1 L (4 cups)"},
-          {"item": "Onion, halved", "qty": "1/2 medium"},
-          {"item": "Bay leaf", "qty": "1 pcs"},
-          {"item": "Cardamom pods", "qty": "2 pcs"},
-          {"item": "Salt", "qty": "1 tsp"}
-        ],
-        "prep": [
-          "Rinse the 450 g lamb cubes quickly under cold water and pat dry on the raw-meat board. Halve half an onion."
-        ],
-        "steps": [
-          "Put the 450 g lamb, 1 L cold water, 1/2 onion, 1 bay leaf, 2 cardamom pods and 1 tsp salt in a medium pot 20 cm. Bring to a boil on high heat (about 8 minutes) and skim the grey foam with a spoon.",
-          "Cover and simmer on low heat for 55 to 60 minutes until a fork slides into a cube with no resistance and it reads at least 70 C. Lift the lamb out with a slotted spoon onto a plate. Strain the broth through a sieve into a jug and keep 2 cups (480 ml); discard the onion and spices."
-        ]
-      },
-      {
-        "title": "Part 2 - Vegetable Stew and Assembly",
-        "ingredients": [
-          {"item": "Ghee", "qty": "2 tbsp"},
-          {"item": "Onion, finely chopped", "qty": "1 medium (120 g)"},
-          {"item": "Garlic, crushed", "qty": "2 cloves"},
-          {"item": "Tomatoes, chopped", "qty": "2 medium (250 g)"},
-          {"item": "Green bell pepper, sliced 1 cm", "qty": "1 pcs (120 g)"},
-          {"item": "Carrot, in 1 cm slices", "qty": "1 medium (100 g)"},
-          {"item": "Potato, peeled, in 4 cm cubes", "qty": "1 large (200 g)"},
-          {"item": "Salt", "qty": "1/2 tsp", "note": "the broth is already salted"},
-          {"item": "Black pepper, ground", "qty": "1/4 tsp"},
-          {"item": "Turmeric", "qty": "1/4 tsp"},
-          {"item": "Ground cardamom", "qty": "1/8 tsp"},
-          {"item": "Cinnamon stick", "qty": "1 pcs (half stick, 4 cm)"},
-          {"item": "Reserved lamb broth", "qty": "2 cups (480 ml)"},
-          {"item": "Fresh parsley or coriander, chopped", "qty": "2 tbsp", "note": "garnish"}
-        ],
-        "prep": [
-          "Chop 1 onion finely, crush 2 garlic cloves and chop 2 tomatoes on the vegetable board.",
-          "Slice 1 green bell pepper into 1 cm strips, slice 1 carrot 1 cm thick and cut 1 peeled potato into 4 cm cubes. Chop 2 tbsp parsley or coriander."
-        ],
-        "steps": [
-          "Melt 2 tbsp ghee in a large pot 22 cm over medium heat for 1 minute. Add the 1 chopped onion and stir for 6 to 8 minutes until soft and golden.",
-          "Add the 2 crushed garlic cloves and stir for 1 minute until fragrant.",
-          "Add the 2 chopped tomatoes, the sliced green pepper, the carrot slices, 1/2 tsp salt, 1/4 tsp black pepper, 1/4 tsp turmeric, 1/8 tsp cardamom and the half cinnamon stick. Stir on medium heat for 4 to 5 minutes until the tomatoes collapse and the mixture turns yellow-red.",
-          "Add the potato cubes and the boiled lamb and pour in the 2 cups reserved broth; the liquid should just cover everything. Bring to a boil on high heat (about 3 minutes).",
-          "Cover and simmer gently on low heat for 35 to 40 minutes, stirring once at 20 minutes, until a knife slides easily into the potato and carrot, the lamb is falling off the bone and the sauce has thickened to coat a spoon. Taste and adjust salt.",
-          "Turn off the heat, remove the cinnamon stick and sprinkle the 2 tbsp chopped parsley or coriander over the top."
-        ]
-      }
-    ],
-    "timeline": [
-      "0:00 Put the lamb on to boil with onion, bay leaf and cardamom (60 minutes).",
-      "0:15 Chop the onion, garlic and tomatoes; cut the pepper, carrot and potato.",
-      "0:50 Start Part 2: fry the onion in ghee, add garlic, then tomatoes, pepper, carrot and spices.",
-      "1:05 Lamb is tender: strain the broth, add the lamb, potato and 2 cups broth to the stew.",
-      "1:10 Simmer 35 to 40 minutes.",
-      "1:50 Garnish and serve with white rice."
-    ],
-    "mistakes": [
-      "Lamb chewy -> it must be fork-tender after boiling before it goes into the stew; add 10 more minutes of boiling if needed.",
-      "Potatoes turn to mush -> cut them 4 cm, add them with the broth, and keep the simmer gentle, never a rolling boil.",
-      "Stew too salty -> the boiling broth carries 1 tsp salt, so add only 1/2 tsp in Part 2 and taste at the end.",
-      "Sauce thin -> simmer the last 10 minutes with the lid slightly open until it coats a spoon.",
-      "Onion burnt -> keep the heat at medium and stir; golden takes 6 to 8 minutes."
-    ],
-    "serving": [
-      "Ladle the salona into a deep dish with the lamb pieces in the centre and the vegetables around them.",
-      "Serve with plain white rice (1 cup rice cooked in 1 1/2 cups water with 1/2 tsp salt) or warm Arabic bread.",
-      "Add lemon wedges and a small bowl of plain yogurt on the side."
-    ],
-    "safety": [
-      "Lamb is safe at 70 C and must be fork-tender after boiling.",
-      "Use a separate board for raw meat and wash it with hot soapy water afterwards.",
-      "Cool leftovers within 1 hour; keep in a closed container in the fridge for 2 to 3 days.",
-      "Reheat until steaming hot throughout."
-    ],
-    "source": {
-      "site": "Sayidaty Kitchen (kitchen.sayidaty.net)",
-      "chef": "Sayidaty Kitchen editorial",
-      "title_ar": "صالونة اللحم الخليجية",
-      "url": "https://kitchen.sayidaty.net/node/38473",
-      "image_source": "to be filled by image step",
-      "verification": "Partially verified: page opened and read, content paraphrased by the fetcher rather than copied verbatim",
-      "adapted": "Scaled from about 1 kg lamb, 2 onions, 4 tomatoes, 2 peppers, 2 carrots, 2 potatoes, 4 tbsp ghee and 5 cups broth for 4 people to 450 g bone-in lamb shoulder, 1 onion, 2 tomatoes, 1 pepper, 1 carrot, 1 potato, 2 tbsp ghee and 2 cups broth for 2 adults keeping the source ratios; the source starts from pre-boiled meat and ready broth, so a boiling step (60 minutes with onion, bay leaf, cardamom and 1 tsp salt) was added to make both; black pepper set at 1/4 tsp; the source's 1 hour stew simmer shortened to 35 to 40 minutes because the lamb is already tender and the vegetables are smaller in quantity."
-    },
-    "video": null,
-    "video_tl": {
-      "url": "https://www.youtube.com/watch?v=v2XMC2IOE3Y",
-      "title": "How to cook Salona Laham - Marilou Recipes",
-      "channel": "Marilou Recipes",
-      "language": "Tagalog"
-    }
-  },
-  {
-    "id": 14,
-    "name_en": "Mashi - Malfouf",
-    "name_ar": "محشي ملفوف بالدجاج",
-    "cuisine": "Levantine",
-    "category": "Main Course",
-    "info": {
-      "prep_time": "50 min (blanching the cabbage and rolling)",
-      "cook_time": "75 min",
-      "total_time": "2 h 5 min",
-      "servings": "2 Adults",
-      "difficulty": "Medium",
-      "equipment": ["deep pot 24 cm (for blanching the cabbage)", "heavy-bottomed non-stick pot 20 cm with lid (for cooking)", "heat-proof plate that fits inside the 20 cm pot", "tongs", "deep mixing bowl", "measuring jug", "chopping board for raw chicken", "second board for vegetables", "round serving plate larger than the pot"]
-    },
-    "meat_spec": {
-      "type": "Bone-in",
-      "cut": "Thigh",
-      "skin": "Skinless",
-      "weight": "300 g chicken plus 100 g ground lamb",
-      "preparation": "Pieces (2 thighs) for the base of the pot; 100 g ground lamb mixed into the rice filling",
-      "cooking_method": "Simmered",
-      "source_specified": true,
-      "note": "Source specifies chicken thigh pieces (6 for a large pot) as the base and 200 g ground meat in the filling without naming the animal; skinless thighs are used so the broth stays clean, and ground lamb is suggested for the filling as the usual Levantine choice."
-    },
-    "spice_note": "Source recipe contains no chili; check that the bought mixed spice (baharat) lists no chili, and black pepper is kept at 1/8 tsp.",
-    "components": [
-      {
-        "title": "Part 1 - Blanched Cabbage Leaves",
-        "ingredients": [
-          {"item": "White cabbage, small to medium head", "qty": "1 pcs (about 1 kg)"},
-          {"item": "Water, for blanching", "qty": "2.5 L (10 cups)"},
-          {"item": "Cumin seeds or ground cumin", "qty": "2 tsp", "note": "goes in the blanching water as in the source"}
-        ],
-        "prep": [
-          "Remove any torn outer leaves from the cabbage. With a small knife cut a deep cone around the core so the leaves are freed at the base."
-        ],
-        "steps": [
-          "Bring 2.5 L water with 2 tsp cumin to a boil in a deep pot 24 cm on high heat (about 10 minutes).",
-          "Lower the whole cabbage into the boiling water, core side down, and keep the water boiling on medium-high heat. After 2 to 3 minutes the outer leaves loosen; lift them off one by one with tongs onto a tray. Keep going for 12 to 15 minutes until you have 18 to 20 soft, bendable leaves; stop when the leaves become small and tight.",
-          "Lay each leaf flat and cut out the thick centre rib with a knife, cutting large leaves into 2 pieces of roughly 10 x 12 cm. Keep the ribs and torn pieces to line the pot."
-        ]
-      },
-      {
-        "title": "Part 2 - Rice and Meat Filling",
-        "ingredients": [
-          {"item": "Short-grain Egyptian rice", "qty": "1 cup (200 g)", "note": "washed and drained"},
-          {"item": "Ground lamb", "qty": "100 g"},
-          {"item": "Onion, very finely minced", "qty": "1/2 large (80 g)"},
-          {"item": "Salt", "qty": "1 1/4 tsp"},
-          {"item": "Mixed spice (baharat), chili-free", "qty": "1 1/2 tsp"},
-          {"item": "Black pepper, ground", "qty": "1/8 tsp"},
-          {"item": "Vegetable oil or melted ghee", "qty": "1/4 cup (60 ml)"}
-        ],
-        "prep": [
-          "Wash 1 cup rice in 3 changes of water until it runs clear and drain it in a sieve for 10 minutes.",
-          "Mince 1/2 large onion as finely as you can on the vegetable board."
-        ],
-        "steps": [
-          "In a deep bowl mix the drained 1 cup rice, 100 g ground lamb, the minced 1/2 onion, 1 1/4 tsp salt, 1 1/2 tsp mixed spice, 1/8 tsp black pepper and 1/4 cup oil with a spoon for 2 minutes until the meat is evenly spread through the rice with no lumps. This is used raw."
-        ]
-      },
-      {
-        "title": "Part 3 - Rolling, Layering and Cooking in Lemon-Garlic Broth",
-        "ingredients": [
-          {"item": "Chicken thighs, bone-in, skinless", "qty": "300 g (2 pcs)", "note": "pat dry; do not wash"},
-          {"item": "Salt, for the chicken", "qty": "1/4 tsp"},
-          {"item": "Black pepper, for the chicken", "qty": "1/8 tsp"},
-          {"item": "Mixed spice (baharat), for the chicken", "qty": "1/4 tsp"},
-          {"item": "Turmeric, for the chicken", "qty": "1/8 tsp"},
-          {"item": "Garlic head, cut in half across", "qty": "1/2 pcs", "note": "tucked between the rolls"},
-          {"item": "Garlic, crushed", "qty": "2 cloves", "note": "for the broth"},
-          {"item": "Lemon juice, fresh", "qty": "1/4 cup (60 ml)"},
-          {"item": "Pomegranate molasses", "qty": "2 tbsp"},
-          {"item": "Water", "qty": "1 1/2 cups (360 ml)"},
-          {"item": "Dried mint", "qty": "1 tsp", "note": "for the broth, standard addition"}
-        ],
-        "prep": [
-          "Pat the 2 chicken thighs dry on the raw-chicken board, rub them with 1/4 tsp salt, 1/8 tsp black pepper, 1/4 tsp mixed spice and 1/8 tsp turmeric, and lay them flat in the bottom of a heavy non-stick pot 20 cm. Cover the bare spots of the pot base with the cabbage ribs and torn pieces. Wash your hands.",
-          "Cut half a head of garlic across so the cloves show. Crush 2 more cloves.",
-          "In a measuring jug mix 1/4 cup lemon juice, 2 tbsp pomegranate molasses, 1 1/2 cups water, the 2 crushed garlic cloves and 1 tsp dried mint."
-        ],
-        "steps": [
-          "Rolling: lay a leaf piece on the board with the cut rib side towards you, smooth side down. Put 1 tbsp of filling in a thin line along the edge nearest you, leaving 1.5 cm free at each side. Fold the near edge over the filling, fold the two sides in, then roll away from you firmly into a finger 1.5 cm thick. Do not roll tightly; the rice swells and needs room. Repeat for all leaves (about 18 to 20 rolls, 15 minutes).",
-          "Lay the rolls in the pot over the chicken in tight rows, seam side down, in 2 to 3 layers, changing direction each layer. Tuck the halved garlic head cut side down between the rolls in the middle layer.",
-          "Set a heat-proof plate upside down directly on top of the rolls and press it gently; it keeps the rolls closed and under the liquid. Put the pot, with no broth yet, on medium-low heat for 15 minutes until you hear the chicken sizzling and smell it browning; this is the source's dry-start stage.",
-          "Pour the lemon-garlic broth from the jug slowly down the side of the pot over the plate so the rolls do not move. Raise the heat to medium-high and boil uncovered for 15 minutes until the liquid drops to the level of the plate.",
-          "Lower to the lowest heat, cover with the lid (plate still inside) and cook for 30 to 35 minutes until the broth is absorbed, a roll pressed with a finger feels soft and a grain of rice from one roll is fully tender with no hard centre. If the rice is still hard, add 1/4 cup hot water and cook 10 more minutes.",
-          "Turn off the heat and rest covered for 10 minutes. Remove the plate, run a spatula around the edge, place a round serving plate over the pot, hold both with oven gloves and flip in one movement. Wait 2 minutes and lift the pot; the chicken sits on top of the rolls."
-        ]
-      }
-    ],
-    "timeline": [
-      "0:00 Boil the water with cumin; core the cabbage.",
-      "0:10 Blanch the cabbage and peel the leaves (15 minutes); wash and drain the rice.",
-      "0:25 Trim the ribs; mix the filling; season the chicken and line the pot.",
-      "0:35 Roll the leaves and layer them over the chicken; add the garlic head; mix the broth.",
-      "0:50 Dry-start on medium-low with the plate on top (15 minutes).",
-      "1:05 Add the broth and boil 15 minutes.",
-      "1:20 Cover and cook on lowest heat 30 to 35 minutes.",
-      "1:55 Rest 10 minutes, flip and serve."
-    ],
-    "mistakes": [
-      "Rolls open while cooking -> fold the sides in before rolling, lay them seam side down, and keep the plate on top from the dry-start stage.",
-      "Rice inside is hard -> do not roll tightly; if still hard after 35 minutes add 1/4 cup hot water and give 10 more minutes on the lowest heat.",
-      "Leaves tear when rolling -> blanch until truly soft (2 to 3 minutes per layer) and cut away the whole thick rib.",
-      "Bottom burns in the dry-start stage -> use medium-low heat, a non-stick pot and the cabbage ribs under the chicken, and keep the stage at 15 minutes.",
-      "Too sour -> measure the lemon juice exactly at 1/4 cup; the pomegranate molasses adds sweetness to balance it.",
-      "Chicken undercooked -> the thighs cook for over an hour under the rolls; if in doubt check that the meat pulls from the bone easily when the pot is flipped."
-    ],
-    "serving": [
-      "Bring the flipped pot to the table whole so the golden chicken thighs sit on top of the rolls, then lift the thighs aside and serve the rolls with a spoon.",
-      "Squeeze the soft garlic cloves out of their skins over the rolls.",
-      "Serve with plain yogurt, lemon wedges and warm Arabic bread, as the source suggests."
-    ],
-    "safety": [
-      "Chicken thighs must reach 74 C; after 75 minutes of cooking under the rolls they will, and the meat should pull from the bone easily.",
-      "Raw rice and raw meat filling must be rolled and cooked the same day; do not leave the filled bowl out of the fridge for more than 1 hour before cooking.",
-      "Do not wash raw chicken; use a separate board for it and wash hands after seasoning.",
-      "Cool leftovers within 1 hour; keep in a closed container in the fridge for 2 to 3 days; reheat until steaming hot, and reheat rice only once."
-    ],
-    "source": {
-      "site": "Manal Alalem (manalonline.com)",
-      "chef": "Manal Alalem",
-      "title_ar": "ملفوف بالدجاج",
-      "url": "https://www.manalonline.com/ملفوف-بالدجاج/",
-      "image_source": "to be filled by image step",
-      "verification": "Partially verified: page opened and read via the percent-encoded URL, content paraphrased by the fetcher; the page's '200 C' in the boiling step is a site error and was ignored",
-      "adapted": "Scaled from 6 chicken thighs, 2 cups rice, 200 g ground meat, 1/2 cup lemon juice, 1/4 cup pomegranate molasses and 3 cups water (no servings stated) to 2 thighs, 1 cup rice, 100 g ground lamb, 1/4 cup lemon juice, 2 tbsp molasses and 1 1/2 cups water for 2 adults keeping the source ratios; blanching water reduced from 8 cups to 2.5 L and cumin from 1 tbsp to 2 tsp for a small cabbage; the source names no meat type for the filling, so ground lamb is suggested; 2 crushed garlic cloves and 1 tsp dried mint added to the broth as the standard Levantine lemon-garlic broth; the dry-start reduced from 20 minutes on medium to 15 minutes on medium-low for the smaller pot; the final covered cooking time (not given in the source) set at 30 to 35 minutes; the 10 minute rest before flipping is a standard value."
-    },
-    "video": {
-      "url": "https://www.youtube.com/watch?v=U_J4e58eoyY",
-      "title": "ADDICTIVE Herby Egyptian Cabbage Rolls",
-      "channel": "Middle Eats",
-      "language": "English",
-      "duration": "6:55",
-      "priority": "P4",
-      "spicy_warning": false,
-      "subtitles": "n/a"
-    },
-    "video_tl": {
-      "url": "https://www.youtube.com/watch?v=8lVHVC6YXww",
-      "title": "How to make Cabbage Rolls / Malfouf - Kitchen with Sorayda",
-      "channel": "Kitchen with Sorayda",
-      "language": "Tagalog"
-    }
-  },
-  {
-    "id": 15,
-    "name_en": "Cajun Chicken with Lobia and White Rice",
-    "name_ar": "دجاج كاجن مع لوبيا بالصلصة وأرز أبيض",
-    "cuisine": "Other",
-    "category": "Main Course",
-    "info": {
-      "prep_time": "25 min active, plus overnight bean soak and 2 h chicken marinating",
-      "cook_time": "75 min",
-      "total_time": "1 h 40 min after soaking and marinating",
-      "servings": "2 Adults",
-      "difficulty": "Medium",
-      "equipment": ["oven", "baking tray or dish 25 x 30 cm", "aluminium foil", "mixing bowl with lid (for marinating)", "medium pot 20 cm with lid (for the beans)", "medium pot 18 cm with lid (for the rice)", "colander", "small bowl for the spice mix", "chopping board for raw chicken", "second board for vegetables", "meat thermometer"]
-    },
-    "meat_spec": {
-      "type": "Bone-in",
-      "cut": "Half",
-      "skin": "Skin-on",
-      "weight": "600 g",
-      "preparation": "Half chicken cut into 4 pieces (thigh, drumstick, breast half in 2)",
-      "cooking_method": "Roasted",
-      "source_specified": true,
-      "note": "Source specifies 1/2 chicken, bone-in with skin, for 2 persons; it is cut into 4 pieces here so the marinade reaches more surface and it cooks evenly in 50 minutes."
-    },
-    "spice_note": "Source uses hot paprika, crushed chili and a bought Cajun spice mix (which contains cayenne); all three are removed and replaced with a home Cajun mix of sweet paprika, garlic powder, onion powder, oregano, thyme, cumin and 1/4 tsp black pepper. The lobia and rice components contain no chili.",
-    "components": [
-      {
-        "title": "Part 1 - Cajun Chicken (home mix, no cayenne)",
-        "ingredients": [
-          {"item": "Half chicken, bone-in, skin-on, cut in 4 pieces", "qty": "600 g", "note": "pat dry; do not wash"},
-          {"item": "Sweet paprika", "qty": "2 tsp"},
-          {"item": "Garlic powder", "qty": "1 tsp"},
-          {"item": "Onion powder", "qty": "1 tsp"},
-          {"item": "Dried oregano", "qty": "1/2 tsp"},
-          {"item": "Dried thyme", "qty": "1/2 tsp"},
-          {"item": "Ground cumin", "qty": "1/2 tsp"},
-          {"item": "Black pepper, ground", "qty": "1/4 tsp"},
-          {"item": "Salt", "qty": "1 tsp"},
-          {"item": "Lemon juice, fresh", "qty": "3 tbsp"},
-          {"item": "Vegetable oil", "qty": "2 tbsp"},
-          {"item": "Onion, sliced in rings", "qty": "1 medium (120 g)"}
-        ],
-        "prep": [
-          "Pat the 600 g chicken pieces dry with kitchen paper on the raw-chicken board and leave them in a colander for 10 minutes so the skin dries. Do not wash the chicken.",
-          "In a small bowl mix 2 tsp sweet paprika, 1 tsp garlic powder, 1 tsp onion powder, 1/2 tsp oregano, 1/2 tsp thyme, 1/2 tsp cumin, 1/4 tsp black pepper and 1 tsp salt. Stir in 3 tbsp lemon juice, then 2 tbsp oil, until it is a loose red paste.",
-          "Make 2 shallow cuts in the thick part of the thigh and breast. Put the chicken in a bowl, pour the paste over and rub it over every side and under the skin with a gloved hand. Cover and refrigerate for at least 2 hours, up to 12 hours.",
-          "Slice 1 onion into rings."
-        ],
-        "steps": [
-          "Preheat the oven to 200 C (fan 180 C) for 15 minutes. Lay the 4 marinated chicken pieces skin side up in a baking dish 25 x 30 cm, pour every drop of marinade from the bowl over them and spread the onion rings on top. Cover the dish tightly with 2 layers of foil.",
-          "Bake on the middle shelf for 35 minutes until the chicken is firm and the onions are soft and the juices in the dish are bubbling.",
-          "Remove the foil (steam escapes, keep your face back) and bake uncovered for 15 to 20 minutes until the skin is deep red-brown and crisp at the edges and a thermometer in the thickest part of the thigh (not touching bone) reads 74 C. Rest in the dish for 5 minutes."
-        ]
-      },
-      {
-        "title": "Part 2 - Lobia in Tomato Sauce",
-        "ingredients": [
-          {"item": "Dried lobia (black-eyed beans)", "qty": "1/2 cup (100 g)", "note": "soaked overnight or at least 6 hours"},
-          {"item": "Water, for boiling the beans", "qty": "3 cups (720 ml)"},
-          {"item": "Salt, for boiling the beans", "qty": "1/2 tsp"},
-          {"item": "Vegetable oil", "qty": "1 tbsp"},
-          {"item": "Onion, finely minced", "qty": "1/2 medium (60 g)"},
-          {"item": "Tomato juice or passata", "qty": "1 cup (240 ml)"},
-          {"item": "Salt", "qty": "1/4 tsp"},
-          {"item": "Black pepper, ground", "qty": "1/8 tsp"},
-          {"item": "Mixed spice (baharat), chili-free", "qty": "1/4 tsp"},
-          {"item": "Ground cumin", "qty": "1/4 tsp"}
-        ],
-        "prep": [
-          "The night before: wash 1/2 cup dried lobia, cover with 3 cups cold water and soak for at least 6 hours; drain and rinse.",
-          "Mince 1/2 onion finely."
-        ],
-        "steps": [
-          "Put the drained soaked beans in a medium pot 20 cm with 3 cups fresh water and 1/2 tsp salt. Bring to a boil on high heat (about 5 minutes), skim the foam, then cover and simmer on low for 35 to 40 minutes until a bean crushes easily between two fingers. Drain in a colander and keep 1/4 cup of the cooking water.",
-          "Dry the pot, add 1 tbsp oil and heat over medium heat for 1 minute. Add the 1/2 minced onion and stir for 5 to 6 minutes until golden.",
-          "Pour in 1 cup tomato juice and cook on medium heat for 6 to 8 minutes, stirring now and then, until it thickens and darkens slightly.",
-          "Add 1/4 tsp salt, 1/8 tsp black pepper, 1/4 tsp mixed spice and 1/4 tsp cumin, then the cooked beans and the 1/4 cup reserved cooking water. Stir, cover and simmer on low heat for 20 to 25 minutes until the beans are very soft and the sauce is thick and clings to them. Taste for salt."
-        ]
-      },
-      {
-        "title": "Part 3 - White Rice",
-        "ingredients": [
-          {"item": "White rice (Egyptian short-grain or basmati)", "qty": "1 cup (200 g)"},
-          {"item": "Water, hot", "qty": "1 1/2 cups (360 ml)"},
-          {"item": "Salt", "qty": "1/2 tsp"},
-          {"item": "Butter or vegetable oil", "qty": "1 tsp", "note": "standard addition, optional"}
-        ],
-        "prep": [
-          "Wash 1 cup rice in 3 changes of cold water until the water runs almost clear and drain in a sieve."
-        ],
-        "steps": [
-          "Bring 1 1/2 cups water with 1 tsp butter to a boil in a medium pot 18 cm over medium heat (about 3 minutes).",
-          "Add the drained 1 cup rice and 1/2 tsp salt and stir once; the water should stand about 1 cm above the rice. Let it return to a boil for 1 minute.",
-          "Reduce to the lowest heat, cover and simmer for 15 minutes without lifting the lid until the water is absorbed and a grain is tender with no hard centre. Turn off the heat, rest covered for 5 minutes and fluff with a fork."
-        ]
-      }
-    ],
-    "timeline": [
-      "Night before: soak the lobia. Morning (at least 2 hours ahead): mix the Cajun paste and marinate the chicken.",
-      "0:00 Put the soaked beans on to boil (40 minutes).",
-      "0:05 Preheat the oven to 200 C; slice the onion rings.",
-      "0:20 Put the chicken in the oven covered with foil (35 minutes).",
-      "0:40 Beans are soft: drain, fry the onion, add tomato juice.",
-      "0:50 Add spices and beans to the sauce; simmer 20 to 25 minutes.",
-      "0:55 Remove the foil from the chicken (15 to 20 minutes more).",
-      "0:55 Wash the rice and put it on (15 minutes plus 5 minutes rest).",
-      "1:15 Chicken reads 74 C: rest 5 minutes while the rice rests and the beans finish.",
-      "1:20 Serve."
-    ],
-    "mistakes": [
-      "Chicken tastes hot -> never use a bought Cajun blend or hot paprika; the home mix uses sweet paprika only.",
-      "Chicken skin soft -> the foil must come off for the last 15 to 20 minutes and the oven must be fully at 200 C.",
-      "Beans still hard after 40 minutes -> they were under-soaked or old; keep simmering, checking every 10 minutes, before adding them to the tomato sauce (acid stops them softening).",
-      "Lobia sauce watery -> cook the tomato juice down 6 to 8 minutes before the beans go in and finish with the lid on but the sauce thick.",
-      "Rice gummy -> use exactly 1 1/2 cups water for 1 cup rice, keep the lid closed for the 15 minutes, and rest 5 minutes before fluffing."
-    ],
-    "serving": [
-      "Spoon the white rice onto one side of each plate, ladle the lobia next to it and lay 2 chicken pieces on top with the roasted onion rings.",
-      "Spoon the red juices from the baking dish over the chicken.",
-      "Serve with a simple green salad and lemon wedges."
-    ],
-    "safety": [
-      "Chicken is safe at 74 C internal temperature at the thickest part of the thigh.",
-      "Do not wash raw chicken; marinate it covered in the fridge, never on the counter, and discard any marinade that does not go into the oven with the chicken.",
-      "Dried beans must be soaked and then boiled until fully soft before eating.",
-      "Cool leftovers within 1 hour; keep in closed containers in the fridge for 2 to 3 days; reheat until steaming hot, and reheat rice only once."
-    ],
-    "source": {
-      "site": "Cookpad (chicken), Shamlola (lobia and white rice)",
-      "chef": "Cookpad user Umm Taqi (@Cooker_Lolo) for the chicken; Shamlola editorial for the lobia and rice",
-      "title_ar": "دجاج ببهارات الكيجن بالفرن + لوبيا بالصلصة + الأرز الأبيض",
-      "url": "https://cookpad.com/sa/وصفات/15512334",
-      "image_source": "to be filled by image step",
-      "verification": "Partially verified: all three pages opened and read, content paraphrased by the fetcher; lobia page https://www.shamlola.com/recipes/طريقة-عمل-لوبيا-بالصلصة ; rice page https://www.shamlola.com/recipes/طريقة-عمل-الأرز-الأبيض",
-      "adapted": "Chicken kept at the source's 1/2 chicken for 2 persons but cut into 4 pieces; hot paprika, crushed chili and the bought Cajun mix removed and replaced with a home mix (sweet paprika, garlic powder, onion powder, oregano, thyme, cumin, 1/4 tsp black pepper); the source's 'spoon' measures are not defined, so tsp amounts are used, and its 1/2 cup lemon juice and 1/2 cup oil reduced to 3 tbsp and 2 tbsp; the source gives no oven temperature, so 200 C with 35 minutes covered and 15 to 20 minutes uncovered is the professional standard. Lobia scaled from 1 cup dried beans and 2 cups tomato juice for 4 to 1/2 cup and 1 cup for 2; the source does not quantify oil, salt, pepper or spices, so 1 tbsp oil, 1/4 tsp salt, 1/8 tsp pepper, 1/4 tsp baharat and 1/4 tsp cumin are standard values, and boiling water set at 3 cups. Rice kept at the source's 1 cup to 1 1/2 cups water and 15 minutes; washing the rice and 1 tsp butter are standard additions."
-    },
-    "video": {
-      "url": "https://www.youtube.com/watch?v=5P2HYaeo_f8",
-      "title": "Egyptian Comfort Food: Black-Eyed Beans in Tomato Sauce | Vegan Recipe",
-      "channel": "Muhammed the Egyptian Cook",
-      "language": "English",
-      "duration": "4:08",
-      "priority": "P4",
-      "spicy_warning": false,
-      "subtitles": "manual English"
-    },
-    "video_tl": null
-  },
-  {
-    "id": 16,
-    "name_en": "Grilled Chicken with Molokhia and White Rice",
-    "name_ar": "دجاج مشوي مع ملوخية مصرية وأرز أبيض",
-    "cuisine": "Egyptian",
-    "category": "Main Course",
-    "info": {
-      "prep_time": "25 min active, plus 6 h to overnight marinating",
-      "cook_time": "60 min",
-      "total_time": "1 h 25 min after marinating",
-      "servings": "2 Adults",
-      "difficulty": "Medium",
-      "equipment": ["oven", "roasting tray with a rack", "zip bag or bowl with lid (for marinating)", "basting brush", "medium pot 18 cm (for the molokhia)", "small frying pan (for the ta'leya)", "medium pot 18 cm with lid (for the rice)", "small pot (for heating broth)", "chopping board for raw chicken", "second board for vegetables", "meat thermometer"]
-    },
-    "meat_spec": {
-      "type": "Bone-in",
-      "cut": "Half",
-      "skin": "Skin-on",
-      "weight": "600 g",
-      "preparation": "Half chicken, flattened with the palm and cut into 2 (leg quarter and breast with wing)",
-      "cooking_method": "Roasted",
-      "source_specified": false,
-      "note": "Source uses 1 whole chicken of about 1 kg roasted whole for 4 people. For 2 adults a half chicken (600 g), flattened and cut in 2, is suggested so it roasts in 45 to 50 minutes on the rack instead of 70 and the skin still browns."
-    },
-    "spice_note": "Source recipe contains no chili in any of the three components; the paprika is sweet and black pepper is not used at all.",
-    "components": [
-      {
-        "title": "Part 1 - Oven-Grilled Chicken",
-        "ingredients": [
-          {"item": "Half chicken, bone-in, skin-on, flattened and cut in 2", "qty": "600 g", "note": "pat dry; do not wash"},
-          {"item": "Garlic, minced", "qty": "1 clove"},
-          {"item": "Lemon juice", "qty": "1 tbsp"},
-          {"item": "Balsamic vinegar", "qty": "1 tbsp"},
-          {"item": "White vinegar", "qty": "1 tbsp"},
-          {"item": "Olive oil", "qty": "1 tbsp"},
-          {"item": "Soy sauce", "qty": "1 tbsp"},
-          {"item": "Salt", "qty": "3/4 tsp", "note": "the soy sauce is salty"},
-          {"item": "Sweet paprika", "qty": "1 tsp"},
-          {"item": "Mixed spice (baharat), chili-free", "qty": "1 tsp"},
-          {"item": "Ground cinnamon", "qty": "1/2 tsp"},
-          {"item": "Dried thyme", "qty": "1 tsp"},
-          {"item": "Dried basil", "qty": "1 tsp"}
-        ],
-        "prep": [
-          "Pat the 600 g chicken dry with kitchen paper on the raw-chicken board and leave it in a colander for 10 minutes so the skin dries. Do not wash it.",
-          "In a small bowl mix 1 minced garlic clove, 1 tbsp lemon juice, 1 tbsp olive oil, 1 tbsp balsamic vinegar, 1 tbsp white vinegar and 1 tbsp soy sauce. Add 3/4 tsp salt, 1 tsp paprika, 1 tsp mixed spice, 1/2 tsp cinnamon, 1 tsp thyme and 1 tsp basil and mix again.",
-          "Rub the marinade over the chicken on both sides and under the skin with a gloved hand. Put it in a zip bag or covered bowl and refrigerate overnight or at least 6 hours. Keep 2 tbsp of the marinade in a separate small covered bowl in the fridge for basting."
-        ],
-        "steps": [
-          "Preheat the oven to 190 C (fan 170 C) for 15 minutes. Set the 2 marinated chicken pieces skin side up on the rack of a roasting tray with 1 cm of water in the tray below to catch drips.",
-          "Roast on the middle shelf for 25 minutes until the skin starts to colour, then brush with half of the 2 tbsp reserved marinade using the basting brush.",
-          "Roast for another 20 to 25 minutes, brushing once more at 10 minutes, until the skin is deep golden brown, the juices run clear and a thermometer in the thickest part of the thigh (not touching bone) reads 74 C. Rest on the rack for 5 minutes."
-        ]
-      },
-      {
-        "title": "Part 2 - Egyptian Green Molokhia",
-        "ingredients": [
-          {"item": "Molokhia leaves, finely minced (fresh or frozen block)", "qty": "200 g (half a 400 g frozen pack)"},
-          {"item": "Chicken broth, hot (from a cube or homemade)", "qty": "2 cups (480 ml)"},
-          {"item": "Garlic, very finely minced", "qty": "1 1/2 tsp total (1/2 tsp for the pot, 1 tsp for the ta'leya)"},
-          {"item": "Ground dried coriander", "qty": "1 1/2 tsp total (1/2 tsp for the pot, 1 tsp for the ta'leya)"},
-          {"item": "Ghee", "qty": "1 tbsp"},
-          {"item": "Salt", "qty": "1/4 tsp", "note": "less if the broth is salty"}
-        ],
-        "prep": [
-          "If using frozen molokhia, take 200 g out of the freezer 30 minutes ahead so the block can break up; do not thaw it fully.",
-          "Mince the garlic as finely as possible (1 1/2 tsp) and divide it into 1/2 tsp and 1 tsp. Divide 1 1/2 tsp ground coriander the same way.",
-          "Heat 2 cups chicken broth in a small pot until steaming."
-        ],
-        "steps": [
-          "Put the 200 g minced molokhia in a medium pot 18 cm over medium-low heat with 1/2 tsp garlic and 1/2 tsp ground coriander and stir for 1 minute until the block loosens.",
-          "Add the hot broth a ladle at a time (about 2 cups in total), stirring with a wooden spoon between additions, for 4 to 5 minutes until the molokhia is a smooth green soup of medium thickness that coats the spoon but still pours. Add 1/4 tsp salt. Rule: once the leaves are in, never let it boil hard; keep it below a simmer, with only small bubbles at the edge, or the leaves sink and separate from the liquid. Take it off the heat as soon as it is hot through (about 2 more minutes).",
-          "Ta'leya: heat 1 tbsp ghee in a small frying pan over medium heat for 30 seconds. Add the remaining 1 tsp minced garlic and stir for 30 to 40 seconds until it just starts to colour, then add the remaining 1 tsp ground coriander and stir for 20 to 30 seconds more until the garlic is reddish-gold and the kitchen smells of coriander. Do not let it go dark brown.",
-          "Pour the sizzling ta'leya over the molokhia at once and cover the pot with the lid for 2 minutes so the aroma stays inside. Stir once before serving."
-        ]
-      },
-      {
-        "title": "Part 3 - White Rice",
-        "ingredients": [
-          {"item": "White rice (Egyptian short-grain or basmati)", "qty": "1 cup (200 g)"},
-          {"item": "Water, hot", "qty": "1 1/2 cups (360 ml)"},
-          {"item": "Salt", "qty": "1/2 tsp"},
-          {"item": "Butter or vegetable oil", "qty": "1 tsp", "note": "standard addition, optional"}
-        ],
-        "prep": [
-          "Wash 1 cup rice in 3 changes of cold water until the water runs almost clear and drain in a sieve."
-        ],
-        "steps": [
-          "Bring 1 1/2 cups water with 1 tsp butter to a boil in a medium pot 18 cm over medium heat (about 3 minutes).",
-          "Add the drained 1 cup rice and 1/2 tsp salt and stir once; the water should stand about 1 cm above the rice. Let it return to a boil for 1 minute.",
-          "Reduce to the lowest heat, cover and simmer for 15 minutes without lifting the lid until the water is absorbed and a grain is tender with no hard centre. Turn off the heat, rest covered for 5 minutes and fluff with a fork."
-        ]
-      }
-    ],
-    "timeline": [
-      "Night before (or 6 hours ahead): mix the marinade, rub it into the chicken, refrigerate; keep 2 tbsp aside for basting.",
-      "0:00 Preheat the oven to 190 C; take the frozen molokhia out.",
-      "0:15 Put the chicken on the rack in the oven (45 to 50 minutes).",
-      "0:20 Mince and divide the garlic and coriander; wash the rice.",
-      "0:35 Heat the broth; put the rice on (15 minutes plus 5 minutes rest).",
-      "0:40 Brush the chicken; start the molokhia on medium-low and add the broth.",
-      "0:50 Make the ta'leya and pour it over the molokhia; cover.",
-      "1:00 Chicken reads 74 C: rest 5 minutes.",
-      "1:05 Serve."
-    ],
-    "mistakes": [
-      "Molokhia separates into leaves and watery broth -> it boiled hard; keep it below a simmer, add the broth hot and gradually, and take it off the heat as soon as it is hot through.",
-      "Ta'leya bitter -> the garlic went dark brown; stop at reddish-gold and pour it over immediately.",
-      "Molokhia too thick or too thin -> add the broth a ladle at a time; it should coat the spoon but still pour.",
-      "Chicken skin pale -> the rack lifts it off the tray so air circulates; the oven must be fully at 190 C and the chicken not covered.",
-      "Chicken dry at the breast -> check the thigh at 74 C and stop; the source's 70 minutes is for a whole 1 kg bird.",
-      "Rice gummy -> exactly 1 1/2 cups water for 1 cup rice, lid closed for 15 minutes, rest 5 minutes."
-    ],
-    "serving": [
-      "Spoon the white rice onto each plate and ladle the molokhia into a small bowl beside it, or pour it over the rice at the table as Egyptians do.",
-      "Lay a piece of chicken on each plate next to the rice, skin side up.",
-      "Serve with lemon wedges, and a small plate of chopped onion in vinegar on the side."
-    ],
-    "safety": [
-      "Chicken is safe at 74 C internal temperature at the thickest part of the thigh.",
-      "Do not wash raw chicken; marinate it covered in the fridge; use only the 2 tbsp marinade kept apart before it touched the chicken for basting.",
-      "Molokhia must be eaten the same day or cooled within 1 hour and kept in the fridge for up to 2 days; reheat gently without boiling.",
-      "Cool leftovers within 1 hour; keep in closed containers in the fridge for 2 to 3 days; reheat until steaming hot, and reheat rice only once."
-    ],
-    "source": {
-      "site": "Shamlola (shamlola.com), all three components",
-      "chef": "Shamlola editorial",
-      "title_ar": "طريقة تحضير دجاج مشوي في الفرن + الملوخية الخضراء المصرية + الأرز الأبيض",
-      "url": "https://www.shamlola.com/recipes/طريقة-تحضير-دجاج-مشوي-في-الفرن",
-      "image_source": "to be filled by image step",
-      "verification": "Verified (all three pages opened and read); molokhia page https://www.shamlola.com/recipes/طريقة-عمل-الملوخية-الخضراء-المصرية ; rice page https://www.shamlola.com/recipes/طريقة-عمل-الأرز-الأبيض",
-      "adapted": "Chicken scaled from a 1 kg whole bird for 4 to a 600 g half chicken cut in 2, marinade halved, cinnamon reduced from 1 tsp to 1/2 tsp and salt from 1 tsp to 3/4 tsp for the smaller bird, roasting time shortened from 70 to 45 to 50 minutes at the source's 190 C, and 2 tbsp marinade kept aside before it touches the chicken so basting is safe. Molokhia scaled from 1/2 kg leaves for 6 to 200 g for 2; the source does not quantify the broth, so 2 cups is the professional standard for 200 g; salt set at 1/4 tsp; the source splits the garlic and coriander between the pot and the ta'leya, kept here as 1/2 tsp and 1 tsp. Rice kept at the source's 1 cup to 1 1/2 cups water and 15 minutes; washing the rice and 1 tsp butter are standard additions."
-    },
-    "video": {
-      "url": "https://www.youtube.com/watch?v=aCDXz0SbPl8",
-      "title": "Ancient Jute Leaf Stew - Egyptian Molokhia Recipe",
-      "channel": "Middle Eats",
-      "language": "English",
-      "duration": "11:58",
-      "priority": "P4",
-      "spicy_warning": false,
-      "subtitles": "n/a"
-    },
-    "video_tl": {
-      "url": "https://www.youtube.com/watch?v=vgyfk9PCN-Q",
-      "title": "Molokhia with Chicken (Saluyot sa Tagalog) - Mohd & Ley Omari",
-      "channel": "Mohd & Ley Omari",
-      "language": "Tagalog"
-    }
+  "video_tl": {
+   "url": "https://www.youtube.com/watch?v=JjuCxo2Jwco",
+   "title": "Bukhari Rice with Lamb (Tagalog) - Rebecca Cooking Channel",
+   "channel": "Rebecca Cooking Channel",
+   "language": "Tagalog"
   }
+ },
+ {
+  "id": 10,
+  "name_en": "Chicken Curry with Boiled Egg",
+  "name_ar": "الدجاج بالكاري مع البيض المسلوق",
+  "cuisine": "Other",
+  "category": "Main Course",
+  "info": {
+   "prep_time": "20 min",
+   "cook_time": "55 min",
+   "total_time": "1 h 15 min",
+   "servings": "2 Adults",
+   "difficulty": "Easy",
+   "equipment": [
+    "wide non-stick skillet 28 cm with lid",
+    "small pot for boiling eggs",
+    "small frying pan for cashews",
+    "small bowl for the spice mix",
+    "chopping board for raw chicken",
+    "second board for vegetables",
+    "meat thermometer"
+   ]
+  },
+  "meat_spec": {
+   "type": "Bone-in",
+   "cut": "Mixed",
+   "skin": "Skinless",
+   "weight": "400 g",
+   "preparation": "Pieces (4): 2 thighs and 2 drumsticks",
+   "cooking_method": "Simmered",
+   "source_specified": false,
+   "note": "Source says '1 kg chicken cut into 8 pieces' and does not mention skin. Suggested cut: bone-in skinless thighs and drumsticks because dark meat stays juicy in the coconut sauce and removing the skin keeps the curry from turning greasy."
+  },
+  "spice_note": "Source uses 1 tsp crushed chili flakes and 2 sliced green chilies; both are removed. The chili flakes are replaced by extra sweet paprika for colour and the green chilies by 1/2 sliced green bell pepper for the green note; the curry powder must be a mild blend with no chili on the label.",
+  "components": [
+   {
+    "title": "Part 1 - Coconut Chicken Curry with Boiled Egg",
+    "ingredients": [
+     {
+      "item": "Chicken thighs and drumsticks, bone-in, skinless",
+      "qty": "400 g (4 pcs)",
+      "note": "pat dry; do not wash"
+     },
+     {
+      "item": "Eggs",
+      "qty": "2 pcs",
+      "note": "hard-boiled, peeled, halved; household addition"
+     },
+     {
+      "item": "Mild curry powder, chili-free",
+      "qty": "1 1/2 tsp",
+      "note": "check the label for chili"
+     },
+     {
+      "item": "Ground cumin",
+      "qty": "1/2 tsp"
+     },
+     {
+      "item": "Turmeric",
+      "qty": "1/2 tsp"
+     },
+     {
+      "item": "Sweet paprika",
+      "qty": "1 tsp",
+      "note": "1/2 tsp from the source plus 1/2 tsp replacing the chili flakes"
+     },
+     {
+      "item": "Ground coriander",
+      "qty": "1/2 tsp"
+     },
+     {
+      "item": "Salt",
+      "qty": "1/2 tsp"
+     },
+     {
+      "item": "Black pepper, ground",
+      "qty": "1/4 tsp"
+     },
+     {
+      "item": "Corn oil",
+      "qty": "1 1/2 tbsp"
+     },
+     {
+      "item": "Onion, cut in thin wedges",
+      "qty": "1 large (150 g)"
+     },
+     {
+      "item": "Garlic, sliced",
+      "qty": "2 cloves"
+     },
+     {
+      "item": "Fresh ginger, minced",
+      "qty": "1 1/2 tsp"
+     },
+     {
+      "item": "Green bell pepper, sliced thin",
+      "qty": "1/2 pcs (60 g)",
+      "note": "replaces the green chilies"
+     },
+     {
+      "item": "Coconut milk",
+      "qty": "1/2 cup (120 ml)"
+     },
+     {
+      "item": "Water",
+      "qty": "1/2 cup (120 ml)"
+     },
+     {
+      "item": "Cooking cream",
+      "qty": "1/4 cup (60 ml)"
+     },
+     {
+      "item": "Fresh coriander, chopped",
+      "qty": "1/4 cup (10 g)"
+     },
+     {
+      "item": "Cashews",
+      "qty": "2 tbsp",
+      "note": "fried in 1 tsp oil for serving"
+     }
+    ],
+    "prep": [
+     "Put 2 eggs in a small pot, cover with cold water, bring to a boil on high heat and boil for 9 minutes. Cool them in cold water for 5 minutes, peel and cut each in half lengthwise.",
+     "Pat the 4 chicken pieces dry with kitchen paper on the raw-chicken board. Do not wash the chicken.",
+     "In a small bowl mix 1 1/2 tsp curry powder, 1/2 tsp cumin, 1/2 tsp turmeric, 1 tsp sweet paprika, 1/2 tsp ground coriander, 1/2 tsp salt and 1/4 tsp black pepper.",
+     "Cut 1 large onion into thin wedges, slice 2 garlic cloves, mince 1 1/2 tsp ginger and slice 1/2 green bell pepper thinly on the vegetable board. Chop 1/4 cup fresh coriander.",
+     "Fry 2 tbsp cashews in 1 tsp oil in a small frying pan over medium heat for 2 to 3 minutes until golden; drain on kitchen paper."
+    ],
+    "steps": [
+     "Heat 1 1/2 tbsp corn oil in a wide non-stick skillet 28 cm over medium heat for 1 minute. Add the 1 onion in wedges and stir for 8 to 10 minutes until deep golden and soft at the edges.",
+     "Add the 2 sliced garlic cloves, 1 1/2 tsp minced ginger and the 1/2 sliced green bell pepper and stir on medium heat for 1 to 2 minutes until the ginger smells fragrant and the pepper is bright green.",
+     "Rub each of the 4 chicken pieces thoroughly with the spice mix from the bowl and lay them on the onion. Sprinkle any leftover spice over them. Raise the heat to high and turn the chicken with tongs for 3 to 4 minutes until the outside is no longer pink and the spices smell toasted.",
+     "Pour in 1/2 cup coconut milk and 1/2 cup water, scrape the bottom of the skillet, cover and simmer on low heat for 35 minutes, turning the chicken once at 18 minutes, until a thermometer at the thickest part next to the bone reads 74 C and the sauce has reduced to a thick yellow gravy.",
+     "Add 1/4 cup cream, stir and let the sauce bubble gently on medium-low heat for exactly 1 minute until glossy. Stir in the 1/4 cup chopped coriander.",
+     "Lay the 4 boiled egg halves cut side up on top of the chicken, cover and keep on low heat for 2 minutes until the eggs are heated through and lightly coated in sauce. Turn off the heat."
+    ]
+   }
+  ],
+  "timeline": null,
+  "mistakes": [
+   "Curry tastes hot -> some curry powders contain chili; read the label and choose a mild blend, and use sweet paprika only.",
+   "Sauce split or grainy -> keep the simmer low once the coconut milk is in and add the cream off a hard boil for just 1 minute.",
+   "Onion pale and watery -> give it the full 8 to 10 minutes on medium heat; the deep golden colour is the base of the flavour.",
+   "Chicken dry -> stop at 74 C; 35 minutes is enough for 400 g, not the 50 minutes the source gives for 1 kg.",
+   "Eggs rubbery and grey -> boil 9 minutes only and cool at once in cold water; add them to the pan for the last 2 minutes, never earlier."
+  ],
+  "serving": [
+   "Spoon the curry into a shallow serving dish with the chicken pieces in the centre and the 4 egg halves arranged on top, yolk side up.",
+   "Scatter the 2 tbsp fried cashews and a little extra chopped coriander over everything.",
+   "Serve with plain white rice (1 cup rice cooked in 1 1/2 cups water with 1/2 tsp salt) and lemon wedges."
+  ],
+  "safety": [
+   "Chicken is safe at 74 C internal temperature at the thickest part next to the bone.",
+   "Do not wash raw chicken; use a separate board and knife for it and wash hands after handling.",
+   "Cool leftovers within 1 hour; keep in a closed container in the fridge for 2 to 3 days (eggs included).",
+   "Reheat until steaming hot all the way through."
+  ],
+  "source": {
+   "site": "Manal Alalem (manalonline.com)",
+   "chef": "Manal Alalem",
+   "title_ar": "الدجاج بالكاري",
+   "url": "https://www.manalonline.com/الدجاج-بالكاري/",
+   "image_source": "to be filled by image step",
+   "verification": "Verified (page opened and read)",
+   "adapted": "Scaled from 1 kg chicken, 2 onions, 1 cup coconut milk and 1 cup water to 400 g bone-in skinless thighs and drumsticks, 1 onion, 1/2 cup coconut milk and 1/2 cup water for 2 adults keeping the source ratios; 1 tsp chili flakes and 2 green chilies removed and replaced with extra sweet paprika and 1/2 green bell pepper; simmer shortened from 50 to 35 minutes for the smaller quantity; the source has no boiled egg, so 2 hard-boiled eggs halved and laid on top for the last 2 minutes are a household addition; cashew quantity (as needed in the source) set at 2 tbsp; the source gives no servings, so 1 kg was treated as 4 to 5 portions."
+  },
+  "video": {
+   "url": "https://www.youtube.com/watch?v=vrVMgQ_ra_g",
+   "title": "Chicken Masala Curry Recipe By Food Fusion",
+   "channel": "Food Fusion",
+   "language": "English (on-screen text, no narration)",
+   "duration": "2:57",
+   "priority": "P4",
+   "spicy_warning": true,
+   "subtitles": "n/a"
+  },
+  "video_tl": null
+ },
+ {
+  "id": 11,
+  "name_en": "Chicken with Vegetables in Oven",
+  "name_ar": "صينية الدجاج بالخضروات",
+  "cuisine": "Levantine",
+  "category": "Main Course",
+  "info": {
+   "prep_time": "20 min",
+   "cook_time": "55 min",
+   "total_time": "1 h 15 min",
+   "servings": "2 Adults",
+   "difficulty": "Easy",
+   "equipment": [
+    "oven",
+    "medium baking dish 25 x 30 cm",
+    "deep mixing bowl",
+    "small bowl for the spice mix",
+    "vegetable brush",
+    "chopping board for raw chicken",
+    "second board for vegetables",
+    "meat thermometer"
+   ]
+  },
+  "meat_spec": {
+   "type": "Bone-in",
+   "cut": "Mixed",
+   "skin": "Skin-on",
+   "weight": "500 g",
+   "preparation": "Pieces (4): 2 thighs and 2 drumsticks",
+   "cooking_method": "Roasted",
+   "source_specified": false,
+   "note": "Source says '1 kg chicken' with the spices rubbed under the skin, so skin-on is implied, but whole versus pieces is not stated. Suggested cut: bone-in skin-on thighs and drumsticks because they cook in the same 50 minutes as the potatoes and the skin crisps while the meat stays moist."
+  },
+  "spice_note": "Source uses 1 tsp crushed chili flakes; it is removed and replaced with extra sweet paprika for colour, and the black pepper is reduced from 1 tsp to 1/4 tsp.",
+  "components": [
+   {
+    "title": "Part 1 - Chicken and Vegetable Tray",
+    "ingredients": [
+     {
+      "item": "Chicken thighs and drumsticks, bone-in, skin-on",
+      "qty": "500 g (4 pcs)",
+      "note": "pat dry; do not wash"
+     },
+     {
+      "item": "Olive oil",
+      "qty": "2 tbsp"
+     },
+     {
+      "item": "Ground cumin",
+      "qty": "1/2 tsp"
+     },
+     {
+      "item": "Turmeric",
+      "qty": "1/2 tsp"
+     },
+     {
+      "item": "Sweet paprika",
+      "qty": "1 tsp",
+      "note": "1/2 tsp from the source plus 1/2 tsp replacing the chili flakes"
+     },
+     {
+      "item": "Salt",
+      "qty": "3/4 tsp"
+     },
+     {
+      "item": "Black pepper, ground",
+      "qty": "1/4 tsp"
+     },
+     {
+      "item": "Dried oregano",
+      "qty": "1/2 tsp"
+     },
+     {
+      "item": "Dried basil",
+      "qty": "1/2 tsp"
+     },
+     {
+      "item": "Potatoes, scrubbed, skin on, in 3 cm cubes",
+      "qty": "1 large (250 g)"
+     },
+     {
+      "item": "Red bell pepper, in 3 cm squares",
+      "qty": "1/2 pcs (75 g)"
+     },
+     {
+      "item": "Green bell pepper, in 3 cm squares",
+      "qty": "1/2 pcs (75 g)"
+     },
+     {
+      "item": "Yellow bell pepper, in 3 cm squares",
+      "qty": "1/2 pcs (75 g)"
+     },
+     {
+      "item": "Garlic, whole peeled cloves",
+      "qty": "3 cloves"
+     },
+     {
+      "item": "Onion, in 3 cm squares",
+      "qty": "1/2 large (80 g)"
+     },
+     {
+      "item": "Fresh parsley, chopped",
+      "qty": "1 1/2 tbsp"
+     }
+    ],
+    "prep": [
+     "Preheat the oven to 200 C (fan 180 C) for 15 minutes.",
+     "Pat the 4 chicken pieces dry on the raw-chicken board. Do not wash them.",
+     "In a small bowl mix 1/2 tsp cumin, 1/2 tsp turmeric, 1 tsp sweet paprika, 3/4 tsp salt, 1/4 tsp black pepper, 1/2 tsp oregano and 1/2 tsp basil.",
+     "Rub half of the spice mix over the chicken, pushing some under the skin with a finger, and lay the pieces skin side up in a medium baking dish 25 x 30 cm. Wash your hands.",
+     "Scrub 1 large potato under running water with a vegetable brush, do not peel, and cut it into 3 cm cubes on the vegetable board. Put the cubes in a deep bowl.",
+     "Cut the 3 half peppers and 1/2 onion into 3 cm squares and add them to the potato with the 3 whole garlic cloves.",
+     "Sprinkle the remaining spice mix and 2 tbsp olive oil over the vegetables and toss with your fingertips for 1 minute until every piece is coated and orange-yellow.",
+     "Chop 1 1/2 tbsp parsley."
+    ],
+    "steps": [
+     "Spread the oiled vegetables around and over the chicken in the baking dish in a single layer, leaving the skin of the chicken partly uncovered so it can brown.",
+     "Bake on the middle shelf of the oven at 200 C for 30 minutes uncovered until the vegetables start to colour at the edges, then turn the vegetables with a spoon (leave the chicken skin side up).",
+     "Bake for another 20 to 25 minutes until the potato cubes are soft when pierced with a knife, the chicken skin is golden and a thermometer in the thickest thigh (not touching bone) reads 74 C and the juices run clear.",
+     "Remove from the oven, rest for 5 minutes in the dish and sprinkle the 1 1/2 tbsp chopped parsley over the top."
+    ]
+   }
+  ],
+  "timeline": null,
+  "mistakes": [
+   "Potatoes still hard when the chicken is done -> cut them no bigger than 3 cm and keep them in a single layer; crowding steams instead of roasting.",
+   "Chicken skin pale and soft -> keep the skin partly uncovered by the vegetables and make sure the oven is fully preheated to 200 C.",
+   "Vegetables watery -> use a dish just large enough for a single layer and do not cover with foil.",
+   "Chicken dry -> check at 50 minutes and stop at 74 C; the source's 60 minutes is for a full kilo.",
+   "Garlic burnt and bitter -> leave the cloves whole and tucked between the vegetables, not on top."
+  ],
+  "serving": [
+   "Serve straight from the baking dish or lift the chicken onto a platter and spoon the vegetables around it.",
+   "Spoon the juices from the bottom of the dish over the chicken.",
+   "Serve with plain white rice (1 cup rice cooked in 1 1/2 cups water with 1/2 tsp salt) or warm Arabic bread, and a bowl of plain yogurt."
+  ],
+  "safety": [
+   "Chicken is safe at 74 C internal temperature at the thickest part next to the bone.",
+   "Do not wash raw chicken; use a separate board for it and wash hands after rubbing in the spices.",
+   "Use oven gloves for the hot dish and set it on a heat-proof mat.",
+   "Cool leftovers within 1 hour; keep in a closed container in the fridge for 2 to 3 days; reheat until steaming hot."
+  ],
+  "source": {
+   "site": "Manal Alalem (manalonline.com)",
+   "chef": "Manal Alalem",
+   "title_ar": "صينية الدجاج بالخضروات جديد",
+   "url": "https://www.manalonline.com/صينية-الدجاج-بالخضروات-جديد/",
+   "image_source": "to be filled by image step",
+   "verification": "Verified (page opened and read)",
+   "adapted": "Scaled from 1 kg chicken, 2 potatoes, 3 whole peppers and 1/4 cup olive oil to 500 g bone-in skin-on thighs and drumsticks, 1 potato, 3 half peppers and 2 tbsp olive oil for 2 adults keeping the source ratios; 1 tsp chili flakes removed and replaced with extra sweet paprika; black pepper reduced from 1 tsp to 1/4 tsp; the source gives no oven temperature and does not mention covering, so 200 C uncovered is used as the professional standard and the time shortened from 60 to 50 to 55 minutes for pieces; the source gives no servings, so 1 kg was treated as 4 portions."
+  },
+  "video": {
+   "url": "https://www.youtube.com/watch?v=DEqiJfLxLfM",
+   "title": "One Pan Chicken and Potatoes | Easy Dinner!",
+   "channel": "Feelgoodfoodie",
+   "language": "English",
+   "duration": "4:28",
+   "priority": "P4",
+   "spicy_warning": false,
+   "subtitles": "n/a"
+  },
+  "video_tl": {
+   "url": "https://www.youtube.com/watch?v=4jEgNMqNw6Q",
+   "title": "Filipino Style Roasted Chicken with Vegetables - Food Bae PH",
+   "channel": "Food Bae PH",
+   "language": "Tagalog"
+  }
+ },
+ {
+  "id": 12,
+  "name_en": "Chicken Salona",
+  "name_ar": "صالونة الدجاج",
+  "cuisine": "Gulf",
+  "category": "Main Course",
+  "info": {
+   "prep_time": "20 min",
+   "cook_time": "60 min",
+   "total_time": "1 h 20 min",
+   "servings": "2 Adults",
+   "difficulty": "Easy",
+   "equipment": [
+    "medium pot 22 cm with lid",
+    "wooden spoon",
+    "chopping board for raw chicken",
+    "second board for vegetables",
+    "meat thermometer"
+   ]
+  },
+  "meat_spec": {
+   "type": "Bone-in",
+   "cut": "Mixed",
+   "skin": "Skinless",
+   "weight": "400 g",
+   "preparation": "Pieces (4): 2 thighs and 2 drumsticks",
+   "cooking_method": "Simmered",
+   "source_specified": false,
+   "note": "Source says '1 kg chicken cut into pieces' with no cut, bone or skin stated. Suggested cut: bone-in skinless thighs and drumsticks because the bones enrich the stew broth over 45 minutes of simmering and the skin would make the sauce greasy."
+  },
+  "spice_note": "Source recipe contains no chili; the green pepper is the sweet bell variety and the black pepper is reduced from 1/2 tsp to 1/4 tsp.",
+  "components": [
+   {
+    "title": "Part 1 - Chicken and Vegetable Salona",
+    "ingredients": [
+     {
+      "item": "Chicken thighs and drumsticks, bone-in, skinless",
+      "qty": "400 g (4 pcs)",
+      "note": "pat dry; do not wash"
+     },
+     {
+      "item": "Vegetable oil",
+      "qty": "1 tbsp"
+     },
+     {
+      "item": "Onion, finely chopped",
+      "qty": "1 small (80 g)"
+     },
+     {
+      "item": "Garlic, minced",
+      "qty": "2 cloves"
+     },
+     {
+      "item": "Tomato, chopped",
+      "qty": "1 large (150 g)"
+     },
+     {
+      "item": "Tomato paste",
+      "qty": "1 tbsp"
+     },
+     {
+      "item": "Salt",
+      "qty": "3/4 tsp"
+     },
+     {
+      "item": "Black pepper, ground",
+      "qty": "1/4 tsp"
+     },
+     {
+      "item": "Turmeric",
+      "qty": "1/4 tsp"
+     },
+     {
+      "item": "Ground cumin",
+      "qty": "1/4 tsp"
+     },
+     {
+      "item": "Ground coriander",
+      "qty": "1/4 tsp"
+     },
+     {
+      "item": "Sweet paprika",
+      "qty": "1/2 tsp"
+     },
+     {
+      "item": "Chicken broth (from a cube) or water",
+      "qty": "1 1/4 cups (300 ml)"
+     },
+     {
+      "item": "Dried lime (loomi), pierced twice with a knife",
+      "qty": "1 pcs",
+      "note": "optional in the source; recommended for the Gulf flavour"
+     },
+     {
+      "item": "Potato, peeled, in 3 cm cubes",
+      "qty": "1 medium (150 g)"
+     },
+     {
+      "item": "Carrot, in 1 cm slices",
+      "qty": "1 medium (100 g)"
+     },
+     {
+      "item": "Zucchini, in 1.5 cm slices",
+      "qty": "1 medium (150 g)"
+     },
+     {
+      "item": "Green bell pepper, in 2 cm cubes",
+      "qty": "1/2 pcs (60 g)"
+     },
+     {
+      "item": "Fresh coriander or parsley, chopped",
+      "qty": "2 tbsp",
+      "note": "garnish"
+     }
+    ],
+    "prep": [
+     "Pat the 4 chicken pieces dry on the raw-chicken board. Do not wash them.",
+     "Chop 1 small onion finely, mince 2 garlic cloves and chop 1 large tomato on the vegetable board.",
+     "Peel 1 potato and cut it into 3 cm cubes; slice 1 carrot 1 cm thick; slice 1 zucchini 1.5 cm thick; cut 1/2 green bell pepper into 2 cm cubes. Keep the potato and carrot on one plate and the zucchini and pepper on another.",
+     "Pierce 1 dried lime twice with the tip of a knife. Chop 2 tbsp coriander or parsley."
+    ],
+    "steps": [
+     "Heat 1 tbsp oil in a medium pot 22 cm over medium heat for 1 minute. Add the 1 chopped onion and stir for 5 to 6 minutes until soft and golden.",
+     "Add the 2 minced garlic cloves and stir for 1 minute until fragrant but not brown.",
+     "Add the 4 chicken pieces and turn them with tongs on medium-high heat for 5 to 6 minutes until lightly browned on all sides.",
+     "Add the 1 chopped tomato and 1 tbsp tomato paste and stir on medium heat for 3 minutes until the tomato softens and the paste darkens slightly.",
+     "Add 3/4 tsp salt, 1/4 tsp black pepper, 1/4 tsp turmeric, 1/4 tsp cumin, 1/4 tsp ground coriander and 1/2 tsp paprika and stir for 30 seconds until the chicken is coated and the spices smell toasted.",
+     "Pour in 1 1/4 cups broth, add the pierced dried lime and bring to a boil on high heat (about 3 minutes). Lower the heat, cover and simmer on low for 20 minutes until the chicken is firm and the broth is lightly coloured.",
+     "Add the potato cubes and carrot slices, push them under the liquid, cover and simmer on low for 10 minutes until a knife goes halfway into a potato cube.",
+     "Add the zucchini slices and green pepper cubes, cover and simmer on low for 10 to 15 minutes until every vegetable is tender, the chicken reads 74 C next to the bone and the sauce has thickened enough to coat a spoon. Taste and add salt if needed.",
+     "Turn off the heat, remove the dried lime and sprinkle the 2 tbsp chopped coriander or parsley over the top."
+    ]
+   }
+  ],
+  "timeline": null,
+  "mistakes": [
+   "Vegetables fall apart -> add them in the two stages given (potato and carrot first, zucchini and pepper last) and keep the simmer gentle.",
+   "Sauce thin and watery -> use only 1 1/4 cups broth for this quantity and simmer the last 10 minutes with the lid slightly open if needed.",
+   "Dried lime makes the stew bitter -> use 1 lime only, pierced not crushed, and take it out before serving.",
+   "Chicken tough -> brown it only until lightly coloured, then keep the heat low once the broth is in.",
+   "Stew tastes flat -> the tomato paste must cook 3 minutes until it darkens, and taste for salt at the end."
+  ],
+  "serving": [
+   "Ladle the salona into a deep serving dish with the chicken pieces on top and the vegetables around them.",
+   "Serve with plain white rice (1 cup rice cooked in 1 1/2 cups water with 1/2 tsp salt) or warm Arabic bread.",
+   "Add lemon wedges and a small plate of sliced onion and fresh herbs on the side."
+  ],
+  "safety": [
+   "Chicken is safe at 74 C internal temperature next to the bone.",
+   "Do not wash raw chicken; use a separate board for it and wash hands after handling.",
+   "Cool leftovers within 1 hour; keep in a closed container in the fridge for 2 to 3 days.",
+   "Reheat until steaming hot throughout."
+  ],
+  "source": {
+   "site": "Sayidaty Kitchen (kitchen.sayidaty.net)",
+   "chef": "Sayidaty Kitchen editorial",
+   "title_ar": "صالونة الدجاج بالخضار",
+   "url": "https://kitchen.sayidaty.net/node/40276/صالونة-الدجاج-بالخضار/وصفات-طبخ/وصفات",
+   "image_source": "to be filled by image step",
+   "verification": "Verified (page opened and read)",
+   "adapted": "Scaled from 1 kg chicken, 2 potatoes, 2 carrots, 2 zucchini, 1 pepper, 2 tomatoes and 3 cups broth for 6 people to 400 g bone-in skinless thighs and drumsticks, 1 potato, 1 carrot, 1 zucchini, 1/2 pepper, 1 tomato and 1 1/4 cups broth for 2 adults keeping the source ratios; black pepper reduced to 1/4 tsp; salt ('to taste') set at 3/4 tsp; dried limes reduced from 2 to 1; first simmer shortened from 25 to 20 minutes for the smaller quantity."
+  },
+  "video": null,
+  "video_tl": {
+   "url": "https://www.youtube.com/watch?v=CkJ57o5iWv8",
+   "title": "How to cook Chicken Salona - Marilou Recipes",
+   "channel": "Marilou Recipes",
+   "language": "Tagalog"
+  }
+ },
+ {
+  "id": 13,
+  "name_en": "Lamb Salona",
+  "name_ar": "صالونة اللحم الخليجية",
+  "cuisine": "Gulf",
+  "category": "Main Course",
+  "info": {
+   "prep_time": "20 min (vegetables cut while the lamb boils)",
+   "cook_time": "110 min",
+   "total_time": "2 h 10 min",
+   "servings": "2 Adults",
+   "difficulty": "Medium",
+   "equipment": [
+    "medium pot 20 cm with lid (for boiling lamb)",
+    "large pot 22 cm with lid (for the stew)",
+    "slotted spoon",
+    "fine sieve",
+    "measuring jug",
+    "chopping board for raw meat",
+    "second board for vegetables",
+    "meat thermometer"
+   ]
+  },
+  "meat_spec": {
+   "type": "Bone-in",
+   "cut": "Shoulder",
+   "skin": "n/a",
+   "weight": "450 g",
+   "preparation": "Cubes 4 cm",
+   "cooking_method": "Boiled",
+   "fat": "moderate",
+   "source_specified": false,
+   "note": "Source says 'about 1 kg lamb (or veal), cubed, pre-boiled' with no cut. Suggested cut: bone-in lamb shoulder because it turns tender in 60 minutes of boiling and the bones make the broth that the source asks for."
+  },
+  "spice_note": "Source recipe contains no chili; the green pepper is the sweet bell variety and the black pepper is set at 1/4 tsp.",
+  "components": [
+   {
+    "title": "Part 1 - Boiled Lamb and Broth",
+    "ingredients": [
+     {
+      "item": "Lamb shoulder, bone-in, in 4 cm cubes",
+      "qty": "450 g"
+     },
+     {
+      "item": "Water",
+      "qty": "1 L (4 cups)"
+     },
+     {
+      "item": "Onion, halved",
+      "qty": "1/2 medium"
+     },
+     {
+      "item": "Bay leaf",
+      "qty": "1 pcs"
+     },
+     {
+      "item": "Cardamom pods",
+      "qty": "2 pcs"
+     },
+     {
+      "item": "Salt",
+      "qty": "1 tsp"
+     }
+    ],
+    "prep": [
+     "Rinse the 450 g lamb cubes quickly under cold water and pat dry on the raw-meat board. Halve half an onion."
+    ],
+    "steps": [
+     "Put the 450 g lamb, 1 L cold water, 1/2 onion, 1 bay leaf, 2 cardamom pods and 1 tsp salt in a medium pot 20 cm. Bring to a boil on high heat (about 8 minutes) and skim the grey foam with a spoon.",
+     "Cover and simmer on low heat for 55 to 60 minutes until a fork slides into a cube with no resistance and it reads at least 70 C. Lift the lamb out with a slotted spoon onto a plate. Strain the broth through a sieve into a jug and keep 2 cups (480 ml); discard the onion and spices."
+    ]
+   },
+   {
+    "title": "Part 2 - Vegetable Stew and Assembly",
+    "ingredients": [
+     {
+      "item": "Ghee",
+      "qty": "2 tbsp"
+     },
+     {
+      "item": "Onion, finely chopped",
+      "qty": "1 medium (120 g)"
+     },
+     {
+      "item": "Garlic, crushed",
+      "qty": "2 cloves"
+     },
+     {
+      "item": "Tomatoes, chopped",
+      "qty": "2 medium (250 g)"
+     },
+     {
+      "item": "Green bell pepper, sliced 1 cm",
+      "qty": "1 pcs (120 g)"
+     },
+     {
+      "item": "Carrot, in 1 cm slices",
+      "qty": "1 medium (100 g)"
+     },
+     {
+      "item": "Potato, peeled, in 4 cm cubes",
+      "qty": "1 large (200 g)"
+     },
+     {
+      "item": "Salt",
+      "qty": "1/2 tsp",
+      "note": "the broth is already salted"
+     },
+     {
+      "item": "Black pepper, ground",
+      "qty": "1/4 tsp"
+     },
+     {
+      "item": "Turmeric",
+      "qty": "1/4 tsp"
+     },
+     {
+      "item": "Ground cardamom",
+      "qty": "1/8 tsp"
+     },
+     {
+      "item": "Cinnamon stick",
+      "qty": "1 pcs (half stick, 4 cm)"
+     },
+     {
+      "item": "Reserved lamb broth",
+      "qty": "2 cups (480 ml)"
+     },
+     {
+      "item": "Fresh parsley or coriander, chopped",
+      "qty": "2 tbsp",
+      "note": "garnish"
+     }
+    ],
+    "prep": [
+     "Chop 1 onion finely, crush 2 garlic cloves and chop 2 tomatoes on the vegetable board.",
+     "Slice 1 green bell pepper into 1 cm strips, slice 1 carrot 1 cm thick and cut 1 peeled potato into 4 cm cubes. Chop 2 tbsp parsley or coriander."
+    ],
+    "steps": [
+     "Melt 2 tbsp ghee in a large pot 22 cm over medium heat for 1 minute. Add the 1 chopped onion and stir for 6 to 8 minutes until soft and golden.",
+     "Add the 2 crushed garlic cloves and stir for 1 minute until fragrant.",
+     "Add the 2 chopped tomatoes, the sliced green pepper, the carrot slices, 1/2 tsp salt, 1/4 tsp black pepper, 1/4 tsp turmeric, 1/8 tsp cardamom and the half cinnamon stick. Stir on medium heat for 4 to 5 minutes until the tomatoes collapse and the mixture turns yellow-red.",
+     "Add the potato cubes and the boiled lamb and pour in the 2 cups reserved broth; the liquid should just cover everything. Bring to a boil on high heat (about 3 minutes).",
+     "Cover and simmer gently on low heat for 35 to 40 minutes, stirring once at 20 minutes, until a knife slides easily into the potato and carrot, the lamb is falling off the bone and the sauce has thickened to coat a spoon. Taste and adjust salt.",
+     "Turn off the heat, remove the cinnamon stick and sprinkle the 2 tbsp chopped parsley or coriander over the top."
+    ]
+   }
+  ],
+  "timeline": [
+   "0:00 Put the lamb on to boil with onion, bay leaf and cardamom (60 minutes).",
+   "0:15 Chop the onion, garlic and tomatoes; cut the pepper, carrot and potato.",
+   "0:50 Start Part 2: fry the onion in ghee, add garlic, then tomatoes, pepper, carrot and spices.",
+   "1:05 Lamb is tender: strain the broth, add the lamb, potato and 2 cups broth to the stew.",
+   "1:10 Simmer 35 to 40 minutes.",
+   "1:50 Garnish and serve with white rice."
+  ],
+  "mistakes": [
+   "Lamb chewy -> it must be fork-tender after boiling before it goes into the stew; add 10 more minutes of boiling if needed.",
+   "Potatoes turn to mush -> cut them 4 cm, add them with the broth, and keep the simmer gentle, never a rolling boil.",
+   "Stew too salty -> the boiling broth carries 1 tsp salt, so add only 1/2 tsp in Part 2 and taste at the end.",
+   "Sauce thin -> simmer the last 10 minutes with the lid slightly open until it coats a spoon.",
+   "Onion burnt -> keep the heat at medium and stir; golden takes 6 to 8 minutes."
+  ],
+  "serving": [
+   "Ladle the salona into a deep dish with the lamb pieces in the centre and the vegetables around them.",
+   "Serve with plain white rice (1 cup rice cooked in 1 1/2 cups water with 1/2 tsp salt) or warm Arabic bread.",
+   "Add lemon wedges and a small bowl of plain yogurt on the side."
+  ],
+  "safety": [
+   "Lamb is safe at 70 C and must be fork-tender after boiling.",
+   "Use a separate board for raw meat and wash it with hot soapy water afterwards.",
+   "Cool leftovers within 1 hour; keep in a closed container in the fridge for 2 to 3 days.",
+   "Reheat until steaming hot throughout."
+  ],
+  "source": {
+   "site": "Sayidaty Kitchen (kitchen.sayidaty.net)",
+   "chef": "Sayidaty Kitchen editorial",
+   "title_ar": "صالونة اللحم الخليجية",
+   "url": "https://kitchen.sayidaty.net/node/38473",
+   "image_source": "to be filled by image step",
+   "verification": "Partially verified: page opened and read, content paraphrased by the fetcher rather than copied verbatim",
+   "adapted": "Scaled from about 1 kg lamb, 2 onions, 4 tomatoes, 2 peppers, 2 carrots, 2 potatoes, 4 tbsp ghee and 5 cups broth for 4 people to 450 g bone-in lamb shoulder, 1 onion, 2 tomatoes, 1 pepper, 1 carrot, 1 potato, 2 tbsp ghee and 2 cups broth for 2 adults keeping the source ratios; the source starts from pre-boiled meat and ready broth, so a boiling step (60 minutes with onion, bay leaf, cardamom and 1 tsp salt) was added to make both; black pepper set at 1/4 tsp; the source's 1 hour stew simmer shortened to 35 to 40 minutes because the lamb is already tender and the vegetables are smaller in quantity."
+  },
+  "video": null,
+  "video_tl": {
+   "url": "https://www.youtube.com/watch?v=v2XMC2IOE3Y",
+   "title": "How to cook Salona Laham - Marilou Recipes",
+   "channel": "Marilou Recipes",
+   "language": "Tagalog"
+  }
+ },
+ {
+  "id": 14,
+  "name_en": "Mashi - Malfouf",
+  "name_ar": "محشي ملفوف بالدجاج",
+  "cuisine": "Levantine",
+  "category": "Main Course",
+  "info": {
+   "prep_time": "50 min (blanching the cabbage and rolling)",
+   "cook_time": "75 min",
+   "total_time": "2 h 5 min",
+   "servings": "2 Adults",
+   "difficulty": "Medium",
+   "equipment": [
+    "deep pot 24 cm (for blanching the cabbage)",
+    "heavy-bottomed non-stick pot 20 cm with lid (for cooking)",
+    "heat-proof plate that fits inside the 20 cm pot",
+    "tongs",
+    "deep mixing bowl",
+    "measuring jug",
+    "chopping board for raw chicken",
+    "second board for vegetables",
+    "round serving plate larger than the pot"
+   ]
+  },
+  "meat_spec": {
+   "type": "Bone-in",
+   "cut": "Thigh",
+   "skin": "Skinless",
+   "weight": "300 g chicken plus 100 g ground lamb",
+   "preparation": "Pieces (2 thighs) for the base of the pot; 100 g ground lamb mixed into the rice filling",
+   "cooking_method": "Simmered",
+   "source_specified": true,
+   "note": "Source specifies chicken thigh pieces (6 for a large pot) as the base and 200 g ground meat in the filling without naming the animal; skinless thighs are used so the broth stays clean, and ground lamb is suggested for the filling as the usual Levantine choice."
+  },
+  "spice_note": "Source recipe contains no chili; check that the bought mixed spice (baharat) lists no chili, and black pepper is kept at 1/8 tsp.",
+  "components": [
+   {
+    "title": "Part 1 - Blanched Cabbage Leaves",
+    "ingredients": [
+     {
+      "item": "White cabbage, small to medium head",
+      "qty": "1 pcs (about 1 kg)"
+     },
+     {
+      "item": "Water, for blanching",
+      "qty": "2.5 L (10 cups)"
+     },
+     {
+      "item": "Cumin seeds or ground cumin",
+      "qty": "2 tsp",
+      "note": "goes in the blanching water as in the source"
+     }
+    ],
+    "prep": [
+     "Remove any torn outer leaves from the cabbage. With a small knife cut a deep cone around the core so the leaves are freed at the base."
+    ],
+    "steps": [
+     "Bring 2.5 L water with 2 tsp cumin to a boil in a deep pot 24 cm on high heat (about 10 minutes).",
+     "Lower the whole cabbage into the boiling water, core side down, and keep the water boiling on medium-high heat. After 2 to 3 minutes the outer leaves loosen; lift them off one by one with tongs onto a tray. Keep going for 12 to 15 minutes until you have 18 to 20 soft, bendable leaves; stop when the leaves become small and tight.",
+     "Lay each leaf flat and cut out the thick centre rib with a knife, cutting large leaves into 2 pieces of roughly 10 x 12 cm. Keep the ribs and torn pieces to line the pot."
+    ]
+   },
+   {
+    "title": "Part 2 - Rice and Meat Filling",
+    "ingredients": [
+     {
+      "item": "Short-grain Egyptian rice",
+      "qty": "1 cup (200 g)",
+      "note": "washed and drained"
+     },
+     {
+      "item": "Ground lamb",
+      "qty": "100 g"
+     },
+     {
+      "item": "Onion, very finely minced",
+      "qty": "1/2 large (80 g)"
+     },
+     {
+      "item": "Salt",
+      "qty": "1 1/4 tsp"
+     },
+     {
+      "item": "Mixed spice (baharat), chili-free",
+      "qty": "1 1/2 tsp"
+     },
+     {
+      "item": "Black pepper, ground",
+      "qty": "1/8 tsp"
+     },
+     {
+      "item": "Vegetable oil or melted ghee",
+      "qty": "1/4 cup (60 ml)"
+     }
+    ],
+    "prep": [
+     "Wash 1 cup rice in 3 changes of water until it runs clear and drain it in a sieve for 10 minutes.",
+     "Mince 1/2 large onion as finely as you can on the vegetable board."
+    ],
+    "steps": [
+     "In a deep bowl mix the drained 1 cup rice, 100 g ground lamb, the minced 1/2 onion, 1 1/4 tsp salt, 1 1/2 tsp mixed spice, 1/8 tsp black pepper and 1/4 cup oil with a spoon for 2 minutes until the meat is evenly spread through the rice with no lumps. This is used raw."
+    ]
+   },
+   {
+    "title": "Part 3 - Rolling, Layering and Cooking in Lemon-Garlic Broth",
+    "ingredients": [
+     {
+      "item": "Chicken thighs, bone-in, skinless",
+      "qty": "300 g (2 pcs)",
+      "note": "pat dry; do not wash"
+     },
+     {
+      "item": "Salt, for the chicken",
+      "qty": "1/4 tsp"
+     },
+     {
+      "item": "Black pepper, for the chicken",
+      "qty": "1/8 tsp"
+     },
+     {
+      "item": "Mixed spice (baharat), for the chicken",
+      "qty": "1/4 tsp"
+     },
+     {
+      "item": "Turmeric, for the chicken",
+      "qty": "1/8 tsp"
+     },
+     {
+      "item": "Garlic head, cut in half across",
+      "qty": "1/2 pcs",
+      "note": "tucked between the rolls"
+     },
+     {
+      "item": "Garlic, crushed",
+      "qty": "2 cloves",
+      "note": "for the broth"
+     },
+     {
+      "item": "Lemon juice, fresh",
+      "qty": "1/4 cup (60 ml)"
+     },
+     {
+      "item": "Pomegranate molasses",
+      "qty": "2 tbsp"
+     },
+     {
+      "item": "Water",
+      "qty": "1 1/2 cups (360 ml)"
+     },
+     {
+      "item": "Dried mint",
+      "qty": "1 tsp",
+      "note": "for the broth, standard addition"
+     }
+    ],
+    "prep": [
+     "Pat the 2 chicken thighs dry on the raw-chicken board, rub them with 1/4 tsp salt, 1/8 tsp black pepper, 1/4 tsp mixed spice and 1/8 tsp turmeric, and lay them flat in the bottom of a heavy non-stick pot 20 cm. Cover the bare spots of the pot base with the cabbage ribs and torn pieces. Wash your hands.",
+     "Cut half a head of garlic across so the cloves show. Crush 2 more cloves.",
+     "In a measuring jug mix 1/4 cup lemon juice, 2 tbsp pomegranate molasses, 1 1/2 cups water, the 2 crushed garlic cloves and 1 tsp dried mint."
+    ],
+    "steps": [
+     "Rolling: lay a leaf piece on the board with the cut rib side towards you, smooth side down. Put 1 tbsp of filling in a thin line along the edge nearest you, leaving 1.5 cm free at each side. Fold the near edge over the filling, fold the two sides in, then roll away from you firmly into a finger 1.5 cm thick. Do not roll tightly; the rice swells and needs room. Repeat for all leaves (about 18 to 20 rolls, 15 minutes).",
+     "Lay the rolls in the pot over the chicken in tight rows, seam side down, in 2 to 3 layers, changing direction each layer. Tuck the halved garlic head cut side down between the rolls in the middle layer.",
+     "Set a heat-proof plate upside down directly on top of the rolls and press it gently; it keeps the rolls closed and under the liquid. Put the pot, with no broth yet, on medium-low heat for 15 minutes until you hear the chicken sizzling and smell it browning; this is the source's dry-start stage.",
+     "Pour the lemon-garlic broth from the jug slowly down the side of the pot over the plate so the rolls do not move. Raise the heat to medium-high and boil uncovered for 15 minutes until the liquid drops to the level of the plate.",
+     "Lower to the lowest heat, cover with the lid (plate still inside) and cook for 30 to 35 minutes until the broth is absorbed, a roll pressed with a finger feels soft and a grain of rice from one roll is fully tender with no hard centre. If the rice is still hard, add 1/4 cup hot water and cook 10 more minutes.",
+     "Turn off the heat and rest covered for 10 minutes. Remove the plate, run a spatula around the edge, place a round serving plate over the pot, hold both with oven gloves and flip in one movement. Wait 2 minutes and lift the pot; the chicken sits on top of the rolls."
+    ]
+   }
+  ],
+  "timeline": [
+   "0:00 Boil the water with cumin; core the cabbage.",
+   "0:10 Blanch the cabbage and peel the leaves (15 minutes); wash and drain the rice.",
+   "0:25 Trim the ribs; mix the filling; season the chicken and line the pot.",
+   "0:35 Roll the leaves and layer them over the chicken; add the garlic head; mix the broth.",
+   "0:50 Dry-start on medium-low with the plate on top (15 minutes).",
+   "1:05 Add the broth and boil 15 minutes.",
+   "1:20 Cover and cook on lowest heat 30 to 35 minutes.",
+   "1:55 Rest 10 minutes, flip and serve."
+  ],
+  "mistakes": [
+   "Rolls open while cooking -> fold the sides in before rolling, lay them seam side down, and keep the plate on top from the dry-start stage.",
+   "Rice inside is hard -> do not roll tightly; if still hard after 35 minutes add 1/4 cup hot water and give 10 more minutes on the lowest heat.",
+   "Leaves tear when rolling -> blanch until truly soft (2 to 3 minutes per layer) and cut away the whole thick rib.",
+   "Bottom burns in the dry-start stage -> use medium-low heat, a non-stick pot and the cabbage ribs under the chicken, and keep the stage at 15 minutes.",
+   "Too sour -> measure the lemon juice exactly at 1/4 cup; the pomegranate molasses adds sweetness to balance it.",
+   "Chicken undercooked -> the thighs cook for over an hour under the rolls; if in doubt check that the meat pulls from the bone easily when the pot is flipped."
+  ],
+  "serving": [
+   "Bring the flipped pot to the table whole so the golden chicken thighs sit on top of the rolls, then lift the thighs aside and serve the rolls with a spoon.",
+   "Squeeze the soft garlic cloves out of their skins over the rolls.",
+   "Serve with plain yogurt, lemon wedges and warm Arabic bread, as the source suggests."
+  ],
+  "safety": [
+   "Chicken thighs must reach 74 C; after 75 minutes of cooking under the rolls they will, and the meat should pull from the bone easily.",
+   "Raw rice and raw meat filling must be rolled and cooked the same day; do not leave the filled bowl out of the fridge for more than 1 hour before cooking.",
+   "Do not wash raw chicken; use a separate board for it and wash hands after seasoning.",
+   "Cool leftovers within 1 hour; keep in a closed container in the fridge for 2 to 3 days; reheat until steaming hot, and reheat rice only once."
+  ],
+  "source": {
+   "site": "Manal Alalem (manalonline.com)",
+   "chef": "Manal Alalem",
+   "title_ar": "ملفوف بالدجاج",
+   "url": "https://www.manalonline.com/ملفوف-بالدجاج/",
+   "image_source": "to be filled by image step",
+   "verification": "Partially verified: page opened and read via the percent-encoded URL, content paraphrased by the fetcher; the page's '200 C' in the boiling step is a site error and was ignored",
+   "adapted": "Scaled from 6 chicken thighs, 2 cups rice, 200 g ground meat, 1/2 cup lemon juice, 1/4 cup pomegranate molasses and 3 cups water (no servings stated) to 2 thighs, 1 cup rice, 100 g ground lamb, 1/4 cup lemon juice, 2 tbsp molasses and 1 1/2 cups water for 2 adults keeping the source ratios; blanching water reduced from 8 cups to 2.5 L and cumin from 1 tbsp to 2 tsp for a small cabbage; the source names no meat type for the filling, so ground lamb is suggested; 2 crushed garlic cloves and 1 tsp dried mint added to the broth as the standard Levantine lemon-garlic broth; the dry-start reduced from 20 minutes on medium to 15 minutes on medium-low for the smaller pot; the final covered cooking time (not given in the source) set at 30 to 35 minutes; the 10 minute rest before flipping is a standard value."
+  },
+  "video": {
+   "url": "https://www.youtube.com/watch?v=U_J4e58eoyY",
+   "title": "ADDICTIVE Herby Egyptian Cabbage Rolls",
+   "channel": "Middle Eats",
+   "language": "English",
+   "duration": "6:55",
+   "priority": "P4",
+   "spicy_warning": false,
+   "subtitles": "n/a"
+  },
+  "video_tl": {
+   "url": "https://www.youtube.com/watch?v=8lVHVC6YXww",
+   "title": "How to make Cabbage Rolls / Malfouf - Kitchen with Sorayda",
+   "channel": "Kitchen with Sorayda",
+   "language": "Tagalog"
+  }
+ },
+ {
+  "id": 15,
+  "name_en": "Cajun Chicken with Lobia and White Rice",
+  "name_ar": "دجاج كاجن مع لوبيا بالصلصة وأرز أبيض",
+  "cuisine": "Other",
+  "category": "Main Course",
+  "info": {
+   "prep_time": "25 min active, plus overnight bean soak and 2 h chicken marinating",
+   "cook_time": "75 min",
+   "total_time": "1 h 40 min after soaking and marinating",
+   "servings": "2 Adults",
+   "difficulty": "Medium",
+   "equipment": [
+    "oven",
+    "baking tray or dish 25 x 30 cm",
+    "aluminium foil",
+    "mixing bowl with lid (for marinating)",
+    "medium pot 20 cm with lid (for the beans)",
+    "medium pot 18 cm with lid (for the rice)",
+    "colander",
+    "small bowl for the spice mix",
+    "chopping board for raw chicken",
+    "second board for vegetables",
+    "meat thermometer"
+   ]
+  },
+  "meat_spec": {
+   "type": "Bone-in",
+   "cut": "Half",
+   "skin": "Skin-on",
+   "weight": "600 g",
+   "preparation": "Half chicken cut into 4 pieces (thigh, drumstick, breast half in 2)",
+   "cooking_method": "Roasted",
+   "source_specified": true,
+   "note": "Source specifies 1/2 chicken, bone-in with skin, for 2 persons; it is cut into 4 pieces here so the marinade reaches more surface and it cooks evenly in 50 minutes."
+  },
+  "spice_note": "Source uses hot paprika, crushed chili and a bought Cajun spice mix (which contains cayenne); all three are removed and replaced with a home Cajun mix of sweet paprika, garlic powder, onion powder, oregano, thyme, cumin and 1/4 tsp black pepper. The lobia and rice components contain no chili.",
+  "components": [
+   {
+    "title": "Part 1 - Cajun Chicken (home mix, no cayenne)",
+    "ingredients": [
+     {
+      "item": "Half chicken, bone-in, skin-on, cut in 4 pieces",
+      "qty": "600 g",
+      "note": "pat dry; do not wash"
+     },
+     {
+      "item": "Sweet paprika",
+      "qty": "2 tsp"
+     },
+     {
+      "item": "Garlic powder",
+      "qty": "1 tsp"
+     },
+     {
+      "item": "Onion powder",
+      "qty": "1 tsp"
+     },
+     {
+      "item": "Dried oregano",
+      "qty": "1/2 tsp"
+     },
+     {
+      "item": "Dried thyme",
+      "qty": "1/2 tsp"
+     },
+     {
+      "item": "Ground cumin",
+      "qty": "1/2 tsp"
+     },
+     {
+      "item": "Black pepper, ground",
+      "qty": "1/4 tsp"
+     },
+     {
+      "item": "Salt",
+      "qty": "1 tsp"
+     },
+     {
+      "item": "Lemon juice, fresh",
+      "qty": "3 tbsp"
+     },
+     {
+      "item": "Vegetable oil",
+      "qty": "2 tbsp"
+     },
+     {
+      "item": "Onion, sliced in rings",
+      "qty": "1 medium (120 g)"
+     }
+    ],
+    "prep": [
+     "Pat the 600 g chicken pieces dry with kitchen paper on the raw-chicken board and leave them in a colander for 10 minutes so the skin dries. Do not wash the chicken.",
+     "In a small bowl mix 2 tsp sweet paprika, 1 tsp garlic powder, 1 tsp onion powder, 1/2 tsp oregano, 1/2 tsp thyme, 1/2 tsp cumin, 1/4 tsp black pepper and 1 tsp salt. Stir in 3 tbsp lemon juice, then 2 tbsp oil, until it is a loose red paste.",
+     "Make 2 shallow cuts in the thick part of the thigh and breast. Put the chicken in a bowl, pour the paste over and rub it over every side and under the skin with a gloved hand. Cover and refrigerate for at least 2 hours, up to 12 hours.",
+     "Slice 1 onion into rings."
+    ],
+    "steps": [
+     "Preheat the oven to 200 C (fan 180 C) for 15 minutes. Lay the 4 marinated chicken pieces skin side up in a baking dish 25 x 30 cm, pour every drop of marinade from the bowl over them and spread the onion rings on top. Cover the dish tightly with 2 layers of foil.",
+     "Bake on the middle shelf for 35 minutes until the chicken is firm and the onions are soft and the juices in the dish are bubbling.",
+     "Remove the foil (steam escapes, keep your face back) and bake uncovered for 15 to 20 minutes until the skin is deep red-brown and crisp at the edges and a thermometer in the thickest part of the thigh (not touching bone) reads 74 C. Rest in the dish for 5 minutes."
+    ]
+   },
+   {
+    "title": "Part 2 - Lobia in Tomato Sauce",
+    "ingredients": [
+     {
+      "item": "Dried lobia (black-eyed beans)",
+      "qty": "1/2 cup (100 g)",
+      "note": "soaked overnight or at least 6 hours"
+     },
+     {
+      "item": "Water, for boiling the beans",
+      "qty": "3 cups (720 ml)"
+     },
+     {
+      "item": "Salt, for boiling the beans",
+      "qty": "1/2 tsp"
+     },
+     {
+      "item": "Vegetable oil",
+      "qty": "1 tbsp"
+     },
+     {
+      "item": "Onion, finely minced",
+      "qty": "1/2 medium (60 g)"
+     },
+     {
+      "item": "Tomato juice or passata",
+      "qty": "1 cup (240 ml)"
+     },
+     {
+      "item": "Salt",
+      "qty": "1/4 tsp"
+     },
+     {
+      "item": "Black pepper, ground",
+      "qty": "1/8 tsp"
+     },
+     {
+      "item": "Mixed spice (baharat), chili-free",
+      "qty": "1/4 tsp"
+     },
+     {
+      "item": "Ground cumin",
+      "qty": "1/4 tsp"
+     }
+    ],
+    "prep": [
+     "The night before: wash 1/2 cup dried lobia, cover with 3 cups cold water and soak for at least 6 hours; drain and rinse.",
+     "Mince 1/2 onion finely."
+    ],
+    "steps": [
+     "Put the drained soaked beans in a medium pot 20 cm with 3 cups fresh water and 1/2 tsp salt. Bring to a boil on high heat (about 5 minutes), skim the foam, then cover and simmer on low for 35 to 40 minutes until a bean crushes easily between two fingers. Drain in a colander and keep 1/4 cup of the cooking water.",
+     "Dry the pot, add 1 tbsp oil and heat over medium heat for 1 minute. Add the 1/2 minced onion and stir for 5 to 6 minutes until golden.",
+     "Pour in 1 cup tomato juice and cook on medium heat for 6 to 8 minutes, stirring now and then, until it thickens and darkens slightly.",
+     "Add 1/4 tsp salt, 1/8 tsp black pepper, 1/4 tsp mixed spice and 1/4 tsp cumin, then the cooked beans and the 1/4 cup reserved cooking water. Stir, cover and simmer on low heat for 20 to 25 minutes until the beans are very soft and the sauce is thick and clings to them. Taste for salt."
+    ]
+   },
+   {
+    "title": "Part 3 - White Rice",
+    "ingredients": [
+     {
+      "item": "White rice (Egyptian short-grain or basmati)",
+      "qty": "1 cup (200 g)"
+     },
+     {
+      "item": "Water, hot",
+      "qty": "1 1/2 cups (360 ml)"
+     },
+     {
+      "item": "Salt",
+      "qty": "1/2 tsp"
+     },
+     {
+      "item": "Butter or vegetable oil",
+      "qty": "1 tsp",
+      "note": "standard addition, optional"
+     }
+    ],
+    "prep": [
+     "Wash 1 cup rice in 3 changes of cold water until the water runs almost clear and drain in a sieve."
+    ],
+    "steps": [
+     "Bring 1 1/2 cups water with 1 tsp butter to a boil in a medium pot 18 cm over medium heat (about 3 minutes).",
+     "Add the drained 1 cup rice and 1/2 tsp salt and stir once; the water should stand about 1 cm above the rice. Let it return to a boil for 1 minute.",
+     "Reduce to the lowest heat, cover and simmer for 15 minutes without lifting the lid until the water is absorbed and a grain is tender with no hard centre. Turn off the heat, rest covered for 5 minutes and fluff with a fork."
+    ]
+   }
+  ],
+  "timeline": [
+   "Night before: soak the lobia. Morning (at least 2 hours ahead): mix the Cajun paste and marinate the chicken.",
+   "0:00 Put the soaked beans on to boil (40 minutes).",
+   "0:05 Preheat the oven to 200 C; slice the onion rings.",
+   "0:20 Put the chicken in the oven covered with foil (35 minutes).",
+   "0:40 Beans are soft: drain, fry the onion, add tomato juice.",
+   "0:50 Add spices and beans to the sauce; simmer 20 to 25 minutes.",
+   "0:55 Remove the foil from the chicken (15 to 20 minutes more).",
+   "0:55 Wash the rice and put it on (15 minutes plus 5 minutes rest).",
+   "1:15 Chicken reads 74 C: rest 5 minutes while the rice rests and the beans finish.",
+   "1:20 Serve."
+  ],
+  "mistakes": [
+   "Chicken tastes hot -> never use a bought Cajun blend or hot paprika; the home mix uses sweet paprika only.",
+   "Chicken skin soft -> the foil must come off for the last 15 to 20 minutes and the oven must be fully at 200 C.",
+   "Beans still hard after 40 minutes -> they were under-soaked or old; keep simmering, checking every 10 minutes, before adding them to the tomato sauce (acid stops them softening).",
+   "Lobia sauce watery -> cook the tomato juice down 6 to 8 minutes before the beans go in and finish with the lid on but the sauce thick.",
+   "Rice gummy -> use exactly 1 1/2 cups water for 1 cup rice, keep the lid closed for the 15 minutes, and rest 5 minutes before fluffing."
+  ],
+  "serving": [
+   "Spoon the white rice onto one side of each plate, ladle the lobia next to it and lay 2 chicken pieces on top with the roasted onion rings.",
+   "Spoon the red juices from the baking dish over the chicken.",
+   "Serve with a simple green salad and lemon wedges."
+  ],
+  "safety": [
+   "Chicken is safe at 74 C internal temperature at the thickest part of the thigh.",
+   "Do not wash raw chicken; marinate it covered in the fridge, never on the counter, and discard any marinade that does not go into the oven with the chicken.",
+   "Dried beans must be soaked and then boiled until fully soft before eating.",
+   "Cool leftovers within 1 hour; keep in closed containers in the fridge for 2 to 3 days; reheat until steaming hot, and reheat rice only once."
+  ],
+  "source": {
+   "site": "Custom Recipe (per brief) + Shamlola",
+   "chef": "Household custom (non-spicy Cajun mix); Shamlola editorial for lobia and rice",
+   "title_ar": "دجاج كاجن (وصفة منزلية) + لوبيا بالصلصة + أرز أبيض",
+   "url": "https://www.shamlola.com/recipes/طريقة-عمل-لوبيا-بالصلصة",
+   "image_source": "to be filled by image step",
+   "verification": "Lobia and rice: Verified (Shamlola pages opened and read). Cajun chicken: Custom Recipe as listed in the brief; no Cajun recipe exists on the approved Arabic sites, so the chicken technique follows the Sayidaty grilled-chicken method with a home non-spicy Cajun mix.",
+   "adapted": "Cajun mix made at home without cayenne or chili (sweet paprika, garlic powder, onion powder, oregano, thyme, max 1/4 tsp black pepper). Scaled to 2 adults."
+  },
+  "video": {
+   "url": "https://www.youtube.com/watch?v=5P2HYaeo_f8",
+   "title": "Egyptian Comfort Food: Black-Eyed Beans in Tomato Sauce | Vegan Recipe",
+   "channel": "Muhammed the Egyptian Cook",
+   "language": "English",
+   "duration": "4:08",
+   "priority": "P4",
+   "spicy_warning": false,
+   "subtitles": "manual English"
+  },
+  "video_tl": null
+ },
+ {
+  "id": 16,
+  "name_en": "Grilled Chicken with Molokhia and White Rice",
+  "name_ar": "دجاج مشوي مع ملوخية مصرية وأرز أبيض",
+  "cuisine": "Egyptian",
+  "category": "Main Course",
+  "info": {
+   "prep_time": "25 min active, plus 6 h to overnight marinating",
+   "cook_time": "60 min",
+   "total_time": "1 h 25 min after marinating",
+   "servings": "2 Adults",
+   "difficulty": "Medium",
+   "equipment": [
+    "oven",
+    "roasting tray with a rack",
+    "zip bag or bowl with lid (for marinating)",
+    "basting brush",
+    "medium pot 18 cm (for the molokhia)",
+    "small frying pan (for the ta'leya)",
+    "medium pot 18 cm with lid (for the rice)",
+    "small pot (for heating broth)",
+    "chopping board for raw chicken",
+    "second board for vegetables",
+    "meat thermometer"
+   ]
+  },
+  "meat_spec": {
+   "type": "Bone-in",
+   "cut": "Half",
+   "skin": "Skin-on",
+   "weight": "600 g",
+   "preparation": "Half chicken, flattened with the palm and cut into 2 (leg quarter and breast with wing)",
+   "cooking_method": "Roasted",
+   "source_specified": false,
+   "note": "Source uses 1 whole chicken of about 1 kg roasted whole for 4 people. For 2 adults a half chicken (600 g), flattened and cut in 2, is suggested so it roasts in 45 to 50 minutes on the rack instead of 70 and the skin still browns."
+  },
+  "spice_note": "Source recipe contains no chili in any of the three components; the paprika is sweet and black pepper is not used at all.",
+  "components": [
+   {
+    "title": "Part 1 - Oven-Grilled Chicken",
+    "ingredients": [
+     {
+      "item": "Half chicken, bone-in, skin-on, flattened and cut in 2",
+      "qty": "600 g",
+      "note": "pat dry; do not wash"
+     },
+     {
+      "item": "Garlic, minced",
+      "qty": "1 clove"
+     },
+     {
+      "item": "Lemon juice",
+      "qty": "1 tbsp"
+     },
+     {
+      "item": "Balsamic vinegar",
+      "qty": "1 tbsp"
+     },
+     {
+      "item": "White vinegar",
+      "qty": "1 tbsp"
+     },
+     {
+      "item": "Olive oil",
+      "qty": "1 tbsp"
+     },
+     {
+      "item": "Soy sauce",
+      "qty": "1 tbsp"
+     },
+     {
+      "item": "Salt",
+      "qty": "3/4 tsp",
+      "note": "the soy sauce is salty"
+     },
+     {
+      "item": "Sweet paprika",
+      "qty": "1 tsp"
+     },
+     {
+      "item": "Mixed spice (baharat), chili-free",
+      "qty": "1 tsp"
+     },
+     {
+      "item": "Ground cinnamon",
+      "qty": "1/2 tsp"
+     },
+     {
+      "item": "Dried thyme",
+      "qty": "1 tsp"
+     },
+     {
+      "item": "Dried basil",
+      "qty": "1 tsp"
+     }
+    ],
+    "prep": [
+     "Pat the 600 g chicken dry with kitchen paper on the raw-chicken board and leave it in a colander for 10 minutes so the skin dries. Do not wash it.",
+     "In a small bowl mix 1 minced garlic clove, 1 tbsp lemon juice, 1 tbsp olive oil, 1 tbsp balsamic vinegar, 1 tbsp white vinegar and 1 tbsp soy sauce. Add 3/4 tsp salt, 1 tsp paprika, 1 tsp mixed spice, 1/2 tsp cinnamon, 1 tsp thyme and 1 tsp basil and mix again.",
+     "Rub the marinade over the chicken on both sides and under the skin with a gloved hand. Put it in a zip bag or covered bowl and refrigerate overnight or at least 6 hours. Keep 2 tbsp of the marinade in a separate small covered bowl in the fridge for basting."
+    ],
+    "steps": [
+     "Preheat the oven to 190 C (fan 170 C) for 15 minutes. Set the 2 marinated chicken pieces skin side up on the rack of a roasting tray with 1 cm of water in the tray below to catch drips.",
+     "Roast on the middle shelf for 25 minutes until the skin starts to colour, then brush with half of the 2 tbsp reserved marinade using the basting brush.",
+     "Roast for another 20 to 25 minutes, brushing once more at 10 minutes, until the skin is deep golden brown, the juices run clear and a thermometer in the thickest part of the thigh (not touching bone) reads 74 C. Rest on the rack for 5 minutes."
+    ]
+   },
+   {
+    "title": "Part 2 - Egyptian Green Molokhia",
+    "ingredients": [
+     {
+      "item": "Molokhia leaves, finely minced (fresh or frozen block)",
+      "qty": "200 g (half a 400 g frozen pack)"
+     },
+     {
+      "item": "Chicken broth, hot (from a cube or homemade)",
+      "qty": "2 cups (480 ml)"
+     },
+     {
+      "item": "Garlic, very finely minced",
+      "qty": "1 1/2 tsp total (1/2 tsp for the pot, 1 tsp for the ta'leya)"
+     },
+     {
+      "item": "Ground dried coriander",
+      "qty": "1 1/2 tsp total (1/2 tsp for the pot, 1 tsp for the ta'leya)"
+     },
+     {
+      "item": "Ghee",
+      "qty": "1 tbsp"
+     },
+     {
+      "item": "Salt",
+      "qty": "1/4 tsp",
+      "note": "less if the broth is salty"
+     }
+    ],
+    "prep": [
+     "If using frozen molokhia, take 200 g out of the freezer 30 minutes ahead so the block can break up; do not thaw it fully.",
+     "Mince the garlic as finely as possible (1 1/2 tsp) and divide it into 1/2 tsp and 1 tsp. Divide 1 1/2 tsp ground coriander the same way.",
+     "Heat 2 cups chicken broth in a small pot until steaming."
+    ],
+    "steps": [
+     "Put the 200 g minced molokhia in a medium pot 18 cm over medium-low heat with 1/2 tsp garlic and 1/2 tsp ground coriander and stir for 1 minute until the block loosens.",
+     "Add the hot broth a ladle at a time (about 2 cups in total), stirring with a wooden spoon between additions, for 4 to 5 minutes until the molokhia is a smooth green soup of medium thickness that coats the spoon but still pours. Add 1/4 tsp salt. Rule: once the leaves are in, never let it boil hard; keep it below a simmer, with only small bubbles at the edge, or the leaves sink and separate from the liquid. Take it off the heat as soon as it is hot through (about 2 more minutes).",
+     "Ta'leya: heat 1 tbsp ghee in a small frying pan over medium heat for 30 seconds. Add the remaining 1 tsp minced garlic and stir for 30 to 40 seconds until it just starts to colour, then add the remaining 1 tsp ground coriander and stir for 20 to 30 seconds more until the garlic is reddish-gold and the kitchen smells of coriander. Do not let it go dark brown.",
+     "Pour the sizzling ta'leya over the molokhia at once and cover the pot with the lid for 2 minutes so the aroma stays inside. Stir once before serving."
+    ]
+   },
+   {
+    "title": "Part 3 - White Rice",
+    "ingredients": [
+     {
+      "item": "White rice (Egyptian short-grain or basmati)",
+      "qty": "1 cup (200 g)"
+     },
+     {
+      "item": "Water, hot",
+      "qty": "1 1/2 cups (360 ml)"
+     },
+     {
+      "item": "Salt",
+      "qty": "1/2 tsp"
+     },
+     {
+      "item": "Butter or vegetable oil",
+      "qty": "1 tsp",
+      "note": "standard addition, optional"
+     }
+    ],
+    "prep": [
+     "Wash 1 cup rice in 3 changes of cold water until the water runs almost clear and drain in a sieve."
+    ],
+    "steps": [
+     "Bring 1 1/2 cups water with 1 tsp butter to a boil in a medium pot 18 cm over medium heat (about 3 minutes).",
+     "Add the drained 1 cup rice and 1/2 tsp salt and stir once; the water should stand about 1 cm above the rice. Let it return to a boil for 1 minute.",
+     "Reduce to the lowest heat, cover and simmer for 15 minutes without lifting the lid until the water is absorbed and a grain is tender with no hard centre. Turn off the heat, rest covered for 5 minutes and fluff with a fork."
+    ]
+   }
+  ],
+  "timeline": [
+   "Night before (or 6 hours ahead): mix the marinade, rub it into the chicken, refrigerate; keep 2 tbsp aside for basting.",
+   "0:00 Preheat the oven to 190 C; take the frozen molokhia out.",
+   "0:15 Put the chicken on the rack in the oven (45 to 50 minutes).",
+   "0:20 Mince and divide the garlic and coriander; wash the rice.",
+   "0:35 Heat the broth; put the rice on (15 minutes plus 5 minutes rest).",
+   "0:40 Brush the chicken; start the molokhia on medium-low and add the broth.",
+   "0:50 Make the ta'leya and pour it over the molokhia; cover.",
+   "1:00 Chicken reads 74 C: rest 5 minutes.",
+   "1:05 Serve."
+  ],
+  "mistakes": [
+   "Molokhia separates into leaves and watery broth -> it boiled hard; keep it below a simmer, add the broth hot and gradually, and take it off the heat as soon as it is hot through.",
+   "Ta'leya bitter -> the garlic went dark brown; stop at reddish-gold and pour it over immediately.",
+   "Molokhia too thick or too thin -> add the broth a ladle at a time; it should coat the spoon but still pour.",
+   "Chicken skin pale -> the rack lifts it off the tray so air circulates; the oven must be fully at 190 C and the chicken not covered.",
+   "Chicken dry at the breast -> check the thigh at 74 C and stop; the source's 70 minutes is for a whole 1 kg bird.",
+   "Rice gummy -> exactly 1 1/2 cups water for 1 cup rice, lid closed for 15 minutes, rest 5 minutes."
+  ],
+  "serving": [
+   "Spoon the white rice onto each plate and ladle the molokhia into a small bowl beside it, or pour it over the rice at the table as Egyptians do.",
+   "Lay a piece of chicken on each plate next to the rice, skin side up.",
+   "Serve with lemon wedges, and a small plate of chopped onion in vinegar on the side."
+  ],
+  "safety": [
+   "Chicken is safe at 74 C internal temperature at the thickest part of the thigh.",
+   "Do not wash raw chicken; marinate it covered in the fridge; use only the 2 tbsp marinade kept apart before it touched the chicken for basting.",
+   "Molokhia must be eaten the same day or cooled within 1 hour and kept in the fridge for up to 2 days; reheat gently without boiling.",
+   "Cool leftovers within 1 hour; keep in closed containers in the fridge for 2 to 3 days; reheat until steaming hot, and reheat rice only once."
+  ],
+  "source": {
+   "site": "Shamlola (shamlola.com), all three components",
+   "chef": "Shamlola editorial",
+   "title_ar": "طريقة تحضير دجاج مشوي في الفرن + الملوخية الخضراء المصرية + الأرز الأبيض",
+   "url": "https://www.shamlola.com/recipes/طريقة-تحضير-دجاج-مشوي-في-الفرن",
+   "image_source": "to be filled by image step",
+   "verification": "Verified (all three pages opened and read); molokhia page https://www.shamlola.com/recipes/طريقة-عمل-الملوخية-الخضراء-المصرية ; rice page https://www.shamlola.com/recipes/طريقة-عمل-الأرز-الأبيض",
+   "adapted": "Chicken scaled from a 1 kg whole bird for 4 to a 600 g half chicken cut in 2, marinade halved, cinnamon reduced from 1 tsp to 1/2 tsp and salt from 1 tsp to 3/4 tsp for the smaller bird, roasting time shortened from 70 to 45 to 50 minutes at the source's 190 C, and 2 tbsp marinade kept aside before it touches the chicken so basting is safe. Molokhia scaled from 1/2 kg leaves for 6 to 200 g for 2; the source does not quantify the broth, so 2 cups is the professional standard for 200 g; salt set at 1/4 tsp; the source splits the garlic and coriander between the pot and the ta'leya, kept here as 1/2 tsp and 1 tsp. Rice kept at the source's 1 cup to 1 1/2 cups water and 15 minutes; washing the rice and 1 tsp butter are standard additions."
+  },
+  "video": {
+   "url": "https://www.youtube.com/watch?v=aCDXz0SbPl8",
+   "title": "Ancient Jute Leaf Stew - Egyptian Molokhia Recipe",
+   "channel": "Middle Eats",
+   "language": "English",
+   "duration": "11:58",
+   "priority": "P4",
+   "spicy_warning": false,
+   "subtitles": "n/a"
+  },
+  "video_tl": {
+   "url": "https://www.youtube.com/watch?v=vgyfk9PCN-Q",
+   "title": "Molokhia with Chicken (Saluyot sa Tagalog) - Mohd & Ley Omari",
+   "channel": "Mohd & Ley Omari",
+   "language": "Tagalog"
+  }
+ }
 ]

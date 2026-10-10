@@ -12,6 +12,25 @@ except Exception:
     PICKS = {}
 E = html.escape
 
+# Country of origin of each dish (flag + name)
+ORIGIN = {
+ 1:('🇮🇳🇸🇦','Indian / Gulf'), 2:('🇮🇳🇸🇦','Indian / Gulf'), 3:('🇵🇸','Palestine'), 4:('🇵🇸','Palestine'), 5:('🇵🇹🇿🇦','Portuguese / South African style'),
+ 6:('🇸🇦','Saudi Arabia'), 7:('🇸🇦','Saudi Arabia'), 8:('🇸🇦','Saudi Arabia'), 9:('🇸🇦','Saudi Arabia'), 10:('🇮🇳🇦🇪','Indian / Gulf home style'),
+ 11:('🇦🇪','Gulf home cooking'), 12:('🇦🇪','United Arab Emirates'), 13:('🇦🇪','United Arab Emirates'), 14:('🇱🇧🇸🇾','Levant'), 15:('🇺🇸🇪🇬','American / Egyptian'),
+ 16:('🇪🇬','Egypt'), 17:('🇪🇬','Egypt'), 18:('🇪🇬','Egypt'), 19:('🇵🇸','Palestine'), 20:('🇮🇹','Italy'), 21:('🇬🇧','International'),
+ 22:('🇮🇳🇸🇦','Indian / Gulf'), 23:('🇾🇪🇸🇦','Yemen / Saudi Arabia'),
+ 'B1':('🇪🇬','Egypt'), 'B2':('🇪🇬','Egypt'), 'B3':('🇸🇦','Gulf'), 'B4':('🇱🇧🇯🇴','Levant'), 'B5':('🇪🇬','Egypt'), 'B6':('🇸🇦','Gulf'), 'B7':('🇪🇬','Egypt'),
+ 'B8':('🇸🇦','Gulf'), 'B9':('🇨🇾🇱🇧','Cyprus / Levant'), 'B10':('🇸🇦','Gulf'), 'B11':('🇱🇧','Levant'), 'B12':('🇪🇬','Egypt'), 'B13':('🇪🇬','Egypt'), 'B14':('🇸🇦','Gulf'), 'B15':('🇸🇦','Gulf'),
+ 'S1':('🇱🇧','Lebanon'), 'S2':('🇱🇧','Levant'), 'S3':('🇸🇦','Gulf'), 'S4':('🇱🇧','Lebanon'), 'S5':('🇸🇦','Gulf'), 'S6':('🇬🇷','Greece'), 'S7':('🇺🇸','International'), 'S8':('🇨🇾🇱🇧','Cyprus / Levant'), 'S9':('🇸🇦','Gulf'),
+}
+SITE_FLAG = {'Sayidaty':'🇸🇦', 'Manal':'🇯🇴', 'Shamlola':'🇪🇬', 'Samira':'🇵🇸', 'Fatafeat':'🇦🇪', 'Custom':'🏠'}
+def site_flag(site):
+    for k, f in SITE_FLAG.items():
+        if k.lower() in (site or '').lower(): return f
+    return ''
+def origin(rid):
+    return ORIGIN.get(rid if isinstance(rid, int) else str(rid), ('', ''))
+
 def load():
     rec = []
     for f in sorted(glob.glob(os.path.join(HERE, 'recipes', '*.json'))):
@@ -43,7 +62,7 @@ def photos(r):
 CSS = """
 @page{size:A4;margin:14mm 13mm 16mm}
 *{box-sizing:border-box}
-body{font-family:Inter,'Segoe UI',Arial,sans-serif;color:#1e1810;font-size:10.5px;line-height:1.45;margin:0;background:#fff}
+body{font-family:Inter,'Segoe UI',Arial,'Noto Color Emoji',sans-serif;color:#1e1810;font-size:10.5px;line-height:1.45;margin:0;background:#fff}
 .cover{height:265mm;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;background:#fdfaf4;border:1px solid #e6ddd1;page-break-after:always}
 .cover h1{font-size:46px;letter-spacing:.06em;margin:0}
 .cover .sub{font-size:16px;color:#c8522a;margin-top:10px;letter-spacing:.2em}
@@ -59,7 +78,7 @@ h1.sec-title{font-size:24px;margin:0 0 4px;color:#1e1810}
 /* recipe */
 .recipe{page-break-before:always}
 .head{display:flex;justify-content:space-between;gap:12px;border-bottom:3px solid #1e1810;padding-bottom:8px}
-.head h1{font-size:24px;margin:0}
+.head h1{font-size:24px;margin:0}.flag{font-family:'Noto Color Emoji';font-size:22px}
 .ar{font-size:15px;color:#6f6257}
 .tags{font-size:9.5px;color:#6f6257;margin-top:2px}
 .badge{display:inline-block;background:#2f6b4a;color:#fff;font-weight:700;padding:3px 8px;border-radius:4px;font-size:9.5px;white-space:nowrap}
@@ -115,11 +134,11 @@ def recipe_html(r):
     if vt and vt.get('url'):
         vid += f'<div class=qr><img src="{qr(vt["url"])}"><div><b>Tagalog video</b><br>{E(vt.get("title",""))}<br><small><a href="{E(vt["url"])}">{E(vt["url"])}</a></small></div></div>'
     s = r['source']
-    src = f'<div class=src><b>Original Arabic recipe reference:</b> {E(s.get("site",""))} · Chef: {E(s.get("chef",""))} · {E(s.get("title_ar",""))} · <a href="{E(s.get("url",""))}">{E(s.get("url",""))}</a> · Verification: {E(s.get("verification",""))}<br><b>Adapted:</b> {E(s.get("adapted",""))}' + (f'<br><b>Image source:</b> Wikimedia Commons / video stills (see credits)' if ph else '') + '</div>'
+    src = f'<div class=src><b>Original Arabic recipe reference:</b> {site_flag(s.get("site",""))} {E(s.get("site",""))} · Chef: {E(s.get("chef",""))} · {E(s.get("title_ar",""))} · <a href="{E(s.get("url",""))}">{E(s.get("url",""))}</a> · Verification: {E(s.get("verification",""))}<br><b>Adapted:</b> {E(s.get("adapted",""))}' + (f'<br><b>Image source:</b> Wikimedia Commons / video stills (see credits)' if ph else '') + '</div>'
     info = r['info']
     return f'''<section class=recipe id="{anchor}">
-<div class=head><div><h1>{E(r["name_en"])}</h1><div class=ar>{E(r["name_ar"])}</div>
-<div class=tags>Cuisine: <b>{E(r["cuisine"])}</b> · Category: <b>{E(r["category"])}</b> · Recipe {E(str(rid))}</div>
+<div class=head><div><h1><span class=flag>{origin(rid)[0]}</span> {E(r["name_en"])}</h1><div class=ar>{E(r["name_ar"])}</div>
+<div class=tags>Origin: <b>{origin(rid)[0]} {E(origin(rid)[1])}</b> · Cuisine: <b>{E(r["cuisine"])}</b> · Category: <b>{E(r["category"])}</b> · Recipe {E(str(rid))}</div>
 <div class=info><span><b>Prep</b> {E(info["prep_time"])}</span><span><b>Cook</b> {E(info["cook_time"])}</span><span><b>Total</b> {E(info["total_time"])}</span><span><b>Servings</b> {E(info["servings"])}</span><span><b>Difficulty</b> {E(info["difficulty"])}</span></div>
 <div class=note>Equipment: {E(", ".join(info.get("equipment", [])))}</div></div>
 <div><span class=badge>SPICE LEVEL: 0/5 - NO CHILI - NON-SPICY</span>{spec}</div></div>
@@ -135,7 +154,7 @@ def recipe_html(r):
 def front_matter(recs):
     def toc_group(cat, title):
         items = [r for r in recs if r['category'] == cat]
-        return f'<h3>{title}</h3><ul class=toc>' + ''.join(f'<li><a href="#r-{r["id"]}">{E(str(r["id"]))}. {E(r["name_en"])}</a><span class=ar>{E(r["name_ar"])}</span></li>' for r in items) + '</ul>'
+        return f'<h3>{title}</h3><ul class=toc>' + ''.join(f'<li><a href="#r-{r["id"]}">{origin(r["id"])[0]} {E(str(r["id"]))}. {E(r["name_en"])}</a><span class=ar>{E(r["name_ar"])}</span></li>' for r in items) + '</ul>'
     toc = toc_group('Breakfast', 'Breakfast Recipes') + toc_group('Salad', 'Salad Recipes') + toc_group('Main Course', 'Main Course Recipes')
     return f'''
 <section class=cover><h1>HOME COOKBOOK</h1><div class=sub>GULF • LEVANTINE • EGYPTIAN CUISINE</div><div class=sub2>Daily Cooking Guide for Household Staff</div><div class=meta>All recipes: 2 adults · Spice level 0/5, no chili · English with Arabic dish names<br>Al Maysari household · Abu Dhabi · 2026</div></section>
@@ -179,9 +198,10 @@ def front_matter(recs):
 def back_matter(recs):
     gl = [('Baharat / 7-spice','Arabic mixed spice: allspice, black pepper, cinnamon, cloves, coriander, cumin, nutmeg. Not hot.'),('Bzar','Emirati spice mix for salona and stews.'),('Dum','Steaming rice in a sealed pot on the lowest heat so it finishes in its own steam.'),('Ghee','Clarified butter. Use for frying onions and nuts.'),('Loomi','Dried black lime. Pierce it before adding to the pot.'),('Sumac','Sour red powder used in fattoush and musakhan.'),('Ta\'leya','Garlic fried in ghee with coriander, poured over molokhia.'),('Saffron','Red threads soaked in warm water or rose water for colour and aroma.'),('Al dente','Pasta cooked but still slightly firm in the centre.'),('Blanch','Dip in boiling water 1 to 2 minutes then cold water.'),('Sear','Brown quickly on high heat.'),('Fold','Mix gently with a spatula from the bottom up.'),('Daqoos','Gulf tomato sauce served beside rice. This house makes it without chili.'),('Sahawiq','Yemeni tomato and coriander sauce; this house makes it without chili.')]
     glh = '<dl class=gl>' + ''.join(f'<dt>{E(a)}</dt><dd>{E(b)}</dd>' for a,b in gl) + '</dl>'
-    rows = ''.join(f'<tr><td>{E(str(r["id"]))}</td><td>{E(r["name_en"])}</td><td>{E(r["source"].get("site",""))}</td><td>{E(r["source"].get("chef",""))}</td><td style="font-size:8px"><a href="{E(r["source"].get("url",""))}">{E(r["source"].get("url",""))}</a></td><td>{E(r["source"].get("verification",""))[:40]}</td></tr>' for r in recs)
+    rows = ''.join(f'<tr><td>{E(str(r["id"]))}</td><td>{E(r["name_en"])}</td><td>{site_flag(r["source"].get("site",""))} {E(r["source"].get("site",""))}</td><td>{E(r["source"].get("chef",""))}</td><td style="font-size:8px"><a href="{E(r["source"].get("url",""))}">{E(r["source"].get("url",""))}</a></td><td>{E(r["source"].get("verification",""))[:40]}</td></tr>' for r in recs)
     return f'''<section class=sec id=glossary><h1 class=sec-title>Cooking Terminology Glossary</h1><div class=rule></div>{glh}</section>
 <section class=sec id=sources><h1 class=sec-title>Recipe Sources &amp; References</h1><div class=rule></div>
+<h2>Approved Arabic sources</h2><table class=ing style="width:70%"><tr><td>🇸🇦 Sayidaty Kitchen</td><td>kitchen.sayidaty.net</td></tr><tr><td>🇯🇴 Manal Alalem</td><td>manalonline.com</td></tr><tr><td>🇪🇬 Shamlola</td><td>shamlola.com</td></tr><tr><td>🇵🇸 Chef Samira Basharat</td><td>kitchen.sayidaty.net/recipes/index/chef/4243</td></tr><tr><td>🏠 Custom Recipe</td><td>household recipes as listed in the brief (Peri-Peri, Cajun, Chicken Mix)</td></tr></table>
 <p class=note>Every recipe was rewritten in English from an Arabic source page that was opened and read. Quantities were scaled to 2 adults and all chili removed. Photos: Wikimedia Commons (free licences) and stills from the linked videos; see each recipe.</p>
 <table class=ing style="font-size:8.5px"><tr><th>No.</th><th>Dish</th><th>Site</th><th>Chef</th><th>URL</th><th>Verification</th></tr>{rows}</table></section>'''
 
