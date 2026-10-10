@@ -14,11 +14,11 @@ PICKS = {
  9:  ['c08.jpg', 'c00.jpg', 'yt_video.jpg'],           # bukhari carrots raisins, tray, Tagalog video
  10: ['c01.jpg', 'c08.jpg', 'yt_video.jpg'],           # curry halved eggs in pan, plated with rice, video
  11: ['c00.jpg', 'c03.jpg', 'yt_video.jpg'],           # tray roast with potatoes, plated, Food Bae
- 12: ['yt_video.jpg', 'c01.jpg'],                      # Gulf family meal, Marilou video result
+ 12: ['c01.jpg', 'yt_video.jpg'],                      # Gulf family meal, Marilou video result
  13: ['yt_video.jpg', 'c09.jpg'],                      # lamb saloona video result, lamb stew bowl
  14: ['c08.jpg', 'c02.jpg', 'c09.jpg', 'yt_video.jpg'],# cabbage rolls plate, in pot, rolling technique, video
- 15: ['yt_video2.jpg', 'c12.jpg', 'yt_video.jpg'],     # cajun chicken, lobia+rice, black-eyed peas stew
- 16: ['c04.jpg', 'c08.jpg'],           # molokhia bowl, with meat, video
+ 15: ['yt_video.jpg', 'yt_video2.jpg', 'c12.jpg'],     # cajun chicken, lobia+rice, black-eyed peas stew
+ 16: ['c04.jpg', 'c08.jpg', 'yt_video.jpg'],           # molokhia bowl, with meat, video
  17: ['c02.jpg', 'c01.jpg', 'yt_video.jpg'],           # bamia lamb with rice, clay bowl, video
  18: ['yt_video.jpg', 'c01.jpg', 'c02.jpg'],           # bamia chicken video, clay bowl, with rice
  19: ['c05.jpg', 'c08.jpg', 'c01.jpg'],                # musakhan on bread, large tray, pine nuts close-up
