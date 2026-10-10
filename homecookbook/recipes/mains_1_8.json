@@ -1,0 +1,1054 @@
+[
+  {
+    "id": 1,
+    "name_en": "Chicken Biryani",
+    "name_ar": "برياني الدجاج",
+    "cuisine": "Gulf",
+    "category": "Main Course",
+    "info": {
+      "prep_time": "40 min (includes 30 min rice soak)",
+      "cook_time": "85 min",
+      "total_time": "2 h 5 min",
+      "servings": "2 Adults",
+      "difficulty": "Medium",
+      "equipment": ["large non-stick skillet 28 cm with lid", "heavy-bottomed pot 20 cm with tight lid", "small cup", "slotted spoon", "fine sieve", "chopping board for raw chicken", "second board for vegetables", "meat thermometer"]
+    },
+    "meat_spec": {
+      "type": "Bone-in",
+      "cut": "Mixed",
+      "skin": "Skinless",
+      "weight": "400 g",
+      "preparation": "Pieces (4): 2 thighs and 2 drumsticks",
+      "cooking_method": "Simmered",
+      "source_specified": false,
+      "note": "Source says only '1 kg chicken cut into 8 pieces'. Suggested cut: bone-in thighs and drumsticks because dark meat stays juicy through the long simmer and the final steaming; skin removed so the sauce does not turn greasy."
+    },
+    "spice_note": "Source uses 1/2 tsp crushed chili flakes and 2 chopped green chilies and suggests daqqous chili sauce for serving; all three are removed and replaced with 1/2 tsp sweet paprika for colour and a squeeze of lemon at the table.",
+    "components": [
+      {
+        "title": "Part 1 - Spiced Chicken in Sauce",
+        "ingredients": [
+          {"item": "Chicken thighs and drumsticks, bone-in, skinless", "qty": "400 g (4 pcs)", "note": "pat dry with kitchen paper; do not wash"},
+          {"item": "Ghee or butter", "qty": "1 tbsp"},
+          {"item": "Ground cardamom", "qty": "1/4 tsp"},
+          {"item": "Black pepper, ground", "qty": "1/4 tsp"},
+          {"item": "Sweet paprika", "qty": "1/2 tsp", "note": "replaces the chili flakes of the source"},
+          {"item": "Turmeric", "qty": "1/4 tsp"},
+          {"item": "Ground cumin", "qty": "1/4 tsp"},
+          {"item": "Salt", "qty": "3/4 tsp"},
+          {"item": "Onion, finely chopped", "qty": "1 medium (120 g)"},
+          {"item": "Garlic, crushed", "qty": "2 cloves"},
+          {"item": "Fresh ginger, grated", "qty": "1 tsp"},
+          {"item": "Tomatoes, peeled and chopped", "qty": "1 large (150 g)"},
+          {"item": "Plain yogurt", "qty": "3 tbsp"},
+          {"item": "Bay leaf", "qty": "1 pcs"},
+          {"item": "Cinnamon stick", "qty": "1 pcs (half stick, 4 cm)"},
+          {"item": "Fresh mint, chopped", "qty": "1 tbsp"},
+          {"item": "Fresh coriander, chopped", "qty": "2 tbsp"},
+          {"item": "Water", "qty": "80 ml (1/3 cup)"}
+        ],
+        "prep": [
+          "Pat the 4 chicken pieces dry with kitchen paper on the raw-chicken board. Do not wash the chicken.",
+          "Chop 1 medium onion finely, crush 2 garlic cloves, grate 1 tsp ginger on the vegetable board.",
+          "Score a cross on 1 large tomato, drop it in boiling water for 30 seconds, peel and chop it.",
+          "Chop 1 tbsp mint and 2 tbsp coriander. Measure all the ground spices into one small bowl."
+        ],
+        "steps": [
+          "Melt 1 tbsp ghee in a large non-stick skillet 28 cm over medium heat for 1 minute. Add the spice bowl (1/4 tsp cardamom, 1/4 tsp black pepper, 1/2 tsp paprika, 1/4 tsp turmeric, 1/4 tsp cumin, 3/4 tsp salt) and stir for 20 seconds until the spices smell toasted but are not dark.",
+          "Add the 1 chopped onion, 2 crushed garlic cloves and 1 tsp grated ginger to the skillet, still on medium heat, and stir for 6 to 8 minutes until the onion is soft, light golden and smells sweet.",
+          "Add the 400 g chicken pieces to the skillet on medium heat and turn them with tongs for 4 minutes until every piece is coated in the yellow onion mixture and the outside is no longer pink.",
+          "Add the 1 chopped tomato, 3 tbsp yogurt, 1 bay leaf, the half cinnamon stick, 1 tbsp mint and 2 tbsp coriander. Stir once, cover the skillet and cook on medium-low heat for 10 minutes until the tomato has collapsed into a sauce.",
+          "Pour in 80 ml water, cover again and simmer on low heat for 30 minutes, turning the chicken once at 15 minutes, until the chicken reads 74 C on a thermometer at the thickest part and only about 1/2 cup of thick sauce remains. Turn off the heat and keep covered."
+        ]
+      },
+      {
+        "title": "Part 2 - Saffron Basmati Rice and Assembly",
+        "ingredients": [
+          {"item": "Basmati rice", "qty": "1 cup (200 g)"},
+          {"item": "Water for cooking the rice", "qty": "1 1/3 cups (320 ml)"},
+          {"item": "Rose water", "qty": "1 1/2 tbsp"},
+          {"item": "Saffron threads", "qty": "1/4 tsp"},
+          {"item": "Ghee", "qty": "1 tbsp"},
+          {"item": "Almonds, blanched", "qty": "2 tbsp"},
+          {"item": "Raisins", "qty": "2 tbsp"},
+          {"item": "Onion, chopped", "qty": "1 small (80 g)"},
+          {"item": "Fresh ginger, grated", "qty": "1/4 tsp"},
+          {"item": "Whole cardamom pods", "qty": "2 pcs"},
+          {"item": "Whole cloves", "qty": "2 pcs"},
+          {"item": "Cinnamon stick", "qty": "1 pcs (half stick, 4 cm)"},
+          {"item": "Salt", "qty": "3/4 tsp"}
+        ],
+        "prep": [
+          "Put 1 cup basmati rice in a bowl, cover with cold water, swirl with your hand and pour the water off. Repeat 4 to 5 times until the water runs almost clear. Cover with fresh cold water and soak for 30 minutes, then drain in a sieve.",
+          "Mix 1 1/2 tbsp rose water and 1/4 tsp saffron in a small cup and leave it to colour while the rice soaks.",
+          "Chop 1 small onion."
+        ],
+        "steps": [
+          "Heat 1 tbsp ghee in a heavy-bottomed pot 20 cm over medium heat for 1 minute. Add 2 tbsp almonds and stir for 2 to 3 minutes until light golden, then lift them out with a slotted spoon onto a plate. Add 2 tbsp raisins to the same ghee and stir for 30 to 60 seconds until they puff up, then lift them out to the same plate.",
+          "In the same pot on medium heat add the 1 chopped small onion, 1/4 tsp grated ginger, 2 cardamom pods, 2 cloves and the half cinnamon stick. Stir for 2 minutes until the onion is soft and the whole spices smell fragrant.",
+          "Add the drained 1 cup rice and 3/4 tsp salt to the pot and stir gently with a wooden spoon for 1 minute so every grain is coated in ghee and spice.",
+          "Pour in 1 1/3 cups water, raise the heat to high and boil uncovered for 5 to 7 minutes until most of the water has gone and small holes appear on the surface of the rice.",
+          "Lay the 4 cooked chicken pieces on top of the rice and pour the remaining sauce from the skillet over them. Drizzle the saffron rose water from the cup over everything. Cover the pot with a clean kitchen towel and then the lid, and cook on the lowest heat for 25 minutes until the rice grains are long, dry and separate and no liquid is left at the bottom (tilt the pot to check).",
+          "Turn off the heat and leave the pot covered for 5 minutes. Lift the chicken off onto a plate, fluff the rice with a fork from the sides inward, and turn it onto a wide serving dish."
+        ]
+      }
+    ],
+    "timeline": [
+      "0:00 Wash the rice and start the 30 minute soak; mix saffron and rose water.",
+      "0:05 Prepare onion, garlic, ginger, tomato, herbs and the spice bowl.",
+      "0:15 Start Part 1: fry spices and onion, add chicken, then tomato and yogurt (10 min covered).",
+      "0:35 Add water to the chicken and simmer 30 minutes.",
+      "0:40 Fry almonds and raisins, then onion and whole spices in the rice pot.",
+      "0:45 Add rice and water, boil until the water is almost absorbed.",
+      "1:05 Chicken is done: place it on the rice with its sauce, add saffron water, steam on lowest heat 25 minutes.",
+      "1:30 Rest 5 minutes, fluff and serve."
+    ],
+    "mistakes": [
+      "Rice turns mushy -> use the exact 1 1/3 cups water for 1 cup rice and boil off the water before the steaming stage; do not add extra.",
+      "Chicken dry or stringy -> keep the heat low once the water is in and stop at 74 C; thighs and drumsticks forgive better than breast.",
+      "Spices burn in step 1 -> stir for 20 seconds only and have the onion ready to add immediately.",
+      "Bottom of the rice scorches -> use the lowest flame and a heavy pot; a heat diffuser helps on gas.",
+      "Yogurt splits into grains -> add it off a hard boil on medium-low heat and stir it in gently."
+    ],
+    "serving": [
+      "Turn the rice onto a wide oval platter and arrange the 4 chicken pieces on top.",
+      "Scatter the fried almonds and raisins over the chicken.",
+      "Serve with a bowl of plain yogurt and a simple cucumber and tomato salad, and lemon wedges instead of the daqqous chili sauce."
+    ],
+    "safety": [
+      "Chicken is safe at 74 C internal temperature at the thickest part next to the bone.",
+      "Do not wash raw chicken; use a separate board and knife for the raw chicken and wash hands after handling it.",
+      "Cool leftovers within 1 hour, keep in a closed container in the fridge for 2 to 3 days.",
+      "Reheat rice and chicken until steaming hot all the way through; reheat rice only once."
+    ],
+    "source": {
+      "site": "Manal Alalem (manalonline.com)",
+      "chef": "Manal Alalem",
+      "title_ar": "برياني الدجاج",
+      "url": "https://www.manalonline.com/برياني-الدجاج/",
+      "image_source": "to be filled by image step",
+      "verification": "Verified (page opened and read)",
+      "adapted": "Scaled from 1 kg chicken and 3 cups rice to 400 g chicken and 1 cup rice for 2 adults keeping the 3:4 rice to water ratio; chili flakes and green chili removed and replaced with sweet paprika; black pepper reduced to 1/4 tsp; chicken simmer shortened from 50 to 30 minutes and final steaming from 50 to 25 minutes for the smaller quantity; the source prepares saffron rose water but never says when to add it, so it is drizzled over the rice before steaming."
+    },
+    "video": {
+      "url": "https://www.youtube.com/watch?v=DYrIt5DZuEA",
+      "title": "برياني الدجاج - منال العالم",
+      "channel": "Manal Alalem",
+      "language": "Arabic (manual English subtitle track present)",
+      "duration": "14:35",
+      "priority": "P2",
+      "spicy_warning": true,
+      "subtitles": "manual English"
+    },
+    "video_tl": {
+      "url": "https://www.youtube.com/watch?v=rngAYfGgVGw",
+      "title": "Simple Chicken Biryani (Pinoy Style) - Maine Cooks",
+      "channel": "Maine Cooks",
+      "language": "Tagalog"
+    }
+  },
+  {
+    "id": 2,
+    "name_en": "Lamb Biryani",
+    "name_ar": "برياني اللحم",
+    "cuisine": "Gulf",
+    "category": "Main Course",
+    "info": {
+      "prep_time": "35 min (includes 30 min rice soak, done while the lamb boils)",
+      "cook_time": "95 min",
+      "total_time": "1 h 50 min",
+      "servings": "2 Adults",
+      "difficulty": "Medium",
+      "equipment": ["medium pot 20 cm with lid (for boiling lamb)", "medium non-stick pot 20 cm with lid (for sauce and final layering)", "small pot for the rice", "small pot for boiling eggs", "fine sieve", "measuring jug", "small cup"]
+    },
+    "meat_spec": {
+      "type": "Bone-in",
+      "cut": "Shoulder",
+      "skin": "n/a",
+      "weight": "450 g",
+      "preparation": "Cubes 4 cm",
+      "cooking_method": "Boiled",
+      "fat": "moderate",
+      "source_specified": false,
+      "note": "Source says '1 kg meat cut into pieces, lamb or beef' without a cut. Suggested cut: bone-in lamb shoulder because it becomes tender in 60 minutes of boiling and the bones give a richer broth for cooking the rice."
+    },
+    "spice_note": "Source recipe contains no chili; check that the bought baharat (mixed spice) blend lists no chili, or mix your own from cinnamon, cardamom, cloves, cumin, coriander and 1/4 tsp black pepper.",
+    "components": [
+      {
+        "title": "Part 1 - Boiled Lamb and Broth",
+        "ingredients": [
+          {"item": "Lamb shoulder, bone-in, cut in 4 cm cubes", "qty": "450 g"},
+          {"item": "Water", "qty": "1 L (4 cups)"},
+          {"item": "Onion, quartered", "qty": "1/2 medium"},
+          {"item": "Cardamom pods", "qty": "2 pcs"},
+          {"item": "Bay leaves", "qty": "1 pcs"},
+          {"item": "Cinnamon stick", "qty": "1 pcs (half stick, 4 cm)"},
+          {"item": "Whole cloves", "qty": "3 pcs"},
+          {"item": "Salt", "qty": "1 1/2 tsp"},
+          {"item": "Black pepper, ground", "qty": "1/4 tsp"}
+        ],
+        "prep": [
+          "Rinse the 450 g lamb cubes quickly under cold water and pat dry.",
+          "Cut half an onion into quarters."
+        ],
+        "steps": [
+          "Put the 450 g lamb cubes in a medium pot 20 cm, add 1 L cold water, the 1/2 quartered onion, 2 cardamom pods, 1 bay leaf, the half cinnamon stick, 3 cloves, 1 1/2 tsp salt and 1/4 tsp black pepper. Bring to a boil on high heat for about 8 minutes, then skim off the grey foam with a spoon.",
+          "Lower to medium-low heat, cover and simmer for 55 to 60 minutes until a fork slides into a cube with no resistance. Lift the lamb out with a slotted spoon onto a plate. Pour the broth through a sieve into a measuring jug and keep 1 2/3 cups (400 ml) for the rice; discard the onion and whole spices."
+        ]
+      },
+      {
+        "title": "Part 2 - Yogurt Spice Sauce",
+        "ingredients": [
+          {"item": "Corn oil or ghee", "qty": "1 1/2 tbsp"},
+          {"item": "Onion, finely chopped", "qty": "1 medium (120 g)"},
+          {"item": "Garlic, crushed", "qty": "2 cloves"},
+          {"item": "Fresh ginger, minced", "qty": "1/2 tsp"},
+          {"item": "Baharat (mixed spice), chili-free", "qty": "2 tsp"},
+          {"item": "Plain yogurt", "qty": "1/3 cup (80 g)"},
+          {"item": "Fresh mint, chopped", "qty": "2 tbsp"},
+          {"item": "Saffron threads", "qty": "1/4 tsp"},
+          {"item": "Rose water", "qty": "1 1/2 tbsp"}
+        ],
+        "prep": [
+          "Mix 1/4 tsp saffron with 1 1/2 tbsp rose water in a small cup and leave to colour for 20 minutes.",
+          "Chop 1 medium onion finely, crush 2 garlic cloves, mince 1/2 tsp ginger, chop 2 tbsp mint."
+        ],
+        "steps": [
+          "Heat 1 1/2 tbsp oil in a medium non-stick pot 20 cm over medium heat for 1 minute. Add the 1 chopped onion, 2 crushed garlic cloves and 1/2 tsp ginger and stir for 10 to 12 minutes until the onion is dark brown (not black) and smells sweet.",
+          "Add the boiled lamb cubes and 2 tsp baharat to the pot on medium heat and stir for 4 to 5 minutes until the lamb is coated and golden at the edges.",
+          "Add 2 tbsp mint, 1/3 cup yogurt and the saffron rose water from the cup. Stir on medium-low heat for 4 to 5 minutes until the yogurt thickens into a glossy sauce that clings to the meat. Turn off the heat."
+        ]
+      },
+      {
+        "title": "Part 3 - Rice, Layering and Boiled Egg",
+        "ingredients": [
+          {"item": "Long-grain basmati rice ('walima' type in the source)", "qty": "1 1/4 cups (250 g)"},
+          {"item": "Warm water with 1 tsp salt, for soaking", "qty": "3 cups"},
+          {"item": "Reserved lamb broth", "qty": "1 2/3 cups (400 ml)"},
+          {"item": "Eggs", "qty": "2 pcs"},
+          {"item": "Fresh coriander, chopped", "qty": "2 tbsp"}
+        ],
+        "prep": [
+          "Wash 1 1/4 cups rice in a bowl, changing the water 4 to 5 times until it runs clear. Cover with 3 cups warm water mixed with 1 tsp salt and soak for 30 minutes, then drain in a sieve.",
+          "Put 2 eggs in a small pot, cover with cold water, bring to a boil on high heat and boil 9 minutes; cool in cold water, peel and cut into quarters.",
+          "Chop 2 tbsp coriander."
+        ],
+        "steps": [
+          "Bring the 1 2/3 cups reserved broth to a boil in a small pot on high heat (about 3 minutes). Add the drained 1 1/4 cups rice, stir once, cover, and cook on low heat for 12 to 14 minutes until the broth is absorbed and a grain pressed between the fingers is soft with no hard centre.",
+          "Spoon half of the cooked rice into the non-stick pot with the lamb sauce and fold gently with a spatula for 1 minute so the rice is streaked yellow with sauce. Spread the remaining rice on top in an even layer without stirring.",
+          "Cover the pot with a kitchen towel and then the lid and keep on the lowest heat for 10 to 15 minutes until steam rises when the lid is lifted and the top rice smells of saffron. Turn off the heat."
+        ]
+      }
+    ],
+    "timeline": [
+      "0:00 Put the lamb on to boil with the whole spices.",
+      "0:10 Wash the rice and start its 30 minute soak; mix saffron and rose water; boil and peel the eggs.",
+      "0:30 Chop onion, garlic, ginger, mint and coriander.",
+      "0:45 Start browning the onion for the sauce (12 minutes).",
+      "1:05 Lamb is tender: strain the broth, add the lamb and baharat to the onion, then yogurt and saffron water.",
+      "1:10 Boil the broth and cook the rice (14 minutes).",
+      "1:25 Layer rice over the lamb sauce, steam 10 to 15 minutes.",
+      "1:40 Serve topped with the quartered eggs and coriander."
+    ],
+    "mistakes": [
+      "Lamb still chewy -> keep simmering, checking every 10 minutes; it is done only when a fork slides in with no resistance.",
+      "Onion burnt instead of dark brown -> keep the heat at medium and stir often; dark brown takes 10 to 12 minutes, black takes 14.",
+      "Rice wet and heavy -> use exactly 1 2/3 cups broth for 1 1/4 cups soaked rice and do not lift the lid during the 12 minutes.",
+      "Sauce too salty -> the broth already carries salt, so add no salt in Part 2 and taste before serving.",
+      "Baharat tastes hot -> some shop blends include chili; read the label or mix your own."
+    ],
+    "serving": [
+      "Spoon the layered rice and lamb onto a round platter so the saffron-stained rice shows on top.",
+      "Arrange the quartered boiled eggs around the edge and sprinkle the chopped coriander over the centre.",
+      "Serve with plain yogurt and a green salad."
+    ],
+    "safety": [
+      "Lamb is safe when it reads at least 70 C and is fork-tender after 55 to 60 minutes of boiling.",
+      "Use a separate board for raw meat; wash hands and board with hot soapy water afterwards.",
+      "Cool leftovers within 1 hour; store in a closed container in the fridge for 2 to 3 days.",
+      "Reheat until steaming hot throughout; reheat rice only once."
+    ],
+    "source": {
+      "site": "Manal Alalem (manalonline.com)",
+      "chef": "Manal Alalem",
+      "title_ar": "برياني اللحم",
+      "url": "https://www.manalonline.com/برياني-اللحم/",
+      "image_source": "to be filled by image step",
+      "verification": "Verified (page opened and read)",
+      "adapted": "Scaled from 1 kg meat and 3 cups rice to 450 g bone-in lamb shoulder and 1 1/4 cups rice for 2 adults keeping the 3:4 rice to broth ratio; black pepper (unquantified in source) set at 1/4 tsp; boiled eggs reduced from 3 to 2; rice cooking time of 12 to 14 minutes and egg boiling time of 9 minutes are not stated in the source and are standard values."
+    },
+    "video": {
+      "url": "https://www.youtube.com/watch?v=eWe1Mjzvf9w",
+      "title": "Arabic Mutton Biryani - Fusion Recipe By Food Fusion",
+      "channel": "Food Fusion",
+      "language": "English (on-screen text, no narration)",
+      "duration": "4:34",
+      "priority": "P4",
+      "spicy_warning": true,
+      "subtitles": "n/a"
+    },
+    "video_tl": null
+  },
+  {
+    "id": 3,
+    "name_en": "Chicken Maqluba",
+    "name_ar": "مقلوبة الدجاج بالباذنجان",
+    "cuisine": "Levantine",
+    "category": "Main Course",
+    "info": {
+      "prep_time": "30 min (eggplant salting and rice soak run during the chicken boil)",
+      "cook_time": "80 min",
+      "total_time": "1 h 50 min",
+      "servings": "2 Adults",
+      "difficulty": "Medium",
+      "equipment": ["medium pot 20 cm with lid (for boiling chicken)", "deep frying pan 24 cm", "medium non-stick pot 18 to 20 cm with tight lid (for layering)", "fine sieve", "measuring jug", "mixing bowl", "kitchen paper", "round serving plate larger than the pot"]
+    },
+    "meat_spec": {
+      "type": "Bone-in",
+      "cut": "Thigh",
+      "skin": "Skinless",
+      "weight": "450 g",
+      "preparation": "Pieces (2 large thighs), meat pulled off the bone after boiling into 3 cm pieces",
+      "cooking_method": "Boiled",
+      "source_specified": false,
+      "note": "Source says '1 kg boiled chicken, cut into small pieces' with no cut. Suggested cut: bone-in skinless thighs because the bones make a flavourful stock (which the source uses as the cooking liquid) and thigh meat stays moist after boiling and a second cooking in the rice."
+    },
+    "spice_note": "Source recipe contains no chili.",
+    "components": [
+      {
+        "title": "Part 1 - Boiled Chicken and Stock",
+        "ingredients": [
+          {"item": "Chicken thighs, bone-in, skinless", "qty": "450 g (2 large pcs)", "note": "do not wash"},
+          {"item": "Water", "qty": "750 ml (3 cups)"},
+          {"item": "Onion, halved", "qty": "1/2 medium"},
+          {"item": "Bay leaf", "qty": "1 pcs"},
+          {"item": "Cardamom pods", "qty": "2 pcs"},
+          {"item": "Salt", "qty": "1/2 tsp"}
+        ],
+        "prep": [
+          "Pat the 2 chicken thighs dry on the raw-chicken board. Halve half an onion."
+        ],
+        "steps": [
+          "Put the 450 g chicken thighs, 750 ml water, 1/2 onion, 1 bay leaf, 2 cardamom pods and 1/2 tsp salt in a medium pot 20 cm. Bring to a boil on high heat (about 6 minutes), skim the foam, then cover and simmer on low heat for 30 minutes until the meat pulls easily from the bone and reads 74 C.",
+          "Lift the chicken onto a plate and let it cool for 10 minutes. Strain the stock through a sieve into a measuring jug; you need 1 1/2 cups (360 ml) (top up with hot water if short). Pull the meat off the bones and cut it into 3 cm pieces on a clean board."
+        ]
+      },
+      {
+        "title": "Part 2 - Fried Eggplant",
+        "ingredients": [
+          {"item": "Eggplant", "qty": "1 medium (300 g)"},
+          {"item": "Salt, for drawing out water", "qty": "1/2 tsp"},
+          {"item": "Corn oil, for frying", "qty": "200 ml"}
+        ],
+        "prep": [
+          "Cut the 1 eggplant into 1 cm thick round slices, lay them on a tray, sprinkle both sides with 1/2 tsp salt and leave 15 minutes. Wipe the salt and beads of water off well with kitchen paper; do not rinse."
+        ],
+        "steps": [
+          "Heat 200 ml corn oil in a deep frying pan 24 cm over medium-high heat for 3 minutes until a corner of a slice sizzles at once. Fry the eggplant slices in 2 batches for 2 to 3 minutes per side until deep golden and soft, then drain on kitchen paper."
+        ]
+      },
+      {
+        "title": "Part 3 - Layering, Cooking and Flipping",
+        "ingredients": [
+          {"item": "Short-grain rice (Egyptian or Calrose type)", "qty": "1 cup (200 g)"},
+          {"item": "Warm water, for soaking", "qty": "2 cups"},
+          {"item": "Reserved chicken stock", "qty": "1 1/2 cups (360 ml)"},
+          {"item": "Salt", "qty": "3/4 tsp"},
+          {"item": "Mixed spice (baharat), chili-free", "qty": "1/2 tsp"},
+          {"item": "Turmeric", "qty": "1/4 tsp"},
+          {"item": "Ground cinnamon", "qty": "1/4 tsp"},
+          {"item": "Ground cardamom", "qty": "1/8 tsp"},
+          {"item": "Black pepper, ground", "qty": "1/8 tsp"},
+          {"item": "Corn oil", "qty": "1 tbsp"},
+          {"item": "Pine nuts, fried in 1 tsp oil until golden", "qty": "2 tbsp", "note": "for serving"}
+        ],
+        "prep": [
+          "Wash 1 cup short-grain rice in 3 changes of water, cover with 2 cups warm water and soak 15 minutes, then drain in a sieve.",
+          "Pour the 1 1/2 cups stock into a bowl and stir in 3/4 tsp salt, 1/2 tsp mixed spice, 1/4 tsp turmeric, 1/4 tsp cinnamon, 1/8 tsp cardamom and 1/8 tsp black pepper."
+        ],
+        "steps": [
+          "In a medium non-stick pot 18 to 20 cm, off the heat, spread 1/3 of the drained rice on the bottom, then lay the fried eggplant slices over it, then the chicken pieces, then the rest of the rice, pressing lightly with the back of a spoon for 1 minute so the layers are flat.",
+          "Pour the seasoned stock slowly over the back of a spoon so the layers do not move, then drizzle 1 tbsp corn oil on top. Place the pot on high heat for 4 to 5 minutes until the liquid boils around the edges.",
+          "Lower to the lowest heat, cover tightly and simmer for 30 minutes until all the liquid is absorbed and a grain of rice from the top is soft with no hard centre. Turn off the heat and rest covered for 10 minutes.",
+          "Run a thin spatula around the inside edge, place a round serving plate over the pot, hold both firmly with oven gloves and flip in one movement. Wait 2 minutes, then lift the pot straight up; the maqluba should stand as a cake with the eggplant and chicken on top."
+        ]
+      }
+    ],
+    "timeline": [
+      "0:00 Put the chicken on to boil (30 minutes).",
+      "0:05 Slice and salt the eggplant (15 minutes).",
+      "0:10 Wash the rice and soak 15 minutes; mix the spices into a bowl ready for the stock.",
+      "0:25 Wipe the eggplant and fry it in batches.",
+      "0:40 Chicken is done: strain the stock, season it, pull the meat.",
+      "0:50 Layer the pot, add stock, bring to a boil and simmer 30 minutes.",
+      "1:25 Rest 10 minutes, fry the pine nuts, flip and serve."
+    ],
+    "mistakes": [
+      "Maqluba collapses when flipped -> rest 10 minutes after cooking and use a non-stick pot; press the layers gently before adding stock.",
+      "Rice at the bottom burnt -> use the lowest flame and a heavy or non-stick pot; the top layer must be rice, not chicken.",
+      "Eggplant soaks up oil and is soggy -> salt it 15 minutes, wipe dry, and fry in hot oil in small batches.",
+      "Rice undercooked in the middle -> keep the lid tight for the full 30 minutes; if still hard, add 3 tbsp hot water and steam 5 more minutes.",
+      "Stock too bland -> taste the seasoned stock before pouring; it should taste slightly too salty because the rice absorbs it."
+    ],
+    "serving": [
+      "Present the flipped maqluba whole at the table, then cut into wedges with a sharp knife.",
+      "Scatter the 2 tbsp fried pine nuts over the top.",
+      "Serve with a bowl of plain yogurt and a chopped cucumber and tomato salad with lemon."
+    ],
+    "safety": [
+      "Chicken is safe at 74 C internal temperature; it is checked at the end of the boiling stage.",
+      "Do not wash raw chicken; use a separate board for it and a clean board to cut the cooked meat.",
+      "Keep the hot oil pan away from the pot edge and never leave it unattended; keep a lid nearby.",
+      "Cool leftovers within 1 hour; fridge 2 to 3 days in a closed container; reheat until steaming hot."
+    ],
+    "source": {
+      "site": "Manal Alalem (manalonline.com)",
+      "chef": "Manal Alalem",
+      "title_ar": "مقلوبة الدجاج الباذنجان",
+      "url": "https://www.manalonline.com/مقلوبة-الدجاج-الباذنجان/",
+      "image_source": "to be filled by image step",
+      "verification": "Verified (page opened and read)",
+      "adapted": "Scaled from 1 kg boiled chicken, 2 1/2 cups rice and 3 1/2 cups stock to 450 g chicken thighs, 1 cup rice and 1 1/2 cups stock for 2 adults keeping the source ratio; the source starts from already-boiled chicken and stock, so a boiling step (30 minutes with onion, bay leaf and cardamom) was added; frying oil quantity (200 ml) and 10 minute rest before flipping are not stated in the source and are standard values."
+    },
+    "video": {
+      "url": "https://www.youtube.com/watch?v=KmfFZn6sX5c",
+      "title": "Palestinian Chicken And Rice Is Served Upside Down",
+      "channel": "Middle Eats",
+      "language": "English",
+      "duration": "8:31",
+      "priority": "P4",
+      "spicy_warning": false,
+      "subtitles": "n/a"
+    },
+    "video_tl": null
+  },
+  {
+    "id": 4,
+    "name_en": "Lamb Maqluba",
+    "name_ar": "مقلوبة اللحم بالباذنجان",
+    "cuisine": "Levantine",
+    "category": "Main Course",
+    "info": {
+      "prep_time": "35 min (eggplant salting and rice soak run during the lamb boil)",
+      "cook_time": "110 min",
+      "total_time": "2 h 25 min",
+      "servings": "2 Adults",
+      "difficulty": "Medium",
+      "equipment": ["large pot 22 cm with lid (for boiling lamb)", "deep frying pan 24 cm", "medium non-stick pot 18 to 20 cm with tight lid (for layering)", "fine sieve", "measuring jug", "vegetable peeler", "kitchen paper", "round serving plate larger than the pot"]
+    },
+    "meat_spec": {
+      "type": "Bone-in",
+      "cut": "Shoulder",
+      "skin": "n/a",
+      "weight": "450 g",
+      "preparation": "Pieces (4 to 5 pieces of about 100 g each)",
+      "cooking_method": "Boiled",
+      "fat": "moderate",
+      "source_specified": false,
+      "note": "Source says '1 1/2 kg meat cut into pieces' with no type or cut. Suggested cut: bone-in lamb shoulder because it becomes fork-tender in 50 to 60 minutes of boiling and its bones enrich the broth that cooks the rice."
+    },
+    "spice_note": "Source recipe contains no chili; check that the mixed spice (baharat) blend lists no chili.",
+    "components": [
+      {
+        "title": "Part 1 - Boiled Lamb and Spiced Broth",
+        "ingredients": [
+          {"item": "Lamb shoulder, bone-in, in 100 g pieces", "qty": "450 g"},
+          {"item": "Water", "qty": "750 ml (3 cups), plus extra to top up"},
+          {"item": "Onion, quartered", "qty": "1/2 large"},
+          {"item": "Salt", "qty": "1 tsp"},
+          {"item": "Mixed spice (baharat), chili-free", "qty": "1/2 tsp"},
+          {"item": "Ground cinnamon", "qty": "1/3 tsp"},
+          {"item": "Black pepper, ground", "qty": "1/8 tsp"},
+          {"item": "Ground turmeric", "qty": "1/4 tsp"}
+        ],
+        "prep": [
+          "Rinse and pat dry the 450 g lamb pieces. Quarter half a large onion."
+        ],
+        "steps": [
+          "Put the 450 g lamb, 1/2 quartered onion, 1 tsp salt, 1/2 tsp mixed spice, 1/3 tsp cinnamon, 1/8 tsp black pepper and 1/4 tsp turmeric in a large pot 22 cm and add 750 ml water. Bring to a boil on high heat for about 7 minutes and skim the foam.",
+          "Cover and simmer on medium-low heat for 50 to 60 minutes until a fork slides into the meat with no resistance. Lift the lamb out onto a plate. Strain the broth through a sieve into a jug and top up with hot water to make 1 2/3 cups (400 ml)."
+        ]
+      },
+      {
+        "title": "Part 2 - Fried Eggplant",
+        "ingredients": [
+          {"item": "Eggplant", "qty": "1 medium (300 g)"},
+          {"item": "Salt, for drawing out water", "qty": "1/2 tsp"},
+          {"item": "Corn oil, for frying", "qty": "200 ml"}
+        ],
+        "prep": [
+          "Peel the 1 eggplant with a peeler, slice it 1 cm thick, sprinkle both sides with 1/2 tsp salt and leave on a tray for 30 minutes. Pat dry with kitchen paper."
+        ],
+        "steps": [
+          "Heat 200 ml corn oil in a deep frying pan 24 cm over medium-high heat for 3 minutes until a slice sizzles immediately. Fry the eggplant in 2 batches for 2 to 3 minutes per side until golden brown and soft, then drain on kitchen paper."
+        ]
+      },
+      {
+        "title": "Part 3 - Layering, Cooking and Flipping",
+        "ingredients": [
+          {"item": "Basmati rice", "qty": "1 cup (200 g)"},
+          {"item": "Warm water, for soaking", "qty": "2 cups"},
+          {"item": "Ghee", "qty": "1 tbsp"},
+          {"item": "Onion, sliced", "qty": "1/2 large (80 g)"},
+          {"item": "Reserved lamb broth", "qty": "1 2/3 cups (400 ml)"},
+          {"item": "Mixed fried nuts (almonds and pine nuts), fried in 1 tsp oil until golden", "qty": "3 tbsp", "note": "garnish"}
+        ],
+        "prep": [
+          "Wash 1 cup basmati in 4 changes of water, cover with 2 cups warm water and soak 15 to 20 minutes, then drain.",
+          "Slice half a large onion thinly."
+        ],
+        "steps": [
+          "Heat 1 tbsp ghee in a medium non-stick pot 18 to 20 cm over medium heat for 1 minute. Add the 1/2 sliced onion and stir for 7 to 8 minutes until golden and soft, then spread it flat over the bottom.",
+          "Off the heat, arrange the boiled lamb pieces over the onion, stand the fried eggplant slices around the sides and over the meat, then spread the drained 1 cup rice on top in an even layer, pressing gently with a spoon.",
+          "Pour the 1 2/3 cups broth slowly over the back of a spoon. Place the pot on high heat for 4 to 5 minutes until it boils, then cover tightly and cook on the lowest heat for 30 to 35 minutes until the liquid is absorbed and a grain of rice from the top is soft. Turn off the heat and rest covered for 10 minutes.",
+          "Run a spatula around the edge, place a round serving plate over the pot, hold firmly with oven gloves and flip in one movement. Wait 2 minutes, lift the pot and garnish with the 3 tbsp fried nuts."
+        ]
+      }
+    ],
+    "timeline": [
+      "0:00 Put the lamb on to boil with the spices (60 minutes).",
+      "0:05 Peel, slice and salt the eggplant (30 minutes).",
+      "0:35 Wash the rice and soak 20 minutes; pat the eggplant dry and fry it.",
+      "0:55 Fry the sliced onion in ghee in the layering pot.",
+      "1:05 Lamb is tender: strain and measure the broth; layer lamb, eggplant and rice.",
+      "1:10 Add broth, boil, then simmer 30 to 35 minutes.",
+      "1:45 Rest 10 minutes, fry the nuts, flip and serve."
+    ],
+    "mistakes": [
+      "Lamb tough -> keep boiling; test with a fork every 10 minutes after 45 minutes.",
+      "Rice under the lid still hard -> the broth must be exactly 1 2/3 cups for 1 cup rice and the lid tight; add 3 tbsp hot water and 5 more minutes if needed.",
+      "Maqluba falls apart on flipping -> rest 10 minutes, use a non-stick pot, and flip in one confident movement.",
+      "Eggplant greasy -> salt 30 minutes, dry well, and fry only when the oil is hot.",
+      "Broth too weak -> it must taste clearly seasoned before it goes on the rice; add salt to the jug if needed."
+    ],
+    "serving": [
+      "Bring the flipped maqluba to the table whole with the golden onion and eggplant on top.",
+      "Scatter the fried nuts over the top and cut into wedges to serve.",
+      "Serve with plain yogurt and a simple chopped salad."
+    ],
+    "safety": [
+      "Lamb is safe at 70 C and is fork-tender after 50 to 60 minutes of boiling.",
+      "Use a separate board for raw meat and wash it with hot soapy water.",
+      "Keep the frying pan handle turned inward and never leave hot oil unattended.",
+      "Cool leftovers within 1 hour; fridge 2 to 3 days in a closed container; reheat until steaming hot."
+    ],
+    "source": {
+      "site": "Manal Alalem (manalonline.com)",
+      "chef": "Manal Alalem",
+      "title_ar": "المقلوبـة",
+      "url": "https://www.manalonline.com/المقلوبـة/",
+      "image_source": "to be filled by image step",
+      "verification": "Verified (page opened and read)",
+      "adapted": "Scaled from 1 1/2 kg meat, 3 cups rice and 5 cups broth to 450 g bone-in lamb shoulder, 1 cup rice and 1 2/3 cups broth for 2 adults keeping the 3:5 rice to broth ratio; boiling water reduced from 6 to 7 cups to 3 cups for the smaller pot; frying oil (200 ml), nut quantity and the 10 minute rest before flipping are not stated in the source and are standard values."
+    },
+    "video": {
+      "url": "https://www.youtube.com/watch?v=70_97ub8Jwk",
+      "title": "The FLIPPED-OVER rice dish adored by ALL Palestinians",
+      "channel": "Middle Eats",
+      "language": "English",
+      "duration": "11:23",
+      "priority": "P4",
+      "spicy_warning": false,
+      "subtitles": "n/a"
+    },
+    "video_tl": null
+  },
+  {
+    "id": 5,
+    "name_en": "Yellow Rice with Nando's Peri-Peri Chicken",
+    "name_ar": "أرز أصفر بالكركم مع دجاج بيري بيري",
+    "cuisine": "Other",
+    "category": "Main Course",
+    "info": {
+      "prep_time": "25 min active, plus 2 to 12 h marinating",
+      "cook_time": "55 min",
+      "total_time": "1 h 20 min after marinating",
+      "servings": "2 Adults",
+      "difficulty": "Medium",
+      "equipment": ["blender or stick blender", "mixing bowl with lid", "oven", "baking tray lined with aluminium foil", "medium pot 18 cm with lid", "small pot for broth", "meat thermometer", "chopping board for raw chicken", "second board for vegetables"]
+    },
+    "meat_spec": {
+      "type": "Bone-in",
+      "cut": "Half",
+      "skin": "Skin-on",
+      "weight": "600 g",
+      "preparation": "Half chicken, backbone side flattened with the palm, cut into 2 (leg quarter and breast with wing)",
+      "cooking_method": "Roasted",
+      "source_specified": false,
+      "note": "Source uses 1 whole chicken of about 1200 g roasted whole for 4 people. For 2 adults a half chicken (600 g), flattened and cut in 2, is suggested so it roasts in 45 minutes instead of 90 and the skin crisps as in a Nando's style bird."
+    },
+    "spice_note": "Source peri-peri marinade uses 1 hot red chili and 1 tsp chili powder; both are removed and replaced with a home non-spicy marinade of lemon juice, garlic, sweet paprika, oregano and olive oil over the roasted bell pepper base. Bottled peri-peri sauce must be checked on the label and is usually hot, so do not substitute it.",
+    "components": [
+      {
+        "title": "Part 1 - Non-Spicy Peri-Peri Style Marinade",
+        "ingredients": [
+          {"item": "Red bell pepper, roasted and skin removed", "qty": "1 pcs (jarred or roasted under the grill 15 minutes)"},
+          {"item": "Garlic", "qty": "2 cloves"},
+          {"item": "Tomato paste", "qty": "2 tsp"},
+          {"item": "Lemon juice", "qty": "2 tbsp", "note": "replaces the chili heat with zing"},
+          {"item": "White vinegar", "qty": "1 tbsp"},
+          {"item": "Olive oil", "qty": "2 tbsp"},
+          {"item": "Sweet paprika", "qty": "1 tbsp", "note": "gives the red colour, no heat"},
+          {"item": "Dried oregano", "qty": "1 tsp"},
+          {"item": "Salt", "qty": "1 tsp"},
+          {"item": "Black pepper, ground", "qty": "1/4 tsp"},
+          {"item": "Mixed spice (baharat), chili-free", "qty": "1/2 tsp"},
+          {"item": "Ground allspice", "qty": "1/4 tsp"},
+          {"item": "Bay leaf, ground", "qty": "1/4 tsp"}
+        ],
+        "prep": [
+          "If using a fresh pepper: put 1 red bell pepper under the oven grill on high for 15 minutes, turning every 5 minutes until the skin is black in patches; cover in a bowl 10 minutes, then peel and deseed it.",
+          "Peel 2 garlic cloves and squeeze 2 tbsp lemon juice."
+        ],
+        "steps": [
+          "Put the 1 roasted pepper, 2 garlic cloves and 2 tsp tomato paste in a blender and blend on high for 30 seconds until smooth.",
+          "Add 2 tbsp lemon juice, 1 tbsp vinegar, 2 tbsp olive oil, 1 tbsp sweet paprika, 1 tsp oregano, 1 tsp salt, 1/4 tsp black pepper, 1/2 tsp mixed spice, 1/4 tsp allspice and 1/4 tsp ground bay leaf, and blend on medium for 1 minute until it is a thick, deep-red, pourable sauce. Keep 2 tbsp aside in a small bowl for brushing at the end."
+        ]
+      },
+      {
+        "title": "Part 2 - Roasted Peri-Peri Style Chicken",
+        "ingredients": [
+          {"item": "Half chicken, bone-in, skin-on, flattened and cut in 2", "qty": "600 g", "note": "do not wash; pat dry"},
+          {"item": "Marinade from Part 1", "qty": "all except the 2 tbsp reserved"}
+        ],
+        "prep": [
+          "Pat the 600 g chicken dry with kitchen paper on the raw-chicken board. Make 2 shallow cuts across the thickest part of the thigh so the marinade goes in.",
+          "Put the chicken in a bowl, pour the marinade over, rub it into every side and under the skin with a gloved hand, cover and refrigerate for at least 2 hours, best 12 hours."
+        ],
+        "steps": [
+          "Preheat the oven to 200 C (fan 180 C) for 15 minutes. Lay the 2 marinated chicken pieces skin side up on a baking tray lined with foil, spacing them apart, and roast on the middle shelf for 25 minutes until the edges start to brown.",
+          "Brush the chicken with the 2 tbsp reserved marinade using a clean brush and roast for another 20 to 25 minutes until the skin is deep red-brown and crisp and a thermometer in the thickest part of the thigh (not touching bone) reads 74 C and the juices run clear. Rest on the tray for 5 minutes before serving."
+        ]
+      },
+      {
+        "title": "Part 3 - Yellow Turmeric Rice",
+        "ingredients": [
+          {"item": "Butter", "qty": "2 tbsp"},
+          {"item": "Onion, finely chopped", "qty": "1/2 medium (60 g)"},
+          {"item": "Garlic, minced", "qty": "1 clove"},
+          {"item": "Basmati rice", "qty": "1 cup (200 g)"},
+          {"item": "Turmeric", "qty": "1 tsp"},
+          {"item": "Hot chicken broth (from a cube or homemade)", "qty": "1 1/2 cups (360 ml)"},
+          {"item": "Dried thyme", "qty": "1/4 tsp"},
+          {"item": "Salt", "qty": "1/2 tsp", "note": "less if the broth is salty"},
+          {"item": "Black pepper, ground", "qty": "1/8 tsp"}
+        ],
+        "prep": [
+          "Wash 1 cup basmati in 3 to 4 changes of water until the water runs clear and drain in a sieve for 10 minutes (no soaking, as in the source).",
+          "Chop 1/2 onion finely and mince 1 garlic clove. Heat 1 1/2 cups broth in a small pot until steaming."
+        ],
+        "steps": [
+          "Melt 2 tbsp butter in a medium pot 18 cm over medium heat for 1 minute until foaming. Add the 1/2 chopped onion and 1 minced garlic clove and stir for 4 to 5 minutes until the onion is soft and translucent, not brown.",
+          "Add the drained 1 cup rice and 1 tsp turmeric and stir for 1 to 2 minutes until every grain is yellow and shiny with butter.",
+          "Pour in the 1 1/2 cups hot broth with 1/4 tsp thyme, 1/2 tsp salt and 1/8 tsp black pepper; the liquid should stand about 1 cm above the rice. Stir once, bring to a boil on high heat (about 2 minutes), then cover and cook on medium heat for 5 minutes until the broth level drops to the surface of the rice.",
+          "Stir once more, cover and cook on the lowest heat for 12 minutes until the broth is absorbed and the grains are tender and separate. Turn off the heat, keep covered 5 minutes, then fluff with a fork."
+        ]
+      }
+    ],
+    "timeline": [
+      "Day before or morning: make the marinade (Part 1) and marinate the chicken for 2 to 12 hours.",
+      "0:00 Preheat the oven to 200 C.",
+      "0:15 Put the chicken in the oven (25 minutes, then brush, then 20 to 25 minutes).",
+      "0:20 Wash and drain the rice; chop onion and garlic; heat the broth.",
+      "0:35 Start the rice: butter, onion, rice and turmeric, then broth (about 25 minutes total).",
+      "0:40 Brush the chicken with the reserved marinade.",
+      "1:00 Chicken reads 74 C: rest 5 minutes while the rice finishes steaming.",
+      "1:05 Serve."
+    ],
+    "mistakes": [
+      "Chicken skin pale and soft -> make sure the oven is fully preheated to 200 C and the pieces are not crowded on the tray.",
+      "Chicken dry at the breast -> check the thigh at 74 C and stop; do not roast to the source's 90 minutes, which is for a whole 1200 g bird.",
+      "Marinade is hot -> never add bottled peri-peri sauce; the home mix uses only sweet paprika and bell pepper for colour.",
+      "Rice gummy -> use hot broth, exactly 1 1/2 cups for 1 cup rice, and do not stir after the second stir.",
+      "Rice tastes bitter -> too much turmeric; 1 tsp for 1 cup rice is enough."
+    ],
+    "serving": [
+      "Spoon the yellow rice onto two plates or one platter and lay a piece of chicken on each portion, skin side up.",
+      "Spoon any juices from the tray over the chicken and add a lemon wedge to each plate.",
+      "Serve with a green salad or coleslaw made with plain yogurt."
+    ],
+    "safety": [
+      "Chicken is safe at 74 C internal temperature at the thickest part of the thigh.",
+      "Do not wash raw chicken; use a separate board and bowl for it; discard leftover raw marinade and use only the 2 tbsp kept apart before it touched the chicken for brushing.",
+      "Keep marinating chicken covered in the fridge, never on the counter.",
+      "Cool leftovers within 1 hour; fridge 2 to 3 days in a closed container; reheat until steaming hot."
+    ],
+    "source": {
+      "site": "Shamlola (shamlola.com), both components",
+      "chef": "Shamlola editorial",
+      "title_ar": "طريقة عمل الأرز الأصفر بالكركم + دجاج البيري بيري المشوي من المطبخ البرتغالي",
+      "url": "https://www.shamlola.com/recipes/طريقة-عمل-الأرز-الأصفر-بالكركم",
+      "image_source": "to be filled by image step",
+      "verification": "Verified (both pages opened and read); chicken component page: https://www.shamlola.com/recipes/دجاج-البيري-بيري-المشوي-من-المطبخ-البر",
+      "adapted": "Chicken scaled from a 1200 g whole bird to a 600 g half chicken and roasting changed from 220 C for 90 minutes to 200 C for 45 to 50 minutes; hot red chili and chili powder removed and replaced with lemon juice, oregano, olive oil and sweet paprika (Nando's style home marinade); salt reduced from 1 tbsp to 1 tsp; rice quantity kept at 1 cup with 1 1/2 cups broth (source ratio) which serves 2 adults as a main, turmeric reduced from 1 tbsp to 1 tsp; rice cooking times (5 plus 12 minutes) are not stated in the source and are standard values."
+    },
+    "video": {
+      "url": "https://www.youtube.com/watch?v=jvgOHMdz7LQ",
+      "title": "دجاج بيري بيري مع الرز المبهر - Peri Peri Chicken with Rice",
+      "channel": "Dana Abu Shanab - دانا أبو شنب",
+      "language": "Arabic (manual English subtitle track present)",
+      "duration": "8:59",
+      "priority": "P4",
+      "spicy_warning": true,
+      "subtitles": "manual English"
+    },
+    "video_tl": {
+      "url": "https://www.youtube.com/watch?v=aI5f6PM590I",
+      "title": "Roasted Peri-Peri Chicken with Yellow Rice - Chef RV Manabat",
+      "channel": "Chef RV Manabat",
+      "language": "Tagalog"
+    }
+  },
+  {
+    "id": 6,
+    "name_en": "Lamb Kabsa",
+    "name_ar": "كبسة اللحم",
+    "cuisine": "Gulf",
+    "category": "Main Course",
+    "info": {
+      "prep_time": "20 min (rice soak runs during the lamb simmer)",
+      "cook_time": "110 min",
+      "total_time": "2 h 10 min",
+      "servings": "2 Adults",
+      "difficulty": "Medium",
+      "equipment": ["non-stick pot 22 cm with tight lid", "fine sieve", "measuring jug", "small frying pan", "slotted spoon", "chopping board for raw meat", "second board for vegetables"]
+    },
+    "meat_spec": {
+      "type": "Bone-in",
+      "cut": "Shoulder",
+      "skin": "n/a",
+      "weight": "500 g",
+      "preparation": "Pieces (4 medium pieces of about 125 g)",
+      "cooking_method": "Simmered",
+      "fat": "moderate",
+      "source_specified": true,
+      "note": "Source specifies lamb shoulder or leg, bone-in, medium pieces; shoulder chosen for tenderness."
+    },
+    "spice_note": "Source recipe contains no chili; the only heat is 1/2 tsp black pepper, reduced here to 1/4 tsp.",
+    "components": [
+      {
+        "title": "Part 1 - Lamb Kabsa (meat, broth and rice in one pot)",
+        "ingredients": [
+          {"item": "Lamb shoulder, bone-in, medium pieces", "qty": "500 g (4 pcs)"},
+          {"item": "Vegetable oil", "qty": "1 tbsp"},
+          {"item": "Onion, finely chopped", "qty": "1 medium (120 g)"},
+          {"item": "Dried lime (loomi), pierced twice with a knife", "qty": "1 pcs"},
+          {"item": "Cinnamon stick", "qty": "1 pcs"},
+          {"item": "Bay leaf", "qty": "1 pcs"},
+          {"item": "Green cardamom pods", "qty": "2 pcs"},
+          {"item": "Whole cloves", "qty": "2 pcs"},
+          {"item": "Salt (for the meat)", "qty": "1/2 tsp"},
+          {"item": "Ground cinnamon", "qty": "1/4 tsp"},
+          {"item": "Ground cardamom", "qty": "1/4 tsp"},
+          {"item": "Black pepper, ground", "qty": "1/4 tsp"},
+          {"item": "Tomato paste", "qty": "2 tsp"},
+          {"item": "Tomato sauce (passata)", "qty": "3 tbsp"},
+          {"item": "Water", "qty": "1 1/2 cups (360 ml), plus 1/2 cup to top up"},
+          {"item": "Long-grain basmati rice", "qty": "1 cup (200 g)"},
+          {"item": "Salt (for the rice)", "qty": "1/2 tsp"},
+          {"item": "Strained lamb broth (for the rice)", "qty": "1 1/2 cups (360 ml)"}
+        ],
+        "prep": [
+          "Pat the 500 g lamb pieces dry. Peel and chop 1 onion finely on the vegetable board. Pierce the dried lime twice with a knife point.",
+          "Measure the whole spices into one bowl and the ground spices with the meat salt into another."
+        ],
+        "steps": [
+          "Heat 1 tbsp oil in a non-stick pot 22 cm over medium heat for 1 minute. Add the 1 chopped onion and stir for about 7 minutes until soft and light golden.",
+          "Add the 500 g lamb pieces and brown on medium-high heat for 3 minutes per side (6 minutes total) until golden on the outside.",
+          "Add the 1 cinnamon stick, 1 bay leaf, 2 cardamom pods, 2 cloves and the 1 dried lime, then 1/4 tsp ground cinnamon, 1/4 tsp ground cardamom, 1/4 tsp black pepper and 1/2 tsp salt. Stir on medium heat for 2 minutes until the spices smell fragrant and coat the meat.",
+          "Add 2 tsp tomato paste and stir for 2 minutes until it darkens slightly, then add 3 tbsp tomato sauce and 1 1/2 cups water. Bring to a boil on high heat (about 3 minutes), then cover and simmer on medium-low heat for 60 minutes, adding up to 1/2 cup water at 30 minutes if the meat is not covered, until a fork slides into the lamb with no resistance.",
+          "While the lamb simmers, wash 1 cup basmati in 4 to 5 changes of water until clear, soak in cold water for 30 minutes and drain.",
+          "Lift the lamb out onto a plate. Pour the broth through a sieve into a jug, pressing the onion, and measure exactly 1 1/2 cups (360 ml); top up with hot water if short or set any extra aside. Return the lamb pieces to the bottom of the same pot and pour the 1 1/2 cups broth over them.",
+          "Add the drained 1 cup rice and 1/2 tsp salt in an even layer over the meat, raise the heat to high and cook uncovered for about 5 minutes until the liquid is bubbling across the surface.",
+          "Cover tightly, lower to the lowest heat and cook for 25 minutes without lifting the lid until the liquid is absorbed and the grains are long and separate. Turn off the heat, rest 5 minutes, then fluff the rice gently with a fork, lifting the lamb pieces out first."
+        ]
+      },
+      {
+        "title": "Part 2 - Almond and Raisin Garnish",
+        "ingredients": [
+          {"item": "Olive oil", "qty": "2 tsp"},
+          {"item": "Almonds, blanched", "qty": "2 1/2 tbsp"},
+          {"item": "Raisins", "qty": "2 1/2 tbsp"},
+          {"item": "Parsley, finely chopped", "qty": "1 tbsp"}
+        ],
+        "prep": [
+          "Chop 1 tbsp parsley finely."
+        ],
+        "steps": [
+          "Heat 2 tsp olive oil in a small frying pan over medium heat for 1 minute. Add 2 1/2 tbsp almonds and stir constantly for 2 to 3 minutes until lightly golden, then lift out with a slotted spoon. Add 2 1/2 tbsp raisins to the same pan and stir for 1 to 2 minutes until plump and warm, then remove."
+        ]
+      }
+    ],
+    "timeline": [
+      "0:00 Chop onion, prepare spices, dry the lamb.",
+      "0:05 Fry onion (7 minutes), brown lamb, add spices, tomato and water.",
+      "0:25 Lamb simmering (60 minutes). Wash the rice and soak 30 minutes.",
+      "1:25 Lamb tender: strain the broth, measure 1 1/2 cups, return lamb, add rice, boil 5 minutes.",
+      "1:35 Cover and cook 25 minutes on lowest heat.",
+      "1:50 Fry the almonds and raisins, chop parsley.",
+      "2:00 Rest 5 minutes, fluff and serve."
+    ],
+    "mistakes": [
+      "Rice wet or mushy -> measure exactly 1 1/2 cups broth for 1 cup soaked rice; set any extra broth aside.",
+      "Rice dry and hard on top -> the lid must be tight; put a towel under it and do not open for 25 minutes.",
+      "Lamb chewy -> it needs the full 60 minutes; test with a fork before straining the broth.",
+      "Bitter taste -> the dried lime was crushed or left in the rice; pierce it only and remove it when straining.",
+      "Almonds burn -> stir constantly on medium heat and remove them at light gold; they darken off the heat."
+    ],
+    "serving": [
+      "Spread the rice on a large round platter and place the lamb pieces on top.",
+      "Scatter the fried almonds, raisins and chopped parsley over the meat.",
+      "Serve with a tomato and cucumber salad and plain yogurt; the traditional daqqous is a chili sauce, so serve lemon wedges instead."
+    ],
+    "safety": [
+      "Lamb is safe at 70 C and is fork-tender after 60 minutes of simmering.",
+      "Use a separate board for raw lamb and wash hands and board after handling.",
+      "Cool leftovers within 1 hour; fridge 2 to 3 days in a closed container; reheat until steaming hot; reheat rice only once."
+    ],
+    "source": {
+      "site": "Sayidaty Kitchen",
+      "chef": "Sayidaty Kitchen editorial",
+      "title_ar": "كبسة لحم مثل المطاعم",
+      "url": "https://kitchen.sayidaty.net/node/40877/كبسة-لحم-مثل-المطاعم/وصفات-طبخ/وصفات",
+      "image_source": "to be filled by image step",
+      "verification": "Verified (page opened and read)",
+      "adapted": "Scaled from 5 servings (1.5 kg lamb, 3 cups rice, 4 1/2 cups broth) to 2 adults (500 g lamb, 1 cup rice, 1 1/2 cups broth) keeping the 2:3 rice to broth ratio; whole spices reduced proportionally; black pepper reduced to 1/4 tsp; browning time per side (3 minutes) and the 5 minute rest are not stated in the source and are standard values."
+    },
+    "video": {
+      "url": "https://www.youtube.com/watch?v=ZMsO1x7tLGE",
+      "title": "طبخ كبسة اللحم مع الرز! أطيب واسهل وصفة! Cooking meat and rice  Kabsa! Easy and delicious recipe!",
+      "channel": "هدوء الطبخ Peaceful Cooking",
+      "language": "Bilingual title; cooking shown with on-screen subtitles, manual English track present",
+      "duration": "8:27",
+      "priority": "P4",
+      "spicy_warning": true,
+      "subtitles": "manual English"
+    },
+    "video_tl": {
+      "url": "https://www.youtube.com/watch?v=HfnTOP4p_ek",
+      "title": "How to cook Saudi Kabsa Lamb (Tagalog) - madam kikay cooking",
+      "channel": "madam kikay cooking",
+      "language": "Tagalog"
+    }
+  },
+  {
+    "id": 7,
+    "name_en": "Chicken Kabsa",
+    "name_ar": "كبسة الدجاج",
+    "cuisine": "Gulf",
+    "category": "Main Course",
+    "info": {
+      "prep_time": "20 min",
+      "cook_time": "80 min",
+      "total_time": "1 h 40 min",
+      "servings": "2 Adults",
+      "difficulty": "Easy",
+      "equipment": ["large pot 22 cm with tight lid", "box grater", "small bowl for the spice mix", "kettle for hot water", "meat thermometer", "chopping board for raw chicken", "second board for vegetables"]
+    },
+    "meat_spec": {
+      "type": "Bone-in",
+      "cut": "Mixed",
+      "skin": "Skin-on",
+      "weight": "500 g",
+      "preparation": "Pieces (4): 2 leg quarters each cut into thigh and drumstick",
+      "cooking_method": "Simmered",
+      "source_specified": false,
+      "note": "Source says '1.5 kg chicken cut into 8 to 10 pieces', bone-in implied, skin not stated. Suggested: bone-in skin-on leg pieces because they brown well in the butter and stay moist through 30 minutes of simmering plus 30 minutes under the rice."
+    },
+    "spice_note": "Source recipe contains no chili; the daqqous hot sauce it suggests for serving is omitted and black pepper is limited to 1/4 tsp.",
+    "components": [
+      {
+        "title": "Part 1 - Chicken Kabsa (one pot)",
+        "ingredients": [
+          {"item": "Chicken leg quarters, bone-in, skin-on, cut into 4 pieces", "qty": "500 g (4 pcs)", "note": "do not wash; pat dry"},
+          {"item": "Butter", "qty": "1 1/2 tbsp"},
+          {"item": "Onion, finely chopped", "qty": "1 medium (120 g)"},
+          {"item": "Garlic, minced", "qty": "2 cloves"},
+          {"item": "Tomato puree (passata)", "qty": "1 1/2 tbsp"},
+          {"item": "Fresh tomato, chopped", "qty": "1 medium (150 g)"},
+          {"item": "Carrot, grated", "qty": "1 medium (80 g)"},
+          {"item": "Whole cloves", "qty": "1 pcs"},
+          {"item": "Salt", "qty": "1 tsp"},
+          {"item": "Black pepper, ground", "qty": "1/4 tsp"},
+          {"item": "Saffron threads", "qty": "1/8 tsp (a pinch)"},
+          {"item": "Ground cinnamon", "qty": "1/4 tsp"},
+          {"item": "Baharat (mixed spice), chili-free", "qty": "1/4 tsp"},
+          {"item": "Dried lime powder (loomi)", "qty": "1/4 tsp"},
+          {"item": "Ground green cardamom", "qty": "1/8 tsp"},
+          {"item": "Nutmeg, grated", "qty": "1/8 tsp (a pinch)"},
+          {"item": "Ground cumin", "qty": "1/4 tsp"},
+          {"item": "Ground coriander", "qty": "1/4 tsp"},
+          {"item": "Hot water", "qty": "1 3/4 cups (420 ml)"},
+          {"item": "Basmati rice", "qty": "1 cup (200 g)"},
+          {"item": "Raisins", "qty": "1 1/2 tbsp"},
+          {"item": "Sliced almonds, toasted dry in a pan 2 minutes", "qty": "1 1/2 tbsp", "note": "for serving"}
+        ],
+        "prep": [
+          "Pat the 4 chicken pieces dry on the raw-chicken board.",
+          "Chop 1 onion finely, mince 2 garlic cloves, chop 1 tomato, grate 1 carrot on the vegetable board.",
+          "Mix the kabsa spices in a small bowl: 1/8 tsp saffron, 1/4 tsp cinnamon, 1/4 tsp baharat, 1/4 tsp dried lime powder, 1/8 tsp cardamom, 1/8 tsp nutmeg, 1/4 tsp cumin, 1/4 tsp coriander.",
+          "Wash 1 cup basmati in 3 to 4 changes of water until the water runs clear and drain in a sieve; no soaking, as in the source, because the rice cooks for 30 minutes in the stew.",
+          "Boil water in the kettle for the 1 3/4 cups hot water."
+        ],
+        "steps": [
+          "Melt 1 1/2 tbsp butter in a large pot 22 cm over medium heat for 1 minute until foaming. Add the 4 chicken pieces skin side down, the 1 chopped onion and 2 minced garlic cloves, and fry for 10 to 12 minutes, turning the chicken at 6 minutes, until the onion is soft and the chicken skin is golden brown.",
+          "Add 1 1/2 tbsp tomato puree and stir on low heat for 3 minutes until it coats the chicken and smells sweet rather than raw.",
+          "Add the 1 chopped tomato, 1 grated carrot, 1 clove, 1 tsp salt, 1/4 tsp black pepper and the whole kabsa spice bowl. Stir on medium heat for 3 minutes until the tomato softens and the pot smells strongly of cinnamon and dried lime.",
+          "Pour in 1 3/4 cups hot water, bring to a boil on high heat for about 2 minutes, then cover and simmer on low heat for 30 minutes until the chicken reads 74 C at the bone and the liquid is red and glossy.",
+          "Add the drained 1 cup rice, stir well so the rice is under the liquid and the chicken sits on top, cover tightly and cook on low heat for 20 minutes without opening.",
+          "Scatter 1 1/2 tbsp raisins over the rice, cover again and cook on the lowest heat for a final 10 minutes until the liquid is fully absorbed and a grain from the top is tender. Turn off the heat and rest covered for 5 minutes."
+        ]
+      }
+    ],
+    "timeline": null,
+    "mistakes": [
+      "Rice gummy -> keep the exact 1 3/4 cups water for 1 cup unsoaked rice and do not soak the rice beforehand.",
+      "Chicken pale -> fry it skin side down in the butter without moving it for the first 6 minutes.",
+      "Rice stuck to the bottom -> after adding the rice, use the lowest heat and a heavy pot; do not stir again after the first mix.",
+      "Flavour flat -> the dried lime powder and saffron are the kabsa signature; do not skip them.",
+      "Too salty -> use 1 tsp salt only; stock cubes are not used in this recipe."
+    ],
+    "serving": [
+      "Spread the rice on a large round platter and lift the chicken pieces on top.",
+      "Sprinkle the toasted sliced almonds over the chicken.",
+      "Serve with a chopped tomato, cucumber and lemon salad and plain yogurt instead of the daqqous chili sauce."
+    ],
+    "safety": [
+      "Chicken is safe at 74 C internal temperature at the thickest part next to the bone.",
+      "Do not wash raw chicken; use a separate board and wash hands after handling.",
+      "Cool leftovers within 1 hour; fridge 2 to 3 days in a closed container; reheat until steaming hot; reheat rice only once."
+    ],
+    "source": {
+      "site": "Sayidaty Kitchen",
+      "chef": "Saudi Kitchen Restaurant, Dubai (published by Sayidaty Kitchen)",
+      "title_ar": "كبسة الدجاج على الطريقة السعودية التقليدية",
+      "url": "https://kitchen.sayidaty.net/node/28408/كبسة-الدجاج-على-الطريقة-السعودية-التقليدية/وصفات-طبخ/وصفات",
+      "image_source": "to be filled by image step",
+      "verification": "Verified (page opened and read)",
+      "adapted": "Scaled from 6 servings (1.5 kg chicken, 2 1/4 cups rice, 4 cups water) to 2 adults (500 g chicken, 1 cup rice, 1 3/4 cups water) keeping the source rice to water ratio; rice cooking time shortened from 35 to 40 minutes to 30 minutes for the smaller quantity; salt and pepper ('to taste' in source) set at 1 tsp and 1/4 tsp; the daqqous hot sauce serving suggestion is omitted."
+    },
+    "video": {
+      "url": "https://www.youtube.com/watch?v=vetvxR2nE7U",
+      "title": "The Middle East's most FLAVOURFUL chicken and rice! Gulf Kabsa (Machboos)",
+      "channel": "Middle Eats",
+      "language": "English",
+      "duration": "10:11",
+      "priority": "P4",
+      "spicy_warning": true,
+      "subtitles": "n/a"
+    },
+    "video_tl": {
+      "url": "https://www.youtube.com/watch?v=JhTIBKOpUEY",
+      "title": "Kabsa Rice with Chicken (Saudi / Tagalog) - Yamyam Arabicfood",
+      "channel": "Yamyam Arabicfood",
+      "language": "Tagalog"
+    }
+  },
+  {
+    "id": 8,
+    "name_en": "Chicken Bukhari",
+    "name_ar": "الرز البخاري بالدجاج",
+    "cuisine": "Gulf",
+    "category": "Main Course",
+    "info": {
+      "prep_time": "30 min (includes 20 min rice soak)",
+      "cook_time": "70 min",
+      "total_time": "1 h 40 min",
+      "servings": "2 Adults",
+      "difficulty": "Easy",
+      "equipment": ["wide pot 24 cm with tight lid", "box grater", "small bowl for the spices", "fine sieve", "tongs", "meat thermometer", "chopping board for raw chicken", "second board for vegetables"]
+    },
+    "meat_spec": {
+      "type": "Bone-in",
+      "cut": "Half",
+      "skin": "Skin-on",
+      "weight": "600 g",
+      "preparation": "Pieces (4): half chicken cut into thigh, drumstick, and breast halved with wing",
+      "cooking_method": "Simmered",
+      "source_specified": false,
+      "note": "Source says '1 whole chicken cut into 8 pieces' for 4 people, bone-in, skin not stated. For 2 adults half a chicken in 4 pieces is used; skin-on so the pieces brown well in the ghee at the start."
+    },
+    "spice_note": "Source recipe contains no chili; the 'hot tomato-garlic-lemon sauce' it suggests for serving is replaced by mint yogurt, and black pepper is reduced to 1/4 tsp.",
+    "components": [
+      {
+        "title": "Part 1 - Chicken Bukhari Rice (one pot)",
+        "ingredients": [
+          {"item": "Half chicken, bone-in, skin-on, cut into 4 pieces", "qty": "600 g (4 pcs)", "note": "do not wash; pat dry"},
+          {"item": "Ghee", "qty": "2 tbsp"},
+          {"item": "Long-grain basmati rice", "qty": "1 1/4 cups (250 g)"},
+          {"item": "Warm water, for soaking", "qty": "3 cups"},
+          {"item": "Onion, finely chopped", "qty": "1 small (80 g)"},
+          {"item": "Garlic, crushed", "qty": "2 cloves"},
+          {"item": "Tomato, grated (skin discarded)", "qty": "1 large (150 g)"},
+          {"item": "Tomato paste", "qty": "1 1/2 tsp"},
+          {"item": "Salt", "qty": "1/2 tsp", "note": "plus more only if the stock is unsalted"},
+          {"item": "Black pepper, ground", "qty": "1/4 tsp"},
+          {"item": "Ground cumin", "qty": "1/4 tsp"},
+          {"item": "Ground coriander", "qty": "1/4 tsp"},
+          {"item": "Ground cinnamon", "qty": "1/8 tsp"},
+          {"item": "Cardamom pods", "qty": "3 pcs"},
+          {"item": "Cinnamon stick", "qty": "1 pcs (half stick, 4 cm)"},
+          {"item": "Bay leaf", "qty": "1 pcs"},
+          {"item": "Carrot, grated", "qty": "1 medium (80 g)"},
+          {"item": "Chicken stock (from cube or homemade), hot", "qty": "2 cups (480 ml)"},
+          {"item": "Carrot, grated, for garnish", "qty": "2 tbsp"},
+          {"item": "Almonds, toasted dry in a pan 2 to 3 minutes", "qty": "2 tbsp", "note": "for garnish"}
+        ],
+        "prep": [
+          "Wash 1 1/4 cups basmati in 4 changes of water until clear, cover with 3 cups warm water and soak 20 minutes, then drain in a sieve.",
+          "Pat the 4 chicken pieces dry on the raw-chicken board.",
+          "Chop 1 small onion finely, crush 2 garlic cloves, grate 1 large tomato on the coarse side of the grater and discard the skin, grate 1 carrot plus 2 tbsp extra for garnish.",
+          "Put 1/2 tsp salt, 1/4 tsp black pepper, 1/4 tsp cumin, 1/4 tsp coriander, 1/8 tsp ground cinnamon, 3 cardamom pods, the half cinnamon stick and 1 bay leaf together in a small bowl.",
+          "Heat 2 cups chicken stock until steaming."
+        ],
+        "steps": [
+          "Heat 2 tbsp ghee in a wide pot 24 cm over medium-high heat for 1 minute. Add the 4 chicken pieces skin side down and fry for 4 minutes per side (8 minutes total) until golden on both sides, then lift out with tongs onto a plate.",
+          "Lower to medium heat, add the 1 chopped onion to the same ghee and stir for 5 to 6 minutes until soft and lightly golden. Add 2 crushed garlic cloves, the 1 grated tomato and 1 1/2 tsp tomato paste and stir for 2 minutes until combined.",
+          "Add the spice bowl (salt, black pepper, cumin, coriander, ground cinnamon, cardamom pods, cinnamon stick, bay leaf) and cook on medium heat, stirring every minute, for 5 to 6 minutes until the tomato breaks down, the mixture darkens to a deep brick red and the ghee shows at the edges.",
+          "Add the 1 grated carrot and stir for 1 minute until it softens slightly. Return the 4 chicken pieces to the pot skin side up with any juices.",
+          "Pour in the 2 cups hot stock, bring to a boil on high heat (about 2 minutes), then simmer uncovered on medium heat for 20 minutes until the chicken reads 74 C at the bone and the liquid has reduced slightly.",
+          "Lift the chicken out onto the plate with tongs. Add the drained 1 1/4 cups rice to the stock and stir once to level it. Lay the chicken pieces gently on top, cover tightly and cook on the lowest heat for 25 minutes until the liquid is absorbed and a grain from under the chicken is tender with no hard centre. Turn off the heat and rest covered for 5 minutes.",
+          "Lift the chicken off, remove the cinnamon stick and bay leaf, and fluff the rice gently with a fork from the sides so the carrot and tomato colour run through it."
+        ]
+      }
+    ],
+    "timeline": null,
+    "mistakes": [
+      "Rice pale and watery -> cook the tomato and spices until they darken and the fat separates before adding the stock; this gives the bukhari colour.",
+      "Rice overcooked -> use 2 cups stock for 1 1/4 cups soaked rice, and keep the 20 minute reduction so there is less liquid when the rice goes in.",
+      "Chicken skin stuck to the pot -> let the ghee get hot and do not move the pieces for the first 4 minutes.",
+      "Bottom scorches -> lowest heat and a tight lid for the final 25 minutes; a towel under the lid helps.",
+      "Whole spices bitten at the table -> fish out the cinnamon stick, bay leaf and cardamom pods before serving."
+    ],
+    "serving": [
+      "Spread the orange-red rice on a large platter and arrange the 4 chicken pieces on top.",
+      "Garnish with the 2 tbsp fresh grated carrot and 2 tbsp toasted almonds.",
+      "Serve with mint yogurt (1/2 cup plain yogurt, 1 tbsp chopped mint, pinch of salt) and a cucumber salad; the hot tomato sauce of the source is left out."
+    ],
+    "safety": [
+      "Chicken is safe at 74 C internal temperature at the thickest part next to the bone.",
+      "Do not wash raw chicken; use a separate board and wash hands and tongs after handling raw pieces.",
+      "Cool leftovers within 1 hour; fridge 2 to 3 days in a closed container; reheat until steaming hot; reheat rice only once."
+    ],
+    "source": {
+      "site": "Sayidaty Kitchen",
+      "chef": "Sayidaty Kitchen editorial",
+      "title_ar": "البخاري بالدجاج",
+      "url": "https://kitchen.sayidaty.net/node/37104/البخاري-بالدجاج/وصفات-طبخ/وصفات",
+      "image_source": "to be filled by image step",
+      "verification": "Verified (page opened and read)",
+      "adapted": "Scaled from 4 servings (1 whole chicken, 2 1/2 cups rice, 4 cups stock) to 2 adults (half chicken 600 g, 1 1/4 cups rice, 2 cups stock) keeping the 5:8 rice to stock ratio; black pepper reduced to 1/4 tsp; browning time per side (4 minutes) and the onion time (5 to 6 minutes) are not stated in the source and are standard values; the hot sauce serving suggestion is omitted and mint yogurt kept."
+    },
+    "video": {
+      "url": "https://www.youtube.com/watch?v=k_Q-VrxxDOY",
+      "title": "طبخ وصفة دجاج بخاري عربي مع الأرز لذيذة جدا 😍 Delicious Arabic Bukhari chicken and rice recipe",
+      "channel": "مطبخنا اليمني Our Yemeni Kitchen",
+      "language": "Bilingual title; on-screen subtitles, manual English track present",
+      "duration": "8:14",
+      "priority": "P4",
+      "spicy_warning": true,
+      "subtitles": "manual English"
+    },
+    "video_tl": null
+  }
+]

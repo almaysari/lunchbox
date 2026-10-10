@@ -1,0 +1,973 @@
+[
+  {
+    "id": 17,
+    "name_en": "Okra with Lamb and White Rice",
+    "name_ar": "بامية باللحم مع أرز أبيض",
+    "cuisine": "Egyptian",
+    "category": "Main Course",
+    "info": {
+      "prep_time": "20 min (okra trimmed and dried while the lamb simmers)",
+      "cook_time": "100 min",
+      "total_time": "2 h",
+      "servings": "2 Adults",
+      "difficulty": "Medium",
+      "equipment": ["medium pot 22 cm with lid (for the stew)", "wide non-stick frying pan 26 cm (for the okra)", "medium pot 18 cm with lid (for the rice)", "slotted spoon", "kitchen paper or a clean cloth", "chopping board for raw meat", "second board for vegetables", "meat thermometer"]
+    },
+    "meat_spec": {
+      "type": "Boneless",
+      "cut": "Shoulder",
+      "skin": "n/a",
+      "weight": "400 g",
+      "preparation": "Cubes 3 cm",
+      "cooking_method": "Simmered",
+      "fat": "moderate",
+      "source_specified": false,
+      "note": "Source says only '1 kg meat in small cubes' with no animal or cut. Suggested cut: boneless lamb shoulder because it becomes tender in 60 to 70 minutes of simmering and its moderate fat keeps the cubes juicy in the tomato sauce."
+    },
+    "spice_note": "Source adds an unquantified hot pepper with the onion and garlic; it is removed and replaced with 1/2 tsp sweet paprika for colour, and black pepper is set at 1/4 tsp.",
+    "components": [
+      {
+        "title": "Part 1 - Lamb and Okra Stew",
+        "ingredients": [
+          {"item": "Lamb shoulder, boneless, in 3 cm cubes", "qty": "400 g", "note": "pat dry; do not wash"},
+          {"item": "Baby okra, whole, stem caps trimmed", "qty": "400 g", "note": "small pods 4 to 5 cm; never cut them"},
+          {"item": "Vegetable oil", "qty": "3 tbsp", "note": "2 tbsp for the okra, 1 tbsp for the stew"},
+          {"item": "Onion, finely chopped", "qty": "1/2 medium (60 g)"},
+          {"item": "Garlic, minced", "qty": "3 cloves"},
+          {"item": "Chicken or meat stock cube", "qty": "1 pcs", "note": "crumbled"},
+          {"item": "Tomatoes, chopped", "qty": "1 large (150 g)"},
+          {"item": "Tomato paste", "qty": "1 tbsp"},
+          {"item": "Mixed spice (baharat), chili-free", "qty": "1/2 tsp"},
+          {"item": "Sweet paprika", "qty": "1/2 tsp", "note": "replaces the hot pepper"},
+          {"item": "Black pepper, ground", "qty": "1/4 tsp"},
+          {"item": "Salt", "qty": "1/2 tsp", "note": "the stock cube is salty; taste at the end"},
+          {"item": "Water, hot", "qty": "2 cups (480 ml)"},
+          {"item": "Lemon juice", "qty": "1 tbsp", "note": "standard addition; helps keep the okra firm"}
+        ],
+        "prep": [
+          "Pat the 400 g lamb cubes dry with kitchen paper on the raw-meat board.",
+          "Wash the 400 g okra, then dry every pod completely on a clean cloth for 10 minutes. Trim only the hard stem cap in a thin cone without opening the pod; a cut pod leaks slime. Keep the pods whole.",
+          "Chop 1/2 onion finely, mince 3 garlic cloves and chop 1 large tomato on the vegetable board. Crumble 1 stock cube into a small bowl.",
+          "Boil 2 cups water in a kettle."
+        ],
+        "steps": [
+          "Heat 1 tbsp oil in a medium pot 22 cm over medium heat for 1 minute. Add the 1/2 chopped onion, 3 minced garlic cloves and the crumbled stock cube and stir for 4 to 5 minutes until the onion is soft and translucent.",
+          "Add the 400 g lamb cubes and turn them with a spoon on medium-high heat for 5 to 6 minutes until every side is browned and no raw red shows.",
+          "Add the 1 chopped tomato, 1 tbsp tomato paste, 1/2 tsp mixed spice, 1/2 tsp sweet paprika, 1/4 tsp black pepper and 1/2 tsp salt and stir on medium heat for 3 minutes until the paste darkens and the tomato collapses.",
+          "Pour in 2 cups hot water, bring to a boil on high heat (about 2 minutes), skim any foam, then cover and simmer on low heat for 60 to 70 minutes until a fork slides into a cube with no resistance and the meat reads at least 70 C. The sauce should be thick enough to coat a spoon; if it is thin, simmer uncovered for the last 10 minutes.",
+          "While the lamb is in its last 15 minutes, heat 2 tbsp oil in a wide non-stick frying pan 26 cm over medium-high heat for 1 minute. Add the 400 g whole dry okra in a single layer and fry for 4 to 5 minutes, shaking the pan instead of stirring, until the pods turn bright green with light golden spots and are half cooked. Lift them out with a slotted spoon onto kitchen paper.",
+          "Lay the fried okra on top of the lamb and sauce in the pot, sprinkle 1 tbsp lemon juice over it and push the pods gently under the sauce with the back of the spoon once; do not stir. Cover and simmer on low heat for 12 to 15 minutes until a pod is tender when pierced with a knife tip but still holds its shape. Taste the sauce and add salt only if needed. Turn off the heat and rest covered for 5 minutes."
+        ]
+      },
+      {
+        "title": "Part 2 - White Rice",
+        "ingredients": [
+          {"item": "White rice (Egyptian short-grain or basmati)", "qty": "1 cup (200 g)"},
+          {"item": "Water, hot", "qty": "1 1/2 cups (360 ml)"},
+          {"item": "Salt", "qty": "1/2 tsp"},
+          {"item": "Butter or vegetable oil", "qty": "1 tsp", "note": "standard addition, optional"}
+        ],
+        "prep": [
+          "Wash 1 cup rice in 3 changes of cold water until the water runs almost clear and drain in a sieve."
+        ],
+        "steps": [
+          "Bring 1 1/2 cups water with 1 tsp butter to a boil in a medium pot 18 cm over medium heat (about 3 minutes).",
+          "Add the drained 1 cup rice and 1/2 tsp salt and stir once; the water should stand about 1 cm above the rice. Let it return to a boil for 1 minute.",
+          "Reduce to the lowest heat, cover and simmer for 15 minutes without lifting the lid until the water is absorbed and a grain is tender with no hard centre. Turn off the heat, rest covered for 5 minutes and fluff with a fork."
+        ]
+      }
+    ],
+    "timeline": [
+      "0:00 Chop the onion, garlic and tomato; brown the lamb and start the simmer (60 to 70 minutes).",
+      "0:15 Wash, dry and trim the okra; leave it on a cloth to dry fully.",
+      "1:00 Wash the rice and put it on (15 minutes plus 5 minutes rest).",
+      "1:05 Fry the okra 4 to 5 minutes and lay it on the lamb; simmer 12 to 15 minutes.",
+      "1:20 Rest both pots 5 minutes.",
+      "1:25 Serve."
+    ],
+    "mistakes": [
+      "Okra slimy -> dry the pods completely before frying, never cut them, do not stir once they are in the sauce, and add the lemon juice.",
+      "Okra falls apart -> add it only for the last 12 to 15 minutes and keep the simmer gentle.",
+      "Lamb chewy -> it must be fork-tender before the okra goes in; add 10 more minutes of simmering if needed.",
+      "Stew too salty -> the stock cube carries salt; use only 1/2 tsp salt and taste at the end.",
+      "Sauce thin -> cook the tomato paste 3 minutes until dark and simmer uncovered for the last 10 minutes of the lamb.",
+      "Rice gummy -> exactly 1 1/2 cups water for 1 cup rice, lid closed for 15 minutes, rest 5 minutes."
+    ],
+    "serving": [
+      "Spoon the white rice onto one side of a wide platter and ladle the okra and lamb next to it so the whole pods show on top.",
+      "Spoon extra sauce over the rice.",
+      "Serve with lemon wedges and a small plate of chopped tomato and cucumber salad."
+    ],
+    "safety": [
+      "Lamb is safe at 70 C and must be fork-tender after the simmer.",
+      "Use a separate board and knife for raw meat and wash hands and board with hot soapy water afterwards.",
+      "Hot oil spits when okra goes in; make sure the pods are dry and keep the pan at medium-high, not high.",
+      "Cool leftovers within 1 hour; keep in a closed container in the fridge for 2 to 3 days; reheat until steaming hot, and reheat rice only once."
+    ],
+    "source": {
+      "site": "Shamlola (shamlola.com), both components",
+      "chef": "Shamlola editorial",
+      "title_ar": "طريقة عمل بامية باللحم + الأرز الأبيض",
+      "url": "https://www.shamlola.com/recipes/طريقة-عمل-بامية-باللحم",
+      "image_source": "to be filled by image step",
+      "verification": "Partially verified: both pages opened and read, content paraphrased by the fetcher; rice page https://www.shamlola.com/recipes/طريقة-عمل-الأرز-الأبيض",
+      "adapted": "Scaled from 1 kg okra, 1 kg meat, 3 tomatoes, 1 onion and 2 stock cubes for 4 people to 400 g okra, 400 g boneless lamb shoulder, 1 tomato plus 1 tbsp tomato paste, 1/2 onion and 1 stock cube for 2 adults keeping the source ratios; the hot pepper removed and replaced with 1/2 tsp sweet paprika; the source does not quantify garlic, spices, tomato paste or oil, so 3 cloves, 1/2 tsp baharat, 1/4 tsp black pepper, 1 tbsp paste and 3 tbsp oil are standard values; the source gives no simmering liquid, time or heat for the meat, so 2 cups water and 60 to 70 minutes on low are the professional standard; the okra is fried whole and added for the last 12 to 15 minutes without stirring (the source finishes it in the sauce without a time); 1 tbsp lemon juice is a standard addition against slime. Rice kept at the source's 1 cup to 1 1/2 cups water and 15 minutes; washing the rice and 1 tsp butter are standard additions."
+    },
+    "video": {
+      "url": "https://www.youtube.com/watch?v=C0aeWKQyEjg",
+      "title": "How Does This Okra Stew Have NO Slime?",
+      "channel": "Middle Eats",
+      "language": "English",
+      "duration": "7:52",
+      "priority": "P4",
+      "spicy_warning": true,
+      "subtitles": "n/a"
+    },
+    "video_tl": {
+      "url": "https://www.youtube.com/watch?v=yypa-uNFKr0",
+      "title": "Marag Bamya with Lamb - Angeline Canja",
+      "channel": "Angeline Canja",
+      "language": "Tagalog"
+    }
+  },
+  {
+    "id": 18,
+    "name_en": "Fried Chicken with Okra and White Rice",
+    "name_ar": "دجاج بانيه مع بامية بدون لحم وأرز أبيض",
+    "cuisine": "Egyptian",
+    "category": "Main Course",
+    "info": {
+      "prep_time": "25 min active, plus 1 h marinating",
+      "cook_time": "55 min",
+      "total_time": "1 h 20 min after marinating",
+      "servings": "2 Adults",
+      "difficulty": "Medium",
+      "equipment": ["deep frying pan 26 cm (for the chicken)", "medium pot 20 cm with lid (for the okra)", "medium pot 18 cm with lid (for the rice)", "box grater", "mixing bowl with lid (for marinating)", "wide plate for the breadcrumbs", "tongs", "wire rack or kitchen paper", "kitchen thermometer for oil (or a wooden spoon test)", "chopping board for raw chicken", "second board for vegetables", "meat thermometer"]
+    },
+    "meat_spec": {
+      "type": "Boneless",
+      "cut": "Breast",
+      "skin": "Skinless",
+      "weight": "350 g",
+      "preparation": "Pieces (4 thin cutlets, each cut from a breast half across and flattened to 1 cm)",
+      "cooking_method": "Fried",
+      "source_specified": true,
+      "note": "Source specifies 1/2 kg boneless skinless chicken breast cut into thin cutlets for pane; scaled to 350 g (2 breast halves) for 2 adults."
+    },
+    "spice_note": "Source recipe contains no chili in any of the three components; the bought chicken spice mix must list no chili, and black pepper is reduced from 1 tsp to 1/4 tsp.",
+    "components": [
+      {
+        "title": "Part 1 - Egyptian Fried Chicken Pane",
+        "ingredients": [
+          {"item": "Chicken breast, boneless, skinless", "qty": "350 g (2 halves, cut into 4 cutlets)", "note": "pat dry; do not wash"},
+          {"item": "Tomato, grated", "qty": "1/2 medium (60 g)"},
+          {"item": "Onion, grated", "qty": "1/2 small (40 g)"},
+          {"item": "Egg", "qty": "1 pcs"},
+          {"item": "Chicken spice mix, chili-free", "qty": "1/2 tsp", "note": "check the label"},
+          {"item": "Salt", "qty": "1/2 tsp"},
+          {"item": "Black pepper, ground", "qty": "1/4 tsp"},
+          {"item": "Breadcrumbs, fine", "qty": "1 cup (100 g)"},
+          {"item": "Vegetable oil, for shallow frying", "qty": "1 cup (240 ml)", "note": "about 1 cm deep in the pan"}
+        ],
+        "prep": [
+          "Pat the 350 g chicken breast dry on the raw-chicken board. Cut each breast half across into 2 thinner cutlets, lay them between 2 sheets of baking paper and flatten with a rolling pin to about 1 cm so you have 4 even cutlets. Do not wash the chicken.",
+          "Grate 1/2 tomato and 1/2 onion on the fine side of the box grater into a mixing bowl on the vegetable board.",
+          "Crack 1 egg into the bowl, add 1/2 tsp chicken spice, 1/2 tsp salt and 1/4 tsp black pepper and beat with a fork for 30 seconds until smooth.",
+          "Add the 4 cutlets, turn them so every side is coated, cover and refrigerate for 1 hour.",
+          "Spread 1 cup breadcrumbs on a wide plate. Set a wire rack or kitchen paper next to the stove."
+        ],
+        "steps": [
+          "Lift one cutlet at a time from the marinade, let the extra drip off for a few seconds, then press it firmly into the breadcrumbs on both sides until no wet spot shows. Lay the 4 coated cutlets on a plate and let them sit for 5 minutes so the coating sets.",
+          "Pour 1 cup oil into a deep frying pan 26 cm (about 1 cm deep) and heat over medium-high heat for 3 to 4 minutes to 170 to 175 C; a pinch of breadcrumbs dropped in should bubble at once and turn golden in 20 seconds, not brown in 5.",
+          "Lower 2 cutlets into the oil with tongs, away from you, and fry on medium heat for 3 to 4 minutes until the underside is deep golden; turn once and fry for 3 minutes more until golden on both sides and a thermometer in the thickest part reads 74 C with no pink inside. Lift onto the rack.",
+          "Let the oil come back to temperature for 1 minute, then fry the second pair the same way. Sprinkle a pinch of salt over the hot cutlets."
+        ]
+      },
+      {
+        "title": "Part 2 - Okra in Tomato Sauce (no meat)",
+        "ingredients": [
+          {"item": "Baby okra, whole, stem caps trimmed", "qty": "250 g", "note": "small pods 4 to 5 cm; never cut them"},
+          {"item": "Olive oil", "qty": "3 tbsp (40 ml)"},
+          {"item": "Onion, finely chopped", "qty": "1/2 large (80 g)"},
+          {"item": "Garlic, finely chopped", "qty": "1 1/2 tsp (2 cloves)"},
+          {"item": "Tomato sauce (passata)", "qty": "3/4 cup (180 ml)"},
+          {"item": "Seven-spice mix, chili-free", "qty": "1/2 tsp"},
+          {"item": "Lemon juice", "qty": "1 tbsp (1/4 lemon)"},
+          {"item": "Salt", "qty": "1/4 tsp", "note": "not quantified in the source"},
+          {"item": "Water, hot", "qty": "1/4 cup (60 ml)", "note": "only if the sauce gets too thick"}
+        ],
+        "prep": [
+          "Wash the 250 g okra, then dry every pod completely on a clean cloth for 10 minutes. Trim only the hard stem cap in a thin cone without opening the pod. Keep the pods whole.",
+          "Chop 1/2 large onion finely and chop 2 garlic cloves on the vegetable board. Squeeze 1 tbsp lemon juice."
+        ],
+        "steps": [
+          "Heat 3 tbsp olive oil in a medium pot 20 cm over medium heat for 1 minute. Add the 1/2 chopped onion, cover and cook for 5 minutes, lifting the lid once to stir, until golden and soft.",
+          "Add 1 1/2 tsp chopped garlic and stir for 1 minute until fragrant. Pour in 3/4 cup tomato sauce, 1/2 tsp seven-spice, 1 tbsp lemon juice and 1/4 tsp salt and simmer on medium-low heat for 8 to 10 minutes, stirring now and then, until the sauce thickens and darkens slightly.",
+          "Lay the 250 g whole dry okra on top of the sauce in one layer and spoon a little sauce over the pods once with a wooden spoon; do not stir again. Cover and simmer on low heat for 20 to 25 minutes, shaking the pot gently every 5 minutes so the base does not catch, until a pod is tender when pierced with a knife tip and the sauce clings to it. If the sauce becomes dry before the okra is tender, add 1/4 cup hot water down the side of the pot.",
+          "Uncover and cook for the last 3 minutes so the steam escapes and the sauce is thick. Turn off the heat."
+        ]
+      },
+      {
+        "title": "Part 3 - White Rice",
+        "ingredients": [
+          {"item": "White rice (Egyptian short-grain or basmati)", "qty": "1 cup (200 g)"},
+          {"item": "Water, hot", "qty": "1 1/2 cups (360 ml)"},
+          {"item": "Salt", "qty": "1/2 tsp"},
+          {"item": "Butter or vegetable oil", "qty": "1 tsp", "note": "standard addition, optional"}
+        ],
+        "prep": [
+          "Wash 1 cup rice in 3 changes of cold water until the water runs almost clear and drain in a sieve."
+        ],
+        "steps": [
+          "Bring 1 1/2 cups water with 1 tsp butter to a boil in a medium pot 18 cm over medium heat (about 3 minutes).",
+          "Add the drained 1 cup rice and 1/2 tsp salt and stir once; the water should stand about 1 cm above the rice. Let it return to a boil for 1 minute.",
+          "Reduce to the lowest heat, cover and simmer for 15 minutes without lifting the lid until the water is absorbed and a grain is tender with no hard centre. Turn off the heat, rest covered for 5 minutes and fluff with a fork."
+        ]
+      }
+    ],
+    "timeline": [
+      "1 hour ahead: flatten the cutlets, mix the marinade and refrigerate the chicken.",
+      "0:00 Wash, dry and trim the okra; chop the onion and garlic.",
+      "0:15 Start the okra sauce: onion 5 minutes, garlic, tomato sauce 8 to 10 minutes.",
+      "0:30 Lay the okra on the sauce; cover and simmer 20 to 25 minutes.",
+      "0:35 Wash the rice and put it on (15 minutes plus 5 minutes rest).",
+      "0:40 Bread the cutlets and heat the oil.",
+      "0:45 Fry the chicken in 2 batches (about 15 minutes).",
+      "0:58 Uncover the okra for 3 minutes; rest the rice.",
+      "1:02 Serve."
+    ],
+    "mistakes": [
+      "Coating falls off -> let the marinade drip off, press the crumbs on firmly, rest the coated cutlets 5 minutes and turn them only once in the pan.",
+      "Chicken pale and greasy -> the oil was too cold; test with a pinch of breadcrumbs and fry only 2 cutlets at a time so the temperature holds.",
+      "Chicken brown outside but raw inside -> the cutlets were thicker than 1 cm or the oil too hot; flatten evenly and keep the heat at medium once the chicken is in.",
+      "Okra slimy -> dry the pods fully, keep them whole, add them to a thick sauce late and shake the pot instead of stirring.",
+      "Okra burnt at the base -> shake the pot every 5 minutes and add 1/4 cup hot water if the sauce dries.",
+      "Rice gummy -> exactly 1 1/2 cups water for 1 cup rice, lid closed for 15 minutes, rest 5 minutes."
+    ],
+    "serving": [
+      "Spoon the white rice onto each plate and ladle the okra in its sauce beside it.",
+      "Lay 2 fried cutlets on each plate on the other side of the rice so they stay crisp and do not sit in the sauce.",
+      "Serve with lemon wedges and a simple green salad."
+    ],
+    "safety": [
+      "Chicken is safe at 74 C internal temperature at the thickest part of the cutlet; cut one open to check there is no pink if you have no thermometer.",
+      "Do not wash raw chicken; marinate it covered in the fridge; use a separate board for it and wash hands after breading.",
+      "Hot oil: never leave the pan unattended, keep a lid nearby, lower the cutlets in away from you, and let the oil cool fully before pouring it out.",
+      "Cool leftovers within 1 hour; keep in closed containers in the fridge for 2 to 3 days; reheat fried chicken in the oven at 180 C until steaming hot, and reheat rice only once."
+    ],
+    "source": {
+      "site": "Shamlola (shamlola.com), all three components",
+      "chef": "Shamlola editorial",
+      "title_ar": "طريقة عمل دجاج بانيه من المطبخ المصرى + بامية بدون لحم + الأرز الأبيض",
+      "url": "https://www.shamlola.com/recipes/طريقة-عمل-دجاج-بانيه-من-المطبخ-المصرى",
+      "image_source": "to be filled by image step",
+      "verification": "Verified (all three pages opened and read); okra page https://www.shamlola.com/recipes/طريقة-عمل-بامية-بدون-لحم/ ; rice page https://www.shamlola.com/recipes/طريقة-عمل-الأرز-الأبيض",
+      "adapted": "Chicken scaled from 1/2 kg breast, 1 tomato, 1 onion, 2 cups breadcrumbs and 2 cups oil for 5 people to 350 g breast, 1/2 tomato, 1/2 onion, 1 cup breadcrumbs and 1 cup oil for 2 adults keeping the source ratios; the single egg is kept whole; black pepper reduced from 1 tsp to 1/4 tsp and salt from 1 tsp to 1/2 tsp; chicken spice ('as needed' in the source) set at 1/2 tsp; the source gives no oil temperature or minutes, so 170 to 175 C and 3 to 4 minutes per side are the professional standard; the flattening to 1 cm is standard practice. Okra scaled from 1/2 kg okra, 1/3 cup olive oil, 1 large onion, 1 tbsp garlic, 1 1/2 cups tomato sauce, 1 tsp seven-spice and 1/2 lemon for 4 to 250 g, 3 tbsp, 1/2 onion, 1 1/2 tsp, 3/4 cup, 1/2 tsp and 1 tbsp for 2; salt (not listed in the source) set at 1/4 tsp; the source adds the okra before the sauce and simmers 45 minutes stirring every 5 minutes, changed to cooking the sauce first and laying the whole okra on top for 20 to 25 minutes with shaking instead of stirring, so the pods stay whole and not slimy. Rice kept at the source's 1 cup to 1 1/2 cups water and 15 minutes; washing the rice and 1 tsp butter are standard additions."
+    },
+    "video": {
+      "url": "https://www.youtube.com/watch?v=ojcIbDvCT9w",
+      "title": "The Crispiest Egyptian Chicken Pane Recipe | Perfect Breaded Fried Chicken Breast | دجاج بانيه مصري",
+      "channel": "Rania's tasty recipes",
+      "language": "English",
+      "duration": "4:40",
+      "priority": "P4",
+      "spicy_warning": false,
+      "subtitles": "n/a"
+    },
+    "video_tl": {
+      "url": "https://www.youtube.com/watch?v=sc4QnMwS2V8",
+      "title": "Okra / Bamia with Chicken Salona - Marilou Recipes",
+      "channel": "Marilou Recipes",
+      "language": "Tagalog"
+    }
+  },
+  {
+    "id": 19,
+    "name_en": "Musakhan Chicken with White Rice in Oven",
+    "name_ar": "مسخن دجاج مع أرز أبيض",
+    "cuisine": "Levantine",
+    "category": "Main Course",
+    "info": {
+      "prep_time": "25 min",
+      "cook_time": "85 min",
+      "total_time": "1 h 50 min",
+      "servings": "2 Adults",
+      "difficulty": "Medium",
+      "equipment": ["oven", "wide heavy pot or deep frying pan 28 cm with lid (for the onions)", "medium pot 22 cm with lid (for poaching the chicken)", "baking tray lined with baking paper", "medium pot 18 cm with lid (for the rice)", "small dry frying pan (for the pine nuts)", "slotted spoon", "basting brush", "chopping board for raw chicken", "second board for vegetables", "meat thermometer"]
+    },
+    "meat_spec": {
+      "type": "Bone-in",
+      "cut": "Leg",
+      "skin": "Skin-on",
+      "weight": "600 g",
+      "preparation": "Pieces (2 whole leg quarters, thigh and drumstick together)",
+      "cooking_method": "Roasted",
+      "source_specified": false,
+      "note": "Source uses 1 whole chicken cut up, boiled then baked, for 4 people. Suggested cut: 2 bone-in skin-on leg quarters because they stay juicy through the poaching and the skin turns golden in the oven, and 600 g is the right share of a chicken for 2 adults."
+    },
+    "spice_note": "Source recipe contains no chili; the only warmth is black pepper, reduced from 1 tbsp for 4 to 1/4 tsp for 2, and the sumac gives the sour note.",
+    "components": [
+      {
+        "title": "Part 1 - Poached and Roasted Chicken",
+        "ingredients": [
+          {"item": "Chicken leg quarters, bone-in, skin-on", "qty": "600 g (2 pcs)", "note": "pat dry; do not wash"},
+          {"item": "Water", "qty": "4 cups (1 L)"},
+          {"item": "Onion, halved", "qty": "1/2 medium"},
+          {"item": "Bay leaves", "qty": "2 pcs"},
+          {"item": "Cardamom pods", "qty": "3 pcs"},
+          {"item": "Cloves", "qty": "2 pcs"},
+          {"item": "Salt, for poaching", "qty": "1 tsp"},
+          {"item": "Olive oil, for roasting", "qty": "1 tbsp"},
+          {"item": "Sumac, for roasting", "qty": "1 tsp"},
+          {"item": "Salt, for roasting", "qty": "1/4 tsp"},
+          {"item": "Black pepper, ground", "qty": "1/8 tsp"}
+        ],
+        "prep": [
+          "Pat the 2 leg quarters dry on the raw-chicken board. Do not wash them. Halve 1/2 onion.",
+          "Line a baking tray with baking paper."
+        ],
+        "steps": [
+          "Put the 2 leg quarters, 4 cups water, 1/2 onion, 2 bay leaves, 3 cardamom pods, 2 cloves and 1 tsp salt in a medium pot 22 cm. Bring to a boil on high heat (about 6 minutes) and skim the grey foam.",
+          "Cover and simmer on low heat for 25 minutes until the meat is firm and a thermometer next to the bone reads at least 70 C. Lift the chicken out with a slotted spoon onto the lined tray and pat the skin dry with kitchen paper. Keep 1 1/2 cups of the broth for the rice.",
+          "Preheat the oven to 200 C (fan 180 C) for 15 minutes while the onions finish. Brush the chicken with 1 tbsp olive oil and sprinkle 1 tsp sumac, 1/4 tsp salt and 1/8 tsp black pepper over the skin.",
+          "Roast on the middle shelf for 20 to 25 minutes until the skin is deep golden and crisp at the edges and a thermometer in the thickest part of the thigh (not touching bone) reads 74 C. Rest 5 minutes."
+        ]
+      },
+      {
+        "title": "Part 2 - Sumac Onions in Olive Oil",
+        "ingredients": [
+          {"item": "Onions, finely chopped", "qty": "800 g (5 to 6 medium)"},
+          {"item": "Olive oil", "qty": "1/2 cup (120 ml)"},
+          {"item": "Salt", "qty": "1 tsp"},
+          {"item": "Black pepper, ground", "qty": "1/8 tsp"},
+          {"item": "Sumac", "qty": "4 tbsp (1/4 cup)"}
+        ],
+        "prep": [
+          "Peel and chop 800 g onions finely on the vegetable board (about 15 minutes); a food processor pulsed 5 or 6 times also works."
+        ],
+        "steps": [
+          "Pour 1/2 cup olive oil into a wide heavy pot 28 cm and warm over medium-low heat for 1 minute. Add the 800 g chopped onions and 1 tsp salt and stir for 2 minutes until coated and glistening.",
+          "Cover and cook on low heat for 30 to 35 minutes, stirring every 5 minutes, until the onions are completely soft, pale gold and sweet with no bite left and the oil is clear and yellow; they must not brown.",
+          "Add 1/8 tsp black pepper and 4 tbsp sumac and stir on low heat for 2 minutes until the onions turn a deep purple-red and smell sour and fresh. Turn off the heat and keep covered. Spoon 3 tbsp of the sumac oil from the edge of the pot into a small bowl for the bread."
+        ]
+      },
+      {
+        "title": "Part 3 - Assembly on Taboon Bread with Pine Nuts",
+        "ingredients": [
+          {"item": "Taboon bread or large thin Arabic bread", "qty": "2 pcs (about 25 cm each)"},
+          {"item": "Pine nuts", "qty": "2 tbsp"},
+          {"item": "Almonds, slivered", "qty": "1 tbsp", "note": "optional in the source"},
+          {"item": "Sumac, for finishing", "qty": "1 tsp"},
+          {"item": "Sumac oil from Part 2", "qty": "3 tbsp"}
+        ],
+        "prep": [
+          "Toast 2 tbsp pine nuts and 1 tbsp slivered almonds in a small dry frying pan over medium heat for 2 to 3 minutes, shaking the pan, until pale golden; tip onto a plate at once."
+        ],
+        "steps": [
+          "When the chicken has 5 minutes left in the oven, brush both sides of the 2 breads with the 3 tbsp sumac oil and lay them on an oven-proof platter or a second tray. Spread half of the sumac onions over each bread, leaving a 2 cm edge.",
+          "Put the platter in the oven at 200 C for 4 to 5 minutes until the bread edges are crisp and the onions are hot and shining.",
+          "Set 1 roasted leg quarter on each bread, scatter the toasted pine nuts and almonds over everything and sprinkle 1 tsp sumac on top."
+        ]
+      },
+      {
+        "title": "Part 4 - White Rice",
+        "ingredients": [
+          {"item": "Egyptian short-grain rice", "qty": "1 cup (200 g)", "note": "washed and soaked 15 minutes"},
+          {"item": "Chicken broth from Part 1 (or hot water)", "qty": "1 1/2 cups (360 ml)"},
+          {"item": "Salt", "qty": "1/2 tsp", "note": "the broth is already salted"}
+        ],
+        "prep": [
+          "Wash 1 cup rice in 3 changes of cold water until the water runs almost clear, soak in fresh cold water for 15 minutes and drain in a sieve."
+        ],
+        "steps": [
+          "Bring 1 1/2 cups broth and 1/2 tsp salt to a boil in a medium pot 18 cm over medium heat (about 3 minutes).",
+          "Add the drained 1 cup rice, stir once, let it return to a boil for 1 minute, then cover and cook on the lowest heat for 20 minutes without stirring or lifting the lid until the liquid is absorbed and a grain is tender with no hard centre.",
+          "Turn off the heat, rest covered for 5 minutes and fluff with a fork."
+        ]
+      }
+    ],
+    "timeline": [
+      "0:00 Put the chicken on to poach (25 minutes); chop the onions.",
+      "0:15 Start the onions in olive oil on low (35 minutes).",
+      "0:25 Lift the chicken out; keep 1 1/2 cups broth; preheat the oven to 200 C.",
+      "0:40 Wash and soak the rice; toast the nuts.",
+      "0:45 Oil and season the chicken; put it in the oven (20 to 25 minutes).",
+      "0:50 Add the sumac to the onions; put the rice on (20 minutes plus 5 minutes rest).",
+      "1:05 Oil the bread, spread the onions, into the oven 4 to 5 minutes.",
+      "1:10 Chicken reads 74 C: rest 5 minutes; assemble with the nuts.",
+      "1:15 Serve."
+    ],
+    "mistakes": [
+      "Onions brown and bitter -> keep the heat low, lid on, and stir every 5 minutes; they should be pale gold and soft, never fried.",
+      "Musakhan oily -> use 1/2 cup oil for 800 g onions and spoon only 3 tbsp of it onto the bread.",
+      "Bread soggy -> oil it lightly, spread the onions just before serving and give it 4 to 5 minutes in the hot oven.",
+      "Chicken skin pale -> pat it dry after poaching and roast at a full 200 C without covering.",
+      "Sumac tastes dull -> buy fresh deep-red sumac and add it at the end of the onions, not at the start.",
+      "Rice gummy -> exactly 1 1/2 cups liquid for 1 cup rice and no lifting of the lid for 20 minutes."
+    ],
+    "serving": [
+      "Bring the two breads to the table whole on a wide platter, each topped with a leg quarter, the purple sumac onions and the toasted nuts.",
+      "Serve the white rice in a separate bowl on the side for anyone who wants it with the chicken.",
+      "Add plain yogurt and a chopped cucumber and tomato salad with lemon."
+    ],
+    "safety": [
+      "Chicken is safe at 74 C internal temperature at the thickest part of the thigh after roasting.",
+      "Do not wash raw chicken; use a separate board for it and wash hands after handling.",
+      "Use oven gloves for the trays and the hot platter.",
+      "Cool leftovers within 1 hour; keep onions, chicken and rice in closed containers in the fridge for 2 to 3 days; reheat until steaming hot, and reheat rice only once."
+    ],
+    "source": {
+      "site": "Sayidaty Kitchen (kitchen.sayidaty.net), both components",
+      "chef": "Chef Imtiyaz Al-Jitawi (musakhan); Sayidaty Kitchen editorial (white rice)",
+      "title_ar": "مسخن دجاج + طريقة عمل الأرز الأبيض",
+      "url": "https://kitchen.sayidaty.net/node/8560",
+      "image_source": "to be filled by image step",
+      "verification": "Partially verified: both pages opened and read, content paraphrased by the fetcher; rice page https://kitchen.sayidaty.net/node/30166",
+      "adapted": "Scaled from about 2 kg onions, 1 whole chicken, 1/2 cup sumac and 3 taboon loaves for 4 people to 800 g onions, 600 g leg quarters, 1/4 cup sumac and 2 breads for 2 adults; the source's 3 cups olive oil reduced to 1/2 cup (the research note allows a household reduction) and its 2 tbsp salt and 1 tbsp black pepper reduced to 1 tsp and 1/8 tsp for the onions; the source boils the chicken then bakes it, kept here as a 25 minute poach then 20 to 25 minutes at 200 C (the source gives no oven temperature); the source's 20 minutes for the onions extended to 30 to 35 minutes on low so they fully soften without browning; the source adds the chicken to the onions for 5 minutes, replaced by a sumac and olive oil rub before roasting; the pine nut and almond quantities ('optional') set at 2 tbsp and 1 tbsp; the 4 to 5 minutes in the oven for the dressed bread is a standard step. Rice kept at the source's 1 cup Egyptian rice to 1 1/2 cups liquid for 2 persons, cooked in the poaching broth instead of water, salt reduced from 1 tsp to 1/2 tsp because the broth is salted, and the 25 minutes shortened to 20."
+    },
+    "video": {
+      "url": "https://www.youtube.com/watch?v=Utv9ZTAjE08",
+      "title": "How to make Palestinian Musakhan - Chicken in Sumac Onions",
+      "channel": "Middle Eats",
+      "language": "English",
+      "duration": "7:19",
+      "priority": "P4",
+      "spicy_warning": false,
+      "subtitles": "n/a"
+    },
+    "video_tl": {
+      "url": "https://www.youtube.com/watch?v=cI6NslzSkNc",
+      "title": "Easy way to cook Chicken Musakhan - Els Kusinera",
+      "channel": "Els Kusinera",
+      "language": "Tagalog"
+    }
+  },
+  {
+    "id": 20,
+    "name_en": "Spaghetti with Meatballs",
+    "name_ar": "سباغيتي بكرات اللحم",
+    "cuisine": "Other",
+    "category": "Main Course",
+    "info": {
+      "prep_time": "25 min",
+      "cook_time": "45 min",
+      "total_time": "1 h 10 min",
+      "servings": "2 Adults",
+      "difficulty": "Easy",
+      "equipment": ["wide heavy pot or deep frying pan 28 cm with lid (for the meatballs and sauce)", "large pot 24 cm (for the pasta)", "colander", "deep mixing bowl", "measuring cup for pasta water", "tongs", "chopping board for raw meat", "second board for vegetables", "meat thermometer"]
+    },
+    "meat_spec": {
+      "type": "Boneless",
+      "cut": "Shoulder",
+      "skin": "n/a",
+      "weight": "300 g",
+      "preparation": "Ground beef, 20% fat maximum, shaped into 10 to 12 balls of 3 cm",
+      "cooking_method": "Fried",
+      "source_specified": false,
+      "note": "Source says '250 g minced meat' without naming the animal. Ground beef with no more than 20% fat is used: enough fat to keep the balls juicy, not so much that the sauce turns greasy. The balls are browned in the pan and then finished by simmering in the sauce."
+    },
+    "spice_note": "Source recipe contains no chili; black pepper ('to taste' in the source) is set at 1/4 tsp in total.",
+    "components": [
+      {
+        "title": "Part 1 - Spaghetti with Meatballs in Tomato Sauce",
+        "ingredients": [
+          {"item": "Ground beef, 20% fat maximum", "qty": "300 g"},
+          {"item": "Breadcrumbs, fine", "qty": "1/2 cup (50 g)"},
+          {"item": "Milk", "qty": "1/4 cup (60 ml)"},
+          {"item": "Egg", "qty": "1 pcs"},
+          {"item": "Garlic, minced, for the meatballs", "qty": "2 cloves"},
+          {"item": "Dried oregano, for the meatballs", "qty": "1/2 tsp"},
+          {"item": "Salt, for the meatballs", "qty": "1/2 tsp"},
+          {"item": "Black pepper, for the meatballs", "qty": "1/8 tsp"},
+          {"item": "Vegetable oil", "qty": "2 tbsp"},
+          {"item": "Onion, finely chopped", "qty": "1 small (80 g)"},
+          {"item": "Garlic, minced, for the sauce", "qty": "2 cloves"},
+          {"item": "Tomatoes, ripe, finely chopped", "qty": "4 medium (500 g)"},
+          {"item": "Tomato paste", "qty": "1 tbsp"},
+          {"item": "Sugar", "qty": "1/2 tsp"},
+          {"item": "Dried oregano, for the sauce", "qty": "3/4 tsp"},
+          {"item": "Salt, for the sauce", "qty": "1/2 tsp"},
+          {"item": "Black pepper, for the sauce", "qty": "1/8 tsp"},
+          {"item": "Water", "qty": "1/4 cup (60 ml)"},
+          {"item": "Spaghetti", "qty": "200 g"},
+          {"item": "Water, for boiling the pasta", "qty": "2 L (8 cups)"},
+          {"item": "Salt, for the pasta water", "qty": "1 tbsp"},
+          {"item": "Pasta cooking water, reserved", "qty": "1/2 cup (120 ml)"},
+          {"item": "Parmesan, grated", "qty": "3 tbsp", "note": "for serving"},
+          {"item": "Fresh parsley, chopped", "qty": "2 tbsp", "note": "for serving"}
+        ],
+        "prep": [
+          "In a deep bowl stir 1/2 cup breadcrumbs with 1/4 cup milk and let them soak for 5 minutes until the milk is absorbed.",
+          "Add the 300 g ground beef, 1 egg, 2 minced garlic cloves, 1/2 tsp oregano, 1/2 tsp salt and 1/8 tsp black pepper to the bowl and mix with a gloved hand for 1 minute until just combined; do not overwork or the balls turn tough.",
+          "Wet your hands and roll the mixture into 10 to 12 even balls of 3 cm (about 30 g each) on a plate on the raw-meat side. Refrigerate for 10 minutes so they hold their shape. Wash hands.",
+          "Chop 1 small onion finely, mince 2 garlic cloves and chop 4 tomatoes finely on the vegetable board. Chop 2 tbsp parsley and grate 3 tbsp Parmesan."
+        ],
+        "steps": [
+          "Heat 2 tbsp oil in a wide heavy pot 28 cm over medium-high heat for 1 minute. Add the meatballs in a single layer without touching and fry for 6 to 7 minutes, turning with tongs every 2 minutes, until browned on all sides but not cooked through. Lift them onto a plate.",
+          "Lower to medium heat, add the 1 chopped onion to the same pot and stir for 5 to 6 minutes, scraping the browned bits, until soft and golden. Add 2 minced garlic cloves and stir for 1 minute until fragrant.",
+          "Add the 4 chopped tomatoes, 1 tbsp tomato paste, 1/2 tsp sugar, 3/4 tsp oregano, 1/2 tsp salt, 1/8 tsp black pepper and 1/4 cup water. Stir and bring to a simmer on medium heat (about 3 minutes), then cook for 5 minutes until the tomatoes break down into a loose sauce.",
+          "Return the meatballs and any juices to the sauce, spoon sauce over them, cover and simmer on low heat for 20 minutes, turning the balls once at 10 minutes, until a thermometer in the centre of a ball reads 71 C (no pink inside) and the sauce has thickened and darkened.",
+          "Meanwhile bring 2 L water with 1 tbsp salt to a rolling boil in a large pot 24 cm on high heat (about 10 minutes). Add the 200 g spaghetti, stir once, and boil uncovered for 1 minute less than the packet says (usually 8 to 9 minutes) until a strand is tender with a tiny firm centre. Scoop out 1/2 cup of the cooking water, then drain the pasta in a colander.",
+          "Pour the 1/2 cup reserved pasta water into the sauce, stir on medium heat for 1 minute until glossy, then add the drained spaghetti and toss with tongs for 1 minute until every strand is coated. Turn off the heat."
+        ]
+      }
+    ],
+    "timeline": null,
+    "mistakes": [
+      "Meatballs tough -> soak the breadcrumbs in milk, mix only until combined and keep the balls loosely rolled.",
+      "Meatballs fall apart in the pan -> chill them 10 minutes, use enough oil, and do not move them for the first 2 minutes.",
+      "Sauce watery -> use ripe tomatoes, simmer with the lid on for 20 minutes and add only 1/2 cup pasta water at the end.",
+      "Sauce sour -> keep the 1/2 tsp sugar and cook the tomato paste with the tomatoes; taste for salt at the end.",
+      "Spaghetti sticky -> use 2 L boiling salted water, stir once, drain when just tender and toss straight into the sauce."
+    ],
+    "serving": [
+      "Twist the sauced spaghetti into a nest in the centre of each plate with tongs.",
+      "Set 5 or 6 meatballs on top of each nest and spoon the extra sauce over them.",
+      "Sprinkle the 3 tbsp Parmesan and 2 tbsp parsley over the top and serve with a green salad and garlic bread."
+    ],
+    "safety": [
+      "Ground beef must reach 71 C in the centre of the meatball with no pink inside.",
+      "Use a separate board and bowl for raw meat, wear gloves or wash hands well after rolling.",
+      "Cool leftovers within 1 hour; keep in a closed container in the fridge for 2 to 3 days.",
+      "Reheat until steaming hot throughout; add a spoon of water when reheating the pasta."
+    ],
+    "source": {
+      "site": "Sayidaty Kitchen (kitchen.sayidaty.net)",
+      "chef": "Sayidaty Kitchen editorial",
+      "title_ar": "سباغيتي بكرات اللحم",
+      "url": "https://kitchen.sayidaty.net/node/35902",
+      "image_source": "to be filled by image step",
+      "verification": "Partially verified: page opened and read, content paraphrased by the fetcher",
+      "adapted": "Scaled from 500 g spaghetti, 250 g minced meat, 6 tomatoes and 1 medium onion for 3 people to 200 g spaghetti (a standard dry-pasta portion of 100 g per adult), 300 g ground beef, 4 tomatoes and 1 small onion for 2 adults; the source does not name the meat, so ground beef with no more than 20% fat is used; the breadcrumb, milk, egg, garlic and oregano amounts kept at the source values because they suit 300 g meat; sugar reduced to 1/2 tsp; salt and black pepper ('to taste') set at 1/2 tsp and 1/8 tsp each for the meatballs and the sauce; the source's 1 cup reserved pasta water reduced to 1/2 cup; the source gives no frying or simmering minutes beyond 20 minutes, so 6 to 7 minutes browning and the 71 C check are the professional standard; Parmesan and parsley ('to taste') set at 3 tbsp and 2 tbsp."
+    },
+    "video": null,
+    "video_tl": {
+      "url": "https://www.youtube.com/watch?v=YOG4UdcXMkU",
+      "title": "Spaghetti & Meatballs Pinoy Style (Tagalog) - Mommy-Go-Round",
+      "channel": "Mommy-Go-Round",
+      "language": "Tagalog"
+    }
+  },
+  {
+    "id": 21,
+    "name_en": "Mashed Potato with Grilled Chicken",
+    "name_ar": "بطاطس مهروسة مع صدر دجاج مشوي",
+    "cuisine": "Other",
+    "category": "Main Course",
+    "info": {
+      "prep_time": "20 min active, plus 30 min marinating",
+      "cook_time": "35 min",
+      "total_time": "1 h 25 min including marinating",
+      "servings": "2 Adults",
+      "difficulty": "Easy",
+      "equipment": ["medium pot 20 cm (for the potatoes)", "potato masher or ricer", "small pot (for warming the milk)", "ridged grill pan or heavy frying pan 26 cm", "small saucepan (for the gravy)", "rolling pin or meat mallet", "baking paper", "bowl with lid (for marinating)", "tongs", "whisk", "chopping board for raw chicken", "second board for vegetables", "meat thermometer"]
+    },
+    "meat_spec": {
+      "type": "Boneless",
+      "cut": "Breast",
+      "skin": "Skinless",
+      "weight": "400 g",
+      "preparation": "Pieces (2 breast halves, flattened to an even 1.5 cm)",
+      "cooking_method": "Grilled",
+      "source_specified": false,
+      "note": "Source uses 500 g chicken breast cut in strips and pan-fried in a lemon-honey glaze for 4 people. For 2 adults, 2 whole breast halves (400 g) flattened to 1.5 cm and grilled on a ridged pan are used so the chicken cooks evenly in 10 minutes and has grill marks, as the household asked for a grilled breast."
+    },
+    "spice_note": "Source recipes contain no chili; the black pepper is reduced from 1/2 tsp to 1/4 tsp and the fresh ginger is kept as the only warm note.",
+    "components": [
+      {
+        "title": "Part 1 - Buttery Mashed Potato",
+        "ingredients": [
+          {"item": "Potatoes, floury type, peeled, in 3 cm cubes", "qty": "2 large (500 g)"},
+          {"item": "Water, for boiling", "qty": "1 L (4 cups)"},
+          {"item": "Salt, for boiling", "qty": "1 tsp"},
+          {"item": "Butter", "qty": "2 tbsp (30 g)"},
+          {"item": "Milk, warm", "qty": "1/4 cup (60 ml)", "note": "lactose-free milk works the same; replaces the source's cooking cream"},
+          {"item": "Salt", "qty": "1/4 tsp"}
+        ],
+        "prep": [
+          "Peel 2 large potatoes and cut them into even 3 cm cubes on the vegetable board; rinse in cold water.",
+          "Cut 2 tbsp butter into small pieces and leave it at room temperature."
+        ],
+        "steps": [
+          "Put the 500 g potato cubes in a medium pot 20 cm, cover with 1 L cold water and add 1 tsp salt. Bring to a boil on high heat (about 8 minutes), then simmer on medium heat for 15 to 18 minutes until a knife slides through a cube with no resistance.",
+          "Warm 1/4 cup milk in a small pot over low heat for 2 minutes until steaming; do not boil.",
+          "Drain the potatoes in a colander and return them to the hot pot on the lowest heat for 1 minute, shaking, until the surface is dry and floury.",
+          "Mash the hot potatoes with a masher or press through a ricer for 1 to 2 minutes until no lumps remain. Add the 2 tbsp butter in pieces and stir until melted, then pour in the warm 1/4 cup milk a little at a time and beat with a wooden spoon for 1 minute until smooth and fluffy. Add 1/4 tsp salt, taste, cover and keep warm."
+        ]
+      },
+      {
+        "title": "Part 2 - Grilled Chicken Breast",
+        "ingredients": [
+          {"item": "Chicken breast, boneless, skinless", "qty": "400 g (2 halves)", "note": "pat dry; do not wash"},
+          {"item": "Lemon juice", "qty": "2 tbsp"},
+          {"item": "Honey", "qty": "1 tsp"},
+          {"item": "White vinegar", "qty": "1 tsp"},
+          {"item": "Fresh ginger, finely grated", "qty": "1 tsp"},
+          {"item": "Vegetable oil", "qty": "1 tbsp, plus 1 tsp for the pan"},
+          {"item": "Salt", "qty": "1/2 tsp"},
+          {"item": "Black pepper, ground", "qty": "1/4 tsp"}
+        ],
+        "prep": [
+          "Pat the 2 breast halves dry on the raw-chicken board. Lay each between 2 sheets of baking paper and pound with a rolling pin for 1 minute until an even 1.5 cm thick. Do not wash the chicken.",
+          "In a bowl whisk 2 tbsp lemon juice, 1 tsp honey, 1 tsp vinegar, 1 tsp grated ginger, 1 tbsp oil, 1/2 tsp salt and 1/4 tsp black pepper. Add the chicken, turn to coat, cover and refrigerate for 30 minutes (up to 4 hours). Wash hands."
+        ],
+        "steps": [
+          "Heat a ridged grill pan 26 cm over high heat for 3 to 4 minutes until a drop of water sizzles off at once. Brush it with 1 tsp oil.",
+          "Lift the 2 breasts from the marinade, let the extra drip off, and lay them on the pan without moving them. Grill on medium-high heat for 5 minutes until dark grill lines show and the edges turn white.",
+          "Turn once with tongs and grill for 4 to 5 minutes more until the breast is firm to the touch, the juices run clear and a thermometer in the thickest part reads 74 C.",
+          "Move to a plate, cover loosely with foil and rest for 5 minutes before slicing across the grain."
+        ]
+      },
+      {
+        "title": "Part 3 - Quick Gravy",
+        "ingredients": [
+          {"item": "Butter", "qty": "1 tbsp (15 g)"},
+          {"item": "Plain flour", "qty": "1 tbsp"},
+          {"item": "Chicken stock cube", "qty": "1/2 pcs", "note": "crumbled"},
+          {"item": "Water, warm", "qty": "1/2 cup (120 ml)"},
+          {"item": "Black pepper, ground", "qty": "1 pinch (less than 1/8 tsp)"}
+        ],
+        "prep": [
+          "Crumble 1/2 stock cube into a small bowl and warm 1/2 cup water."
+        ],
+        "steps": [
+          "Melt 1 tbsp butter in a small saucepan over medium heat for 30 seconds. Add 1 tbsp flour and stir with a whisk for 1 minute until it smells toasty and turns pale gold.",
+          "Add the crumbled 1/2 stock cube, then pour in the 1/2 cup warm water a little at a time, whisking, for 2 to 3 minutes until smooth, glossy and thick enough to coat a spoon. Add a pinch of pepper. Keep warm on the lowest heat."
+        ]
+      }
+    ],
+    "timeline": [
+      "30 minutes ahead: flatten the chicken and put it in the marinade.",
+      "0:00 Peel and cube the potatoes; put them on to boil (about 25 minutes).",
+      "0:10 Make the gravy and keep it warm on the lowest heat.",
+      "0:15 Heat the grill pan; warm the milk.",
+      "0:20 Grill the chicken (10 minutes).",
+      "0:25 Drain, dry and mash the potatoes with butter and milk.",
+      "0:30 Rest the chicken 5 minutes.",
+      "0:35 Serve."
+    ],
+    "mistakes": [
+      "Mash gluey -> use floury potatoes, mash by hand (never a blender) and dry them in the pot before mashing.",
+      "Mash lumpy or cold -> mash while hot and add warm milk, not cold.",
+      "Chicken dry -> flatten to an even 1.5 cm, stop at 74 C and rest 5 minutes before cutting.",
+      "Chicken sticks to the pan -> preheat the pan fully, oil it, and do not move the breast for the first 5 minutes.",
+      "Gravy lumpy -> add the water a little at a time while whisking; if lumps form, whisk hard or pass through a sieve.",
+      "Chicken sour or sharp -> keep the marinade to 30 minutes to 4 hours; longer in lemon makes the surface mealy."
+    ],
+    "serving": [
+      "Spoon a mound of mashed potato onto each plate and make a hollow in the top with the back of the spoon.",
+      "Slice each chicken breast across into 5 or 6 pieces and fan it beside the mash.",
+      "Pour the gravy into the hollow and over the chicken, and serve with steamed green beans or a green salad."
+    ],
+    "safety": [
+      "Chicken is safe at 74 C internal temperature at the thickest part of the breast.",
+      "Do not wash raw chicken; marinate it covered in the fridge, use a separate board for it and wash hands after handling.",
+      "Discard the used marinade; do not brush it on the cooked chicken.",
+      "Cool leftovers within 1 hour; keep in closed containers in the fridge for 2 to 3 days; reheat until steaming hot, adding a spoon of milk to the mash."
+    ],
+    "source": {
+      "site": "Sayidaty Kitchen (kitchen.sayidaty.net), both components",
+      "chef": "Sayidaty Kitchen editorial",
+      "title_ar": "بطاطس مهروسة بالزبدة مثل المطاعم + صدور دجاج مشوية بالمقلاة",
+      "url": "https://kitchen.sayidaty.net/node/18801",
+      "image_source": "to be filled by image step",
+      "verification": "Partially verified: both pages opened and read, content paraphrased by the fetcher; chicken page https://kitchen.sayidaty.net/node/23766",
+      "adapted": "Mashed potato kept at the source's 2 potatoes and 2 tbsp butter for 2 persons, with its 1/4 cup cooking cream replaced by 1/4 cup warm milk (lactose-free milk works) as the household asked; the source gives no boiling time or heat, so 15 to 18 minutes at a simmer in salted water and drying the potatoes in the pot are the professional standard; the gravy kept at the source's 1 tbsp butter, 1 tbsp flour and 1/2 cup water with the stock cube halved. Chicken scaled from 500 g breast in strips for 4 to 400 g (2 whole halves) for 2; the source pan-fries cornstarch-coated strips and glazes them with a lemon, honey, vinegar, broth and ginger sauce, changed to a plain grilled flattened breast marinated 30 minutes in the same lemon, honey, vinegar and ginger flavours (no cornstarch, no broth) and grilled 5 minutes per side on a ridged pan, as the household asked; black pepper reduced from 1/2 tsp to 1/4 tsp; the onion is dropped; the source gives no minutes for frying, so 5 minutes per side to 74 C is the professional standard."
+    },
+    "video": {
+      "url": "https://www.youtube.com/watch?v=lFJ7lVRWwEw",
+      "title": "Grilled Chicken Breast (Juicy, Tender Grilled Chicken Every Time - Easy Recipe)",
+      "channel": "The Mediterranean Dish",
+      "language": "English",
+      "duration": "4:44",
+      "priority": "P4",
+      "spicy_warning": false,
+      "subtitles": "manual English"
+    },
+    "video_tl": {
+      "url": "https://www.youtube.com/watch?v=Zl2DkxTpQ-4",
+      "title": "Mashed Potato Recipe (Tagalog) - Juniors Tagalog Cooking Channel",
+      "channel": "Juniors Tagalog Cooking Channel",
+      "language": "Tagalog"
+    }
+  },
+  {
+    "id": 22,
+    "name_en": "Chicken Spinach with White Rice",
+    "name_ar": "سبانخ بالدجاج مع أرز أبيض",
+    "cuisine": "Levantine",
+    "category": "Main Course",
+    "info": {
+      "prep_time": "20 min (spinach washed and chopped while the chicken boils)",
+      "cook_time": "60 min",
+      "total_time": "1 h 20 min",
+      "servings": "2 Adults",
+      "difficulty": "Easy",
+      "equipment": ["medium pot 22 cm with lid (for boiling the chicken)", "large wide pot 26 cm with lid (for the spinach)", "medium pot 18 cm with lid (for the rice)", "slotted spoon", "fine sieve", "measuring jug", "salad spinner or clean cloth", "chopping board for raw chicken", "second board for vegetables", "meat thermometer"]
+    },
+    "meat_spec": {
+      "type": "Bone-in",
+      "cut": "Mixed",
+      "skin": "Skinless",
+      "weight": "450 g",
+      "preparation": "Pieces (4): 2 thighs and 2 drumsticks",
+      "cooking_method": "Boiled",
+      "source_specified": false,
+      "note": "Source says '1 chicken cut into 6 pieces' for 4 people with no mention of skin. Suggested cut: bone-in skinless thighs and drumsticks because the bones make the broth the spinach cooks in and removing the skin keeps the stew clean and not greasy."
+    },
+    "spice_note": "Source recipe contains no chili; black pepper is reduced from 1 tsp for 4 to 1/4 tsp for 2 and the cardamom is kept as the aromatic.",
+    "components": [
+      {
+        "title": "Part 1 - Boiled Chicken and Broth",
+        "ingredients": [
+          {"item": "Chicken thighs and drumsticks, bone-in, skinless", "qty": "450 g (4 pcs)", "note": "pat dry; do not wash"},
+          {"item": "Ghee", "qty": "1/2 tbsp"},
+          {"item": "Onion, halved", "qty": "1/2 medium"},
+          {"item": "Bay leaf", "qty": "1 pcs"},
+          {"item": "Cinnamon stick", "qty": "1 pcs (half stick, 4 cm)"},
+          {"item": "Salt", "qty": "3/4 tsp"},
+          {"item": "Water", "qty": "3 cups (720 ml)"}
+        ],
+        "prep": [
+          "Pat the 4 chicken pieces dry on the raw-chicken board. Do not wash them. Halve 1/2 onion."
+        ],
+        "steps": [
+          "Melt 1/2 tbsp ghee in a medium pot 22 cm over medium-high heat for 1 minute. Add the 4 chicken pieces and turn them for 3 to 4 minutes until the outside is no longer pink.",
+          "Add the 1/2 onion, 1 bay leaf, the half cinnamon stick, 3/4 tsp salt and 3 cups water. Bring to a boil on high heat (about 5 minutes), skim the foam, then cover and simmer on low heat for 25 minutes until the meat is firm and reads at least 74 C next to the bone.",
+          "Lift the chicken out with a slotted spoon onto a plate and cover with foil. Strain the broth through a sieve into a jug; you need 1 1/2 cups (360 ml). Discard the onion and spices."
+        ]
+      },
+      {
+        "title": "Part 2 - Spinach Stew",
+        "ingredients": [
+          {"item": "Fresh spinach leaves", "qty": "600 g", "note": "or 300 g frozen chopped spinach, thawed and squeezed"},
+          {"item": "Ghee", "qty": "1 tbsp"},
+          {"item": "Onion, finely chopped", "qty": "1/2 medium (60 g)"},
+          {"item": "Garlic, minced", "qty": "2 cloves", "note": "standard Levantine addition"},
+          {"item": "Salt", "qty": "1/2 tsp", "note": "the broth is already salted"},
+          {"item": "Black pepper, ground", "qty": "1/4 tsp"},
+          {"item": "Ground cardamom", "qty": "1/2 tsp"},
+          {"item": "Ground coriander", "qty": "1/2 tsp", "note": "standard Levantine addition"},
+          {"item": "Reserved chicken broth", "qty": "1 1/2 cups (360 ml)"},
+          {"item": "Lemon juice", "qty": "1 tbsp", "note": "for serving"}
+        ],
+        "prep": [
+          "Wash the 600 g spinach in 2 changes of cold water, lifting the leaves out so the grit stays behind, spin or shake dry and chop roughly into 3 cm pieces on the vegetable board.",
+          "Chop 1/2 onion finely and mince 2 garlic cloves."
+        ],
+        "steps": [
+          "Melt 1 tbsp ghee in a large wide pot 26 cm over medium heat for 1 minute. Add the 1/2 chopped onion and stir for 5 to 6 minutes until soft and golden. Add the 2 minced garlic cloves and stir for 1 minute until fragrant.",
+          "Add the 600 g chopped spinach in 3 handfuls, stirring each in on medium heat for 1 minute until it wilts before adding the next (about 4 minutes in all), until the pot is a third full of dark green leaves.",
+          "Add 1/2 tsp salt, 1/4 tsp black pepper, 1/2 tsp cardamom and 1/2 tsp ground coriander and stir for 30 seconds until the spices smell toasted.",
+          "Pour in the 1 1/2 cups reserved broth and lay the 4 boiled chicken pieces on top. Bring to a boil on high heat (about 2 minutes), then cover and simmer on low heat for 15 to 20 minutes until the spinach is fully tender, the chicken pulls from the bone easily and the liquid has reduced to a thick green stew that just covers the leaves. Taste and add salt if needed. Turn off the heat."
+        ]
+      },
+      {
+        "title": "Part 3 - White Rice",
+        "ingredients": [
+          {"item": "White rice (Egyptian short-grain or basmati)", "qty": "1 cup (200 g)"},
+          {"item": "Water, hot", "qty": "1 1/2 cups (360 ml)"},
+          {"item": "Salt", "qty": "1/2 tsp"},
+          {"item": "Butter or vegetable oil", "qty": "1 tsp", "note": "standard addition, optional"}
+        ],
+        "prep": [
+          "Wash 1 cup rice in 3 changes of cold water until the water runs almost clear and drain in a sieve."
+        ],
+        "steps": [
+          "Bring 1 1/2 cups water with 1 tsp butter to a boil in a medium pot 18 cm over medium heat (about 3 minutes).",
+          "Add the drained 1 cup rice and 1/2 tsp salt and stir once; the water should stand about 1 cm above the rice. Let it return to a boil for 1 minute.",
+          "Reduce to the lowest heat, cover and simmer for 15 minutes without lifting the lid until the water is absorbed and a grain is tender with no hard centre. Turn off the heat, rest covered for 5 minutes and fluff with a fork."
+        ]
+      }
+    ],
+    "timeline": [
+      "0:00 Brown the chicken, add the water and aromatics; simmer 25 minutes.",
+      "0:05 Wash and chop the spinach; chop the onion and garlic; wash the rice.",
+      "0:25 Fry the onion and garlic; wilt the spinach; add the spices.",
+      "0:35 Strain the broth; add the broth and chicken to the spinach; simmer 15 to 20 minutes.",
+      "0:38 Put the rice on (15 minutes plus 5 minutes rest).",
+      "0:55 Rest the rice; taste the stew.",
+      "1:00 Serve with lemon."
+    ],
+    "mistakes": [
+      "Spinach gritty -> wash it in 2 changes of water and lift the leaves out instead of pouring them through.",
+      "Stew watery -> use only 1 1/2 cups broth for 600 g spinach and simmer with the lid on until it thickens; open the lid for the last 5 minutes if needed.",
+      "Spinach grey and mushy -> wilt it in handfuls on medium heat and simmer only 15 to 20 minutes.",
+      "Stew too salty -> the broth carries 3/4 tsp salt, so add only 1/2 tsp in the stew and taste at the end.",
+      "Rice gummy -> exactly 1 1/2 cups water for 1 cup rice, lid closed for 15 minutes, rest 5 minutes."
+    ],
+    "serving": [
+      "Spoon the white rice onto each plate and ladle the spinach stew beside it with 2 chicken pieces on top.",
+      "Squeeze 1 tbsp lemon juice over the spinach at the table; it brightens the taste.",
+      "Serve with lemon wedges, sliced onion and Arabic bread."
+    ],
+    "safety": [
+      "Chicken is safe at 74 C internal temperature next to the bone; after boiling and simmering it will be well past this.",
+      "Do not wash raw chicken; use a separate board for it and wash hands after handling.",
+      "Cool leftovers within 1 hour; keep in closed containers in the fridge for 2 days (cooked spinach keeps less well than other stews).",
+      "Reheat until steaming hot throughout; reheat rice only once."
+    ],
+    "source": {
+      "site": "Sayidaty Kitchen (stew) and Shamlola (white rice)",
+      "chef": "Sayidaty Kitchen editorial (stew); Shamlola editorial (rice)",
+      "title_ar": "السبانخ بالدجاج + الأرز الأبيض",
+      "url": "https://kitchen.sayidaty.net/node/23456",
+      "image_source": "to be filled by image step",
+      "verification": "Partially verified: both pages opened and read, content paraphrased by the fetcher; the Sayidaty page omits oil and water quantities; rice page https://www.shamlola.com/recipes/طريقة-عمل-الأرز-الأبيض",
+      "adapted": "Scaled from 1 whole chicken in 6 pieces, 2 kg spinach, 1 tbsp salt, 1 tsp black pepper, 1 tsp cardamom, 3 tbsp ghee, 2 onions, 2 bay leaves and 2 cinnamon sticks for 4 people to 450 g bone-in skinless thighs and drumsticks, 600 g spinach (a lighter share than the source ratio because fresh leaves for 2 would otherwise fill the pot), 1 1/4 tsp salt in total, 1/4 tsp black pepper, 1/2 tsp cardamom, 1 1/2 tbsp ghee, 1 onion, 1 bay leaf and 1 cinnamon stick for 2 adults; the source gives no water quantity for boiling the chicken, so 3 cups is used and 1 1/2 cups of the broth go into the stew; 2 garlic cloves, 1/2 tsp ground coriander and lemon at the table are standard Levantine additions; the source's 20 minute chicken boil kept at 25 minutes for bone-in pieces and the final simmer (no time in the source) set at 15 to 20 minutes. The source's rice (3 cups short-grain with no water quantity) replaced by the Shamlola white rice at 1 cup to 1 1/2 cups water for 2 adults; washing the rice and 1 tsp butter are standard additions."
+    },
+    "video": null,
+    "video_tl": null
+  },
+  {
+    "id": 23,
+    "name_en": "Mahdbi Chicken with Rice",
+    "name_ar": "مظبي دجاج مع الرز",
+    "cuisine": "Gulf",
+    "category": "Main Course",
+    "info": {
+      "prep_time": "25 min active, plus 1 h marinating",
+      "cook_time": "60 min",
+      "total_time": "1 h 30 min after marinating",
+      "servings": "2 Adults",
+      "difficulty": "Medium",
+      "equipment": ["oven", "cast-iron skillet or heavy ridged grill pan 28 cm that can go in the oven", "medium pot 20 cm with tight lid (for the rice)", "blender or mortar", "small bowl for the spice rub", "bowl with lid (for marinating)", "tongs", "aluminium foil", "chopping board for raw chicken", "second board for vegetables", "meat thermometer", "oven gloves"]
+    },
+    "meat_spec": {
+      "type": "Bone-in",
+      "cut": "Half",
+      "skin": "Skin-on",
+      "weight": "600 g",
+      "preparation": "Half chicken cut into 2 pieces (leg quarter and breast quarter with wing), flattened with the palm",
+      "cooking_method": "Grilled",
+      "source_specified": true,
+      "note": "Source specifies 1 whole chicken cut in 4 with the skin on, cooked skin-down on a bed of coarse salt. For 2 adults a half chicken (600 g) in 2 quarters is used; seared skin-down in a very hot cast-iron pan and finished in the oven, which gives the same crisp, scorched skin at home without the salt bed."
+    },
+    "spice_note": "Source adds 2 halved green chilies to the rice; they are removed and replaced with 1/4 green bell pepper in strips for the green note. The tomato sahawiq on the side is made without any chili (tomato, coriander, garlic, lemon only), and black pepper is set at 1/4 tsp.",
+    "components": [
+      {
+        "title": "Part 1 - Madhbi Chicken (seared then oven-finished)",
+        "ingredients": [
+          {"item": "Half chicken, bone-in, skin-on, cut in 2 quarters", "qty": "600 g", "note": "pat dry; do not wash"},
+          {"item": "Madhbi or Arabic mixed spice, chili-free", "qty": "1 tsp", "note": "check the label"},
+          {"item": "Black pepper, ground", "qty": "1/4 tsp"},
+          {"item": "Turmeric", "qty": "1/4 tsp"},
+          {"item": "Salt", "qty": "1 tsp"},
+          {"item": "Garlic, crushed", "qty": "2 cloves", "note": "standard addition"},
+          {"item": "Lemon juice", "qty": "1 tbsp", "note": "standard addition"},
+          {"item": "Olive oil", "qty": "2 tbsp (1 tbsp for the rub, 1 tbsp for the pan)"}
+        ],
+        "prep": [
+          "Pat the 600 g chicken quarters dry with kitchen paper on the raw-chicken board and press each one flat with your palm so it lies level. Do not wash the chicken.",
+          "In a small bowl mix 1 tsp mixed spice, 1/4 tsp black pepper, 1/4 tsp turmeric, 1 tsp salt, 2 crushed garlic cloves, 1 tbsp lemon juice and 1 tbsp olive oil into a paste.",
+          "Rub the paste over both sides of the chicken and under the skin with a gloved hand. Cover and refrigerate for 1 hour (up to 6 hours). Take it out 20 minutes before cooking so it is not fridge-cold. Wash hands.",
+          "Preheat the oven to 220 C (fan 200 C) for 15 minutes."
+        ],
+        "steps": [
+          "Set a cast-iron skillet 28 cm over high heat for 4 to 5 minutes until it is very hot and a drop of water skips across it. Open a window or turn on the extractor; this step smokes.",
+          "Add 1 tbsp olive oil, swirl, and lay the 2 chicken quarters skin side down with tongs, pressing them flat with a spatula for 10 seconds. Sear on high heat for 5 to 6 minutes without moving until the skin is deep brown with dark scorched spots at the edges.",
+          "Turn the pieces skin side up with tongs and, wearing oven gloves, move the skillet to the middle shelf of the oven at 220 C. Roast for 20 to 25 minutes until the juices run clear and a thermometer in the thickest part of the thigh (not touching bone) reads 74 C.",
+          "Lift the chicken onto a plate, tent loosely with foil and rest for 5 minutes. Keep the skillet juices for spooning over the rice."
+        ]
+      },
+      {
+        "title": "Part 2 - Yemeni-Style Spiced Rice",
+        "ingredients": [
+          {"item": "Basmati rice", "qty": "1 cup (200 g)", "note": "rinsed, not soaked"},
+          {"item": "Ghee", "qty": "1 tbsp"},
+          {"item": "Onion, diced", "qty": "1/2 medium (60 g)"},
+          {"item": "Bay leaf", "qty": "1 pcs"},
+          {"item": "Cloves", "qty": "3 pcs"},
+          {"item": "Cardamom pods", "qty": "3 pcs"},
+          {"item": "Cinnamon stick", "qty": "1 pcs (4 cm)"},
+          {"item": "Turmeric", "qty": "1/4 tsp"},
+          {"item": "Madhbi or Arabic mixed spice, chili-free", "qty": "1/2 tsp"},
+          {"item": "Green bell pepper, in thin strips", "qty": "1/4 pcs (30 g)", "note": "replaces the green chilies"},
+          {"item": "Tomato, diced", "qty": "1 medium (120 g)"},
+          {"item": "Salt", "qty": "1/2 tsp", "note": "less if the broth is salty"},
+          {"item": "Chicken broth, hot (from a cube or homemade)", "qty": "2 cups (480 ml)"}
+        ],
+        "prep": [
+          "Rinse 1 cup basmati in 4 changes of cold water until the water runs almost clear and drain in a sieve; do not soak, because the source ratio of 2 cups liquid per cup of rice suits unsoaked grains.",
+          "Dice 1/2 onion and 1 tomato and cut 1/4 green bell pepper into thin strips on the vegetable board. Heat 2 cups broth until steaming."
+        ],
+        "steps": [
+          "Melt 1 tbsp ghee in a medium pot 20 cm over medium heat for 1 minute. Add the 1/2 diced onion, 1 bay leaf, 3 cloves, 3 cardamom pods and the cinnamon stick and stir for 4 to 5 minutes until the onion is soft and golden and the spices smell toasted.",
+          "Add 1/4 tsp turmeric and 1/2 tsp mixed spice and stir for 20 seconds, then add the green pepper strips, the 1 diced tomato and 1/2 tsp salt and stir on medium heat for 2 minutes until the tomato softens and the pot turns yellow-red.",
+          "Add the drained 1 cup rice and stir gently for 1 minute until every grain is coated and glossy.",
+          "Pour in the 2 cups hot broth, bring to a boil on high heat (about 2 minutes), then boil uncovered on medium heat for 5 to 6 minutes until the liquid drops to the surface of the rice and small holes appear.",
+          "Cover with a tight lid, turn to the lowest heat and cook for 15 minutes without lifting the lid until the grains are long, dry and separate. Turn off the heat, rest covered for 5 minutes, remove the whole spices and fluff with a fork."
+        ]
+      },
+      {
+        "title": "Part 3 - Mild Tomato Sahawiq (no chili)",
+        "ingredients": [
+          {"item": "Tomatoes, ripe", "qty": "2 medium (250 g)"},
+          {"item": "Fresh coriander, leaves and soft stems", "qty": "1/2 cup (20 g)"},
+          {"item": "Garlic", "qty": "1 clove"},
+          {"item": "Lemon juice", "qty": "1 tbsp"},
+          {"item": "Salt", "qty": "1/4 tsp"},
+          {"item": "Ground cumin", "qty": "1/4 tsp"},
+          {"item": "Olive oil", "qty": "1 tsp"}
+        ],
+        "prep": [
+          "Quarter 2 tomatoes, wash 1/2 cup coriander and peel 1 garlic clove on the vegetable board."
+        ],
+        "steps": [
+          "Put the 2 quartered tomatoes, 1/2 cup coriander, 1 garlic clove, 1 tbsp lemon juice, 1/4 tsp salt and 1/4 tsp cumin in a blender and pulse 5 or 6 times for about 20 seconds until coarse and chunky, not smooth; a mortar gives the same result in 2 minutes.",
+          "Pour into a small bowl, stir in 1 tsp olive oil and keep in the fridge until serving. It should be fresh, sour and green-red with no heat at all."
+        ]
+      }
+    ],
+    "timeline": [
+      "1 hour ahead: rub the chicken with the spice paste and refrigerate.",
+      "0:00 Take the chicken out of the fridge; preheat the oven to 220 C; rinse the rice; dice the onion and tomato; heat the broth.",
+      "0:10 Make the sahawiq and refrigerate it.",
+      "0:15 Start the rice: ghee, onion and spices, tomato, rice, broth (about 30 minutes with the rest).",
+      "0:20 Heat the skillet 4 to 5 minutes; sear the chicken skin-down 5 to 6 minutes.",
+      "0:27 Skillet into the oven (20 to 25 minutes).",
+      "0:35 Cover the rice on the lowest heat for 15 minutes.",
+      "0:50 Chicken reads 74 C: rest 5 minutes; rest the rice.",
+      "0:55 Serve."
+    ],
+    "mistakes": [
+      "Skin pale and soft -> the skillet must be smoking hot before the chicken goes in, the chicken dry, and the skin side left alone for 5 to 6 minutes.",
+      "Chicken burnt outside and raw inside -> sear only 5 to 6 minutes, then let the 220 C oven finish it; check 74 C at the thigh.",
+      "Rice mushy -> rinse but do not soak the basmati, boil uncovered until the liquid drops to the surface, then the lowest heat with a tight lid.",
+      "Rice tastes salty -> stock cubes are salty; use 1/2 tsp salt or less and the chicken is already salted.",
+      "Sahawiq watery -> pulse, do not blend smooth, and use firm ripe tomatoes.",
+      "Dish tastes hot -> buy a mixed spice with no chili on the label; the sahawiq and the rice must have no chili at all."
+    ],
+    "serving": [
+      "Spread the spiced rice on a wide platter and set the 2 chicken quarters on top, skin side up, with the skillet juices spooned over.",
+      "Serve the tomato sahawiq in a small bowl on the side, with lemon wedges.",
+      "Add a plate of sliced cucumber, tomato and onion, and warm Arabic bread as in the Yemeni restaurants."
+    ],
+    "safety": [
+      "Chicken is safe at 74 C internal temperature at the thickest part of the thigh.",
+      "Do not wash raw chicken; marinate it covered in the fridge, use a separate board for it and wash hands after rubbing in the paste.",
+      "The skillet handle stays burning hot after the oven; keep an oven glove on it and warn others in the kitchen.",
+      "Cool leftovers within 1 hour; keep in closed containers in the fridge for 2 to 3 days (sahawiq 1 day); reheat chicken and rice until steaming hot, and reheat rice only once."
+    ],
+    "source": {
+      "site": "Sayidaty Kitchen (kitchen.sayidaty.net)",
+      "chef": "Lama Shehab (Sayidaty chefs)",
+      "title_ar": "مظبي دجاج بالفيديو",
+      "url": "https://kitchen.sayidaty.net/node/6690",
+      "image_source": "to be filled by image step",
+      "verification": "Partially verified: page opened and read, content paraphrased by the fetcher; the page carries an embedded video (https://www.youtube.com/watch?v=AlqU5E4nCPo, Arabic, no captions) and gives no cooking times",
+      "adapted": "Scaled from 1 whole chicken in 4 pieces, 3 cups basmati, 6 cups broth, 1 onion, 2 tomatoes, 4 cinnamon sticks, 3 bay leaves, 12 cloves, 12 cardamom pods and 3 tsp ghee for 4 people to a 600 g half chicken in 2 quarters, 1 cup rice, 2 cups broth (the source's 1 to 2 ratio kept, so the rice is rinsed not soaked), 1/2 onion, 1 tomato, 1 cinnamon stick, 1 bay leaf, 3 cloves, 3 cardamom pods and 1 tbsp ghee for 2 adults; the source's bed of 1.5 kg coarse salt on medium heat is replaced by the home method of a very hot cast-iron sear skin-down then 220 C oven to finish, with 1 tsp salt in the rub instead; the 2 green chilies removed and replaced with 1/4 green bell pepper; 2 garlic cloves, 1 tbsp lemon juice and 1 hour marinating added to the rub as standard practice; black pepper reduced from 1/2 tsp to 1/4 tsp; the source gives no cooking times, so 5 to 6 minutes sear, 20 to 25 minutes oven and 5 plus 15 minutes for the rice are the professional standard; the mild tomato sahawiq (tomato, coriander, garlic, lemon, cumin, no chili) is a household addition as the usual side for madhbi."
+    },
+    "video": {
+      "url": "https://www.youtube.com/watch?v=xvwzTHR-9PE",
+      "title": "وصفة الدجاج المشوي بالفحم مع الرز زي ما يقدمونه في المطاعم اليمنية Amazing Grilled Chicken & Rice Just Like Yemeni Restaurants!",
+      "channel": "مطبخنا اليمني Our Yemeni Kitchen",
+      "language": "Arabic (manual English subtitle track present)",
+      "duration": "8:09",
+      "priority": "P4",
+      "spicy_warning": true,
+      "subtitles": "manual English"
+    },
+    "video_tl": null
+  }
+]

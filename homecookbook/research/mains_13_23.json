@@ -1,0 +1,799 @@
+[
+  {
+    "id": 13,
+    "dish_en": "Lamb Salona",
+    "dish_ar": "صالونة لحم",
+    "components": [
+      {
+        "component_name": "Lamb salona (Gulf-style meat and vegetable stew)",
+        "source_site": "kitchen.sayidaty.net",
+        "chef": "مطبخ سيدتي (Sayidaty Kitchen, no individual chef named); published 2026-03-16",
+        "recipe_title_ar": "صالونة اللحم الخليجية",
+        "url": "https://kitchen.sayidaty.net/node/38473",
+        "servings_stated": "4 persons; total time 60 minutes",
+        "ingredients": [
+          {"item_ar": "لحم غنم (أو عجل)", "item_en": "lamb (or veal), cubed, pre-boiled", "qty": "about 1 kg"},
+          {"item_ar": "بصل", "item_en": "onion, minced", "qty": "2"},
+          {"item_ar": "ثوم", "item_en": "garlic cloves, crushed", "qty": "3"},
+          {"item_ar": "طماطم", "item_en": "tomatoes, chopped", "qty": "4"},
+          {"item_ar": "فلفل أخضر", "item_en": "green peppers (capsicum), sliced", "qty": "2"},
+          {"item_ar": "جزر", "item_en": "carrots, sliced", "qty": "2"},
+          {"item_ar": "بطاطس", "item_en": "potatoes, large cubes", "qty": "2"},
+          {"item_ar": "ملح", "item_en": "salt", "qty": "1 tsp"},
+          {"item_ar": "فلفل أسود", "item_en": "black pepper", "qty": "1/2 tsp"},
+          {"item_ar": "كركم", "item_en": "turmeric", "qty": "1/2 tsp"},
+          {"item_ar": "هيل مطحون", "item_en": "ground cardamom", "qty": "pinch"},
+          {"item_ar": "قرفة", "item_en": "cinnamon stick (or small pinch ground)", "qty": "1 stick"},
+          {"item_ar": "سمن", "item_en": "ghee", "qty": "4 tbsp"},
+          {"item_ar": "مرق لحم", "item_en": "meat broth", "qty": "5 cups"},
+          {"item_ar": "بقدونس أو كزبرة", "item_en": "parsley or coriander, for garnish", "qty": "to taste"}
+        ],
+        "method": [
+          "In a large pot over medium heat, melt the ghee and cook the minced onions until soft and golden.",
+          "Add the garlic and stir about 1 minute. Add the tomatoes, green peppers, carrots and all the spices; stir well.",
+          "Add the potatoes, the pre-boiled meat and enough broth to cover. Simmer gently about 1 hour until meat is tender and vegetables are fully cooked.",
+          "Taste and adjust salt.",
+          "Serve hot garnished with chopped parsley or coriander, with white rice or flatbread."
+        ],
+        "chicken_or_meat_spec": "About 1 kg lamb (or veal) cut into cubes, pre-boiled before use",
+        "rice_type_and_ratio": "Not part of this recipe; page suggests serving with white rice or bread",
+        "spicy_ingredients_found": [],
+        "has_video_on_page": false,
+        "image_on_page_url": "https://kitchen.sayidaty.net/uploads/small/02/0288cf965e347f8572b2ad8a419658d5_w750_h500.jpg",
+        "verification": "Page opened and read via WebFetch on 2026-10-10; content paraphrased by fetcher (verbatim Arabic not returned). Low user rating on page (1.6/5 from 5 reviews).",
+        "notes": "Alternative on same site: 'صالونة لحم خليجية' https://kitchen.sayidaty.net/node/38315 (5 persons, 60 min, uses 1 kg beef, zucchini, green beans, eggplant, 6 tbsp tomato paste, 2 dried limes, 1 tsp each cardamom/cinnamon/coriander/ginger/black pepper/mixed spice/turmeric; method boils meat ~2 h, then builds stew; includes a rice side with no rice quantity stated). Chosen 38473 because it specifies lamb. Neither page lists hot pepper."
+      }
+    ]
+  },
+  {
+    "id": 14,
+    "dish_en": "Mashi Malfouf (stuffed cabbage)",
+    "dish_ar": "محشي ملفوف",
+    "components": [
+      {
+        "component_name": "Stuffed cabbage rolls over chicken (Manal Alalem)",
+        "source_site": "www.manalonline.com",
+        "chef": "منال العالم (Manal Alalem)",
+        "recipe_title_ar": "ملفوف بالدجاج",
+        "url": "https://www.manalonline.com/%D9%85%D9%84%D9%81%D9%88%D9%81-%D8%A8%D8%A7%D9%84%D8%AF%D8%AC%D8%A7%D8%AC/",
+        "servings_stated": "Not listed on page",
+        "ingredients": [
+          {"item_ar": "ماء (لسلق الملفوف)", "item_en": "water for boiling cabbage", "qty": "8 cups"},
+          {"item_ar": "كمون", "item_en": "cumin (in boiling water)", "qty": "1 tbsp"},
+          {"item_ar": "ملفوف", "item_en": "large cabbage head", "qty": "1"},
+          {"item_ar": "أفخاذ دجاج", "item_en": "chicken thigh/drumstick pieces", "qty": "6"},
+          {"item_ar": "ملح", "item_en": "salt (for chicken)", "qty": "1/2 tsp"},
+          {"item_ar": "فلفل أسود", "item_en": "black pepper (for chicken)", "qty": "1/4 tsp"},
+          {"item_ar": "بهارات مشكلة", "item_en": "mixed spice (for chicken)", "qty": "1/2 tsp"},
+          {"item_ar": "كركم", "item_en": "turmeric (for chicken)", "qty": "1/4 tsp"},
+          {"item_ar": "أرز مصري قصير الحبة", "item_en": "short-grain Egyptian rice (filling)", "qty": "2 cups"},
+          {"item_ar": "لحم مفروم", "item_en": "ground meat (filling)", "qty": "200 g"},
+          {"item_ar": "بصل", "item_en": "large onion, finely minced (filling)", "qty": "1"},
+          {"item_ar": "ملح", "item_en": "salt (filling)", "qty": "1 tbsp"},
+          {"item_ar": "بهارات مشكلة", "item_en": "mixed spice (filling)", "qty": "1 tbsp"},
+          {"item_ar": "زيت أو سمن", "item_en": "oil or ghee (filling)", "qty": "1/2 cup"},
+          {"item_ar": "رأس ثوم", "item_en": "garlic head, halved", "qty": "1"},
+          {"item_ar": "عصير ليمون", "item_en": "lemon juice (broth)", "qty": "1/2 cup"},
+          {"item_ar": "دبس رمان", "item_en": "pomegranate molasses (broth)", "qty": "1/4 cup"},
+          {"item_ar": "ماء", "item_en": "water (broth)", "qty": "3 cups"}
+        ],
+        "method": [
+          "Bring 8 cups water with the cumin to a boil in a deep pot.",
+          "Cut a slit around the cabbage core so leaves separate, drop the head into the boiling water, and lift leaves out one by one as they soften.",
+          "Cut the leaves into even pieces (remove thick ribs).",
+          "Spread the chicken pieces over the base of a thick-bottomed pot, season with salt, pepper, mixed spice and turmeric, toss and arrange flat.",
+          "In a deep bowl mix rice, ground meat, minced onion, salt, mixed spice and oil/ghee until combined.",
+          "Place about 1 tbsp filling along the edge of each leaf, roll into a finger shape, and lay the rolls over the chicken; tuck the garlic halves between rolls.",
+          "Mix lemon juice, pomegranate molasses and 3 cups water in a measuring jug.",
+          "Place the pot on medium heat for 20 minutes WITHOUT the broth, with a heavy heat-proof plate pressed on top of the rolls so they stay closed.",
+          "Add the broth gradually, boil 20 minutes, then lower the heat, cover and cook until the rice has absorbed all the liquid and is fully tender.",
+          "Invert the pot onto a serving dish; serve with Arabic bread and yogurt."
+        ],
+        "chicken_or_meat_spec": "6 chicken thigh/drumstick pieces as the pot base plus 200 g ground meat in the filling",
+        "rice_type_and_ratio": "2 cups short-grain Egyptian rice in filling; cooking liquid 1/2 cup lemon juice + 1/4 cup pomegranate molasses + 3 cups water",
+        "spicy_ingredients_found": [],
+        "has_video_on_page": false,
+        "image_on_page_url": "https://www.manalonline.com/images/recipes/ملفوف-بالدجاج-v2.webp",
+        "verification": "Page opened and read via WebFetch on 2026-10-10 (percent-encoded URL with trailing slash works; unencoded URL fails). Fetcher noted the page text says 200°C for the boiling step, which looks like a site error.",
+        "notes": "Manal's more classic page 'محشي الملفوف باللحم والخضار' (https://www.manalonline.com/محشي-الملفوف-باللحم-والخضار/) exists in search results but could NOT be opened (CLIENT_ERROR on 4 attempts, encoded and unencoded). Also seen but not fetched: 'ملفوف مع ريش الغنم' https://www.manalonline.com/ملفوف-مع-ريش-الغنم/."
+      },
+      {
+        "component_name": "Alternative: classic cabbage rolls with rice and ground meat (Sayidaty)",
+        "source_site": "kitchen.sayidaty.net",
+        "chef": "مطبخ سيدتي (Sayidaty Kitchen); published 2025-11-05",
+        "recipe_title_ar": "محشي ملفوف بالرز واللحم المفروم",
+        "url": "https://kitchen.sayidaty.net/node/36729",
+        "servings_stated": "5 persons; total time 120 minutes",
+        "ingredients": [
+          {"item_ar": "الملفوف", "item_en": "cabbage, medium head", "qty": "1"},
+          {"item_ar": "الأرز المصري", "item_en": "Egyptian rice, washed and drained", "qty": "2 cups"},
+          {"item_ar": "البصل", "item_en": "onion, finely chopped", "qty": "1 medium"},
+          {"item_ar": "الثوم", "item_en": "garlic, minced", "qty": "2 cloves"},
+          {"item_ar": "لحم مفروم", "item_en": "ground meat", "qty": "250 g"},
+          {"item_ar": "طماطم", "item_en": "tomatoes, grated", "qty": "2"},
+          {"item_ar": "بقدونس", "item_en": "parsley, chopped", "qty": "1/4 cup"},
+          {"item_ar": "شبت", "item_en": "dill, chopped", "qty": "1/2 cup"},
+          {"item_ar": "كزبرة خضراء", "item_en": "fresh coriander, chopped", "qty": "1/2 cup"},
+          {"item_ar": "زيت نباتي", "item_en": "vegetable oil", "qty": "2 tbsp"},
+          {"item_ar": "ملح", "item_en": "salt", "qty": "1 tsp"},
+          {"item_ar": "فلفل أسود", "item_en": "black pepper", "qty": "1/2 tsp"},
+          {"item_ar": "بهارات مشكلة", "item_en": "mixed spices", "qty": "1 tsp"},
+          {"item_ar": "معجون الطماطم", "item_en": "tomato paste", "qty": "1 tbsp"},
+          {"item_ar": "مرق دجاج", "item_en": "chicken stock", "qty": "as needed to cover"}
+        ],
+        "method": [
+          "Wash cabbage leaves and boil in a pot of water about 5 minutes until soft; drain and cool.",
+          "Heat oil in a skillet over medium heat; sauté onion and garlic until wilted.",
+          "Add ground meat and cook, stirring, until no longer pink; stir in grated tomato, tomato paste, spices, salt and pepper.",
+          "Add rice, parsley, dill and coriander; mix well.",
+          "Add about 1/2 cup water and simmer on low about 7 minutes until the rice starts to cook; remove and cool slightly.",
+          "Put a portion of filling on each leaf, roll snugly folding in the edges.",
+          "Arrange rolls in a deep pot, add chicken stock to cover, weigh down with a heavy plate.",
+          "Bring to a boil on medium, reduce to low and simmer 45 to 60 minutes until rice and cabbage are fully cooked. Serve hot."
+        ],
+        "chicken_or_meat_spec": "250 g ground meat (type not specified)",
+        "rice_type_and_ratio": "2 cups Egyptian short-grain rice; cooked in chicken stock to cover",
+        "spicy_ingredients_found": [],
+        "has_video_on_page": false,
+        "image_on_page_url": "https://kitchen.sayidaty.net/uploads/small/19/195385b1e23546d9e5675fb072c28938_w750_h500.jpg",
+        "verification": "Page opened and read via WebFetch on 2026-10-10; paraphrased by fetcher.",
+        "notes": "Fallback because the Manal classic page could not be opened."
+      }
+    ]
+  },
+  {
+    "id": 15,
+    "dish_en": "Cajun Chicken with Lobia stew and white rice",
+    "dish_ar": "دجاج كاجن مع لوبيا بالصلصة وأرز أبيض",
+    "components": [
+      {
+        "component_name": "Cajun chicken",
+        "source_site": "cookpad.com (last resort; no Cajun chicken recipe found on Sayidaty, Manal or Shamlola, only Cajun pasta/potato/shrimp)",
+        "chef": "ام تقي (Cookpad user @Cooker_Lolo); published 2021-09-17",
+        "recipe_title_ar": "دجاج ببهارات الكيجن بالفرن",
+        "url": "https://cookpad.com/sa/وصفات/15512334",
+        "servings_stated": "2 persons; 2 hours (marinating)",
+        "ingredients": [
+          {"item_ar": "دجاجة", "item_en": "chicken", "qty": "1/2 chicken"},
+          {"item_ar": "بصل", "item_en": "onions, sliced", "qty": "2"},
+          {"item_ar": "فلفل أسود", "item_en": "black pepper", "qty": "1 spoon"},
+          {"item_ar": "ثوم بودرة", "item_en": "garlic powder", "qty": "1 spoon"},
+          {"item_ar": "بصل بودرة", "item_en": "onion powder", "qty": "1 spoon"},
+          {"item_ar": "بابريكا حلوة", "item_en": "sweet paprika", "qty": "1 spoon"},
+          {"item_ar": "بابريكا حارة", "item_en": "hot paprika", "qty": "1 spoon"},
+          {"item_ar": "كمون بودرة", "item_en": "ground cumin", "qty": "1 spoon"},
+          {"item_ar": "شطة مجروشة أو مطحونة", "item_en": "crushed or ground chili", "qty": "1 spoon"},
+          {"item_ar": "بهارات الكيجن", "item_en": "Cajun spice mix", "qty": "1 spoon"},
+          {"item_ar": "ملح", "item_en": "salt", "qty": "1 spoon"},
+          {"item_ar": "عصير ليمون", "item_en": "lemon juice", "qty": "1/2 cup"},
+          {"item_ar": "زيت نباتي", "item_en": "vegetable oil", "qty": "1/2 cup"}
+        ],
+        "method": [
+          "Clean the chicken, drain well in a strainer until dry.",
+          "Mix all dry spices in a bowl, stir in lemon juice, then oil.",
+          "Rub the mixture all over the chicken, making cuts (ideally under the skin) so the marinade penetrates.",
+          "Refrigerate 2 hours or longer.",
+          "Place chicken in a baking tray, pour over all the marinade, top with onion slices if desired, cover with two layers of foil.",
+          "Bake in a preheated oven about 1 hour or more until fully cooked (page gives no temperature).",
+          "Remove foil to brown the chicken. Serve with rice and salad."
+        ],
+        "chicken_or_meat_spec": "1/2 chicken, bone-in with skin",
+        "rice_type_and_ratio": "Not part of this recipe (serve with any rice)",
+        "spicy_ingredients_found": ["hot paprika (بابريكا حارة)", "crushed/ground chili (شطة)", "Cajun spice mix (بهارات الكيجن)"],
+        "has_video_on_page": false,
+        "image_on_page_url": "https://img-global.cpcdn.com/recipes/96744a79278be12d/1200x630cq80/photo.jpg",
+        "verification": "Page opened and read via WebFetch on 2026-10-10; paraphrased by fetcher. Oven temperature is not stated on the page.",
+        "notes": "Spoon sizes ('معلقة') are not specified as tbsp/tsp on the page. The recipe is quite hot (hot paprika + chili); reduce for children. Searched Sayidaty, Shamlola, Manal, Cookpad EG/SA: no plain 'دجاج كاجن' recipe on the preferred sites."
+      },
+      {
+        "component_name": "Lobia (dried cowpea/black-eyed bean) in tomato sauce",
+        "source_site": "www.shamlola.com",
+        "chef": "Not stated on page (Shamlola editorial)",
+        "recipe_title_ar": "طريقة عمل لوبيا بالصلصة",
+        "url": "https://www.shamlola.com/recipes/طريقة-عمل-لوبيا-بالصلصة",
+        "servings_stated": "4 persons; prep 20 min, cook 40 min",
+        "ingredients": [
+          {"item_ar": "لوبيا", "item_en": "dried lobia beans (variety not stated; soaked 6 h)", "qty": "1 cup"},
+          {"item_ar": "بصل مفروم", "item_en": "onion, minced", "qty": "1"},
+          {"item_ar": "عصير طماطم", "item_en": "tomato juice", "qty": "2 cups"},
+          {"item_ar": "ملح", "item_en": "salt", "qty": "to taste"},
+          {"item_ar": "فلفل أسود", "item_en": "black pepper", "qty": "to taste"},
+          {"item_ar": "بهارات", "item_en": "mixed spices", "qty": "not specified"},
+          {"item_ar": "زيت", "item_en": "oil", "qty": "not specified"}
+        ],
+        "method": [
+          "Wash the lobia and soak at least 6 hours.",
+          "Boil the soaked beans in salted water about 40 minutes until tender; drain.",
+          "Heat oil in a pot, add minced onion and stir until golden.",
+          "Add tomato juice and cook over medium heat until the sauce thickens.",
+          "Season with salt, pepper and spices; add the cooked beans and stir.",
+          "Simmer on low at least 30 minutes until beans are fully cooked and sauce is rich. Serve hot with rice."
+        ],
+        "chicken_or_meat_spec": "None (vegetarian)",
+        "rice_type_and_ratio": "Not part of this recipe; page suggests vermicelli rice",
+        "spicy_ingredients_found": [],
+        "has_video_on_page": false,
+        "image_on_page_url": "https://shamlola.s3.amazonaws.com/Shamlola_Images/8/src/73d4fc35b98a3a869e3d8258091e024725a512f3.jpg",
+        "verification": "Page opened and read via WebFetch on 2026-10-10; paraphrased by fetcher.",
+        "notes": "Alternative with exact quantities: Sayidaty 'طريقة عمل اللوبيا الناشفة' https://kitchen.sayidaty.net/node/25846 (4 persons, 60 min: 1.5 cups dried lobia soaked overnight, 3 tbsp vegetable oil, 2 minced onions, pinch salt, 1 tsp black pepper, 1 litre tomato juice; boil beans until tender, sauté onion on medium, season, add tomato juice, boil, add beans, simmer low until thick). Also read and verified."
+      },
+      {
+        "component_name": "White rice",
+        "source_site": "www.shamlola.com",
+        "chef": "Not stated on page",
+        "recipe_title_ar": "طريقة عمل الأرز الأبيض",
+        "url": "https://www.shamlola.com/recipes/طريقة-عمل-الأرز-الأبيض",
+        "servings_stated": "3 persons; prep 10 min, cook 30 min (steps say 15 min simmer)",
+        "ingredients": [
+          {"item_ar": "أرز أبيض", "item_en": "white rice", "qty": "1 large cup"},
+          {"item_ar": "ملح", "item_en": "salt", "qty": "1/2 tsp"},
+          {"item_ar": "ماء أو شوربة", "item_en": "water or stock, hot", "qty": "1.5 large cups"}
+        ],
+        "method": [
+          "Bring the water to a boil in a pot over medium heat.",
+          "Add rice and salt, stir well.",
+          "Reduce heat to low, cover, and simmer 15 minutes until water is absorbed and rice is tender.",
+          "Serve hot."
+        ],
+        "chicken_or_meat_spec": "None",
+        "rice_type_and_ratio": "White rice (type unspecified); 1 cup rice : 1.5 cups water/stock; page tip: hot water should stand about 4 cm above the rice",
+        "spicy_ingredients_found": [],
+        "has_video_on_page": false,
+        "image_on_page_url": "https://shamlola.s3.amazonaws.com/Shamlola_Images/9/src/f2faaebfe747dfd31cd3283f4590f75ad6e1b73c.jpg",
+        "verification": "Page opened and read via WebFetch on 2026-10-10.",
+        "notes": "Same rice component reused for ids 16, 17, 18, 22."
+      }
+    ]
+  },
+  {
+    "id": 16,
+    "dish_en": "Grilled Chicken with Egyptian Molokhia and white rice",
+    "dish_ar": "دجاج مشوي مع ملوخية مصرية وأرز أبيض",
+    "components": [
+      {
+        "component_name": "Oven-grilled whole chicken",
+        "source_site": "www.shamlola.com",
+        "chef": "Not stated on page",
+        "recipe_title_ar": "طريقة تحضير دجاج مشوي في الفرن",
+        "url": "https://www.shamlola.com/recipes/طريقة-تحضير-دجاج-مشوي-في-الفرن",
+        "servings_stated": "4 persons; prep 30 min, cook 70 min (plus 6 h to overnight marinating)",
+        "ingredients": [
+          {"item_ar": "دجاجة صحيحة", "item_en": "whole chicken", "qty": "1 (about 1 kg)"},
+          {"item_ar": "ثوم مفروم", "item_en": "garlic, minced", "qty": "2 cloves"},
+          {"item_ar": "عصير ليمون", "item_en": "lemon juice", "qty": "2 tbsp"},
+          {"item_ar": "خل بلسميك", "item_en": "balsamic vinegar", "qty": "2 tbsp"},
+          {"item_ar": "خل أبيض", "item_en": "white vinegar", "qty": "2 tbsp"},
+          {"item_ar": "زيت زيتون", "item_en": "olive oil", "qty": "2 tbsp"},
+          {"item_ar": "صويا صوص", "item_en": "soy sauce", "qty": "2 tbsp"},
+          {"item_ar": "ملح", "item_en": "salt", "qty": "2 tsp"},
+          {"item_ar": "بابريكا", "item_en": "paprika", "qty": "2 tsp"},
+          {"item_ar": "بهارات", "item_en": "mixed spices", "qty": "2 tsp"},
+          {"item_ar": "قرفة ناعمة", "item_en": "ground cinnamon", "qty": "2 tsp"},
+          {"item_ar": "زعتر مجفف", "item_en": "dried thyme", "qty": "2 tsp"},
+          {"item_ar": "ريحان مجفف", "item_en": "dried basil", "qty": "2 tsp"}
+        ],
+        "method": [
+          "Wash the chicken and drain in a colander until dry.",
+          "In a small bowl mix garlic, lemon juice, olive oil, both vinegars and soy sauce; add salt, paprika, cinnamon, spices, thyme and basil and mix again.",
+          "Rub marinade over the chicken inside, outside and under the skin; place in a bag and refrigerate overnight or at least 6 hours.",
+          "Preheat oven to 190°C.",
+          "Set the chicken on a roasting rack in a tray.",
+          "Roast 70 minutes until cooked through and golden brown, basting from time to time with remaining marinade.",
+          "Serve hot with basmati rice and fried potatoes."
+        ],
+        "chicken_or_meat_spec": "1 whole chicken, about 1 kg, skin on",
+        "rice_type_and_ratio": "Not part of this recipe; page suggests basmati",
+        "spicy_ingredients_found": [],
+        "has_video_on_page": false,
+        "image_on_page_url": "https://shamlola.s3.amazonaws.com/Shamlola_Images/9/src/e99c963d776c8771c68b30e946cbbda42860ceef.jpg",
+        "verification": "Page opened and read via WebFetch on 2026-10-10.",
+        "notes": "Chosen over Shamlola 'دجاج مشوي بالفرن' (https://www.shamlola.com/recipes/دجاج-مشوي-بالفرن), which was also read but lists no quantities except 2 chickens and no oven temperature or time."
+      },
+      {
+        "component_name": "Egyptian green molokhia",
+        "source_site": "www.shamlola.com",
+        "chef": "Not stated on page",
+        "recipe_title_ar": "طريقة عمل الملوخية الخضراء المصرية",
+        "url": "https://www.shamlola.com/recipes/طريقة-عمل-الملوخية-الخضراء-المصرية",
+        "servings_stated": "6 persons; cook 10 min",
+        "ingredients": [
+          {"item_ar": "ملوخية مخرطة", "item_en": "fresh molokhia leaves, finely minced (or 1 packet pre-minced/frozen)", "qty": "1/2 kg"},
+          {"item_ar": "شوربة دجاج أو لحم", "item_en": "chicken or meat broth", "qty": "as needed (not quantified)"},
+          {"item_ar": "ثوم مفروم ناعم", "item_en": "garlic, finely minced", "qty": "1.5 tbsp"},
+          {"item_ar": "كزبرة ناشفة مطحونة", "item_en": "ground dried coriander", "qty": "1.5 tbsp"},
+          {"item_ar": "سمن بلدي", "item_en": "ghee", "qty": "2 tbsp"},
+          {"item_ar": "ملح", "item_en": "salt", "qty": "to taste"}
+        ],
+        "method": [
+          "Put the minced molokhia in a pot over the heat; add 1/2 tbsp of the garlic and 1/2 tbsp of the coriander.",
+          "Gradually add hot broth, stirring, until medium consistency (neither thick nor watery). Do not let it boil hard; remove from heat as soon as it is hot through.",
+          "In a separate small pan heat 2 tbsp ghee, add the remaining minced garlic and stir briefly.",
+          "Add the remaining coriander and stir until the garlic turns reddish-gold, then pour this 'ta'leya' over the molokhia and cover. Serve hot."
+        ],
+        "chicken_or_meat_spec": "None in the molokhia itself; uses chicken or meat broth",
+        "rice_type_and_ratio": "Not part of this recipe",
+        "spicy_ingredients_found": [],
+        "has_video_on_page": false,
+        "image_on_page_url": "https://shamlola.s3.amazonaws.com/Shamlola_Images/6/src/adc36953b1d0b7f6f2d3c8fa118dbb59f2b88fc4.jpg",
+        "verification": "Page opened and read via WebFetch on 2026-10-10. Fetcher flagged that step 2 uses 1/2 tbsp garlic/coriander while list says 1.5 tbsp (the rest goes in the ta'leya). Broth quantity not given on page.",
+        "notes": ""
+      },
+      {
+        "component_name": "White rice",
+        "source_site": "www.shamlola.com",
+        "chef": "Not stated on page",
+        "recipe_title_ar": "طريقة عمل الأرز الأبيض",
+        "url": "https://www.shamlola.com/recipes/طريقة-عمل-الأرز-الأبيض",
+        "servings_stated": "3 persons",
+        "ingredients": [
+          {"item_ar": "أرز أبيض", "item_en": "white rice", "qty": "1 large cup"},
+          {"item_ar": "ملح", "item_en": "salt", "qty": "1/2 tsp"},
+          {"item_ar": "ماء أو شوربة", "item_en": "hot water or stock", "qty": "1.5 large cups"}
+        ],
+        "method": ["See id 15 white rice component (same page)."],
+        "chicken_or_meat_spec": "None",
+        "rice_type_and_ratio": "1 cup rice : 1.5 cups water; 15 min covered on low",
+        "spicy_ingredients_found": [],
+        "has_video_on_page": false,
+        "image_on_page_url": "https://shamlola.s3.amazonaws.com/Shamlola_Images/9/src/f2faaebfe747dfd31cd3283f4590f75ad6e1b73c.jpg",
+        "verification": "Page opened and read via WebFetch on 2026-10-10.",
+        "notes": ""
+      }
+    ]
+  },
+  {
+    "id": 17,
+    "dish_en": "Okra with Lamb and white rice",
+    "dish_ar": "بامية باللحم مع أرز أبيض",
+    "components": [
+      {
+        "component_name": "Okra with meat (Egyptian style)",
+        "source_site": "www.shamlola.com",
+        "chef": "Not stated on page",
+        "recipe_title_ar": "طريقة عمل بامية باللحم",
+        "url": "https://www.shamlola.com/recipes/طريقة-عمل-بامية-باللحم",
+        "servings_stated": "4 persons; cook 15 min (as listed)",
+        "ingredients": [
+          {"item_ar": "بامية", "item_en": "okra", "qty": "1 kg"},
+          {"item_ar": "لحم مقطع قطع صغيرة", "item_en": "meat, small cubes", "qty": "1 kg"},
+          {"item_ar": "ثوم", "item_en": "garlic", "qty": "not quantified"},
+          {"item_ar": "بهارات", "item_en": "mixed spices", "qty": "not quantified"},
+          {"item_ar": "طماطم", "item_en": "tomatoes", "qty": "3"},
+          {"item_ar": "بصلة", "item_en": "onion", "qty": "1"},
+          {"item_ar": "زيت للقلي", "item_en": "oil for frying", "qty": "as needed"},
+          {"item_ar": "مكعب مرقة ماجي", "item_en": "Maggi stock cubes", "qty": "2"},
+          {"item_ar": "فلفل حار", "item_en": "hot pepper", "qty": "not quantified"},
+          {"item_ar": "صلصة طماطم", "item_en": "tomato sauce/paste", "qty": "not quantified"}
+        ],
+        "method": [
+          "Trim the okra tops and shallow-fry in oil until half cooked; set aside.",
+          "Chop onion, garlic, hot pepper and crumble the stock cubes; fry together in oil until the onion wilts.",
+          "Add the meat and cook until done (no time given; lamb cubes typically need slow simmering with water until tender).",
+          "Add chopped tomatoes, tomato sauce and spices; cook until the sauce is done.",
+          "Pour the sauce over the okra (optionally in a Pyrex dish, decorated with pepper and tomato slices) and finish together until the okra is tender."
+        ],
+        "chicken_or_meat_spec": "1 kg meat in small cubes (type not stated; use lamb)",
+        "rice_type_and_ratio": "Not part of this recipe",
+        "spicy_ingredients_found": ["hot pepper (فلفل حار)"],
+        "has_video_on_page": false,
+        "image_on_page_url": "https://shamlola.s3.amazonaws.com/Shamlola_Images/4/src/51df1bf375af740c32a0862b184088a155439f91.jpg",
+        "verification": "Page opened and read via WebFetch on 2026-10-10. Page gives no heat levels or per-step times; several ingredients unquantified.",
+        "notes": "Other Shamlola candidates seen but not read: 'طاجن بامية باللحمة الضأني', 'يخنة البامية باللحم', 'طاجن البامية باللحم'. Hot pepper can be omitted for a mild version."
+      },
+      {
+        "component_name": "White rice",
+        "source_site": "www.shamlola.com",
+        "chef": "Not stated on page",
+        "recipe_title_ar": "طريقة عمل الأرز الأبيض",
+        "url": "https://www.shamlola.com/recipes/طريقة-عمل-الأرز-الأبيض",
+        "servings_stated": "3 persons",
+        "ingredients": [
+          {"item_ar": "أرز أبيض", "item_en": "white rice", "qty": "1 large cup"},
+          {"item_ar": "ملح", "item_en": "salt", "qty": "1/2 tsp"},
+          {"item_ar": "ماء أو شوربة", "item_en": "hot water or stock", "qty": "1.5 large cups"}
+        ],
+        "method": ["See id 15 white rice component (same page)."],
+        "chicken_or_meat_spec": "None",
+        "rice_type_and_ratio": "1 cup rice : 1.5 cups water; 15 min covered on low",
+        "spicy_ingredients_found": [],
+        "has_video_on_page": false,
+        "image_on_page_url": "https://shamlola.s3.amazonaws.com/Shamlola_Images/9/src/f2faaebfe747dfd31cd3283f4590f75ad6e1b73c.jpg",
+        "verification": "Page opened and read via WebFetch on 2026-10-10.",
+        "notes": ""
+      }
+    ]
+  },
+  {
+    "id": 18,
+    "dish_en": "Fried Chicken (Egyptian breaded chicken) with Okra (no meat) and white rice",
+    "dish_ar": "دجاج بانيه مع بامية بدون لحم وأرز أبيض",
+    "components": [
+      {
+        "component_name": "Egyptian breaded fried chicken (paneh)",
+        "source_site": "www.shamlola.com",
+        "chef": "Not stated on page",
+        "recipe_title_ar": "طريقة عمل دجاج بانيه من المطبخ المصرى",
+        "url": "https://www.shamlola.com/recipes/طريقة-عمل-دجاج-بانيه-من-المطبخ-المصرى",
+        "servings_stated": "5 persons; cook 20 min (plus 1 h marinating)",
+        "ingredients": [
+          {"item_ar": "صدر دجاج مسحب مقطع للبانيه", "item_en": "boneless chicken breast, cut into cutlets", "qty": "1/2 kg"},
+          {"item_ar": "طماطم", "item_en": "tomato, grated", "qty": "1"},
+          {"item_ar": "بصل حجم وسط", "item_en": "medium onion, grated", "qty": "1"},
+          {"item_ar": "بيضة", "item_en": "egg", "qty": "1"},
+          {"item_ar": "بقسماط أو كعك مطحون", "item_en": "breadcrumbs", "qty": "2 cups"},
+          {"item_ar": "زيت للتحمير", "item_en": "oil for frying", "qty": "2 cups"},
+          {"item_ar": "بهارات الدجاج", "item_en": "chicken spice mix", "qty": "not quantified"},
+          {"item_ar": "ملح", "item_en": "salt", "qty": "1 tsp"},
+          {"item_ar": "فلفل أسود", "item_en": "black pepper", "qty": "1 tsp"}
+        ],
+        "method": [
+          "In a large bowl grate the onion and tomato together, crack in the egg, add salt, pepper and chicken spices; mix by hand.",
+          "Add the chicken cutlets, coat well and marinate 1 hour.",
+          "Lift each piece from the marinade, press into breadcrumbs on both sides.",
+          "Fry in hot oil (deep pan) until golden on both sides and cooked through; drain on paper. Serve with fried potatoes."
+        ],
+        "chicken_or_meat_spec": "1/2 kg boneless skinless chicken breast cut into thin cutlets",
+        "rice_type_and_ratio": "Not part of this recipe",
+        "spicy_ingredients_found": [],
+        "has_video_on_page": false,
+        "image_on_page_url": "https://shamlola.s3.amazonaws.com/Shamlola_Images/6/src/3e3cded4d1951e0b022a15580ad7f89a4795c00a.jpg",
+        "verification": "Page opened and read via WebFetch on 2026-10-10. Page gives no oil temperature or minutes per side.",
+        "notes": ""
+      },
+      {
+        "component_name": "Okra in tomato sauce (no meat)",
+        "source_site": "www.shamlola.com",
+        "chef": "Not stated on page",
+        "recipe_title_ar": "طريقة عمل بامية بدون لحم",
+        "url": "https://www.shamlola.com/recipes/طريقة-عمل-بامية-بدون-لحم/",
+        "servings_stated": "4 persons; prep 15 min, cook 35 min (steps total about 55 min)",
+        "ingredients": [
+          {"item_ar": "بامية جاهزة ومقمعة", "item_en": "okra, trimmed", "qty": "1/2 kg"},
+          {"item_ar": "زيت زيتون", "item_en": "olive oil", "qty": "1/3 large cup (80 ml)"},
+          {"item_ar": "بصل كبير مفروم", "item_en": "large onion, chopped", "qty": "1"},
+          {"item_ar": "ثوم مفروم", "item_en": "garlic, chopped", "qty": "1 tbsp"},
+          {"item_ar": "صلصة طماطم", "item_en": "tomato sauce", "qty": "1.5 large cups"},
+          {"item_ar": "سبع بهارات", "item_en": "seven-spice mix", "qty": "1 tsp"},
+          {"item_ar": "ليمونة معصورة", "item_en": "lemon, juiced", "qty": "1/2"}
+        ],
+        "method": [
+          "If okra is untrimmed, trim stem tips to a point, wash, and dry completely on a cloth.",
+          "Heat olive oil in a pot over medium heat.",
+          "Add chopped onion, cover and cook about 5 minutes until golden.",
+          "Add dried okra, cover 5 minutes; then add garlic, lemon juice, seven-spice and tomato sauce; stir gently with a wooden spoon.",
+          "Cover and simmer 45 minutes, stirring every 5 minutes so the base does not burn; uncover for the last 5 minutes to let steam escape.",
+          "Serve with rice."
+        ],
+        "chicken_or_meat_spec": "None (vegetarian)",
+        "rice_type_and_ratio": "Not part of this recipe",
+        "spicy_ingredients_found": [],
+        "has_video_on_page": false,
+        "image_on_page_url": "https://shamlola.s3.amazonaws.com/Shamlola_Images/9/src/284ea6a7515a972692863b5db1136ee4db654943.jpg",
+        "verification": "Page opened and read via WebFetch on 2026-10-10.",
+        "notes": "Page tip: soak okra 30 min in 1/2 cup vinegar then rinse and dry to reduce sliminess."
+      },
+      {
+        "component_name": "White rice",
+        "source_site": "www.shamlola.com",
+        "chef": "Not stated on page",
+        "recipe_title_ar": "طريقة عمل الأرز الأبيض",
+        "url": "https://www.shamlola.com/recipes/طريقة-عمل-الأرز-الأبيض",
+        "servings_stated": "3 persons",
+        "ingredients": [
+          {"item_ar": "أرز أبيض", "item_en": "white rice", "qty": "1 large cup"},
+          {"item_ar": "ملح", "item_en": "salt", "qty": "1/2 tsp"},
+          {"item_ar": "ماء أو شوربة", "item_en": "hot water or stock", "qty": "1.5 large cups"}
+        ],
+        "method": ["See id 15 white rice component (same page)."],
+        "chicken_or_meat_spec": "None",
+        "rice_type_and_ratio": "1 cup rice : 1.5 cups water; 15 min covered on low",
+        "spicy_ingredients_found": [],
+        "has_video_on_page": false,
+        "image_on_page_url": "https://shamlola.s3.amazonaws.com/Shamlola_Images/9/src/f2faaebfe747dfd31cd3283f4590f75ad6e1b73c.jpg",
+        "verification": "Page opened and read via WebFetch on 2026-10-10.",
+        "notes": ""
+      }
+    ]
+  },
+  {
+    "id": 19,
+    "dish_en": "Musakhan Chicken with white rice",
+    "dish_ar": "مسخن دجاج",
+    "components": [
+      {
+        "component_name": "Palestinian chicken musakhan",
+        "source_site": "kitchen.sayidaty.net",
+        "chef": "الشيف امتياز الجيتاوي (Chef Imtiyaz Al-Jitawi); published 2018-05-10",
+        "recipe_title_ar": "مسخن دجاج",
+        "url": "https://kitchen.sayidaty.net/node/8560",
+        "servings_stated": "4 persons; 60 minutes",
+        "ingredients": [
+          {"item_ar": "بصل مفروم ناعم", "item_en": "onions, finely chopped", "qty": "about 2 kg"},
+          {"item_ar": "دجاجة مقطعة ومسلوقة", "item_en": "chicken, cut up and boiled", "qty": "1"},
+          {"item_ar": "زيت زيتون", "item_en": "olive oil", "qty": "3 cups"},
+          {"item_ar": "ملح", "item_en": "salt", "qty": "2 tbsp"},
+          {"item_ar": "سماق", "item_en": "sumac", "qty": "1/2 cup"},
+          {"item_ar": "فلفل أسود", "item_en": "black pepper", "qty": "1 tbsp"},
+          {"item_ar": "خبز طابون", "item_en": "taboon flatbread", "qty": "3 loaves"},
+          {"item_ar": "لوز وصنوبر محمص", "item_en": "almonds and toasted pine nuts, garnish", "qty": "optional"}
+        ],
+        "method": [
+          "Boil the chicken pieces in water with bay leaves, cardamom, cloves, an onion and salt until cooked; keep the broth.",
+          "In a wide pot cook the chopped onions in the olive oil over low heat about 20 minutes until very soft; add salt and black pepper.",
+          "Add the chicken pieces to the onions and cook about 5 minutes.",
+          "Move the chicken to a baking tray, season, and bake until golden (page gives no temperature; typical 200°C, 15 to 20 min).",
+          "Dip each taboon loaf in the onion oil, lay on a serving plate, and layer with onions, sumac and nuts; repeat until bread is used.",
+          "Top with the chicken and garnish with toasted nuts."
+        ],
+        "chicken_or_meat_spec": "1 whole chicken cut into pieces, boiled first then baked",
+        "rice_type_and_ratio": "Not part of this recipe (traditionally served on bread)",
+        "spicy_ingredients_found": [],
+        "has_video_on_page": false,
+        "image_on_page_url": "https://kitchen.sayidaty.net/uploads/small/4a/4a0b8321fe15fd2274ed88c7d185dc81_w750_h500.jpg",
+        "verification": "Page opened and read via WebFetch on 2026-10-10; paraphrased by fetcher. Page links to a separate video recipe 'فيديو رولات مسخن الدجاج' (https://kitchen.sayidaty.net/node/3504) but has no embedded video itself.",
+        "notes": "Samira Basharat's chef page (https://kitchen.sayidaty.net/recipes/index/chef/4243, 12 recipes) was read: it has NO musakhan recipe, so fell back to Sayidaty general. Other Sayidaty musakhan pages seen: 'مسخن فلسطيني' node/20483, 'المسخن بالدجاج والبصل والسماق' node/36425, 'صينية المسخن بالفيديو' node/37687 (not read). 3 cups olive oil is as stated on the page; household can reduce."
+      },
+      {
+        "component_name": "White rice (Egyptian)",
+        "source_site": "kitchen.sayidaty.net",
+        "chef": "مطبخ سيدتي (Sayidaty Kitchen); published 2024-07-10",
+        "recipe_title_ar": "طريقة عمل الأرز الأبيض",
+        "url": "https://kitchen.sayidaty.net/node/30166",
+        "servings_stated": "2 persons; 30 minutes",
+        "ingredients": [
+          {"item_ar": "الأرز المصري", "item_en": "Egyptian rice, washed and soaked", "qty": "1 cup"},
+          {"item_ar": "ماء ساخن", "item_en": "hot water", "qty": "1.5 cups"},
+          {"item_ar": "ملح", "item_en": "salt", "qty": "1 tsp"}
+        ],
+        "method": [
+          "Drain the soaked rice.",
+          "Bring water and salt to a boil in a pot.",
+          "Add rice, cover, lower heat, cook 25 minutes without stirring or lifting the lid.",
+          "Fluff with a fork, remove from heat, serve hot."
+        ],
+        "chicken_or_meat_spec": "None",
+        "rice_type_and_ratio": "Egyptian short-grain rice; 1 cup rice : 1.5 cups water",
+        "spicy_ingredients_found": [],
+        "has_video_on_page": false,
+        "image_on_page_url": "https://kitchen.sayidaty.net/uploads/small/05/05c8f2f976d36eecaa826708a3f348eb_w750_h500.jpg",
+        "verification": "Page opened and read via WebFetch on 2026-10-10.",
+        "notes": ""
+      }
+    ]
+  },
+  {
+    "id": 20,
+    "dish_en": "Spaghetti with Meatballs",
+    "dish_ar": "سباغيتي بكرات اللحم",
+    "components": [
+      {
+        "component_name": "Spaghetti with meatballs in tomato sauce",
+        "source_site": "kitchen.sayidaty.net",
+        "chef": "مطبخ سيدتي (Sayidaty Kitchen); published 2025-09-06",
+        "recipe_title_ar": "سباغيتي بكرات اللحم",
+        "url": "https://kitchen.sayidaty.net/node/35902",
+        "servings_stated": "3 persons; 40 minutes",
+        "ingredients": [
+          {"item_ar": "سباغيتي", "item_en": "spaghetti", "qty": "500 g"},
+          {"item_ar": "لحم مفروم", "item_en": "minced meat", "qty": "250 g"},
+          {"item_ar": "بقسماط مطحون", "item_en": "breadcrumbs", "qty": "1/2 cup"},
+          {"item_ar": "حليب", "item_en": "milk", "qty": "1/4 cup"},
+          {"item_ar": "بيضة", "item_en": "egg", "qty": "1"},
+          {"item_ar": "ثوم مفروم (للكرات)", "item_en": "garlic, minced (meatballs)", "qty": "2 cloves"},
+          {"item_ar": "أوريغانو مجفف (للكرات)", "item_en": "dried oregano (meatballs)", "qty": "1/2 tsp"},
+          {"item_ar": "ملح وفلفل أسود", "item_en": "salt and black pepper", "qty": "to taste"},
+          {"item_ar": "زيت نباتي", "item_en": "vegetable oil, for frying", "qty": "2 tbsp"},
+          {"item_ar": "بصل متوسط مفروم", "item_en": "onion, chopped (sauce)", "qty": "1 medium"},
+          {"item_ar": "ثوم مفروم (للصلصة)", "item_en": "garlic, minced (sauce)", "qty": "2 cloves"},
+          {"item_ar": "طماطم مفرومة", "item_en": "tomatoes, chopped", "qty": "6"},
+          {"item_ar": "معجون طماطم", "item_en": "tomato paste", "qty": "1 tbsp"},
+          {"item_ar": "سكر", "item_en": "sugar", "qty": "1 tsp"},
+          {"item_ar": "أوريغانو مجفف (للصلصة)", "item_en": "dried oregano (sauce)", "qty": "1 tsp"},
+          {"item_ar": "ماء", "item_en": "water", "qty": "1/4 cup"},
+          {"item_ar": "جبن بارميزان مبشور", "item_en": "grated Parmesan, garnish", "qty": "to taste"},
+          {"item_ar": "بقدونس مفروم", "item_en": "chopped parsley, garnish", "qty": "to taste"}
+        ],
+        "method": [
+          "Boil the spaghetti in salted water until al dente; drain, reserving 1 cup of cooking water.",
+          "Mix minced meat, breadcrumbs, milk, egg, garlic, oregano, salt and pepper by hand until smooth; shape into small even balls.",
+          "Heat oil in a wide pot over medium-high; fry meatballs in batches until browned on all sides; set aside.",
+          "In the same pot soften the onion, add garlic and cook about 1 minute.",
+          "Add tomatoes, tomato paste, sugar, oregano, salt, pepper, the 1/4 cup water and the reserved pasta water; bring to a simmer.",
+          "Return meatballs to the sauce, cover, and simmer on low about 20 minutes until meatballs are cooked through and sauce thickened.",
+          "Serve spaghetti topped with meatballs and sauce, garnished with Parmesan and parsley."
+        ],
+        "chicken_or_meat_spec": "250 g minced meat (type not stated; beef or lamb)",
+        "rice_type_and_ratio": "N/A (pasta: 500 g spaghetti)",
+        "spicy_ingredients_found": [],
+        "has_video_on_page": false,
+        "image_on_page_url": "https://kitchen.sayidaty.net/uploads/small/91/9193bc47d274df863a4cfa7088fee335_w750_h500.jpg",
+        "verification": "Page opened and read via WebFetch on 2026-10-10; paraphrased by fetcher.",
+        "notes": "Alternative read: 'سباغيتي بكرات اللحم خطوة بخطوة بالصور' by سهر الشريف, https://kitchen.sayidaty.net/node/7418 (4 persons, 60 min; 300 g kofta meat, 1 tbsp cornstarch, 1/2 tsp salt, 1/4 tsp black pepper, 1/2 tsp mixed spice, 2 tbsp olive oil, 1 jar ready pasta sauce, 2 cups tomato juice, 1/4 cup Parmesan, 1 pack spaghetti; brown balls 3 min, simmer in sauce 10 to 15 min). Uses jarred sauce so 35902 chosen as the from-scratch classic."
+      }
+    ]
+  },
+  {
+    "id": 21,
+    "dish_en": "Mashed Potato with Grilled Chicken Breast",
+    "dish_ar": "بطاطس مهروسة مع صدر دجاج مشوي",
+    "components": [
+      {
+        "component_name": "Restaurant-style buttery mashed potatoes (with gravy)",
+        "source_site": "kitchen.sayidaty.net",
+        "chef": "مطبخ سيدتي (Sayidaty Kitchen); published 2021-05-27",
+        "recipe_title_ar": "بطاطس مهروسة بالزبدة مثل المطاعم",
+        "url": "https://kitchen.sayidaty.net/node/18801",
+        "servings_stated": "2 persons; 30 minutes",
+        "ingredients": [
+          {"item_ar": "بطاطس مقطعة مكعبات ومسلوقة", "item_en": "potatoes, diced and boiled", "qty": "2"},
+          {"item_ar": "زبدة", "item_en": "butter (for potatoes)", "qty": "2 tbsp"},
+          {"item_ar": "ملح", "item_en": "salt", "qty": "to taste"},
+          {"item_ar": "كريمة الطبخ", "item_en": "cooking cream", "qty": "1/4 cup"},
+          {"item_ar": "مرق دجاج بودرة", "item_en": "chicken stock cube/powder (gravy)", "qty": "1 cube"},
+          {"item_ar": "طحين", "item_en": "flour (gravy)", "qty": "1 tbsp"},
+          {"item_ar": "زبدة", "item_en": "butter (gravy)", "qty": "1 tbsp"},
+          {"item_ar": "ماء دافئ", "item_en": "warm water (gravy)", "qty": "1/2 cup"}
+        ],
+        "method": [
+          "Mash the boiled potatoes thoroughly while hot.",
+          "Mix in 2 tbsp butter until smooth, season with salt, then stir in the cooking cream.",
+          "Gravy: in a small pan over medium heat melt 1 tbsp butter, toast the flour briefly, add the crumbled stock cube, then pour in the warm water gradually while stirring until smooth and thick.",
+          "Serve the mash hot with the gravy on top."
+        ],
+        "chicken_or_meat_spec": "None",
+        "rice_type_and_ratio": "N/A",
+        "spicy_ingredients_found": [],
+        "has_video_on_page": false,
+        "image_on_page_url": "https://kitchen.sayidaty.net/uploads/small/32/3267bfd83abe56d5330cc90049636d4c_w750_h500.jpg",
+        "verification": "Page opened and read via WebFetch on 2026-10-10. Page gives no boiling time or heat levels.",
+        "notes": "Other Sayidaty mashed potato pages found: node/29147 (على طريقة المطاعم), node/14522 (بالثوم والزبدة), node/18793 (صحية); not read."
+      },
+      {
+        "component_name": "Pan-grilled chicken breast",
+        "source_site": "kitchen.sayidaty.net",
+        "chef": "مطبخ سيدتي (Sayidaty Kitchen); published 2022-11-05",
+        "recipe_title_ar": "صدور دجاج مشوية بالمقلاة",
+        "url": "https://kitchen.sayidaty.net/node/23766",
+        "servings_stated": "4 persons; 60 minutes",
+        "ingredients": [
+          {"item_ar": "صدر الدجاج مقطع شرائح", "item_en": "chicken breast, cut in strips", "qty": "500 g"},
+          {"item_ar": "نشاء", "item_en": "cornstarch (coating)", "qty": "2 tbsp"},
+          {"item_ar": "فلفل أسود", "item_en": "black pepper", "qty": "1/2 tsp"},
+          {"item_ar": "بصل مفروم", "item_en": "onion, minced", "qty": "1"},
+          {"item_ar": "زنجبيل طازج مفروم", "item_en": "fresh ginger, minced", "qty": "1 tbsp"},
+          {"item_ar": "زيت نباتي", "item_en": "vegetable oil", "qty": "2 tbsp"},
+          {"item_ar": "عصير الليمون", "item_en": "lemon juice (sauce)", "qty": "1/4 cup"},
+          {"item_ar": "مرق دجاج", "item_en": "chicken broth (sauce)", "qty": "1/2 cup"},
+          {"item_ar": "نشاء", "item_en": "cornstarch (sauce)", "qty": "1 tbsp"},
+          {"item_ar": "خل", "item_en": "vinegar (sauce)", "qty": "1 tbsp"},
+          {"item_ar": "عسل", "item_en": "honey (sauce)", "qty": "1 tbsp"}
+        ],
+        "method": [
+          "Toss chicken strips in cornstarch and black pepper; pan-fry in 1 tbsp oil over high heat until golden on both sides.",
+          "Whisk the sauce ingredients in a bowl until the cornstarch dissolves.",
+          "Heat the second tbsp oil in the pan, fry onion and ginger until soft.",
+          "Pour in the sauce and stir on low heat until it thickens.",
+          "Return the chicken, cook together about 5 minutes. Serve hot with rice or vegetables."
+        ],
+        "chicken_or_meat_spec": "500 g boneless skinless chicken breast in strips",
+        "rice_type_and_ratio": "N/A",
+        "spicy_ingredients_found": [],
+        "has_video_on_page": false,
+        "image_on_page_url": "https://kitchen.sayidaty.net/uploads/small/ef/ef2e04b30c07a85400f06d2167d7125e_w750_h500.jpg",
+        "verification": "Page opened and read via WebFetch on 2026-10-10; paraphrased by fetcher. No minutes given for the frying step.",
+        "notes": "This is a lemon-honey glazed pan recipe, not a plain grill. Other Sayidaty options found but not read: 'صدور دجاج مشوي' node/7992, 'صدور دجاج مشوية للرجيم' node/32327, 'صدور دجاج مشوية مع صوص الليمون' node/37742, 'تتبيلة صدور دجاج مشوية بالفرن' node/35369."
+      }
+    ]
+  },
+  {
+    "id": 22,
+    "dish_en": "Chicken with Spinach and white rice",
+    "dish_ar": "سبانخ بالدجاج مع أرز أبيض",
+    "components": [
+      {
+        "component_name": "Spinach stew with chicken (classic, with rice)",
+        "source_site": "kitchen.sayidaty.net (Shamlola had no classic spinach-chicken stew; its only match is an oven-baked stuffed roll, see notes)",
+        "chef": "مطبخ سيدتي (Sayidaty Kitchen); published 2022-10-06",
+        "recipe_title_ar": "السبانخ بالدجاج",
+        "url": "https://kitchen.sayidaty.net/node/23456",
+        "servings_stated": "4 persons; 60 minutes",
+        "ingredients": [
+          {"item_ar": "دجاجة مقطعة 6 قطع", "item_en": "chicken, cut into 6 pieces", "qty": "1"},
+          {"item_ar": "ورق سبانخ", "item_en": "spinach leaves", "qty": "2 kg"},
+          {"item_ar": "ملح", "item_en": "salt", "qty": "1 tbsp"},
+          {"item_ar": "فلفل أسود", "item_en": "black pepper", "qty": "1 tsp"},
+          {"item_ar": "هيل مطحون", "item_en": "ground cardamom", "qty": "1 tsp"},
+          {"item_ar": "أرز قصير الحبة", "item_en": "short-grain rice", "qty": "3 cups"},
+          {"item_ar": "سمن", "item_en": "ghee", "qty": "3 tbsp"},
+          {"item_ar": "بصل مفروم ناعم", "item_en": "onion, finely chopped", "qty": "1"},
+          {"item_ar": "بصل مقطع نصفين", "item_en": "onion, halved (for boiling chicken)", "qty": "1"},
+          {"item_ar": "ورق غار", "item_en": "bay leaves", "qty": "2"},
+          {"item_ar": "قرفة عود", "item_en": "cinnamon sticks", "qty": "2"}
+        ],
+        "method": [
+          "Melt 1 tbsp ghee in a pot, add chicken pieces, the halved onion, bay leaves, cinnamon and water; simmer about 20 minutes until chicken is cooked; strain and keep the broth.",
+          "Wash and chop the spinach; in a second pot heat 1 tbsp oil/ghee with the chopped onion, add spinach and stir until wilted.",
+          "Season with salt and pepper, pour in the strained chicken broth and the chicken pieces, and cook until spinach is tender and the stew has thickened.",
+          "Rice: soak 3 cups short-grain rice 15 min, drain; heat oil in a pot, add rice, water and salt; cook 5 min on high then lower the heat and cook until done.",
+          "Serve the spinach and chicken hot beside the rice."
+        ],
+        "chicken_or_meat_spec": "1 whole chicken cut into 6 pieces",
+        "rice_type_and_ratio": "3 cups short-grain rice; water quantity not stated on page (use 1 : 1.5 as per Shamlola white rice page)",
+        "spicy_ingredients_found": [],
+        "has_video_on_page": false,
+        "image_on_page_url": "https://kitchen.sayidaty.net/uploads/small/c4/c4745d0ee61ac8097521fe99f047fd99_w750_h500.jpg",
+        "verification": "Page opened and read via WebFetch on 2026-10-10; paraphrased by fetcher. Fetcher flagged oil missing from ingredient list and water quantities not given.",
+        "notes": "Shamlola candidate read: 'طريقة عمل دجاج بالسبانخ في الفرن' https://www.shamlola.com/recipes/طريقة-عمل-دجاج-بالسبانخ-في-الفرن (4 persons, 30+40 min; 4 chicken breasts butterflied and stuffed with sautéed onion + 2 cups chopped spinach, brushed with 2 tbsp tomato sauce, baked covered 30 min at 180°C then 3 min per side under the grill). It is a stuffed roll rather than the classic stew, so Sayidaty was used."
+      },
+      {
+        "component_name": "White rice",
+        "source_site": "www.shamlola.com",
+        "chef": "Not stated on page",
+        "recipe_title_ar": "طريقة عمل الأرز الأبيض",
+        "url": "https://www.shamlola.com/recipes/طريقة-عمل-الأرز-الأبيض",
+        "servings_stated": "3 persons",
+        "ingredients": [
+          {"item_ar": "أرز أبيض", "item_en": "white rice", "qty": "1 large cup"},
+          {"item_ar": "ملح", "item_en": "salt", "qty": "1/2 tsp"},
+          {"item_ar": "ماء أو شوربة", "item_en": "hot water or stock", "qty": "1.5 large cups"}
+        ],
+        "method": ["See id 15 white rice component (same page)."],
+        "chicken_or_meat_spec": "None",
+        "rice_type_and_ratio": "1 cup rice : 1.5 cups water; 15 min covered on low",
+        "spicy_ingredients_found": [],
+        "has_video_on_page": false,
+        "image_on_page_url": "https://shamlola.s3.amazonaws.com/Shamlola_Images/9/src/f2faaebfe747dfd31cd3283f4590f75ad6e1b73c.jpg",
+        "verification": "Page opened and read via WebFetch on 2026-10-10.",
+        "notes": ""
+      }
+    ]
+  },
+  {
+    "id": 23,
+    "dish_en": "Madhbi Chicken with rice",
+    "dish_ar": "مظبي دجاج",
+    "components": [
+      {
+        "component_name": "Madhbi chicken on coarse salt with spiced basmati rice (video recipe)",
+        "source_site": "kitchen.sayidaty.net",
+        "chef": "لمى شهاب (Lama Shehab, Sayidaty chefs); published 2017-09-22",
+        "recipe_title_ar": "مظبي دجاج بالفيديو",
+        "url": "https://kitchen.sayidaty.net/node/6690",
+        "servings_stated": "4 persons; 60 minutes",
+        "ingredients": [
+          {"item_ar": "دجاجة مقطعة 4 قطع بالجلد", "item_en": "chicken, cut in 4, skin on", "qty": "1"},
+          {"item_ar": "ملح خشن", "item_en": "coarse salt (bed for the chicken)", "qty": "1.5 kg"},
+          {"item_ar": "بهار مشكل (بهارات مظبي)", "item_en": "mixed/madhbi spice", "qty": "1 tsp"},
+          {"item_ar": "فلفل أسود", "item_en": "black pepper", "qty": "1/2 tsp"},
+          {"item_ar": "قرفة عود", "item_en": "cinnamon sticks", "qty": "4"},
+          {"item_ar": "ورق غار", "item_en": "bay leaves", "qty": "3"},
+          {"item_ar": "كبش قرنفل", "item_en": "cloves", "qty": "12"},
+          {"item_ar": "هيل", "item_en": "cardamom pods", "qty": "12"},
+          {"item_ar": "كركم", "item_en": "turmeric", "qty": "1/2 tsp"},
+          {"item_ar": "أرز بسمتي", "item_en": "basmati rice", "qty": "3 cups"},
+          {"item_ar": "مرق دجاج", "item_en": "chicken broth", "qty": "6 cups"},
+          {"item_ar": "بصل مقطع مكعبات", "item_en": "onion, diced", "qty": "1"},
+          {"item_ar": "فلفل أخضر حار مشقوق", "item_en": "green chili, halved lengthwise", "qty": "2"},
+          {"item_ar": "طماطم مكعبات", "item_en": "tomatoes, diced", "qty": "2"},
+          {"item_ar": "سمنة", "item_en": "ghee", "qty": "3 tsp"}
+        ],
+        "method": [
+          "Season the chicken quarters with the mixed spice and black pepper.",
+          "Spread an even layer of coarse salt in a wide heavy pan, lay the chicken skin-down on the salt over medium heat, and leave undisturbed until cooked and the skin is crisp (the video shows the full timing; page gives none).",
+          "In a pot melt the ghee; add onion, bay leaves, cloves, cardamom, cinnamon, turmeric and mixed spice; add the halved chilies and diced tomatoes with a small pinch of salt.",
+          "Add the basmati rice and stir to coat.",
+          "Pour in 6 cups chicken broth, bring to a boil, then cook on low heat, covered, until the rice is done.",
+          "Spoon rice onto a platter, top with the chicken, serve hot."
+        ],
+        "chicken_or_meat_spec": "1 whole chicken cut into 4 pieces, skin on",
+        "rice_type_and_ratio": "Basmati; 3 cups rice : 6 cups broth (1 : 2)",
+        "spicy_ingredients_found": ["2 hot green peppers (فلفل أخضر حار), halved; can be left whole or omitted"],
+        "has_video_on_page": true,
+        "video_url": "https://www.youtube.com/embed/AlqU5E4nCPo (watch: https://www.youtube.com/watch?v=AlqU5E4nCPo)",
+        "image_on_page_url": "https://kitchen.sayidaty.net/uploads/small/6e/6e0220afeb45b45e7046d901c52fb77f_w750_h500.jpg",
+        "verification": "Page opened and read via WebFetch on 2026-10-10; paraphrased by fetcher. Video embed URL taken from page source as reported by fetcher.",
+        "notes": "Also read: 'مظبي دجاج' https://kitchen.sayidaty.net/node/38000 (Sayidaty Kitchen, 2026-02-10, 5 persons, 60 min, no video): 1 whole chicken in pieces rubbed with coarse salt, 1 tsp Arabic mixed spice, 1 cup olive oil and 1 stock cube; cooked covered on a bed of coarse salt over medium heat about 2 hours; rice: 3 cups basmati soaked 30 min, 2 tbsp oil + 2 tbsp ghee, 1 bay leaf, 3 cardamom, 3 cloves, 1 dried lime, 3 cups broth (1:1), boil then low covered 30 min; finished with a lit charcoal in foil drizzled with 1 tbsp olive oil, covered 5 min for smoke. No chili in that version. Other pages found: node/32135 (على الفحم بالطريقة الأصلية), node/21074 (بالفرن), node/26729 (مظبي لحم)."
+      }
+    ]
+  }
+]
