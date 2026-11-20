@@ -25,7 +25,8 @@ jobs:
           set -e
           mkdir -p helper/img/s
           get() { curl -sSL --retry 3 -o "$2" "https://drive.google.com/uc?export=download&id=$1"; echo "$3  $2" | sha256sum -c -; }
-          get 1aLWy4bxxUCtoI59WrYEV8kTOhzZk6eJZ helper/index.html            35ee27b1da8e9fa4339042934b68685c6ef4c88b68398eff584b2627c6021018
+          get 1SoUDOkiQClbX5HJglHnge10dxsJ_4i8L helper/index.html            5542f6a06f07ed0a02055ffbf832c34668435664763f2b0dea1211f689d0354b
+          get 1Gce-7lNYM16mECwCqjgsbfzNCU168PZZ helper/og.jpg                371b0177a917c20dfea977920e8c311b308770b0c687ad40abec8bbefa785fe1
           get 1gjVSVnRQKYU90yWKUI0tIP7U7F25IDTY helper/img/s/s0.jpg           2556af8a728acd3a8a85e0c6df756ce47744485ac481dbb4db936aae09976301
           get 1uvV-f1Z8HuPrVEzUTzqBRY4Tgu1PdJdE helper/img/s/s1.jpg           51d6308e7be1c7c7d250daae5b42e83b68902a03fe68f2a8184821128b68d655
           get 16xgBuSgQWYjiWqVMXC6BdWYRew-hERmL helper/img/s/s2.jpg           8dac688069a0507a94cd27a1da90593b3a697adf6ab2ac55802098941091b357
