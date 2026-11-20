@@ -9,8 +9,6 @@ on:
 
 permissions:
   contents: write
-  pages: write
-  id-token: write
 
 concurrency:
   group: helper-page
@@ -19,51 +17,30 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deploy.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
 
       - name: Fetch page and images (public Drive files)
         run: |
           set -e
-          mkdir -p docs/helper/img/s
+          mkdir -p helper/img/s
           get() { curl -sSL --retry 3 -o "$2" "https://drive.google.com/uc?export=download&id=$1"; echo "$3  $2" | sha256sum -c -; }
-          get 1aLWy4bxxUCtoI59WrYEV8kTOhzZk6eJZ docs/helper/index.html            35ee27b1da8e9fa4339042934b68685c6ef4c88b68398eff584b2627c6021018
-          get 1gjVSVnRQKYU90yWKUI0tIP7U7F25IDTY docs/helper/img/s/s0.jpg           2556af8a728acd3a8a85e0c6df756ce47744485ac481dbb4db936aae09976301
-          get 1uvV-f1Z8HuPrVEzUTzqBRY4Tgu1PdJdE docs/helper/img/s/s1.jpg           51d6308e7be1c7c7d250daae5b42e83b68902a03fe68f2a8184821128b68d655
-          get 16xgBuSgQWYjiWqVMXC6BdWYRew-hERmL docs/helper/img/s/s2.jpg           8dac688069a0507a94cd27a1da90593b3a697adf6ab2ac55802098941091b357
-          get 15VYr25dBwkKSZLMuJoUf0UzrmnOZrmiT docs/helper/img/s/s3.jpg           bd94f455370fb458af5fcdaae82fd426b13addeb0fc55e70c05c5ddbfd88e478
-          get 1Mt5EGqHLpPcAc1DPAIMI-YwjmtzHJlLU docs/helper/img/cf-lambshoulder.jpg 7b98f818af16f110da90683c3bb0bea46141878a759f370979edaf594530395f
-          get 1ZwKezL1EnlgtZFLyJ_CXwrCEKFA7nx8t docs/helper/img/cf-2258136.jpg      8c26327dcf43137467d218efbeff8083c374c8c419b4f9342d7f7970ccb307a4
-          touch docs/.nojekyll
-          printf '<!doctype html><meta charset="utf-8"><meta http-equiv="refresh" content="0; url=helper/"><title>Household List</title><a href="helper/">Household List</a>' > docs/index.html
-          ls -la docs/helper docs/helper/img docs/helper/img/s
+          get 1aLWy4bxxUCtoI59WrYEV8kTOhzZk6eJZ helper/index.html            35ee27b1da8e9fa4339042934b68685c6ef4c88b68398eff584b2627c6021018
+          get 1gjVSVnRQKYU90yWKUI0tIP7U7F25IDTY helper/img/s/s0.jpg           2556af8a728acd3a8a85e0c6df756ce47744485ac481dbb4db936aae09976301
+          get 1uvV-f1Z8HuPrVEzUTzqBRY4Tgu1PdJdE helper/img/s/s1.jpg           51d6308e7be1c7c7d250daae5b42e83b68902a03fe68f2a8184821128b68d655
+          get 16xgBuSgQWYjiWqVMXC6BdWYRew-hERmL helper/img/s/s2.jpg           8dac688069a0507a94cd27a1da90593b3a697adf6ab2ac55802098941091b357
+          get 15VYr25dBwkKSZLMuJoUf0UzrmnOZrmiT helper/img/s/s3.jpg           bd94f455370fb458af5fcdaae82fd426b13addeb0fc55e70c05c5ddbfd88e478
+          get 1Mt5EGqHLpPcAc1DPAIMI-YwjmtzHJlLU helper/img/cf-lambshoulder.jpg 7b98f818af16f110da90683c3bb0bea46141878a759f370979edaf594530395f
+          get 1ZwKezL1EnlgtZFLyJ_CXwrCEKFA7nx8t helper/img/cf-2258136.jpg      8c26327dcf43137467d218efbeff8083c374c8c419b4f9342d7f7970ccb307a4
+          touch .nojekyll
+          ls -la helper helper/img helper/img/s
 
       - name: Commit page files
         run: |
           git config user.name "helper-page-bot"
           git config user.email "helper-page-bot@users.noreply.github.com"
-          git add docs
+          git rm -r -q --ignore-unmatch docs
+          git add helper .nojekyll
           git commit -m "Publish household helper page [skip ci]" || echo "nothing to commit"
           git pull --rebase origin main || true
           git push
-
-      - name: Configure GitHub Pages
-        id: pages
-        uses: actions/configure-pages@v5
-        with:
-          enablement: true
-
-      - name: Upload site
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: docs
-
-      - name: Deploy to GitHub Pages
-        id: deploy
-        uses: actions/deploy-pages@v4
-
-      - name: Print URL
-        run: echo "Site at ${{ steps.deploy.outputs.page_url }}helper/"
